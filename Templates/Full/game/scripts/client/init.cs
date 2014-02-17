@@ -60,10 +60,12 @@ function initClient()
    $Client::GameTypeQuery = $appName;
    $Client::MissionTypeQuery = "Any";
 
+   echo("About to load Theme: " @ $Pref::Theme);
+
    // These should be game specific GuiProfiles.  Custom profiles are saved out
    // from the Gui Editor.  Either of these may override any that already exist.
-   exec("art/gui/defaultGameProfiles.cs");
-   exec("art/gui/customProfiles.cs"); 
+   exec($Pref::Theme @ "art/gui/defaultGameProfiles.cs");
+   exec($Pref::Theme @ "art/gui/customProfiles.cs"); 
    
    // The common module provides basic client functionality
    initBaseClient();
@@ -72,31 +74,31 @@ function initClient()
    configureCanvas();
 
    // Load up the Game GUIs
-   exec("art/gui/defaultGameProfiles.cs");
-   exec("art/gui/PlayGui.gui");
-   exec("art/gui/ChatHud.gui");
-   exec("art/gui/playerList.gui");
-   exec("art/gui/hudlessGui.gui");
+   exec($Pref::Theme @ "art/gui/defaultGameProfiles.cs");
+   exec($Pref::Theme @ "art/gui/PlayGui.gui");
+   exec($Pref::Theme @ "art/gui/ChatHud.gui");
+   exec($Pref::Theme @ "art/gui/playerList.gui");
+   exec($Pref::Theme @ "art/gui/hudlessGui.gui");
 
    // Load up the shell GUIs
-   exec("art/gui/mainMenuGui.gui");
-   exec("art/gui/joinServerDlg.gui");
-   exec("art/gui/endGameGui.gui");
-   exec("art/gui/StartupGui.gui");
-   exec("art/gui/chooseLevelDlg.gui");
-   exec("art/gui/loadingGui.gui");
-   exec("art/gui/optionsDlg.gui");
-   exec("art/gui/remapDlg.gui");
+   exec($Pref::Theme @ "art/gui/mainMenuGui.gui");
+   exec($Pref::Theme @ "art/gui/joinServerDlg.gui");
+   exec($Pref::Theme @ "art/gui/endGameGui.gui");
+   exec($Pref::Theme @ "art/gui/StartupGui.gui");
+   exec($Pref::Theme @ "art/gui/chooseLevelDlg.gui");
+   exec($Pref::Theme @ "art/gui/loadingGui.gui");
+   exec($Pref::Theme @ "art/gui/optionsDlg.gui");
+   exec($Pref::Theme @ "art/gui/remapDlg.gui");
    
    // Gui scripts
    exec("./playerList.cs");
    exec("./chatHud.cs");
    exec("./messageHud.cs");
-   exec("scripts/gui/playGui.cs");
-   exec("scripts/gui/startupGui.cs");
-   exec("scripts/gui/chooseLevelDlg.cs");
-   exec("scripts/gui/loadingGui.cs");
-   exec("scripts/gui/optionsDlg.cs");
+   exec($Pref::Theme @ "scripts/gui/playGui.cs");
+   exec($Pref::Theme @ "scripts/gui/startupGui.cs");
+   exec($Pref::Theme @ "scripts/gui/chooseLevelDlg.cs");
+   exec($Pref::Theme @ "scripts/gui/loadingGui.cs");
+   exec($Pref::Theme @ "scripts/gui/optionsDlg.cs");
 
    // Client scripts
    exec("./client.cs");

@@ -69,6 +69,15 @@ function doScreenShotHudless(%val)
 
 moveMap.bind(keyboard, "alt p", doScreenShotHudless);
 
+function toggleWireframe()
+{
+   if ( $gfx::wireframe )
+     $gfx::wireframe = 0;
+   else
+     $gfx::wireframe = 1;
+}
+moveMap.bind(keyboard, "f5", toggleWireframe);
+
 //------------------------------------------------------------------------------
 // Movement Keys
 //------------------------------------------------------------------------------

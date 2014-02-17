@@ -78,8 +78,8 @@ function onStart()
    exec("./scripts/client/client.cs");
    exec("./scripts/server/server.cs");
    
-   exec("./scripts/gui/guiTreeViewCtrl.cs");
-   exec("./scripts/gui/messageBoxes/messageBox.ed.cs");
+   exec($Pref::Theme @ "core/scripts/gui/guiTreeViewCtrl.cs");
+   exec($Pref::Theme @ "core/scripts/gui/messageBoxes/messageBox.ed.cs");
    
    echo(" % - Initialized Core");
 }

@@ -46,8 +46,8 @@ function initializeCore()
    exec("./persistenceManagerTest.cs");
 
    // Content.
-   exec("~/art/gui/profiles.cs");
-   exec("~/scripts/gui/cursors.cs");
+   exec($Pref::Theme @ "core/art/gui/profiles.cs");
+   exec($Pref::Theme @ "core/scripts/gui/cursors.cs");
    
    exec( "./audioEnvironments.cs" );
    exec( "./audioDescriptions.cs" );
@@ -70,12 +70,12 @@ function initializeCore()
    startFileChangeNotifications();
       
    // Core Guis.
-   exec("~/art/gui/console.gui");
-   exec("~/art/gui/consoleVarDlg.gui");
-   exec("~/art/gui/netGraphGui.gui");
+   exec($Pref::Theme @ "core/art/gui/console.gui");
+   exec($Pref::Theme @ "core/art/gui/consoleVarDlg.gui");
+   exec($Pref::Theme @ "core/art/gui/netGraphGui.gui");
    
    // Gui Helper Scripts.
-   exec("~/scripts/gui/help.cs");
+   exec($Pref::Theme @ "core/scripts/gui/help.cs");
 
    // Random Scripts.
    exec("~/scripts/client/screenshot.cs");
