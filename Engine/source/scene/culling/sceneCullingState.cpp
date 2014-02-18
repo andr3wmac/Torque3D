@@ -32,6 +32,11 @@
 #include "util/tempAlloc.h"
 #include "gfx/sim/debugDraw.h"
 
+// andrewmac : Occlusion Culling
+#include "gfx/gfxOcclusionQuery.h"
+#include "scene/sceneRenderState.h"
+#include "renderInstance/renderBinManager.h"
+Vector<SceneObject*> SceneCullingState::smOcclusionObjList;
 
 extern bool gEditingMission;
 
@@ -88,6 +93,16 @@ SceneCullingState::SceneCullingState( SceneManager* sceneManager, const SceneCam
       SceneCullingVolume::Includer,
       PlaneSetF( planes, 4 )
    );
+
+   // andrewmac : Occlusion Culling
+   // We use this to jump in right after the advanced lighting prepass.
+   RenderPassManager::getRenderBinSignal().notify( this, &SceneCullingState::_handleBinEvent );
+}
+
+// andrewmac : Occlusion Culling
+SceneCullingState::~SceneCullingState()
+{
+    RenderPassManager::getRenderBinSignal().remove( this, &SceneCullingState::_handleBinEvent );
 }
 
 //-----------------------------------------------------------------------------
@@ -727,9 +742,17 @@ U32 SceneCullingState::cullObjects( SceneObject** objects, U32 numObjects, U32 c
       SceneObject* object = objects[ i ];
       bool isCulled = true;
 
+      // andrewmac: Occlusion Culling
+      // This should be more properly positioned to respect editor overrides, etc
+      // but for testing purposes I leave it at the top most culling check.
+	  if ( object->isOcclusionEnabled() )
+	  {
+		 isCulled = object->isOccluded();
+	  } 
+
       // If we should respect editor overrides, test that now.
 
-      if( !( cullOptions & CullEditorOverrides ) &&
+      else if( !( cullOptions & CullEditorOverrides ) &&
           gEditingMission &&
           ( ( object->isCullingDisabledInEditor() && object->isRenderEnabled() ) || object->isSelected() ) )
       {
@@ -935,4 +958,40 @@ void SceneCullingState::debugRenderCullingVolumes() const
             drawer->drawPolyhedron( polyhedron, iter->isOccluder() ? occluderColor : includerColor );
       }
    }
+}
+
+// andrewmac : Occlusion Culling
+// This whole system will be revisited later. I was more concerned
+// with getting it to work. This currently doesn't take frustum
+// culling into account when doing the tests, it just tests for all
+// objects regardless.
+void SceneCullingState::_handleBinEvent( RenderBinManager *bin,
+                                                const SceneRenderState* sceneState,
+                                                bool isBinStart )
+{
+   if (  sceneState->isShadowPass() || 
+         sceneState->isOtherPass() )
+      return;
+
+   String binName( bin->getName() );
+   if ( binName.isEmpty() )
+      return;
+
+   if ( !isBinStart && binName.equal("AL_PrePassBin") )
+   {
+       for( int i = 0; i < smOcclusionObjList.size(); i++ )
+       {
+           SceneObject* object = smOcclusionObjList[i];
+           object->occlusionRender();
+       }
+   }
+}
+
+void SceneCullingState::addOcclusionObject(SceneObject* obj)
+{
+    smOcclusionObjList.push_back(obj);
+}
+void SceneCullingState::removeOcclusionObject(SceneObject* obj)
+{
+    smOcclusionObjList.remove(obj);
 }

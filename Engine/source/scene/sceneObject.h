@@ -66,6 +66,8 @@ class SFXAmbience;
 struct ObjectRenderInst;
 struct Move;
 
+// andrewmac : Occlusion Query
+class GFXOcclusionQuery;
 
 /// A 3D object.
 ///
@@ -151,6 +153,12 @@ class SceneObject : public NetObject, private SceneContainer::Link, public Proce
 
          NextFreeFlag = BIT( 5 )
       };
+
+      // andrewmac: Occlusion Culling
+	  bool isOccluded();
+	  bool isOcclusionEnabled();
+	  void occlusionRender();
+      void setOcclusionCulling(bool val);
 
    protected:
 
@@ -362,6 +370,12 @@ class SceneObject : public NetObject, private SceneContainer::Link, public Proce
       /// Returns the greatest object flag bit defined.
       /// Only bits within this range will be transmitted over the network.
       virtual U32 getObjectFlagMax() const { return NextFreeFlag - 1; }
+
+      // andrewmac: Occlusion Culling
+	  GFXOcclusionQuery* mOcclusionQuery;
+	  bool mPreviousOcclusionResult;
+	  bool mOcclusionCulling;
+      bool mOcclusionPending;
 
    public:
 
@@ -767,6 +781,9 @@ class SceneObject : public NetObject, private SceneContainer::Link, public Proce
       static bool _setMountPID( void* object, const char* index, const char* data );
 
       /// @}
+
+      // andrewmac : Occlusion Culling.
+	  static bool _setOcclusionCulling(void *object, const char *index, const char *data );
 };
 
 #endif  // _SCENEOBJECT_H_

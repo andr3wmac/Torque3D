@@ -51,6 +51,10 @@
 class SceneObject;
 class SceneManager;
 
+// andrewmac : Occlusion Culling
+class SceneRenderState;
+class RenderBinManager;
+
 
 /// An object that gathers the culling state for a scene.
 class SceneCullingState
@@ -92,6 +96,13 @@ class SceneCullingState
 
       /// @}
 
+      // andrewmac : Occlusion Culling
+      // Static list of objects with occlusion enabled.
+      // This will be replaced later, it's mainly for easy testing.
+      static Vector<SceneObject*> smOcclusionObjList;
+      static void addOcclusionObject(SceneObject* obj);
+      static void removeOcclusionObject(SceneObject* obj);
+
    protected:
 
       /// Scene which is being culled.
@@ -129,11 +140,20 @@ class SceneCullingState
       /// frustum.
       bool mDisableZoneCulling;
 
+      // andrewmac: Occlusion Culling
+      void _handleBinEvent( RenderBinManager *bin,                           
+						const SceneRenderState* sceneState,
+						bool isBinStart );  
+
    public:
 
       ///
       SceneCullingState( SceneManager* sceneManager,
                          const SceneCameraState& cameraState );
+
+      // andrewmac: Occlusion Culling
+      // Need destructor to remove render bin notification.
+      ~SceneCullingState();
 
       /// Return the scene which is being culled in this state.
       SceneManager* getSceneManager() const { return mSceneManager; }
@@ -300,6 +320,8 @@ class SceneCullingState
       /// Queue debug visualizations of the culling volumes of all currently selected zones
       /// (or, if no zone is selected, all volumes in the outdoor zone) to the debug drawer.
       void debugRenderCullingVolumes() const;
+
+
 
    private:
 

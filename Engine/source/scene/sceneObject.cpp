@@ -43,6 +43,12 @@
 #include "math/mTransform.h"
 #include "T3D/gameBase/gameProcess.h"
 
+// andrewmac : Occlusion Culling
+#include "gfx/gfxOcclusionQuery.h"
+#include "gfx/gfxDevice.h"
+#include "gfx/gfxDrawUtil.h"
+#include "gfx/gfxDebugEvent.h"
+
 IMPLEMENT_CONOBJECT(SceneObject);
 
 ConsoleDocClass( SceneObject,
@@ -140,6 +146,12 @@ SceneObject::SceneObject()
 
    mObjectFlags.set( RenderEnabledFlag | SelectionEnabledFlag );
    mIsScopeAlways = false;
+
+   // andrewmac: Occlusion Culling
+   mOcclusionQuery = NULL;
+   mPreviousOcclusionResult = false;
+   mOcclusionCulling = false;
+   mOcclusionPending = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -552,6 +564,16 @@ void SceneObject::initPersistFields()
 
    endGroup( "Transform" );
 
+   // andrewmac : Occlusion Culling
+   // I believe there will be more options here later, so it justified a group.
+   addGroup( "Culling" );
+         
+	  addProtectedField( "occlusionCulling", TypeBool, Offset( mOcclusionCulling, SceneObject ),
+         &_setOcclusionCulling, &defaultProtectedGetFn,
+         "Whether the object is included in Occlusion testing." );
+
+   endGroup( "Culling" );
+
    addGroup( "Editing" );
 
       addProtectedField( "isRenderEnabled", TypeBool, Offset( mObjectFlags, SceneObject ),
@@ -797,6 +819,9 @@ U32 SceneObject::packUpdate( NetConnection* conn, U32 mask, BitStream* stream )
    }
    else
       stream->writeFlag( false );
+
+   // andrewmac : Occlusion Culling
+   stream->writeFlag(mOcclusionCulling);
    
    return retMask;
 }
@@ -833,6 +858,21 @@ void SceneObject::unpackUpdate( NetConnection* conn, BitStream* stream )
       else
          unmount();
    }
+
+   // andremwac : Occlusion Culling
+   if ( isClientObject() )
+   {
+       bool val = stream->readFlag();
+       if ( val != mOcclusionCulling )
+       {
+           mOcclusionCulling = val;
+           if ( val ) 
+               SceneCullingState::addOcclusionObject(this);
+           else 
+               SceneCullingState::removeOcclusionObject(this);
+       }
+   } else
+       mOcclusionCulling = stream->readFlag();
 }
 
 //-----------------------------------------------------------------------------
@@ -1431,4 +1471,92 @@ DefineEngineMethod( SceneObject, isGlobalBounds, bool, (),,
    "@return true if the object has a global bounds." )
 {
    return object->isGlobalBounds();
+}
+
+// andrewmac : Occlusion Culling
+// Still a work in progress. Known bugs:
+//   - There's no optimization on the list of objects that's being culled.
+//   - All scene objects that have occlusion culling enabled will be tested every frame.
+//   - Shadows get culled with the object but aren't included in the test, so you can see
+//     them disappear.
+//   - No longer works in Basic Lighting. I can fix this anytime.
+bool SceneObject::isOccluded()
+{
+	if ( !mOcclusionCulling ) return false;
+	if ( !mOcclusionQuery ) return false;
+
+	// Get status, non-blocking.
+	GFXOcclusionQuery::OcclusionQueryStatus status = mOcclusionQuery->getStatus(false);
+	if ( status == GFXOcclusionQuery::Occluded )
+	{
+		mPreviousOcclusionResult = true;
+        mOcclusionPending = false;
+		return true;
+	}
+	else if ( status == GFXOcclusionQuery::NotOccluded )
+	{
+		mPreviousOcclusionResult = false;
+        mOcclusionPending = false;
+		return false;
+	}
+    else if ( status == GFXOcclusionQuery::Unset )
+    {
+        mOcclusionPending = false;
+    }
+
+	// If there's no usable response from the occlusion query,
+	// just use the result from the last query.
+	return mPreviousOcclusionResult;
+}
+
+bool SceneObject::isOcclusionEnabled()
+{
+	return mOcclusionCulling;
+}
+
+void SceneObject::occlusionRender()
+{
+	if ( !mOcclusionCulling ) return;
+    if ( mOcclusionPending ) return;
+
+	// Setup Draw Description:
+	//   Disable all color channels for the occlusion test.
+    //   Enable reading but not writing to z-buffer.
+	GFXStateBlockDesc desc;
+	desc.setZReadWrite( true, false );
+	desc.setColorWrites( false, true, false, false );
+
+    // Create the occlusion query if it doesn't exist.
+	if ( !mOcclusionQuery )
+		mOcclusionQuery = GFX->createOcclusionQuery();
+
+    // If the renderer doesn't support occlusion query it will return
+    // NULL so we need to be safe.
+	if ( mOcclusionQuery )
+	{
+        // This returns false if the query is pending. This may make mOcclusionPending
+        // seem redundant, however I found when the scene is running at a high FPS you
+        // get weird results because this function will return True when it's ready to
+        // test again, but that doesn't mean sceneCullingState had the chance to read 
+        // the result yet, and the result is lost when a new query is placed.
+		if ( mOcclusionQuery->begin() )
+		{
+			GFX->getDrawUtil()->drawCube(desc, getWorldBox(), ColorI(1, 1, 1, 1));
+			mOcclusionQuery->end();
+            mOcclusionPending = true;
+		}
+	}
+}
+
+void SceneObject::setOcclusionCulling(bool val)
+{
+	mOcclusionCulling = val;
+}
+
+bool SceneObject::_setOcclusionCulling(void *object, const char *index, const char *data )
+{
+   SceneObject* so = static_cast<SceneObject*>( object );
+   if ( so )
+	   so->setOcclusionCulling(dAtob(data));
+   return false;
 }
