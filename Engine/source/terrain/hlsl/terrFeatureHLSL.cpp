@@ -530,11 +530,11 @@ void TerrainDetailMapFeatHLSL::processPix(   Vector<ShaderComponent*> &component
    meta->addStatement( new GenOp( "      @ *= @.y * @.w;\r\n",
                                     detailColor, detailInfo, inDet ) );
 
-   Var *baseColor = (Var*)LangElement::find( "baseColor" );
+   //Var *baseColor = (Var*)LangElement::find( "baseColor" );
    Var *outColor = (Var*)LangElement::find( "col" );
 
-   meta->addStatement( new GenOp( "      @ = lerp( @, @ + @, @ );\r\n",
-                                    outColor, outColor, baseColor, detailColor, detailBlend ) );
+   meta->addStatement(new GenOp("      @ = lerp( @, @ + @, @ );\r\n",
+		outColor, outColor, outColor, detailColor, detailBlend));
 
    meta->addStatement( new GenOp( "   }\r\n" ) );
 

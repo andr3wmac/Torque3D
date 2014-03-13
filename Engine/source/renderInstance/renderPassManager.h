@@ -65,15 +65,20 @@ protected:
 
 public:  
 
-   RenderInstType( const RenderInstType &type = Invalid ) 
-      :  mName( type.mName )
-   {
-   }
+	RenderInstType()
+		: mName(Invalid.mName)
+	{
+	}
 
-   RenderInstType( const String &name ) 
-      :  mName( name )
-   {
-   }
+	RenderInstType(const RenderInstType &type)
+		: mName(type.mName)
+	{
+	}
+
+	RenderInstType(const String &name)
+		: mName(name)
+	{
+	}
 
    ~RenderInstType() {}
 
