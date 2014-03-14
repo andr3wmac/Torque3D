@@ -20,21 +20,19 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+// Partial refactor by: Anis A. Hireche (C) 2014 - anishireche@gmail.com
+//-----------------------------------------------------------------------------
+
 #ifndef _GFX_D3D9_OCCLUSIONQUERY_H_
 #define _GFX_D3D9_OCCLUSIONQUERY_H_
 
-#ifndef _GFXOCCLUSIONQUERY_H_
+#include "gfx/D3D9/gfxD3D9Device.h"
 #include "gfx/gfxOcclusionQuery.h"
-#endif
 
 #ifdef TORQUE_GATHER_METRICS
-   #ifndef _PLATFORM_PLATFORMTIMER_H_
    #include "platform/platformTimer.h"
-   #endif
 #endif
-
-struct IDirect3DQuery9;
-
 
 class GFXD3D9OcclusionQuery : public GFXOcclusionQuery
 {
@@ -48,12 +46,12 @@ private:
 #endif
 
 public:
-   GFXD3D9OcclusionQuery( GFXDevice *device );
+   GFXD3D9OcclusionQuery(GFXDevice *device);
    virtual ~GFXD3D9OcclusionQuery();
 
    virtual bool begin();
    virtual void end();   
-   virtual OcclusionQueryStatus getStatus( bool block, U32 *data = NULL );
+   virtual OcclusionQueryStatus getStatus(bool block, U32 *data = NULL);
 
    // GFXResource
    virtual void zombify();   
@@ -61,4 +59,4 @@ public:
    virtual const String describeSelf() const;
 };
 
-#endif // _GFX_D3D9_OCCLUSIONQUERY_H_
+#endif

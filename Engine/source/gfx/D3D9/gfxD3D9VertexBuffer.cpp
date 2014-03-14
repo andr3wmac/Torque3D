@@ -20,29 +20,29 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+// Partial refactor by: Anis A. Hireche (C) 2014 - anishireche@gmail.com
+//-----------------------------------------------------------------------------
+
 #include "platform/platform.h"
 #include "gfx/D3D9/gfxD3D9VertexBuffer.h"
+#include "console/console.h"
 
 GFXD3D9VertexBuffer::~GFXD3D9VertexBuffer() 
 {
-#ifdef TORQUE_DEBUG
-   SAFE_DELETE( name );
-#endif
-
-   if (getOwningDevice() != NULL)
+   if(getOwningDevice() != NULL)
    {
-      if (mBufferType == GFXBufferTypeDynamic)
-         static_cast<GFXD3D9Device *>(getOwningDevice())->deallocVertexBuffer( this );
-      else if (mBufferType != GFXBufferTypeVolatile)
+      if(mBufferType == GFXBufferTypeDynamic)
+	  {
+         SAFE_RELEASE(vb);
+	  }
+      else if(mBufferType != GFXBufferTypeVolatile)
       {
-         static_cast<GFXD3D9Device *>(getOwningDevice())->destroyD3DResource( vb );
+         static_cast<GFXD3D9Device *>(getOwningDevice())->destroyD3DResource(vb);
       }
    }
 }
 
-//-----------------------------------------------------------------------------
-// Lock
-//-----------------------------------------------------------------------------
 void GFXD3D9VertexBuffer::lock(U32 vertexStart, U32 vertexEnd, void **vertexPtr)
 {
    PROFILE_SCOPE(GFXD3D9VertexBuffer_lock);
@@ -51,26 +51,20 @@ void GFXD3D9VertexBuffer::lock(U32 vertexStart, U32 vertexEnd, void **vertexPtr)
 
    U32 flags = 0;
 
-   GFXD3D9Device *d = static_cast<GFXD3D9Device *>( mDevice );
-
    switch( mBufferType )
    {
    case GFXBufferTypeStatic:
-      break;
-
    case GFXBufferTypeDynamic:
-#ifndef TORQUE_OS_XENON
       flags |= D3DLOCK_DISCARD;
-#endif
       break;
 
    case GFXBufferTypeVolatile:
 
       // Get or create the volatile buffer...
-      mVolatileBuffer = d->findVBPool( &mVertexFormat, vertexEnd );
+      mVolatileBuffer = static_cast<GFXD3D9Device*>( GFX )->findVBPool( &mVertexFormat, vertexEnd );
 
       if( !mVolatileBuffer )
-         mVolatileBuffer = d->createVBPool( &mVertexFormat, mVertexSize );
+         mVolatileBuffer = static_cast<GFXD3D9Device*>( GFX )->createVBPool( &mVertexFormat, mVertexSize );
 
       vb = mVolatileBuffer->vb;
 
@@ -82,11 +76,7 @@ void GFXD3D9VertexBuffer::lock(U32 vertexStart, U32 vertexEnd, void **vertexPtr)
       // We created the pool when we requested this volatile buffer, so assume it exists...
       if( mVolatileBuffer->mNumVerts + vertexEnd > MAX_DYNAMIC_VERTS ) 
       {
-#ifdef TORQUE_OS_XENON
-         AssertFatal( false, "This should never, ever happen. findVBPool should have returned NULL" );
-#else
          flags |= D3DLOCK_DISCARD;
-#endif
          mVolatileStart = vertexStart  = 0;
          vertexEnd      = vertexEnd;
       }
@@ -107,31 +97,17 @@ void GFXD3D9VertexBuffer::lock(U32 vertexStart, U32 vertexEnd, void **vertexPtr)
    lockedVertexStart = vertexStart;
    lockedVertexEnd   = vertexEnd;
 
-   //      Con::printf("%x: Locking %s range (%d, %d)", this, (mBufferType == GFXBufferTypeVolatile ? "volatile" : "static"), lockedVertexStart, lockedVertexEnd);
-
-#ifdef TORQUE_OS_XENON
-   // If the vertex buffer which we are trying to lock is held by the D3D device
-   // on Xenon it will bomb. So if that is the case, then SetStreamSource to NULL
-   // and also call setVertexBuffer because otherwise the state-cache will be hosed
-   if( d->mCurrentVB != NULL && d->mCurrentVB->vb == vb )
-   {
-      d->setVertexBuffer( NULL );
-      d->mD3DDevice->SetStreamSource( 0, NULL, 0, 0 );
-   }
-   
-   // As of October 2006 XDK, range locking is no longer supported. Lock the whole buffer
-   // and then manually offset the pointer to simulate the subrange. -patw
-   D3D9Assert( vb->Lock( 0, 0, vertexPtr, flags),
-      "Unable to lock vertex buffer.");
-
-   U8 *tmp = (U8 *)(*vertexPtr);
-   tmp += ( vertexStart * mVertexSize );
-   *vertexPtr = tmp;
-#else
+   /* Anis -> uncomment it for debugging purpose. called many times per frame... spammy! */
+   //Con::printf("%x: Locking %s range (%d, %d)", this, (mBufferType == GFXBufferTypeVolatile ? "volatile" : "static"), lockedVertexStart, lockedVertexEnd);
 
    U32 sizeToLock = (vertexEnd - vertexStart) * mVertexSize;
-   D3D9Assert( vb->Lock(vertexStart * mVertexSize, sizeToLock, vertexPtr, flags),
-      "Unable to lock vertex buffer.");
+
+   HRESULT hr = vb->Lock(vertexStart * mVertexSize, sizeToLock, vertexPtr, flags);
+
+	if(FAILED(hr)) 
+	{
+		AssertFatal(false, "Unable to lock vertex buffer.");
+	}
 
    #ifdef TORQUE_DEBUG
    
@@ -149,8 +125,6 @@ void GFXD3D9VertexBuffer::lock(U32 vertexStart, U32 vertexEnd, void **vertexPtr)
       *vertexPtr = mDebugGuardBuffer + guardSize;
 
    #endif // TORQUE_DEBUG
-
-#endif
 }
 
 void GFXD3D9VertexBuffer::unlock()
@@ -159,33 +133,39 @@ void GFXD3D9VertexBuffer::unlock()
 
    #ifdef TORQUE_DEBUG
    
-      if ( mDebugGuardBuffer )
-      {
-         const U32 guardSize = sizeof( _VBGuardString );
-         const U32 sizeLocked = (lockedVertexEnd - lockedVertexStart) * mVertexSize;
+   if ( mDebugGuardBuffer )
+   {
+		const U32 guardSize = sizeof( _VBGuardString );
+		const U32 sizeLocked = (lockedVertexEnd - lockedVertexStart) * mVertexSize;
 
-         // First check the guard areas for overwrites.
-         AssertFatal( dMemcmp( mDebugGuardBuffer, _VBGuardString, guardSize ) == 0,
-            "GFXD3D9VertexBuffer::unlock - Caught lock memory underrun!" );
-         AssertFatal( dMemcmp( mDebugGuardBuffer + sizeLocked + guardSize, _VBGuardString, guardSize ) == 0,
-            "GFXD3D9VertexBuffer::unlock - Caught lock memory overrun!" );
+		// First check the guard areas for overwrites.
+		AssertFatal(dMemcmp( mDebugGuardBuffer, _VBGuardString, guardSize) == 0,
+		"GFXD3D9VertexBuffer::unlock - Caught lock memory underrun!" );
+		AssertFatal(dMemcmp( mDebugGuardBuffer + sizeLocked + guardSize, _VBGuardString, guardSize) == 0,
+		"GFXD3D9VertexBuffer::unlock - Caught lock memory overrun!" );
                         
-         // Copy the debug content down to the real VB.
-         dMemcpy( mLockedBuffer, mDebugGuardBuffer + guardSize, sizeLocked );
+		// Copy the debug content down to the real VB.
+		dMemcpy(mLockedBuffer, mDebugGuardBuffer + guardSize, sizeLocked);
 
-         // Cleanup.
-         delete [] mDebugGuardBuffer;
-         mDebugGuardBuffer = NULL;
-         mLockedBuffer = NULL;
-      }
+		// Cleanup.
+		delete [] mDebugGuardBuffer;
+		mDebugGuardBuffer = NULL;
+		mLockedBuffer = NULL;
+   }
 
    #endif // TORQUE_DEBUG
 
-   D3D9Assert( vb->Unlock(),
-      "Unable to unlock vertex buffer.");
+   HRESULT hr = vb->Unlock();
+
+   if(FAILED(hr)) 
+   {
+      AssertFatal(false, "Unable to unlock vertex buffer.");
+   }
+
    mIsFirstLock = false;
 
-   //      Con::printf("%x: Unlocking %s range (%d, %d)", this, (mBufferType == GFXBufferTypeVolatile ? "volatile" : "static"), lockedVertexStart, lockedVertexEnd);
+   /* Anis -> uncomment it for debugging purpose. called many times per frame... spammy! */
+   //Con::printf("%x: Unlocking %s range (%d, %d)", this, (mBufferType == GFXBufferTypeVolatile ? "volatile" : "static"), lockedVertexStart, lockedVertexEnd);
 
    lockedVertexEnd = lockedVertexStart = 0;
 
@@ -194,8 +174,6 @@ void GFXD3D9VertexBuffer::unlock()
       mVolatileBuffer->lockedVertexStart = 0;
       mVolatileBuffer->lockedVertexEnd   = 0;
       mVolatileBuffer = NULL;
-      //vb->Release();
-      //vb = NULL;
    }
 }
 
@@ -214,17 +192,17 @@ void GFXD3D9VertexBuffer::resurrect()
    // Static buffers are managed by D3D9 so we don't deal with them.
    if(mBufferType == GFXBufferTypeDynamic)
    {
-      D3D9Assert(static_cast<GFXD3D9Device*>(mDevice)->mD3DDevice->CreateVertexBuffer( mVertexSize * mNumVerts,
-#ifdef TORQUE_OS_XENON
-         D3DUSAGE_WRITEONLY,
-#else
-         D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, 
-#endif
-         0, 
-         D3DPOOL_DEFAULT,
-         &vb,
-         NULL ),
-         "GFXD3D9VertexBuffer::resurrect - Failed to allocate VB" );
+		HRESULT hr = static_cast<GFXD3D9Device*>( GFX )->getDevice()->CreateVertexBuffer(	mVertexSize * mNumVerts,
+																							D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, 
+																							0, 
+																							D3DPOOL_DEFAULT,
+																							&vb,
+																							NULL );
+
+	   if(FAILED(hr)) 
+	   {
+		  AssertFatal(false, "GFXD3D9VertexBuffer::resurrect - Failed to allocate VB");
+	   }
    }
 }
 

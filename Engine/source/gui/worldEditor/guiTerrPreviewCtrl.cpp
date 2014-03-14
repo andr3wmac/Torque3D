@@ -245,7 +245,9 @@ void GuiTerrPreviewCtrl::onRender(Point2I offset, const RectI &updateRect)
    for(U32 i = 0; i < GFX->getNumSamplers(); i++)
       GFX->setTexture(i, NULL);
    
-   GFX->disableShaders();
+   // andrewmac: D3D9-Refactor
+   GFX->setupGenericShaders();
+   //GFX->disableShaders();
    
    Point2F terrPos(terrBlock->getPosition().x, terrBlock->getPosition().y);
 

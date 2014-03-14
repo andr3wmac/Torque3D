@@ -19,21 +19,21 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
-#ifndef _SCREENSHOTD3D_H_
-#define _SCREENSHOTD3D_H_
+
+//-----------------------------------------------------------------------------
+// Partial refactor by: Anis A. Hireche (C) 2014 - anishireche@gmail.com
+//-----------------------------------------------------------------------------
+
+#ifndef _GFXD3D_SCREENSHOT_H_
+#define _GFXD3D_SCREENSHOT_H_
 
 #include "gfx/screenshot.h"
 
-//**************************************************************************
-// D3D implementation of screenshot
-//**************************************************************************
 class ScreenShotD3D : public ScreenShot
 {
 protected:
 
    GBitmap* _captureBackBuffer();
-
 };
 
-
-#endif  // _SCREENSHOTD3D_H_
+#endif

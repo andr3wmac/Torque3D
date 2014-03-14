@@ -20,14 +20,15 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef _VIDEOCAPTURE_H_
+//-----------------------------------------------------------------------------
+// Partial refactor by: Anis A. Hireche (C) 2014 - anishireche@gmail.com
+//-----------------------------------------------------------------------------
+
+#ifndef _GFXD3D_VIDEOCAPTURE_H_
+#define _GFXD3D_VIDEOCAPTURE_H_
+
 #include "gfx/video/videoCapture.h"
-#endif
-
-#ifndef _GFXDEVICE_H_
 #include "gfx/gfxDevice.h"
-#endif
-
 
 class VideoFrameGrabberD3D9 : public VideoFrameGrabber
 {
@@ -80,3 +81,5 @@ public:
    VideoFrameGrabberD3D9();
    ~VideoFrameGrabberD3D9();
 };
+
+#endif

@@ -20,15 +20,14 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+// Partial refactor by: Anis A. Hireche (C) 2014 - anishireche@gmail.com
+//-----------------------------------------------------------------------------
+
 #ifndef _GFXD3D9PRIMITIVEBUFFER_H_
 #define _GFXD3D9PRIMITIVEBUFFER_H_
 
-#ifndef _GFXPRIMITIVEBUFFER_H_
 #include "gfx/gfxPrimitiveBuffer.h"
-#endif
-
-
-struct IDirect3DIndexBuffer9;
 
 class GFXD3D9PrimitiveBuffer : public GFXPrimitiveBuffer
 {
@@ -58,10 +57,6 @@ class GFXD3D9PrimitiveBuffer : public GFXPrimitiveBuffer
       virtual void unlock();
 
       virtual void prepare();      
-
-#ifdef TORQUE_DEBUG
-   //GFXD3D9PrimitiveBuffer *next;
-#endif
 
       // GFXResource interface
       virtual void zombify();

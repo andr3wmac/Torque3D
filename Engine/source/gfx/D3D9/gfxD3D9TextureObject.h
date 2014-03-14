@@ -20,17 +20,16 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+// Partial refactor by: Anis A. Hireche (C) 2014 - anishireche@gmail.com
+//-----------------------------------------------------------------------------
+
 #ifndef _GFXD3D9TEXTUREOBJECT_H_
 #define _GFXD3D9TEXTUREOBJECT_H_
 
-#ifndef _GFXTEXTUREHANDLE_H_
+#include "gfx/D3D9/gfxD3D9Device.h"
 #include "gfx/gfxTextureHandle.h"
-#endif
-
-#ifndef _GFXTEXTUREMANAGER_H_
 #include "gfx/gfxTextureManager.h"
-#endif
-
 
 class GFXD3D9TextureObject : public GFXTextureObject
 {

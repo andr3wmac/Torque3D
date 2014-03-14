@@ -20,13 +20,16 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+// Partial refactor by: Anis A. Hireche (C) 2014 - anishireche@gmail.com
+//-----------------------------------------------------------------------------
+
 #ifndef _GFX_D3D9_QUERYFENCE_H_
 #define _GFX_D3D9_QUERYFENCE_H_
 
 #include "gfx/gfxFence.h"
 #include "gfx/gfxResource.h"
-
-struct IDirect3DQuery9;
+#include "gfx/D3D9/gfxD3D9Device.h"
 
 class GFXD3D9QueryFence : public GFXFence
 {
@@ -40,8 +43,6 @@ public:
    virtual void issue();
    virtual FenceStatus getStatus() const;
    virtual void block();
-
-   
 
    // GFXResource interface
    virtual void zombify();

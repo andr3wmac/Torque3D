@@ -775,7 +775,9 @@ void WaterObject::drawUnderwaterFilter( SceneRenderState *state )
    GFX->setWorldMatrix( newMat );   
 
    // set up render states
-   GFX->disableShaders();
+   // andrewmac: D3D9-Refactor
+   GFX->setupGenericShaders();
+   //GFX->disableShaders();
    GFX->setStateBlock( mUnderwaterSB );
 
    /*

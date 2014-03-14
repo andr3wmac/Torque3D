@@ -20,24 +20,20 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+// Partial refactor by: Anis A. Hireche (C) 2014 - anishireche@gmail.com
+//-----------------------------------------------------------------------------
+
 #include "gfx/gfxDevice.h"
-
-#if defined(TORQUE_OS_XENON)
-#  include <xtl.h>
-#else
-#  include <d3d9.h>
-#endif
-
 #include "gfx/D3D9/gfxD3D9StateBlock.h"
 #include "gfx/D3D9/gfxD3D9EnumTranslate.h"
 
-GFXD3D9StateBlock::GFXD3D9StateBlock(const GFXStateBlockDesc& desc, LPDIRECT3DDEVICE9 d3dDevice)
+GFXD3D9StateBlock::GFXD3D9StateBlock(const GFXStateBlockDesc& desc)
 {
-   AssertFatal(d3dDevice, "Invalid mD3DDevice!");
+   AssertFatal(static_cast<GFXD3D9Device*>(GFX)->getDevice(), "Invalid D3DDevice!");
 
    mDesc = desc;
    mCachedHashValue = desc.getHashValue();
-   mD3DDevice = d3dDevice;
 
    // Color writes
    mColorMask = 0; 
@@ -74,130 +70,107 @@ void GFXD3D9StateBlock::activate(GFXD3D9StateBlock* oldState)
 {
    PROFILE_SCOPE( GFXD3D9StateBlock_Activate );
 
-   // Little macro to save some typing, SD = state diff, checks for null source state block, then
-   // checks to see if the states differ 
-#if defined(TORQUE_OS_XENON)
-   #define SD(x, y)  if (!oldState || oldState->mDesc.x != mDesc.x) \
-                     mD3DDevice->SetRenderState_Inline(y, mDesc.x)
+   // blending
+   if(!oldState || mDesc.blendEnable != oldState->mDesc.blendEnable)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, mDesc.blendEnable);
+   if(!oldState || mDesc.blendSrc != oldState->mDesc.blendSrc)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_SRCBLEND, GFXD3D9Blend[mDesc.blendSrc]);
+   if(!oldState || mDesc.blendDest != oldState->mDesc.blendDest)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_DESTBLEND, GFXD3D9Blend[mDesc.blendDest]);
+   if(!oldState || mDesc.blendOp != oldState->mDesc.blendOp)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_BLENDOP, GFXD3D9BlendOp[mDesc.blendOp]);
 
-      // Same as above, but allows you to set the data
-   #define SDD(x, y, z) if (!oldState || oldState->mDesc.x != mDesc.x) \
-                        mD3DDevice->SetRenderState_Inline(y, z)
-#else
-   #define SD(x, y)  if (!oldState || oldState->mDesc.x != mDesc.x) \
-                     mD3DDevice->SetRenderState(y, mDesc.x)
+   // alpha blending
+   if(!oldState || mDesc.separateAlphaBlendEnable != oldState->mDesc.separateAlphaBlendEnable)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, mDesc.separateAlphaBlendEnable);
+   if(!oldState || mDesc.separateAlphaBlendSrc != oldState->mDesc.separateAlphaBlendSrc)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_SRCBLENDALPHA, GFXD3D9Blend[mDesc.separateAlphaBlendSrc]);
+   if(!oldState || mDesc.separateAlphaBlendDest != oldState->mDesc.separateAlphaBlendDest)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_DESTBLENDALPHA, GFXD3D9Blend[mDesc.separateAlphaBlendDest]);
+   if(!oldState || mDesc.separateAlphaBlendOp != oldState->mDesc.separateAlphaBlendOp)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_BLENDOPALPHA, GFXD3D9BlendOp[mDesc.separateAlphaBlendOp]);
 
-   // Same as above, but allows you to set the data
-   #define SDD(x, y, z) if (!oldState || oldState->mDesc.x != mDesc.x) \
-                        mD3DDevice->SetRenderState(y, z)
-#endif
+   // alpha test
+   if(!oldState || mDesc.alphaTestEnable != oldState->mDesc.alphaTestEnable)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_ALPHATESTENABLE, mDesc.alphaTestEnable);
+   if(!oldState || mDesc.alphaTestFunc != oldState->mDesc.alphaTestFunc)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_ALPHAFUNC, GFXD3D9CmpFunc[mDesc.alphaTestFunc]);
+   if(!oldState || mDesc.alphaTestRef != oldState->mDesc.alphaTestRef)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_ALPHAREF, mDesc.alphaTestRef);
 
-   // Blending
-   SD(blendEnable, D3DRS_ALPHABLENDENABLE);
-   SDD(blendSrc, D3DRS_SRCBLEND, GFXD3D9Blend[mDesc.blendSrc]);
-   SDD(blendDest, D3DRS_DESTBLEND, GFXD3D9Blend[mDesc.blendDest]);
-   SDD(blendOp, D3DRS_BLENDOP, GFXD3D9BlendOp[mDesc.blendOp]);
+   // color writes
+   if(!oldState || mColorMask != oldState->mColorMask)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_COLORWRITEENABLE, mColorMask);
 
-   // Separate alpha blending
-   SD(separateAlphaBlendEnable, D3DRS_SEPARATEALPHABLENDENABLE);
-   SDD(separateAlphaBlendSrc, D3DRS_SRCBLENDALPHA, GFXD3D9Blend[mDesc.separateAlphaBlendSrc]);
-   SDD(separateAlphaBlendDest, D3DRS_DESTBLENDALPHA, GFXD3D9Blend[mDesc.separateAlphaBlendDest]);
-   SDD(separateAlphaBlendOp, D3DRS_BLENDOPALPHA, GFXD3D9BlendOp[mDesc.separateAlphaBlendOp]);
+   // culling
+   if(!oldState || mDesc.cullMode != oldState->mDesc.cullMode)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_CULLMODE, GFXD3D9CullMode[mDesc.cullMode]);
 
-   // Alpha test
-   SD(alphaTestEnable, D3DRS_ALPHATESTENABLE);
-   SDD(alphaTestFunc, D3DRS_ALPHAFUNC, GFXD3D9CmpFunc[mDesc.alphaTestFunc]);
-   SD(alphaTestRef, D3DRS_ALPHAREF);
+   // depth
+   if(!oldState || mDesc.zEnable != oldState->mDesc.zEnable)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_ZENABLE, mDesc.zEnable);
+   if(!oldState || mDesc.zWriteEnable != oldState->mDesc.zWriteEnable)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_ZWRITEENABLE, mDesc.zWriteEnable);
+   if(!oldState || mDesc.zFunc != oldState->mDesc.zFunc)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_ZFUNC, GFXD3D9CmpFunc[mDesc.zFunc]);
 
-   // Color writes
-   if ((oldState == NULL) || (mColorMask != oldState->mColorMask))
-      mD3DDevice->SetRenderState(D3DRS_COLORWRITEENABLE, mColorMask);
+   if(!oldState || mZBias != oldState->mZBias)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_DEPTHBIAS, mZBias);
+   if(!oldState || mZSlopeBias != oldState->mZSlopeBias)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_SLOPESCALEDEPTHBIAS, mZSlopeBias);
 
-   // Culling
-   SDD(cullMode, D3DRS_CULLMODE, GFXD3D9CullMode[mDesc.cullMode]);
+   // stencil
+   if(!oldState || mDesc.stencilEnable != oldState->mDesc.stencilEnable)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_STENCILENABLE, mDesc.stencilEnable);
+   if(!oldState || mDesc.stencilFailOp != oldState->mDesc.stencilFailOp)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_STENCILFAIL, GFXD3D9StencilOp[mDesc.stencilFailOp]);
+   if(!oldState || mDesc.stencilZFailOp != oldState->mDesc.stencilZFailOp)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_STENCILZFAIL, GFXD3D9StencilOp[mDesc.stencilZFailOp]);
+   if(!oldState || mDesc.stencilPassOp != oldState->mDesc.stencilPassOp)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_STENCILPASS, GFXD3D9StencilOp[mDesc.stencilPassOp]);
+   if(!oldState || mDesc.stencilFunc != oldState->mDesc.stencilFunc)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_STENCILFUNC, GFXD3D9CmpFunc[mDesc.stencilFunc]);
+   if(!oldState || mDesc.stencilRef != oldState->mDesc.stencilRef)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_STENCILREF, mDesc.stencilRef);
+   if(!oldState || mDesc.stencilMask != oldState->mDesc.stencilMask)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_STENCILMASK, mDesc.stencilMask);
+   if(!oldState || mDesc.stencilWriteMask != oldState->mDesc.stencilWriteMask)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_STENCILWRITEMASK, mDesc.stencilWriteMask);
+   if(!oldState || mDesc.fillMode != oldState->mDesc.fillMode)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_FILLMODE, GFXD3D9FillMode[mDesc.fillMode]);
 
-   // Depth
-   SD(zEnable, D3DRS_ZENABLE);   
-   SD(zWriteEnable, D3DRS_ZWRITEENABLE);
-   SDD(zFunc, D3DRS_ZFUNC, GFXD3D9CmpFunc[mDesc.zFunc]);   
-   if ((!oldState) || (mZBias != oldState->mZBias))
-      mD3DDevice->SetRenderState(D3DRS_DEPTHBIAS, mZBias);
-   if ((!oldState) || (mZSlopeBias != oldState->mZSlopeBias))
-      mD3DDevice->SetRenderState(D3DRS_SLOPESCALEDEPTHBIAS, mZSlopeBias);
-
-   // Stencil
-   SD(stencilEnable, D3DRS_STENCILENABLE);
-   SDD(stencilFailOp, D3DRS_STENCILFAIL, GFXD3D9StencilOp[mDesc.stencilFailOp]);
-   SDD(stencilZFailOp, D3DRS_STENCILZFAIL, GFXD3D9StencilOp[mDesc.stencilZFailOp]);
-   SDD(stencilPassOp, D3DRS_STENCILPASS, GFXD3D9StencilOp[mDesc.stencilPassOp]);
-   SDD(stencilFunc, D3DRS_STENCILFUNC, GFXD3D9CmpFunc[mDesc.stencilFunc]);
-   SD(stencilRef, D3DRS_STENCILREF);
-   SD(stencilMask, D3DRS_STENCILMASK);
-   SD(stencilWriteMask, D3DRS_STENCILWRITEMASK);
-   SDD(fillMode, D3DRS_FILLMODE, GFXD3D9FillMode[mDesc.fillMode]);
-#if !defined(TORQUE_OS_XENON)
-   SD(ffLighting, D3DRS_LIGHTING);
-   SD(vertexColorEnable, D3DRS_COLORVERTEX);
+   if(!oldState || mDesc.ffLighting != oldState->mDesc.ffLighting)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_LIGHTING, mDesc.ffLighting);
+   if(!oldState || mDesc.vertexColorEnable != oldState->mDesc.vertexColorEnable)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_COLORVERTEX, mDesc.vertexColorEnable);
 
    static DWORD swzTemp;
    getOwningDevice()->getDeviceSwizzle32()->ToBuffer( &swzTemp, &mDesc.textureFactor, sizeof(ColorI) );
-   SDD(textureFactor, D3DRS_TEXTUREFACTOR, swzTemp);
-#endif
-#undef SD
-#undef SDD
 
+   if(!oldState || mDesc.textureFactor != oldState->mDesc.textureFactor)
+	   static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetRenderState(D3DRS_TEXTUREFACTOR, swzTemp);
 
-   // NOTE: Samplers and Stages are different things.
-   //
-   // The Stages were for fixed function blending.  When using shaders
-   // calling SetTextureStageState() is a complete waste of time.  In
-   // fact if this function rises to the top of profiles we should
-   // refactor stateblocks to seperate the two.
-   //
-   // Samplers are used by both fixed function and shaders, but the
-   // number of samplers is limited by shader model.
-#if !defined(TORQUE_OS_XENON)
-
-   #define TSS(x, y, z) if (!oldState || oldState->mDesc.samplers[i].x != mDesc.samplers[i].x) \
-                        mD3DDevice->SetTextureStageState(i, y, z)
-   for ( U32 i = 0; i < 8; i++ )
-   {   
-      TSS(textureColorOp, D3DTSS_COLOROP, GFXD3D9TextureOp[mDesc.samplers[i].textureColorOp]);
-      TSS(colorArg1, D3DTSS_COLORARG1, mDesc.samplers[i].colorArg1);
-      TSS(colorArg2, D3DTSS_COLORARG2, mDesc.samplers[i].colorArg2);
-      TSS(colorArg3, D3DTSS_COLORARG0, mDesc.samplers[i].colorArg3);
-      TSS(alphaOp, D3DTSS_ALPHAOP, GFXD3D9TextureOp[mDesc.samplers[i].alphaOp]);
-      TSS(alphaArg1, D3DTSS_ALPHAARG1, mDesc.samplers[i].alphaArg1);
-      TSS(alphaArg2, D3DTSS_ALPHAARG2, mDesc.samplers[i].alphaArg2);
-      TSS(alphaArg3, D3DTSS_ALPHAARG0, mDesc.samplers[i].alphaArg3);
-      TSS(textureTransform, D3DTSS_TEXTURETRANSFORMFLAGS, mDesc.samplers[i].textureTransform);
-      TSS(resultArg, D3DTSS_RESULTARG, mDesc.samplers[i].resultArg);
-   }
-   #undef TSS
-#endif
-
-#if defined(TORQUE_OS_XENON)
-   #define SS(x, y, z)  if (!oldState || oldState->mDesc.samplers[i].x != mDesc.samplers[i].x) \
-                        mD3DDevice->SetSamplerState_Inline(i, y, z)
-#else
-   #define SS(x, y, z)  if (!oldState || oldState->mDesc.samplers[i].x != mDesc.samplers[i].x) \
-                        mD3DDevice->SetSamplerState(i, y, z)
-#endif
    for ( U32 i = 0; i < getOwningDevice()->getNumSamplers(); i++ )
    {      
-      SS(minFilter, D3DSAMP_MINFILTER, GFXD3D9TextureFilter[mDesc.samplers[i].minFilter]);
-      SS(magFilter, D3DSAMP_MAGFILTER, GFXD3D9TextureFilter[mDesc.samplers[i].magFilter]);
-      SS(mipFilter, D3DSAMP_MIPFILTER, GFXD3D9TextureFilter[mDesc.samplers[i].mipFilter]);
+      if (!oldState || oldState->mDesc.samplers[i].minFilter != mDesc.samplers[i].minFilter) 
+		  static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetSamplerState(i, D3DSAMP_MINFILTER, GFXD3D9TextureFilter[mDesc.samplers[i].minFilter]);
+      if (!oldState || oldState->mDesc.samplers[i].magFilter != mDesc.samplers[i].magFilter) 
+		  static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetSamplerState(i, D3DSAMP_MAGFILTER, GFXD3D9TextureFilter[mDesc.samplers[i].magFilter]);
+      if (!oldState || oldState->mDesc.samplers[i].mipFilter != mDesc.samplers[i].mipFilter) 
+		  static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetSamplerState(i, D3DSAMP_MIPFILTER, GFXD3D9TextureFilter[mDesc.samplers[i].mipFilter]);
 
       F32 bias = mDesc.samplers[i].mipLODBias;
       DWORD dwBias = *( (LPDWORD)(&bias) );
-      SS(mipLODBias, D3DSAMP_MIPMAPLODBIAS, dwBias);
+      if (!oldState || oldState->mDesc.samplers[i].mipLODBias != mDesc.samplers[i].mipLODBias) 
+		  static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetSamplerState(i, D3DSAMP_MIPMAPLODBIAS, dwBias);
 
-      SS(maxAnisotropy, D3DSAMP_MAXANISOTROPY, mDesc.samplers[i].maxAnisotropy);
-
-      SS(addressModeU, D3DSAMP_ADDRESSU, GFXD3D9TextureAddress[mDesc.samplers[i].addressModeU]);
-      SS(addressModeV, D3DSAMP_ADDRESSV, GFXD3D9TextureAddress[mDesc.samplers[i].addressModeV]);
-      SS(addressModeW, D3DSAMP_ADDRESSW, GFXD3D9TextureAddress[mDesc.samplers[i].addressModeW]);
+      if (!oldState || oldState->mDesc.samplers[i].maxAnisotropy != mDesc.samplers[i].maxAnisotropy) 
+		  static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetSamplerState(i, D3DSAMP_MAXANISOTROPY, mDesc.samplers[i].maxAnisotropy);
+      if (!oldState || oldState->mDesc.samplers[i].addressModeU != mDesc.samplers[i].addressModeU) 
+		  static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetSamplerState(i, D3DSAMP_ADDRESSU, GFXD3D9TextureAddress[mDesc.samplers[i].addressModeU]);
+      if (!oldState || oldState->mDesc.samplers[i].addressModeV != mDesc.samplers[i].addressModeV) 
+		  static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetSamplerState(i, D3DSAMP_ADDRESSV, GFXD3D9TextureAddress[mDesc.samplers[i].addressModeV]);
+      if (!oldState || oldState->mDesc.samplers[i].addressModeW != mDesc.samplers[i].addressModeW) 
+		  static_cast<GFXD3D9Device*>(GFX)->getDevice()->SetSamplerState(i, D3DSAMP_ADDRESSW, GFXD3D9TextureAddress[mDesc.samplers[i].addressModeW]);
    }
-   #undef SS
 }
