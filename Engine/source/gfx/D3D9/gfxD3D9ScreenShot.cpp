@@ -25,10 +25,10 @@
 //-----------------------------------------------------------------------------
 
 #include "platform/platform.h"
-#include "gfx/D3D9/gfxD3D9screenshot.h"
+#include "gfx/D3D9/gfxD3D9screenShot.h"
 #include "gfx/D3D9/gfxD3D9Device.h"
 
-GBitmap* ScreenShotD3D::_captureBackBuffer()
+GBitmap* GFXD3D9ScreenShot::_captureBackBuffer()
 {
    IDirect3DSurface9 * backBuffer;
    static_cast<GFXD3D9Device *>(GFX)->getDevice()->GetBackBuffer( 0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer );

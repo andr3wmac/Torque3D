@@ -32,13 +32,9 @@ GFXD3D9VertexBuffer::~GFXD3D9VertexBuffer()
 {
    if(getOwningDevice() != NULL)
    {
-      if(mBufferType == GFXBufferTypeDynamic)
-	  {
-         SAFE_RELEASE(vb);
-	  }
-      else if(mBufferType != GFXBufferTypeVolatile)
+      if(mBufferType != GFXBufferTypeVolatile)
       {
-         static_cast<GFXD3D9Device *>(getOwningDevice())->destroyD3DResource(vb);
+         SAFE_RELEASE(vb);
       }
    }
 }

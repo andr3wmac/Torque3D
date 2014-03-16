@@ -72,7 +72,7 @@ class GFXD3D9Device : public GFXDevice
 protected:
 
    virtual void initStates() { };
-   VideoFrameGrabberD3D9* mVideoFrameGrabber;
+   GFXD3D9VideoFrameGrabber* mVideoFrameGrabber;
 
    static GFXAdapter::CreateDeviceInstanceDelegate mCreateDeviceInstance;
 
@@ -262,19 +262,15 @@ public:
    virtual void drawPrimitive( GFXPrimitiveType primType, U32 vertexStart, U32 primitiveCount );
    // }
 
-   virtual LPDIRECT3DDEVICE9 getDevice(){ return mD3DDevice; }
-   virtual LPDIRECT3D9 getD3D() { return mD3D; }
+   LPDIRECT3DDEVICE9 getDevice(){ return mD3DDevice; }
+   LPDIRECT3D9 getD3D() { return mD3D; }
 
    /// Reset
-   virtual void reset( D3DPRESENT_PARAMETERS &d3dpp );
+   void reset( D3DPRESENT_PARAMETERS &d3dpp );
 
    GFXShaderRef mGenericShader[GS_COUNT];
 
    virtual void setupGenericShaders( GenericShaderType type  = GSColor );
-
-   // Function only really used on the, however a centralized function for
-   // destroying resources is probably a good thing -patw
-   virtual void destroyD3DResource( IDirect3DResource9 *d3dResource ) { SAFE_RELEASE( d3dResource ); }; 
 
    inline virtual F32 getFillConventionOffset() const { return 0.5f; }
    virtual void doParanoidStateCheck() {};
@@ -285,11 +281,7 @@ public:
 
    // Default multisample parameters
    D3DMULTISAMPLE_TYPE getMultisampleType() const { return mMultisampleType; }
-   DWORD getMultisampleLevel() const { return mMultisampleLevel; } 
-
-   // Get the backbuffer, currently only access for WPF support
-   virtual IDirect3DSurface9* getBackBuffer() { return mDeviceBackbuffer; }
-
+   DWORD getMultisampleLevel() const { return mMultisampleLevel; }
 };
 
 #endif

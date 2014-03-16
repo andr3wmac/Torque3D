@@ -49,7 +49,7 @@ public:
    virtual void zombify();
    virtual void resurrect();
 
-protected:
+private:
 
    friend class GFXD3D9TextureTarget;
    friend class GFXD3D9Device;
@@ -61,7 +61,6 @@ protected:
    U32  mSupportsAutoMips;
    GFXFormat mFaceFormat;
    
-   void fillCubeTextures(GFXTexHandle *faces);
    void releaseSurfaces();
 
    /// The callback used to get texture events.

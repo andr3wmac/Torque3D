@@ -30,7 +30,7 @@
 #include "gfx/video/videoCapture.h"
 #include "gfx/gfxDevice.h"
 
-class VideoFrameGrabberD3D9 : public VideoFrameGrabber
+class GFXD3D9VideoFrameGrabber : public VideoFrameGrabber
 {
 protected:   
    enum CaptureStage {
@@ -78,8 +78,8 @@ protected:
    void releaseTextures();
 
 public:
-   VideoFrameGrabberD3D9();
-   ~VideoFrameGrabberD3D9();
+   GFXD3D9VideoFrameGrabber();
+   ~GFXD3D9VideoFrameGrabber();
 };
 
 #endif

@@ -36,8 +36,7 @@
 #include "gfx/D3D9/gfxD3D9OcclusionQuery.h"
 #include "gfx/D3D9/gfxD3D9Shader.h"
 #include "gfx/D3D9/gfxD3D9Target.h"
-#include "gfx/D3D9/gfxD3D9Screenshot.h"
-#include "gfx/D3D9/gfxD3D9VideoCapture.h"
+#include "gfx/D3D9/gfxD3D9ScreenShot.h"
 #include "platformWin32/platformWin32.h"
 #include "windowManager/win32/win32Window.h"
 #include "windowManager/platformWindow.h"
@@ -326,7 +325,7 @@ void GFXD3D9Device::init( const GFXVideoMode &mode, PlatformWindow *window)
 		Platform::forceShutdown(1);
 	}
 
-	mTextureManager = new GFXD3D9TextureManager(mAdapterIndex);
+	mTextureManager = new GFXD3D9TextureManager();
 
 	// Now reacquire all the resources we trashed earlier
 	reacquireDefaultPoolResources();
@@ -361,9 +360,9 @@ void GFXD3D9Device::init( const GFXVideoMode &mode, PlatformWindow *window)
 	mCardProfiler = new GFXD3D9CardProfiler(mAdapterIndex);
 	mCardProfiler->init();
 
-	gScreenShot = new ScreenShotD3D;
+	gScreenShot = new GFXD3D9ScreenShot;
 
-	mVideoFrameGrabber = new VideoFrameGrabberD3D9();
+	mVideoFrameGrabber = new GFXD3D9VideoFrameGrabber();
 	VIDCAP->setFrameGrabber(mVideoFrameGrabber);
 
 	SAFE_RELEASE(mDeviceDepthStencil);
@@ -557,23 +556,6 @@ static void sgPCD3D9DeviceHandleCommandLine(S32 argc, const char **argv)
 
 // Register the command line parsing hook
 static ProcessRegisterCommandLine sgCommandLine( sgPCD3D9DeviceHandleCommandLine );
-
-extern "C" HRESULT WINAPI D3D_GetBackBufferNoRef(IDirect3DSurface9 **ppSurface)
-{
-    HRESULT hr = S_OK;
-  
-    GFXD3D9Device *dev = static_cast<GFXD3D9Device *>(GFX);
-
-    if (!dev)
-    {
-       *ppSurface = NULL;
-       return S_OK;
-    }
-
-    *ppSurface = dev->getBackBuffer();
-
-    return hr;
-}
 
 GFXD3D9Device::GFXD3D9Device(LPDIRECT3D9 d3d, U32 index) : mVideoFrameGrabber( NULL ) 
 {

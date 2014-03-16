@@ -35,19 +35,18 @@
 #include "console/console.h"
 #include "core/resourceManager.h"
 
-//-----------------------------------------------------------------------------
-// Constructor
-//-----------------------------------------------------------------------------
-GFXD3D9TextureManager::GFXD3D9TextureManager( U32 adapterIndex ) 
+/*
+	anis -> GFXFormatR8G8B8 has now the same behaviour as GFXFormatR8G8B8X8. 
+	This is because 24 bit format are now deprecated by microsoft, for data alignment reason there's no changes beetween 24 and 32 bit formats.
+	DirectX 10-11 both have 24 bit format no longer.
+*/
+
+GFXD3D9TextureManager::GFXD3D9TextureManager() 
 {
-   mAdapterIndex = adapterIndex;
    dMemset( mCurTexSet, 0, sizeof( mCurTexSet ) );   
    static_cast<GFXD3D9Device*>( GFX )->getDevice()->GetDeviceCaps(&mDeviceCaps);
 }
 
-//-----------------------------------------------------------------------------
-// Destructor
-//-----------------------------------------------------------------------------
 GFXD3D9TextureManager::~GFXD3D9TextureManager()
 {
    // Destroy texture table now so just in case some texture objects
@@ -485,7 +484,7 @@ bool GFXD3D9TextureManager::_loadTexture(GFXTextureObject *aTexture, DDSFile *dd
 			return true;
 		}
 
-		dMemcpy( lockedRect.pBits, dds->mSurfaces[0]->mMips[i], dds->getSurfaceSize(i) );
+		dMemcpy(lockedRect.pBits, dds->mSurfaces[0]->mMips[i], dds->getSurfaceSize(i));
 
 		surf->UnlockRect();
 		surf->Release();

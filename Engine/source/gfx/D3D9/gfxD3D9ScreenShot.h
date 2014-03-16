@@ -29,7 +29,7 @@
 
 #include "gfx/screenshot.h"
 
-class ScreenShotD3D : public ScreenShot
+class GFXD3D9ScreenShot : public ScreenShot
 {
 protected:
 

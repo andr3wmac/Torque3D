@@ -49,14 +49,7 @@ GFXD3D9TextureTarget::~GFXD3D9TextureTarget()
    for(S32 i=0; i<MaxRenderSlotId; i++)
    {
       mResolveTargets[i] = NULL;
-
-      if( GFXDevice::devicePresent() )
-      {
-         static_cast<GFXD3D9Device*>(GFX)->destroyD3DResource(mTargets[i]);
-         mTargets[i] = NULL;
-      }
-      else
-         SAFE_RELEASE( mTargets[i] );
+      SAFE_RELEASE(mTargets[i]);
    }
 
    zombify();
@@ -78,7 +71,7 @@ void GFXD3D9TextureTarget::attachTexture( RenderSlot slot, GFXTextureObject *tex
    invalidateState();
 
    // Release what we had, it's definitely going to change.
-   static_cast<GFXD3D9Device*>(GFX)->destroyD3DResource( mTargets[slot] ); // SAFE_RELEASE
+   SAFE_RELEASE(mTargets[slot]);
    mTargets[slot] = NULL;
    mResolveTargets[slot] = NULL;
 
@@ -176,7 +169,7 @@ void GFXD3D9TextureTarget::attachTexture(RenderSlot slot, GFXCubemap *tex, U32 f
    invalidateState();
 
    // Release what we had, it's definitely going to change.
-   static_cast<GFXD3D9Device*>(GFX)->destroyD3DResource(mTargets[slot]);
+   SAFE_RELEASE(mTargets[slot]);
    mTargets[slot] = NULL;
    mResolveTargets[slot] = NULL;
 

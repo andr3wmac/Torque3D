@@ -30,7 +30,6 @@
 #include "core/stream/fileStream.h"
 #include "core/util/safeDelete.h"
 #include "console/console.h"
-#include <d3dcompiler.h>
 
 /*
 	anis -> note:
@@ -50,7 +49,7 @@ extern bool gDisassembleAllShaders;
 
 gfxD3DIncludeRef GFXD3D9Shader::smD3DInclude = NULL;
 
-HRESULT gfxD3DInclude::Open(THIS_ D3D_INCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID *ppData, UINT *pBytes)
+HRESULT gfxD3D9Include::Open(THIS_ D3D_INCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID *ppData, UINT *pBytes)
 {
    using namespace Torque;
    // First try making the path relative to the parent.
@@ -80,7 +79,7 @@ HRESULT gfxD3DInclude::Open(THIS_ D3D_INCLUDE_TYPE IncludeType, LPCSTR pFileName
    return S_OK;
 }
 
-HRESULT gfxD3DInclude::Close( THIS_ LPCVOID pData )
+HRESULT gfxD3D9Include::Close( THIS_ LPCVOID pData )
 {
    // Free the data file and pop its path off the stack.
    delete [] (U8*)pData;
@@ -582,7 +581,7 @@ GFXD3D9Shader::GFXD3D9Shader()
    mPixelConstBufferLayoutI = NULL;
 
    if( smD3DInclude == NULL )
-      smD3DInclude = new gfxD3DInclude;
+      smD3DInclude = new gfxD3D9Include;
 }
 
 //------------------------------------------------------------------------------
@@ -776,23 +775,16 @@ bool GFXD3D9Shader::_compileShader( const Torque::Path &filePath,
       if (!FS::GetFSPath( filePath, realPath))
          realPath = filePath;
 
-      // Add a #line pragma so that error and warning messages  
-      // returned by the HLSL compiler report the right file.  
-      String linePragma = String::ToString( "#line 1 \"%s\"\r\n", realPath.getFullPath().c_str() );  
-      U32 linePragmaLen = linePragma.length();  
-        
-      FrameAllocatorMarker fam;  
-      char* buffer = NULL;  
-       
-      U32 bufSize = s.getStreamSize();  
-         
-      buffer = (char *)fam.alloc( bufSize + linePragmaLen + 1 );  
-      dStrncpy( buffer, linePragma.c_str(), linePragmaLen );  
-      s.read( bufSize, buffer + linePragmaLen );  
-      buffer[bufSize+linePragmaLen] = 0;  
-  
-      res =   D3DCompile(buffer, bufSize+linePragmaLen,NULL , defines, smD3DInclude, "main", target, flags, 0, &code,  
-          &errorBuff);  
+      U32 bufSize = s.getStreamSize();
+
+      FrameAllocatorMarker fam;
+      char *buffer = NULL;
+
+      buffer = (char*)fam.alloc(bufSize + 1);
+      s.read(bufSize, buffer);
+      buffer[bufSize] = 0;
+
+	  res = D3DCompile(buffer, bufSize, realPath.getFullPath().c_str(), defines, smD3DInclude, "main", target, flags, 0, &code, &errorBuff);
    }
 
    // Is it a precompiled obj shader?

@@ -180,10 +180,8 @@ void GFXD3D9TextureObject::unlock(U32 mipLevel)
 
 void GFXD3D9TextureObject::release()
 {
-   static_cast<GFXD3D9Device *>( GFX )->destroyD3DResource( mD3DTexture );
-   static_cast<GFXD3D9Device *>( GFX )->destroyD3DResource( mD3DSurface );
-   mD3DTexture = NULL;
-   mD3DSurface = NULL;
+   SAFE_RELEASE(mD3DTexture);
+   SAFE_RELEASE(mD3DSurface);
 }
 
 void GFXD3D9TextureObject::zombify()

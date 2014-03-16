@@ -24,23 +24,23 @@
 // Partial refactor by: Anis A. Hireche (C) 2014 - anishireche@gmail.com
 //-----------------------------------------------------------------------------
 
-#include "gfxD3D9videoCapture.h"
+#include "gfxD3D9VideoCapture.h"
 #include "gfx/D3D9/gfxD3D9Device.h"
 #include "platform/tmm_off.h"
 
-VideoFrameGrabberD3D9::VideoFrameGrabberD3D9()
+GFXD3D9VideoFrameGrabber::GFXD3D9VideoFrameGrabber()
 {
-   GFXDevice::getDeviceEventSignal().notify( this, &VideoFrameGrabberD3D9::_handleGFXEvent );   
+   GFXDevice::getDeviceEventSignal().notify( this, &GFXD3D9VideoFrameGrabber::_handleGFXEvent );   
    mCurrentCapture = 0;
 }
 
-VideoFrameGrabberD3D9::~VideoFrameGrabberD3D9()
+GFXD3D9VideoFrameGrabber::~GFXD3D9VideoFrameGrabber()
 {
-   GFXDevice::getDeviceEventSignal().remove( this, &VideoFrameGrabberD3D9::_handleGFXEvent );
+   GFXDevice::getDeviceEventSignal().remove( this, &GFXD3D9VideoFrameGrabber::_handleGFXEvent );
 }
 
  
-void VideoFrameGrabberD3D9::captureBackBuffer()
+void GFXD3D9VideoFrameGrabber::captureBackBuffer()
 {
    AssertFatal( mCapture[mCurrentCapture].stage != eInSystemMemory, "Error! Trying to override a capture resource in \"SystemMemory\" stage!" );
 
@@ -77,7 +77,7 @@ void VideoFrameGrabberD3D9::captureBackBuffer()
    mCapture[mCurrentCapture].stage = eInVideoMemory;
 }
 
-void VideoFrameGrabberD3D9::makeBitmap()
+void GFXD3D9VideoFrameGrabber::makeBitmap()
 {    
    // Advance the stages for all resources, except the one used for the last capture
    for (U32 i=0; i<eNumStages; i++)
@@ -102,7 +102,7 @@ void VideoFrameGrabberD3D9::makeBitmap()
    AssertFatal( mCapture[mCurrentCapture].stage != eInSystemMemory, "Error! A capture resource with an invalid state was picked for making captures!" );
 }
 
-void VideoFrameGrabberD3D9::releaseTextures()
+void GFXD3D9VideoFrameGrabber::releaseTextures()
 {
    for (U32 i=0; i<eNumStages; i++)
    {
@@ -112,7 +112,7 @@ void VideoFrameGrabberD3D9::releaseTextures()
    }   
 }
 
-void VideoFrameGrabberD3D9::copyToSystemMemory(CaptureResource &capture)
+void GFXD3D9VideoFrameGrabber::copyToSystemMemory(CaptureResource &capture)
 {
    AssertFatal( capture.stage == eInVideoMemory, "Error! copyToSystemMemory() can only work in resources in 'eInVideoMemory' stage!" );
 
@@ -156,7 +156,7 @@ void VideoFrameGrabberD3D9::copyToSystemMemory(CaptureResource &capture)
    capture.stage = eInSystemMemory;
 }
 
-void VideoFrameGrabberD3D9::copyToBitmap(CaptureResource &capture)
+void GFXD3D9VideoFrameGrabber::copyToBitmap(CaptureResource &capture)
 {
    AssertFatal( capture.stage == eInSystemMemory, "Error! copyToBitmap() can only work in resources in 'eInSystemMemory' stage!" );
 
@@ -206,7 +206,7 @@ void VideoFrameGrabberD3D9::copyToBitmap(CaptureResource &capture)
    capture.stage = eReadyToCapture;
 }
 
-bool VideoFrameGrabberD3D9::_handleGFXEvent( GFXDevice::GFXDeviceEventType event_ )
+bool GFXD3D9VideoFrameGrabber::_handleGFXEvent( GFXDevice::GFXDeviceEventType event_ )
 {
    switch ( event_ )
    {

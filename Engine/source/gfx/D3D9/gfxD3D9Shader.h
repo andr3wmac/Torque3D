@@ -270,7 +270,7 @@ public:
    GFXD3D9ShaderConstHandle();
 };
 
-class gfxD3DInclude : public ID3DInclude, public StrongRefBase
+class gfxD3D9Include : public ID3DInclude, public StrongRefBase
 {
 private:
 
@@ -284,14 +284,14 @@ public:
        mLastPath.push_back( path );
     }
 
-    gfxD3DInclude() {}
-    virtual ~gfxD3DInclude() {}
+    gfxD3D9Include() {}
+    virtual ~gfxD3D9Include() {}
 
 	STDMETHOD(Open)(THIS_ D3D_INCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID *ppData, UINT *pBytes);
 	STDMETHOD(Close)(THIS_ LPCVOID pData);
 };
 
-typedef StrongRefPtr<gfxD3DInclude> gfxD3DIncludeRef;
+typedef StrongRefPtr<gfxD3D9Include> gfxD3DIncludeRef;
 
 class GFXD3D9Shader : public GFXShader
 {

@@ -96,7 +96,53 @@ void GFXD3D9Cubemap::initStatic(GFXTexHandle *faces)
 		AssertFatal(false, "CreateCubeTexture call failure");
 	}
 
-	fillCubeTextures(faces);
+    for(U32 i=0; i<6; i++)
+    {
+      // get cube face surface
+      IDirect3DSurface9 *cubeSurf = NULL;
+
+      hr = mCubeTex->GetCubeMapSurface(faceList[i], 0, &cubeSurf);
+
+	  if(FAILED(hr)) 
+	  {
+	 	  AssertFatal(false, "GetCubeMapSurface call failure");
+	  }
+
+      GFXD3D9TextureObject *texObj = static_cast<GFXD3D9TextureObject*>((GFXTextureObject*)faces[i]);
+      IDirect3DSurface9 *inSurf;
+      hr = texObj->get2DTex()->GetSurfaceLevel(0, &inSurf);
+
+	  if(FAILED( hr )) 
+	  {
+	 	  AssertFatal(false, "GetSurfaceLevel call failure");
+	  }
+
+      // Lock the dest surface.
+      D3DLOCKED_RECT lockedRect;
+      cubeSurf->LockRect(&lockedRect, NULL, 0);
+	  
+	  D3DLOCKED_RECT lockedRect2;
+      inSurf->LockRect(&lockedRect2, NULL, 0);
+
+	  // Do a row-by-row copy.
+	  U32 srcPitch = lockedRect2.Pitch;
+	  U32 srcHeight = texObj->getBitmapHeight();
+	  U8* srcBytes = (U8*)lockedRect2.pBits;
+	  U8* dstBytes = (U8*)lockedRect.pBits;
+	  
+	  for (U32 j = 0; j<srcHeight; j++)          
+	  {
+		memcpy(dstBytes, srcBytes, srcPitch);
+		dstBytes += lockedRect.Pitch;
+		srcBytes += srcPitch;
+	  }
+
+	  cubeSurf->UnlockRect();
+	  inSurf->UnlockRect();
+
+      cubeSurf->Release();
+      inSurf->Release();
+    }
 }
 
 void GFXD3D9Cubemap::initStatic(DDSFile *dds)
@@ -135,7 +181,7 @@ void GFXD3D9Cubemap::initStatic(DDSFile *dds)
       for(U32 j = 0; j < levels; j++)
       {
          IDirect3DSurface9 *cubeSurf = NULL;
-         HRESULT hr = mCubeTex->GetCubeMapSurface(faceList[i], j, &cubeSurf);
+         hr = mCubeTex->GetCubeMapSurface(faceList[i], j, &cubeSurf);
 
 		 if(FAILED(hr)) 
 		 {
@@ -184,59 +230,6 @@ void GFXD3D9Cubemap::initDynamic(U32 texSize, GFXFormat faceFormat)
 	{
 		AssertFatal(false, "CreateCubeTexture call failure");
 	}
-}
-
-void GFXD3D9Cubemap::fillCubeTextures(GFXTexHandle *faces)
-{
-   HRESULT hr;
-
-   for(U32 i=0; i<6; i++)
-   {
-      // get cube face surface
-      IDirect3DSurface9 *cubeSurf = NULL;
-
-      hr = mCubeTex->GetCubeMapSurface(faceList[i], 0, &cubeSurf);
-
-	  if(FAILED(hr)) 
-	  {
-	 	  AssertFatal(false, "GetCubeMapSurface call failure");
-	  }
-
-      GFXD3D9TextureObject *texObj = static_cast<GFXD3D9TextureObject*>((GFXTextureObject*)faces[i]);
-      IDirect3DSurface9 *inSurf;
-      hr = texObj->get2DTex()->GetSurfaceLevel(0, &inSurf);
-
-	  if(FAILED( hr )) 
-	  {
-	 	  AssertFatal(false, "GetSurfaceLevel call failure");
-	  }
-
-      // Lock the dest surface.
-      D3DLOCKED_RECT lockedRect;
-      cubeSurf->LockRect(&lockedRect, NULL, 0);
-	  
-	  D3DLOCKED_RECT lockedRect2;
-      inSurf->LockRect(&lockedRect2, NULL, 0);
-
-	  // Do a row-by-row copy.
-	  U32 srcPitch = lockedRect2.Pitch;
-	  U32 srcHeight = texObj->getBitmapHeight();
-	  U8* srcBytes = (U8*)lockedRect2.pBits;
-	  U8* dstBytes = (U8*)lockedRect.pBits;
-	  
-	  for (U32 j = 0; j<srcHeight; j++)          
-	  {
-		memcpy(dstBytes, srcBytes, srcPitch);
-		dstBytes += lockedRect.Pitch;
-		srcBytes += srcPitch;
-	  }
-
-	  cubeSurf->UnlockRect();
-	  inSurf->UnlockRect();
-
-      cubeSurf->Release();
-      inSurf->Release();
-   }
 }
 
 //-----------------------------------------------------------------------------
