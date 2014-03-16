@@ -99,7 +99,7 @@ void ShaderConstHandles::init( GFXShader *shader, CustomMaterial* mat /*=NULL*/ 
    if(mat)
    {
       for (S32 i = 0; i < Material::MAX_TEX_PER_PASS; ++i)
-         mTexHandlesSC[i] = shader->getShaderConstHandle(mat->mSamplerNames[i]);
+         mTexHandlesSC[i] = shader->getShaderConstHandle( mat->mSamplerNames[i] );
    }
 }
 
@@ -221,6 +221,7 @@ bool ProcessedShaderMaterial::init( const FeatureSet &features,
          {
             rpd->mTexSlot[0].texTarget = texTarget;
             rpd->mTexType[0] = Material::TexTarget;
+            rpd->mSamplerNames[0] = "diffuseMap";
          }
       }
 
@@ -515,7 +516,17 @@ bool ProcessedShaderMaterial::_createPasses( MaterialFeatureData &stageFeatures,
 
       passData.mNumTexReg += numTexReg;
       passData.mFeatureData.features.addFeature( *info.type );
+
+      U32 oldTexNumber = texIndex;
       info.feature->setTexData( mStages[stageNum], stageFeatures, passData, texIndex );
+
+#if defined(TORQUE_DEBUG) && defined( TORQUE_OPENGL)
+      if(oldTexNumber != texIndex)
+      {
+         for(int i = oldTexNumber; i < texIndex; i++)
+            AssertFatal(passData.mSamplerNames[ oldTexNumber ].isNotEmpty(),"");
+      }
+#endif
 
       // Add pass if tex units are maxed out
       if( texIndex > GFX->getNumSamplers() )
@@ -525,6 +536,9 @@ bool ProcessedShaderMaterial::_createPasses( MaterialFeatureData &stageFeatures,
          _setPassBlendOp( info.feature, passData, texIndex, stageFeatures, stageNum, features );
       }
    }
+
+   for(int i = 0; i < texIndex; i++)
+      AssertFatal(passData.mSamplerNames[ i ].isNotEmpty(),"");
 
    const FeatureSet &passFeatures = passData.mFeatureData.codify();
    if ( passFeatures.isNotEmpty() )
@@ -586,9 +600,16 @@ bool ProcessedShaderMaterial::_addPass( ShaderRenderPassData &rpd,
    // Copy over features
    rpd.mFeatureData.materialFeatures = fd.features;
 
+   Vector<String> samplers;
+   samplers.setSize(Material::MAX_TEX_PER_PASS);
+   for(int i = 0; i < Material::MAX_TEX_PER_PASS; ++i)
+   {
+      samplers[i] = (rpd.mSamplerNames[i].isEmpty() || rpd.mSamplerNames[i][0] == '$') ? rpd.mSamplerNames[i] : "$" + rpd.mSamplerNames[i];
+   }
+
    // Generate shader
    GFXShader::setLogging( true, true );
-   rpd.shader = SHADERGEN->getShader( rpd.mFeatureData, mVertexFormat, &mUserMacros );
+   rpd.shader = SHADERGEN->getShader( rpd.mFeatureData, mVertexFormat, &mUserMacros, samplers );
    if( !rpd.shader )
       return false;
    rpd.shaderHandles.init( rpd.shader );   
@@ -599,6 +620,30 @@ bool ProcessedShaderMaterial::_addPass( ShaderRenderPassData &rpd,
  
    ShaderRenderPassData *newPass = new ShaderRenderPassData( rpd );
    mPasses.push_back( newPass );
+
+   //initSamplerHandles
+   ShaderConstHandles *handles = _getShaderConstHandles( mPasses.size()-1 );
+   AssertFatal(handles,"");
+   for(int i = 0; i < rpd.mNumTex; i++)
+   { 
+      if(rpd.mSamplerNames[i].isEmpty())
+      {
+         handles->mTexHandlesSC[i] = newPass->shader->getShaderConstHandle( String::EmptyString );
+         handles->mRTParamsSC[i] = newPass->shader->getShaderConstHandle( String::EmptyString );
+         continue;
+      }
+
+      String samplerName = rpd.mSamplerNames[i];
+      if( !samplerName.startsWith("$"))
+         samplerName.insert(0, "$");
+
+      GFXShaderConstHandle *handle = newPass->shader->getShaderConstHandle( samplerName ); 
+
+      handles->mTexHandlesSC[i] = handle;
+      handles->mRTParamsSC[i] = newPass->shader->getShaderConstHandle( String::ToString( "$rtParams%s", samplerName.c_str()+1 ) ); 
+      
+      AssertFatal( handle,"");
+   }
 
    // Give each active feature a chance to create specialized shader consts.
    for( U32 i=0; i < FEATUREMGR->getFeatureCount(); i++ )
@@ -666,7 +711,10 @@ bool ProcessedShaderMaterial::setupPass( SceneRenderState *state, const SceneDat
       // If we were rendering instanced data tell
       // the device to reset that vb stream.
       if ( mInstancingState )
+      {
+         GFX->setVertexBuffer( NULL, 0 ); // TODO OPENGL needed for instancing
          GFX->setVertexBuffer( NULL, 1 );
+      }
 
       return false;
    }
@@ -688,7 +736,7 @@ bool ProcessedShaderMaterial::setupPass( SceneRenderState *state, const SceneDat
    }
    else
    {
-      GFX->disableShaders();
+      GFX->setupGenericShaders();
       GFX->setShaderConstBuffer(NULL);
    } 
 
@@ -704,6 +752,7 @@ void ProcessedShaderMaterial::setTextureStages( SceneRenderState *state, const S
    PROFILE_SCOPE( ProcessedShaderMaterial_SetTextureStages );
 
    ShaderConstHandles *handles = _getShaderConstHandles(pass);
+   AssertFatal(handles,"");
 
    // Set all of the textures we need to render the give pass.
 #ifdef TORQUE_DEBUG
@@ -719,7 +768,7 @@ void ProcessedShaderMaterial::setTextureStages( SceneRenderState *state, const S
    {
       U32 currTexFlag = rpd->mTexType[i];
       if (!LIGHTMGR || !LIGHTMGR->setTextureStage(sgData, currTexFlag, i, shaderConsts, handles))
-      {
+      {     
          switch( currTexFlag )
          {
          // If the flag is unset then assume its just

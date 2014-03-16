@@ -238,6 +238,7 @@ protected:
    // }
 
    virtual GFXShader* createShader();
+   void disableShaders();
 
    /// Device helper function
    virtual D3DPRESENT_PARAMETERS setupPresentParams( const GFXVideoMode &mode, const HWND &hwnd ) const = 0;
@@ -271,7 +272,6 @@ public:
 
    virtual F32  getPixelShaderVersion() const { return mPixVersion; }
    virtual void setPixelShaderVersion( F32 version ){ mPixVersion = version; }
-   virtual void disableShaders();
    virtual void setShader( GFXShader *shader );
    virtual U32  getNumSamplers() const { return mNumSamplers; }
    virtual U32  getNumRenderTargets() const { return mNumRenderTargets; }
@@ -306,8 +306,7 @@ public:
    virtual GFXVertexDecl* allocVertexDecl( const GFXVertexFormat *vertexFormat );
    virtual void setVertexDecl( const GFXVertexDecl *decl );
 
-   virtual void setVertexStream( U32 stream, GFXVertexBuffer *buffer );
-   virtual void setVertexStreamFrequency( U32 stream, U32 frequency );
+   virtual void setVertexStream( U32 stream, GFXVertexBuffer *buffer, U32 frequency );
    // }
 
    virtual U32 getMaxDynamicVerts() { return MAX_DYNAMIC_VERTS; }

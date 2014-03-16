@@ -63,6 +63,7 @@ singleton PostEffect( BL_ShadowFilterPostFx )
    targetClear = "PFXTargetClear_OnDraw";
    targetClearColor = "0 0 0 0";
    texture[0] = "$inTex";
+   
    target = "$outTex";   
 
    // Blur horizontal

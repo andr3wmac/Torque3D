@@ -28,9 +28,7 @@
 #include "gfx/gfxDevice.h"
 #include "gfx/gfxInit.h"
 
-#ifndef GL_GGL_H
-#include "gfx/gl/ggl/ggl.h"
-#endif
+#include "gfx/gl/tGL/tGL.h"
 
 #include "windowManager/platformWindow.h"
 #include "gfx/gfxFence.h"
@@ -41,6 +39,7 @@ class GFXGLVertexBuffer;
 class GFXGLPrimitiveBuffer;
 class GFXGLTextureTarget;
 class GFXGLCubemap;
+class GFXGLStateCache;
 
 class GFXGLDevice : public GFXDevice
 {
@@ -59,9 +58,9 @@ public:
    virtual void deactivate() { }
    virtual GFXAdapterType getAdapterType() { return OpenGL; }
 
-   virtual void enterDebugEvent(ColorI color, const char *name) { }
-   virtual void leaveDebugEvent() { }
-   virtual void setDebugMarker(ColorI color, const char *name) { }
+   virtual void enterDebugEvent(ColorI color, const char *name);
+   virtual void leaveDebugEvent();
+   virtual void setDebugMarker(ColorI color, const char *name);
 
    virtual void enumerateVideoModes();
 
@@ -90,7 +89,6 @@ public:
    virtual void  setPixelShaderVersion( F32 version ) { mPixelShaderVersion = version; }
    
    virtual void setShader(GFXShader* shd);
-   virtual void disableShaders(); ///< Equivalent to setShader(NULL)
    
    /// @attention GL cannot check if the given format supports blending or filtering!
    virtual GFXFormat selectSupportedFormat(GFXTextureProfile *profile,
@@ -135,7 +133,9 @@ public:
    
    ///
    bool supportsAnisotropic() const { return mSupportsAnisotropic; }
-   
+
+   GFXGLStateCache* getOpenglCache() { return mOpenglStateCache; }
+      
 protected:   
    /// Called by GFXDevice to create a device specific stateblock
    virtual GFXStateBlockRef createStateBlockInternal(const GFXStateBlockDesc& desc);
@@ -178,8 +178,7 @@ protected:
 
    virtual void setVertexDecl( const GFXVertexDecl *decl ) { }
 
-   virtual void setVertexStream( U32 stream, GFXVertexBuffer *buffer );
-   virtual void setVertexStreamFrequency( U32 stream, U32 frequency );
+   virtual void setVertexStream( U32 stream, GFXVertexBuffer *buffer, U32 frequency );
 
 private:
    typedef GFXDevice Parent;
@@ -193,9 +192,16 @@ private:
    static GFXAdapter::CreateDeviceInstanceDelegate mCreateDeviceInstance; 
 
    U32 mAdapterIndex;
-   
-   StrongRefPtr<GFXGLVertexBuffer> mCurrentVB;
+   static const U32 MAX_STREAMS = 4; // TODO OPENGL revise
+   StrongRefPtr<GFXGLVertexBuffer> mCurrentVB[MAX_STREAMS];
+   bool mNeedUpdateVertexAttrib;
    StrongRefPtr<GFXGLPrimitiveBuffer> mCurrentPB;
+   U32 mDrawInstancesCount;
+   
+   GFXShader* mCurrentShader;
+   GFXShaderRef mGenericShader[GS_COUNT];
+   GFXShaderConstBufferRef mGenericShaderBuffer[GS_COUNT];
+   GFXShaderConstHandle *mModelViewProjSC[GS_COUNT];
    
    /// Since GL does not have separate world and view matrices we need to track them
    MatrixF m_mCurrentWorld;
@@ -210,6 +216,8 @@ private:
    
    U32 mMaxShaderTextures;
    U32 mMaxFFTextures;
+
+   U32 mMaxTRColors;
 
    RectI mClip;
    
@@ -232,6 +240,9 @@ private:
    GFXFence* _createPlatformSpecificFence(); ///< If our platform (e.g. OS X) supports a fence extenstion (e.g. GL_APPLE_fence) this will create one, otherwise returns NULL
    
    void setPB(GFXGLPrimitiveBuffer* pb); ///< Sets mCurrentPB
+
+   GFXGLStateCache *mOpenglStateCache;
 };
 
+#define GFXGL static_cast<GFXGLDevice*>(GFXDevice::get())
 #endif

@@ -584,14 +584,13 @@ protected:
    virtual void setVertexDecl( const GFXVertexDecl *decl ) = 0;
 
    /// Sets the vertex buffer on the device.
-   virtual void setVertexStream( U32 stream, GFXVertexBuffer *buffer ) = 0;
-
-   /// Set the vertex stream frequency on the device.
-   virtual void setVertexStreamFrequency( U32 stream, U32 frequency ) = 0;
+   virtual void setVertexStream( U32 stream, GFXVertexBuffer *buffer, U32 frequency ) = 0;
 
    /// The maximum number of supported vertex streams which
    /// may be more than the device supports.
    static const U32 VERTEX_STREAM_COUNT = 4;
+
+   const U32 getVertexStreamSupported() const { return mVertexStreamSupported; }
 
    StrongRefPtr<GFXVertexBuffer> mCurrentVertexBuffer[VERTEX_STREAM_COUNT];
    bool mVertexBufferDirty[VERTEX_STREAM_COUNT];
@@ -655,12 +654,17 @@ protected:
    /// it must be updated on the next draw/clear.
    bool mViewportDirty;
 
+   U32 mVertexStreamSupported;
+
 public:
 
    /// @name Texture functions
    /// @{
 protected:
    GFXTextureManager * mTextureManager;
+
+   bool mTextureCoordStartTop;
+   bool mTexelPixelOffset;
 
 public:   
    virtual GFXCubemap * createCubemap() = 0;
@@ -720,7 +724,6 @@ public:
    virtual U32 getNumRenderTargets() const = 0;
 
    virtual void setShader( GFXShader *shader ) {}
-   virtual void disableShaders() {}
 
    /// Set the buffer! (Actual set happens on the next draw call, just like textures, state blocks, etc)
    void setShaderConstBuffer(GFXShaderConstBuffer* buffer);
@@ -729,6 +732,11 @@ public:
    /// and deleted by the caller.
    /// @see GFXShader::init
    virtual GFXShader* createShader() = 0;
+
+   bool isTextureCoordStartTop() const { return mTextureCoordStartTop; }
+
+   /// For handle with DX9 API texel-to-pixel mapping offset
+   bool hasTexelPixelOffset() const { return mTexelPixelOffset; }
    
    /// @}
  
@@ -1112,5 +1120,11 @@ inline void GFXDevice::setVertexFormat( const GFXVertexFormat *vertexFormat )
    mStateDirty = true;
 }
 
+
+#if defined(TORQUE_DEBUG) && defined(TORQUE_DEBUG_GFX)
+#define GFXAssertFatal(x, error) AssertFatal(x, error)
+#else
+#define GFXAssertFatal(x, error)
+#endif
 
 #endif // _GFXDEVICE_H_

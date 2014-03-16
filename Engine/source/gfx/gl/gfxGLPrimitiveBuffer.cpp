@@ -24,17 +24,20 @@
 #include "gfx/gl/gfxGLPrimitiveBuffer.h"
 #include "gfx/gl/gfxGLEnumTranslate.h"
 
-#include "gfx/gl/ggl/ggl.h"
+#include "gfx/gl/tGL/tGL.h"
 #include "gfx/gl/gfxGLUtils.h"
 
 GFXGLPrimitiveBuffer::GFXGLPrimitiveBuffer(GFXDevice *device, U32 indexCount, U32 primitiveCount, GFXBufferType bufferType) :
-GFXPrimitiveBuffer(device, indexCount, primitiveCount, bufferType), mZombieCache(NULL) 
+   GFXPrimitiveBuffer(device, indexCount, primitiveCount, bufferType), mZombieCache(NULL),
+   mFrameAllocatorMark(0),
+   mFrameAllocatorPtr(NULL)
 {
+   // Generate a buffer and allocate the needed memory
+   glGenBuffers(1, &mBuffer);
+   
    PRESERVE_INDEX_BUFFER();
-	// Generate a buffer and allocate the needed memory
-	glGenBuffers(1, &mBuffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(U16), NULL, GFXGLBufferType[bufferType]);
+   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBuffer);
+   glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(U16), NULL, GFXGLBufferType[bufferType]);   
 }
 
 GFXGLPrimitiveBuffer::~GFXGLPrimitiveBuffer()
@@ -48,38 +51,54 @@ GFXGLPrimitiveBuffer::~GFXGLPrimitiveBuffer()
 
 void GFXGLPrimitiveBuffer::lock(U32 indexStart, U32 indexEnd, void **indexPtr)
 {
-	// Preserve previous binding
-   PRESERVE_INDEX_BUFFER();
-   
-   // Bind ourselves and map
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBuffer);
-   glBufferData(GL_ELEMENT_ARRAY_BUFFER, mIndexCount * sizeof(U16), NULL, GFXGLBufferType[mBufferType]);
-   
-   // Offset the buffer to indexStart
-	*indexPtr = (void*)((U8*)glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_WRITE_ONLY) + (indexStart * sizeof(U16)));
+   AssertFatal(!mFrameAllocatorMark && !mFrameAllocatorPtr, "");
+   mFrameAllocatorMark = FrameAllocator::getWaterMark();
+   mFrameAllocatorPtr = (U8*)FrameAllocator::alloc( mIndexCount * sizeof(U16) );
+#if TORQUE_DEBUG
+   mFrameAllocatorMarkGuard = FrameAllocator::getWaterMark();
+#endif
+
+   lockedIndexStart = indexStart;
+   lockedIndexEnd = indexEnd;
+
+   *indexPtr = (void*)(mFrameAllocatorPtr + (indexStart * sizeof(U16)) );
 }
 
 void GFXGLPrimitiveBuffer::unlock()
 {
-	// Preserve previous binding
+   PROFILE_SCOPE(GFXGLPrimitiveBuffer_unlock);
+   
+   U32 offset = lockedIndexStart * sizeof(U16);
+   U32 length = (lockedIndexEnd - lockedIndexStart) * sizeof(U16);
+   
+   // Preserve previous binding
    PRESERVE_INDEX_BUFFER();
    
    // Bind ourselves and unmap
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBuffer);
-	bool res = glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
-   AssertFatal(res, "GFXGLPrimitiveBuffer::unlock - shouldn't fail!");
+   glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, length, mFrameAllocatorPtr + offset );
+   
+#if TORQUE_DEBUG
+   AssertFatal(mFrameAllocatorMarkGuard == FrameAllocator::getWaterMark(), "");
+#endif
+   FrameAllocator::setWaterMark(mFrameAllocatorMark);
+   mFrameAllocatorMark = 0;
+   mFrameAllocatorPtr = NULL;
 }
 
 void GFXGLPrimitiveBuffer::prepare()
 {
 	// Bind
-	static_cast<GFXGLDevice*>(mDevice)->setPB(this);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBuffer);
+   GFXGLDevice* glDevice = static_cast<GFXGLDevice*>(mDevice);
+   glDevice->setPB(this);
+   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBuffer);
+   glDevice->getOpenglCache()->setCacheBinded(GL_ELEMENT_ARRAY_BUFFER, mBuffer);
 }
 
 void GFXGLPrimitiveBuffer::finish()
 {
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+   static_cast<GFXGLDevice*>(mDevice)->getOpenglCache()->setCacheBinded(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 GLvoid* GFXGLPrimitiveBuffer::getBuffer()

@@ -41,7 +41,10 @@ RenderPassData::RenderPassData()
 void RenderPassData::reset()
 {
    for( U32 i = 0; i < Material::MAX_TEX_PER_PASS; ++ i )
+   {
       destructInPlace( &mTexSlot[ i ] );
+      mSamplerNames[ i ].clear();
+   }
 
    dMemset( &mTexSlot, 0, sizeof(mTexSlot) );
    dMemset( &mTexType, 0, sizeof(mTexType) );
@@ -278,7 +281,13 @@ void ProcessedMaterial::_initPassStateBlock( RenderPassData *rpd, GFXStateBlockD
          {
             texTarget = mPasses[0]->mTexSlot[i].texTarget;
             if ( texTarget )
-               texTarget->setupSamplerState( &result.samplers[i] );
+            {
+               for(int j = 0; j < TEXTURE_STAGE_COUNT; ++j) // TODO OPENGL
+               {
+                  if(mPasses[0]->mSamplerNames[i].equal(result._samplerNames[j]))
+                     texTarget->setupSamplerState( &result.samplers[j] );
+               }
+            }
             break;
          }
       }
@@ -286,9 +295,7 @@ void ProcessedMaterial::_initPassStateBlock( RenderPassData *rpd, GFXStateBlockD
 
    // The prepass will take care of writing to the 
    // zbuffer, so we don't have to by default.
-   // The prepass can't write to the backbuffer's zbuffer in OpenGL.
    if (  MATMGR->getPrePassEnabled() && 
-         !GFX->getAdapterType() == OpenGL && 
          !mFeatures.hasFeature(MFT_ForwardShading))
       result.setZReadWrite( result.zEnable, false );
 

@@ -62,7 +62,7 @@ GFX_ImplementTextureProfile( TerrainLayerTexProfile,
                             GFXTextureProfile::DiffuseMap, 
                             GFXTextureProfile::PreserveSize | 
                             GFXTextureProfile::Dynamic,
-                            GFXTextureProfile::None );
+                            GFXTextureProfile::NONE );
 
 
 void TerrainBlock::_onFlushMaterials()
@@ -113,7 +113,7 @@ void TerrainBlock::_updateLayerTexture()
    if (  mLayerTex.isNull() ||
          mLayerTex.getWidth() != layerSize ||
          mLayerTex.getHeight() != layerSize )
-      mLayerTex.set( layerSize, layerSize, GFXFormatR8G8B8A8, &TerrainLayerTexProfile, "" );
+      mLayerTex.set( layerSize, layerSize, GFXFormatB8G8R8A8, &TerrainLayerTexProfile, "" );
 
    AssertFatal(   mLayerTex.getWidth() == layerSize &&
                   mLayerTex.getHeight() == layerSize,
@@ -206,7 +206,8 @@ void TerrainBlock::_updateBaseTexture( bool writeToCache )
       F32 copyOffsetX = 2.0f * GFX->getFillConventionOffset() / (F32)destSize.x;
       F32 copyOffsetY = 2.0f * GFX->getFillConventionOffset() / (F32)destSize.y;
 
-      const bool needsYFlip = GFX->getAdapterType() == OpenGL;
+      // TODO OPENGL
+      const bool needsYFlip = false; //GFX->getAdapterType() == OpenGL;
 
       GFXVertexPT points[4];
       points[0].point      = Point3F( -1.0 - copyOffsetX, -1.0 + copyOffsetY, 0.0 );

@@ -26,14 +26,13 @@
 #ifndef _GFXVERTEXBUFFER_H_
 #include "gfx/gfxVertexBuffer.h"
 #endif
-#ifndef GL_GGL_H
-#include "gfx/gl/ggl/ggl.h"
-#endif
+#include "gfx/gl/tGL/tGL.h"
 
 /// This is a vertex buffer which uses GL_ARB_vertex_buffer_object.
 class GFXGLVertexBuffer : public GFXVertexBuffer 
 {
 public:
+
 	GFXGLVertexBuffer(   GFXDevice *device, 
                         U32 numVerts, 
                         const GFXVertexFormat *vertexFormat, 
@@ -52,13 +51,35 @@ public:
    // GFXResource interface
    virtual void zombify();
    virtual void resurrect();
-   
+   GLuint mDivisor;
+   U32 getVertexAttribActiveMask() const { return mVertexAttribActiveMask; }
+
 private:
    friend class GFXGLDevice;
 	/// GL buffer handle
 	GLuint mBuffer;
-   
    U8* mZombieCache;
+
+   struct glVertexDecl
+   {
+      GLint attrIndex;
+      GLint elementCount; // 1 - 4
+      GLenum type; // GL_FLOAT...
+      GLboolean normalized;
+      GLsizei stride;
+      GLvoid *pointerFirst;
+   };
+
+   U32 mVertexAttribActiveMask;
+   Vector<glVertexDecl> glVerticesFormat;  
+   void _initVerticesFormat();
+
+   //FrameAllocator
+   U32 mFrameAllocatorMark;
+#if TORQUE_DEBUG
+   U32 mFrameAllocatorMarkGuard;
+#endif
+   U8 *mFrameAllocatorPtr;
 };
 
 #endif
