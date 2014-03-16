@@ -24,44 +24,16 @@
 // Partial refactor by: Anis A. Hireche (C) 2014 - anishireche@gmail.com
 //-----------------------------------------------------------------------------
 
-#ifndef _GFXD3DTEXTUREMANAGER_H_
-#define _GFXD3DTEXTUREMANAGER_H_
+#ifndef _GFXD3D_SCREENSHOT_H_
+#define _GFXD3D_SCREENSHOT_H_
 
-#include "gfx/D3D9/gfxD3D9TextureObject.h"
-#include "core/util/safeRelease.h"
+#include "gfx/screenshot.h"
 
-class GFXD3D9TextureManager : public GFXTextureManager 
+class GFXD3D9ScreenShot : public ScreenShot
 {
-   friend class GFXD3D9TextureObject;
-
-public:
-   GFXD3D9TextureManager();
-   virtual ~GFXD3D9TextureManager();
-
 protected:
 
-   // GFXTextureManager
-   GFXTextureObject *_createTextureObject(   U32 height, 
-                                             U32 width,
-                                             U32 depth,
-                                             GFXFormat format,
-                                             GFXTextureProfile *profile,
-                                             U32 numMipLevels,
-                                             bool forceMips = false,
-                                             S32 antialiasLevel = 0,
-                                             GFXTextureObject *inTex = NULL );
-   bool _loadTexture(GFXTextureObject *texture, DDSFile *dds);
-   bool _loadTexture(GFXTextureObject *texture, GBitmap *bmp);
-   bool _loadTexture(GFXTextureObject *texture, void *raw);
-   bool _refreshTexture(GFXTextureObject *texture);
-   bool _freeTexture(GFXTextureObject *texture, bool zombify = false);
-
-private:
-   U32 mCurTexSet[TEXTURE_STAGE_COUNT];
-
-   D3DCAPS9 mDeviceCaps;
-
-   void _innerCreateTexture(GFXD3D9TextureObject *obj, U32 height, U32 width, U32 depth, GFXFormat format, GFXTextureProfile *profile, U32 numMipLevels, bool forceMips = false, S32 antialiasLevel = 0);
+   GBitmap* _captureBackBuffer();
 };
 
 #endif

@@ -18,8 +18,6 @@ torque_winmain
 torque_gethwnd
 torque_directmessage
 
-D3D_GetBackBufferNoRef
-
 SimObject_GetName
 SimObject_GetId
 SimObject_GetClassName

@@ -20,6 +20,10 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+// Partial refactor by: Anis A. Hireche (C) 2014 - anishireche@gmail.com
+//-----------------------------------------------------------------------------
+
 #include "gfx/D3D9/gfxD3D9Device.h"
 #include "gfx/D3D9/gfxD3D9OcclusionQuery.h"
 
@@ -30,9 +34,9 @@
 #include "T3D/gameBase/processList.h"
 #endif
 
-GFXD3D9OcclusionQuery::GFXD3D9OcclusionQuery( GFXDevice *device )
- : GFXOcclusionQuery( device ), 
-   mQuery( NULL )   
+GFXD3D9OcclusionQuery::GFXD3D9OcclusionQuery(GFXDevice *device)
+ : GFXOcclusionQuery(device), 
+   mQuery(NULL)   
 {
 #ifdef TORQUE_GATHER_METRICS
    mTimer = PlatformTimer::create();
@@ -45,32 +49,27 @@ GFXD3D9OcclusionQuery::GFXD3D9OcclusionQuery( GFXDevice *device )
 
 GFXD3D9OcclusionQuery::~GFXD3D9OcclusionQuery()
 {
-   SAFE_RELEASE( mQuery );
+   SAFE_RELEASE(mQuery);
 
 #ifdef TORQUE_GATHER_METRICS
-   SAFE_DELETE( mTimer );
+   SAFE_DELETE(mTimer);
 #endif
 }
 
 bool GFXD3D9OcclusionQuery::begin()
 {
-   if ( GFXDevice::getDisableOcclusionQuery() )
+   if(GFXDevice::getDisableOcclusionQuery())
       return true;
 
-   if ( mQuery == NULL )
+   if(mQuery == NULL)
    {
-#ifdef TORQUE_OS_XENON
-      HRESULT hRes = static_cast<GFXD3D9Device*>( mDevice )->getDevice()->CreateQueryTiled( D3DQUERYTYPE_OCCLUSION, 2, &mQuery );
-#else
-      HRESULT hRes = static_cast<GFXD3D9Device*>( mDevice )->getDevice()->CreateQuery( D3DQUERYTYPE_OCCLUSION, &mQuery );
-#endif
-
-      AssertFatal( hRes != D3DERR_NOTAVAILABLE, "GFXD3D9OcclusionQuery::begin - Hardware does not support D3D9 Occlusion-Queries, this should be caught before this type is created" );
-      AssertISV( hRes != E_OUTOFMEMORY, "GFXD3D9OcclusionQuery::begin - Out of memory" );
+      HRESULT hRes = static_cast<GFXD3D9Device*>(GFX)->getDevice()->CreateQuery(D3DQUERYTYPE_OCCLUSION, &mQuery);
+      AssertFatal(hRes != D3DERR_NOTAVAILABLE, "GFXD3D9OcclusionQuery::begin - Hardware does not support D3D9 Occlusion-Queries, this should be caught before this type is created");
+      AssertISV(hRes != E_OUTOFMEMORY, "GFXD3D9OcclusionQuery::begin - Out of memory");
    }
 
    // Add a begin marker to the command buffer queue.
-   mQuery->Issue( D3DISSUE_BEGIN );
+   mQuery->Issue(D3DISSUE_BEGIN);
 
 #ifdef TORQUE_GATHER_METRICS
    mBeginFrame = GuiTSCtrl::getFrameCount();
@@ -81,20 +80,20 @@ bool GFXD3D9OcclusionQuery::begin()
 
 void GFXD3D9OcclusionQuery::end()
 {
-   if ( GFXDevice::getDisableOcclusionQuery() )
+   if (GFXDevice::getDisableOcclusionQuery())
       return;
 
    // Add an end marker to the command buffer queue.
-   mQuery->Issue( D3DISSUE_END );
+   mQuery->Issue(D3DISSUE_END);
 
 #ifdef TORQUE_GATHER_METRICS
-   AssertFatal( mBeginFrame == GuiTSCtrl::getFrameCount(), "GFXD3D9OcclusionQuery::end - ended query on different frame than begin!" );   
+   AssertFatal(mBeginFrame == GuiTSCtrl::getFrameCount(), "GFXD3D9OcclusionQuery::end - ended query on different frame than begin!");   
    mTimer->getElapsedMs();
    mTimer->reset();
 #endif
 }
 
-GFXD3D9OcclusionQuery::OcclusionQueryStatus GFXD3D9OcclusionQuery::getStatus( bool block, U32 *data )
+GFXD3D9OcclusionQuery::OcclusionQueryStatus GFXD3D9OcclusionQuery::getStatus(bool block, U32 *data)
 {
    // If this ever shows up near the top of a profile then your system is 
    // GPU bound or you are calling getStatus too soon after submitting it.
@@ -107,10 +106,10 @@ GFXD3D9OcclusionQuery::OcclusionQueryStatus GFXD3D9OcclusionQuery::getStatus( bo
    // of time to render an individual frame you could have problems.
    PROFILE_SCOPE(GFXD3D9OcclusionQuery_getStatus);
 
-   if ( GFXDevice::getDisableOcclusionQuery() )
+   if (GFXDevice::getDisableOcclusionQuery())
       return NotOccluded;
 
-   if ( mQuery == NULL )
+   if (mQuery == NULL)
       return Unset;
 
 #ifdef TORQUE_GATHER_METRICS
@@ -125,23 +124,22 @@ GFXD3D9OcclusionQuery::OcclusionQueryStatus GFXD3D9OcclusionQuery::getStatus( bo
 
    if ( block )
    {      
-      while( ( hRes = mQuery->GetData( &dwOccluded, sizeof(DWORD), D3DGETDATA_FLUSH ) ) == S_FALSE )
-         ;
+      while((hRes = mQuery->GetData(&dwOccluded, sizeof(DWORD), D3DGETDATA_FLUSH)) == S_FALSE);
    }
    else
    {
-      hRes = mQuery->GetData( &dwOccluded, sizeof(DWORD), 0 );
+      hRes = mQuery->GetData(&dwOccluded, sizeof(DWORD), 0);
    }
 
-   if ( hRes == S_OK )   
+   if (hRes == S_OK)   
    {
-      if ( data != NULL )
+      if (data != NULL)
          *data = dwOccluded;
 
       return dwOccluded > 0 ? NotOccluded : Occluded;   
    }
 
-   if ( hRes == S_FALSE )
+   if (hRes == S_FALSE)
       return Waiting;
 
    return Error;   

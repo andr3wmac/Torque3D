@@ -20,15 +20,16 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+// Partial refactor by: Anis A. Hireche (C) 2014 - anishireche@gmail.com
+//-----------------------------------------------------------------------------
+
 #include "gfx/D3D9/gfxD3D9Device.h"
 #include "console/console.h"
 #include "gfx/primBuilder.h"
 #include "gfx/D3D9/gfxD3D9CardProfiler.h"
 #include "gfx/D3D9/gfxD3D9EnumTranslate.h"
-#ifdef TORQUE_OS_WIN32
 #include "platformWin32/videoInfo/wmiVideoInfo.h"
-#endif
-
 
 GFXD3D9CardProfiler::GFXD3D9CardProfiler(U32 adapterIndex) : GFXCardProfiler()
 {
@@ -42,48 +43,33 @@ GFXD3D9CardProfiler::~GFXD3D9CardProfiler()
 
 void GFXD3D9CardProfiler::init()
 {
-   mD3DDevice = dynamic_cast<GFXD3D9Device *>(GFX)->getDevice();
-   AssertISV( mD3DDevice, "GFXD3D9CardProfiler::init() - No D3D9 Device found!");
+   AssertISV(static_cast<GFXD3D9Device*>(GFX)->getDevice(), "GFXD3D9CardProfiler::init() - No D3D9 Device found!");
 
-   // Grab the caps so we can get our adapter ordinal and look up our name.
-   D3DCAPS9 caps;
-   D3D9Assert(mD3DDevice->GetDeviceCaps(&caps), "GFXD3D9CardProfiler::init - failed to get device caps!");
-
-#ifdef TORQUE_OS_XENON
-   mCardDescription = "Xbox360 GPU";
-   mChipSet = "ATI";
-   mVersionString = String::ToString(_XDK_VER);
-   mVideoMemory = 512 * 1024 * 1024;
-#else
    WMIVideoInfo wmiVidInfo;
-   if( wmiVidInfo.profileAdapters() )
+   if(wmiVidInfo.profileAdapters())
    {
-      const PlatformVideoInfo::PVIAdapter &adapter = wmiVidInfo.getAdapterInformation( caps.AdapterOrdinal );
+      const PlatformVideoInfo::PVIAdapter &adapter = wmiVidInfo.getAdapterInformation(mAdapterOrdinal);
 
       mCardDescription = adapter.description;
       mChipSet = adapter.chipSet;
       mVersionString = adapter.driverVersion;
       mVideoMemory = adapter.vram;
    }
-#endif
 
    Parent::init();
 }
 
 void GFXD3D9CardProfiler::setupCardCapabilities()
 {
-   // Get the D3D device caps
    D3DCAPS9 caps;
-   mD3DDevice->GetDeviceCaps(&caps);
+   static_cast<GFXD3D9Device*>( GFX )->getDevice()->GetDeviceCaps(&caps);
 
    setCapability( "autoMipMapLevel", ( caps.Caps2 & D3DCAPS2_CANAUTOGENMIPMAP ? 1 : 0 ) );
-
    setCapability( "maxTextureWidth", caps.MaxTextureWidth );
    setCapability( "maxTextureHeight", caps.MaxTextureHeight );
    setCapability( "maxTextureSize", getMin( (U32)caps.MaxTextureWidth, (U32)caps.MaxTextureHeight) );
 
    bool canDoLERPDetailBlend = ( caps.TextureOpCaps & D3DTEXOPCAPS_LERP ) && ( caps.MaxTextureBlendStages > 1 );
-
    bool canDoFourStageDetailBlend = ( caps.TextureOpCaps & D3DTEXOPCAPS_SUBTRACT ) &&
                                     ( caps.PrimitiveMiscCaps & D3DPMISCCAPS_TSSARGTEMP ) &&
                                     ( caps.MaxTextureBlendStages > 3 );
@@ -105,18 +91,8 @@ bool GFXD3D9CardProfiler::_queryFormat( const GFXFormat fmt, const GFXTexturePro
    DWORD usage = 0;
    D3DRESOURCETYPE rType = D3DRTYPE_TEXTURE;
    D3DFORMAT adapterFormat = displayMode.Format;
-
    D3DFORMAT texFormat = GFXD3D9TextureFormat[fmt];
 
-#if defined(TORQUE_OS_XENON)
-   inOutAutogenMips = false;
-   adapterFormat = D3DFMT_A8B8G8R8;
-
-   if(profile->isRenderTarget())
-   {
-      texFormat = (D3DFORMAT)MAKELEFMT(texFormat);
-   }
-#else
    if( profile->isRenderTarget() )
       usage |= D3DUSAGE_RENDERTARGET;
    else if( profile->isZTarget() )
@@ -127,26 +103,22 @@ bool GFXD3D9CardProfiler::_queryFormat( const GFXFormat fmt, const GFXTexturePro
    
    if( inOutAutogenMips )
       usage |= D3DUSAGE_AUTOGENMIPMAP;
-#endif
 
    // Early-check to see if the enum translation table has an unsupported value
    if(texFormat == (_D3DFORMAT)GFX_UNSUPPORTED_VAL)
       return false;
 
-   HRESULT hr = pD3D->CheckDeviceFormat( mAdapterOrdinal, D3DDEVTYPE_HAL, 
-      adapterFormat, usage, rType, texFormat );
+   HRESULT hr = pD3D->CheckDeviceFormat( mAdapterOrdinal, D3DDEVTYPE_HAL, adapterFormat, usage, rType, texFormat );
 
    bool retVal = SUCCEEDED( hr );
 
-#if !defined(TORQUE_OS_XENON)
    // If check device format failed, and auto gen mips were requested, try again
    // without autogen mips.
    if( !retVal && inOutAutogenMips )
    {
       usage ^= D3DUSAGE_AUTOGENMIPMAP;
 
-      hr = pD3D->CheckDeviceFormat( mAdapterOrdinal, D3DDEVTYPE_HAL, 
-         adapterFormat, usage, D3DRTYPE_TEXTURE, GFXD3D9TextureFormat[fmt] );
+      hr = pD3D->CheckDeviceFormat(mAdapterOrdinal, D3DDEVTYPE_HAL, adapterFormat, usage, D3DRTYPE_TEXTURE, GFXD3D9TextureFormat[fmt]);
 
       retVal = SUCCEEDED( hr );
 
@@ -155,7 +127,6 @@ bool GFXD3D9CardProfiler::_queryFormat( const GFXFormat fmt, const GFXTexturePro
       if( retVal )
          inOutAutogenMips = false;
    }
-#endif
 
    return retVal;
 }

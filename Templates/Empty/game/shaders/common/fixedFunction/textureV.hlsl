@@ -19,21 +19,24 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
-#ifndef _SCREENSHOTD3D_H_
-#define _SCREENSHOTD3D_H_
 
-#include "gfx/screenshot.h"
-
-//**************************************************************************
-// D3D implementation of screenshot
-//**************************************************************************
-class ScreenShotD3D : public ScreenShot
+struct Appdata
 {
-protected:
-
-   GBitmap* _captureBackBuffer();
-
+	float4 position   : POSITION;
+	float4 color      : COLOR;
+	float2 texCoord   : TEXCOORD0;
 };
-
-
-#endif  // _SCREENSHOTD3D_H_
+struct Conn
+{
+   float4 HPOS             : POSITION;
+   float4 color            : COLOR;
+   float2 texCoord         : TEXCOORD0;
+};
+Conn main( Appdata In, uniform float4x4 modelview : register(C0) )
+{
+   Conn Out;
+   Out.HPOS = mul(modelview, In.position);
+   Out.color = In.color;
+   Out.texCoord = In.texCoord;
+   return Out;
+}

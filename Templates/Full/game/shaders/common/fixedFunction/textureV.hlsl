@@ -20,34 +20,23 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
-// Partial refactor by: Anis A. Hireche (C) 2014 - anishireche@gmail.com
-//-----------------------------------------------------------------------------
-
-#ifndef _GFX_D3D9_QUERYFENCE_H_
-#define _GFX_D3D9_QUERYFENCE_H_
-
-#include "gfx/gfxFence.h"
-#include "gfx/gfxResource.h"
-#include "gfx/D3D9/gfxD3D9Device.h"
-
-class GFXD3D9QueryFence : public GFXFence
+struct Appdata
 {
-private:
-   mutable IDirect3DQuery9 *mQuery;
-
-public:
-   GFXD3D9QueryFence( GFXDevice *device ) : GFXFence( device ), mQuery( NULL ) {};
-   virtual ~GFXD3D9QueryFence();
-
-   virtual void issue();
-   virtual FenceStatus getStatus() const;
-   virtual void block();
-
-   // GFXResource interface
-   virtual void zombify();
-   virtual void resurrect();
-   virtual const String describeSelf() const;
+	float4 position   : POSITION;
+	float4 color      : COLOR;
+	float2 texCoord   : TEXCOORD0;
 };
-
-#endif
+struct Conn
+{
+   float4 HPOS             : POSITION;
+   float4 color            : COLOR;
+   float2 texCoord         : TEXCOORD0;
+};
+Conn main( Appdata In, uniform float4x4 modelview : register(C0) )
+{
+   Conn Out;
+   Out.HPOS = mul(modelview, In.position);
+   Out.color = In.color;
+   Out.texCoord = In.texCoord;
+   return Out;
+}

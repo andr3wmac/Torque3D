@@ -20,82 +20,30 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+// Partial refactor by: Anis A. Hireche (C) 2014 - anishireche@gmail.com
+//-----------------------------------------------------------------------------
+
 #ifndef _GFXD3D9DEVICE_H_
 #define _GFXD3D9DEVICE_H_
 
+#include <d3d9.h>
+
 #include "platform/tmm_off.h"
-
-#ifdef TORQUE_OS_XENON
-#  include "platformXbox/platformXbox.h"
-#else
-#  include <d3dx9.h>
-#  include "platformWin32/platformWin32.h"
-#endif
-#ifndef _GFXD3D9STATEBLOCK_H_
+#include "platformWin32/platformWin32.h"
+#include "gfx/D3D9/gfxD3D9Shader.h"
 #include "gfx/D3D9/gfxD3D9StateBlock.h"
-#endif
-#ifndef _GFXD3DTEXTUREMANAGER_H_
 #include "gfx/D3D9/gfxD3D9TextureManager.h"
-#endif
-#ifndef _GFXD3D9CUBEMAP_H_
 #include "gfx/D3D9/gfxD3D9Cubemap.h"
-#endif
-#ifndef _GFXD3D9PRIMITIVEBUFFER_H_
-#include "gfx/D3D9/gfxD3D9PrimitiveBuffer.h"
-#endif
-#ifndef _GFXINIT_H_
+#include "gfx/D3D9/gfxD3D9IndexBuffer.h"
+#include "gfx/D3D9/gfxD3D9VideoCapture.h"
 #include "gfx/gfxInit.h"
-#endif
-#ifndef _PLATFORMDLIBRARY_H
-#include "platform/platformDlibrary.h"
-#endif
-
-#ifndef TORQUE_OS_XENON
-#include <DxErr.h>
-#else
-#include <dxerr9.h>
-#define DXGetErrorStringA DXGetErrorString9A
-#define DXGetErrorDescriptionA DXGetErrorDescription9A
-#endif
-
+#include "gfx/gfxResource.h"
 #include "platform/tmm_on.h"
-
-inline void D3D9Assert( HRESULT hr, const char *info ) 
-{
-#if defined( TORQUE_DEBUG )
-   if( FAILED( hr ) ) 
-   {
-      char buf[256];
-      dSprintf( buf, 256, "%s\n%s\n%s", DXGetErrorStringA( hr ), DXGetErrorDescriptionA( hr ), info );
-      AssertFatal( false, buf ); 
-      //      DXTrace( __FILE__, __LINE__, hr, info, true );
-   }
-#endif
-}
-
-
-// Typedefs
-#define D3DX_FUNCTION(fn_name, fn_return, fn_args) \
-   typedef fn_return (WINAPI *D3DXFNPTR##fn_name##)##fn_args##;
-#include "gfx/D3D9/d3dx9Functions.h"
-#undef D3DX_FUNCTION
-
-// Function table
-struct D3DXFNTable
-{
-   D3DXFNTable() : isLoaded( false ){};
-   bool isLoaded;
-   DLibraryRef dllRef;
-   DLibraryRef compilerDllRef;
-#define D3DX_FUNCTION(fn_name, fn_return, fn_args) \
-   D3DXFNPTR##fn_name fn_name;
-#include "gfx/D3D9/d3dx9Functions.h"
-#undef D3DX_FUNCTION
-};
 
 #define GFXD3DX static_cast<GFXD3D9Device *>(GFX)->smD3DX 
 
-class GFXResource;
+class PlatformWindow;
 class GFXD3D9ShaderConstBuffer;
 
 //------------------------------------------------------------------------------
@@ -106,12 +54,29 @@ class GFXD3D9Device : public GFXDevice
    friend class GFXD3D9PrimitiveBuffer;
    friend class GFXD3D9VertexBuffer;
    friend class GFXD3D9TextureObject;
-   friend class GFXPCD3D9TextureTarget;
-   friend class GFXPCD3D9WindowTarget;
+   friend class GFXD3D9TextureTarget;
+   friend class GFXD3D9WindowTarget;
 
-   typedef GFXDevice Parent;
+   virtual GFXFormat selectSupportedFormat(GFXTextureProfile *profile,
+   const Vector<GFXFormat> &formats, bool texture, bool mustblend, bool mustfilter);
+
+   virtual void enumerateVideoModes();
+
+   virtual GFXWindowTarget *allocWindowTarget(PlatformWindow *window);
+   virtual GFXTextureTarget *allocRenderToTextureTarget();
+
+   virtual void enterDebugEvent(ColorI color, const char *name){};
+   virtual void leaveDebugEvent(){};
+   virtual void setDebugMarker(ColorI color, const char *name){};
 
 protected:
+
+   virtual void initStates() { };
+   GFXD3D9VideoFrameGrabber* mVideoFrameGrabber;
+
+   static GFXAdapter::CreateDeviceInstanceDelegate mCreateDeviceInstance;
+
+   void _validateMultisampleParams(D3DFORMAT format, D3DMULTISAMPLE_TYPE & aatype, DWORD & aalevel) const;
 
    MatrixF mTempMatrix;    ///< Temporary matrix, no assurances on value at all
    RectI mClipRect;
@@ -142,7 +107,6 @@ protected:
    /// The stream 0 vertex buffer used for volatile VB offseting.
    GFXD3D9VertexBuffer *mVolatileVB;
 
-   static void initD3DXFnTable();
    //-----------------------------------------------------------------------
    StrongRefPtr<GFXD3D9PrimitiveBuffer> mDynamicPB;                       ///< Dynamic index buffer
    GFXD3D9PrimitiveBuffer *mCurrentPB;
@@ -152,19 +116,17 @@ protected:
 
    S32 mCreateFenceType;
 
-   LPDIRECT3D9       mD3D;        ///< D3D Handle
-   LPDIRECT3DDEVICE9 mD3DDevice;  ///< Handle for D3DDevice
+   LPDIRECT3D9       mD3D;
+   LPDIRECT3DDEVICE9 mD3DDevice;
 
-#if !defined(TORQUE_OS_XENON)
-   LPDIRECT3D9EX       mD3DEx;             ///< D3D9Ex Handle
-   LPDIRECT3DDEVICE9EX mD3DDeviceEx; ///< Handle for D3DDevice9Ex
-#endif
+   GFXShaderConstBufferRef mGenericShaderBuffer[GS_COUNT];
+   GFXShaderConstHandle *mModelViewProjSC[GS_COUNT];
 
-   U32  mAdapterIndex;            ///< Adapter index because D3D supports multiple adapters
+   U32  mAdapterIndex;
 
    F32 mPixVersion;
-   U32 mNumSamplers;               ///< Profiled (via caps)
-   U32 mNumRenderTargets;          ///< Profiled (via caps)
+   U32 mNumSamplers;       ///< Profiled (via caps)
+   U32 mNumRenderTargets;  ///< Profiled (via caps)
 
    D3DMULTISAMPLE_TYPE mMultisampleType;
    DWORD mMultisampleLevel;
@@ -180,25 +142,8 @@ protected:
    /// To release all resources we control from D3DPOOL_DEFAULT
    void releaseDefaultPoolResources();
 
-   /// This you will probably never, ever use, but it is used to generate the code for
-   /// the initStates() function
-   void regenStates();
-
    virtual GFXD3D9VertexBuffer* findVBPool( const GFXVertexFormat *vertexFormat, U32 numVertsNeeded );
    virtual GFXD3D9VertexBuffer* createVBPool( const GFXVertexFormat *vertexFormat, U32 vertSize );
-
-#ifdef TORQUE_DEBUG
-   /// @name Debug Vertex Buffer information/management
-   /// @{
-
-   ///
-   U32 mNumAllocatedVertexBuffers; ///< To keep track of how many are allocated and freed
-   GFXD3D9VertexBuffer *mVBListHead;
-   void addVertexBuffer( GFXD3D9VertexBuffer *buffer );
-   void removeVertexBuffer( GFXD3D9VertexBuffer *buffer );
-   void logVertexBuffers();
-   /// @}
-#endif
 
    // State overrides
    // {
@@ -217,13 +162,11 @@ protected:
    /// Called by base GFXDevice to actually set a const buffer
    virtual void setShaderConstBufferInternal(GFXShaderConstBuffer* buffer);
 
-   // CodeReview - How exactly do we want to deal with this on the Xenon?
-   // Right now it's just in an #ifndef in gfxD3D9Device.cpp - AlexS 4/11/07
-   virtual void setLightInternal(U32 lightStage, const GFXLightInfo light, bool lightEnable);
-   virtual void setLightMaterialInternal(const GFXLightMaterial mat);
-   virtual void setGlobalAmbientInternal(ColorF color);
+   virtual void setMatrix( GFXMatrixType /*mtype*/, const MatrixF &/*mat*/ ) { };
+   virtual void setLightInternal(U32 /*lightStage*/, const GFXLightInfo /*light*/, bool /*lightEnable*/) { };
+   virtual void setLightMaterialInternal(const GFXLightMaterial /*mat*/) { };
+   virtual void setGlobalAmbientInternal(ColorF /*color*/) { };
 
-   virtual void initStates()=0;
    // }
 
    // Index buffer management
@@ -238,15 +181,15 @@ protected:
    // }
 
    virtual GFXShader* createShader();
-   void disableShaders();
 
    /// Device helper function
-   virtual D3DPRESENT_PARAMETERS setupPresentParams( const GFXVideoMode &mode, const HWND &hwnd ) const = 0;
+   virtual D3DPRESENT_PARAMETERS setupPresentParams( const GFXVideoMode &mode, const HWND &hwnd ) const;
    
 public:
-   static D3DXFNTable smD3DX;
 
    static GFXDevice *createInstance( U32 adapterIndex );
+
+   static void enumerateAdapters( Vector<GFXAdapter*> &adapterList );
 
    GFXTextureObject* createRenderSurface( U32 width, U32 height, GFXFormat format, U32 mipLevel );
 
@@ -260,9 +203,9 @@ public:
 
    // Activate/deactivate
    // {
-   virtual void init( const GFXVideoMode &mode, PlatformWindow *window = NULL ) = 0;
+   virtual void init( const GFXVideoMode &mode, PlatformWindow *window = NULL );
 
-   virtual void preDestroy() { Parent::preDestroy(); if(mTextureManager) mTextureManager->kill(); }
+   virtual void preDestroy() { GFXDevice::preDestroy(); if(mTextureManager) mTextureManager->kill(); }
 
    GFXAdapterType getAdapterType(){ return Direct3D9; }
 
@@ -271,7 +214,8 @@ public:
    virtual GFXCubemap *createCubemap();
 
    virtual F32  getPixelShaderVersion() const { return mPixVersion; }
-   virtual void setPixelShaderVersion( F32 version ){ mPixVersion = version; }
+   virtual void setPixelShaderVersion( F32 version ){ mPixVersion = version;} 
+
    virtual void setShader( GFXShader *shader );
    virtual U32  getNumSamplers() const { return mNumSamplers; }
    virtual U32  getNumRenderTargets() const { return mNumRenderTargets; }
@@ -302,11 +246,12 @@ public:
    virtual GFXPrimitiveBuffer *allocPrimitiveBuffer(  U32 numIndices, 
                                                       U32 numPrimitives, 
                                                       GFXBufferType bufferType );
-   virtual void deallocVertexBuffer( GFXD3D9VertexBuffer *vertBuff );
+
    virtual GFXVertexDecl* allocVertexDecl( const GFXVertexFormat *vertexFormat );
    virtual void setVertexDecl( const GFXVertexDecl *decl );
 
    virtual void setVertexStream( U32 stream, GFXVertexBuffer *buffer, U32 frequency );
+   virtual void setVertexStreamFrequency( U32 stream, U32 frequency );
    // }
 
    virtual U32 getMaxDynamicVerts() { return MAX_DYNAMIC_VERTS; }
@@ -317,22 +262,18 @@ public:
    virtual void drawPrimitive( GFXPrimitiveType primType, U32 vertexStart, U32 primitiveCount );
    // }
 
-   virtual LPDIRECT3DDEVICE9 getDevice(){ return mD3DDevice; }
-   virtual LPDIRECT3D9 getD3D() { return mD3D; }
+   LPDIRECT3DDEVICE9 getDevice(){ return mD3DDevice; }
+   LPDIRECT3D9 getD3D() { return mD3D; }
 
    /// Reset
-   virtual void reset( D3DPRESENT_PARAMETERS &d3dpp ) = 0;
+   void reset( D3DPRESENT_PARAMETERS &d3dpp );
 
    GFXShaderRef mGenericShader[GS_COUNT];
 
    virtual void setupGenericShaders( GenericShaderType type  = GSColor );
 
-   // Function only really used on the, however a centralized function for
-   // destroying resources is probably a good thing -patw
-   virtual void destroyD3DResource( IDirect3DResource9 *d3dResource ) { SAFE_RELEASE( d3dResource ); }; 
-
    inline virtual F32 getFillConventionOffset() const { return 0.5f; }
-   virtual void doParanoidStateCheck();
+   virtual void doParanoidStateCheck() {};
 
    GFXFence *createFence();
 
@@ -340,19 +281,7 @@ public:
 
    // Default multisample parameters
    D3DMULTISAMPLE_TYPE getMultisampleType() const { return mMultisampleType; }
-   DWORD getMultisampleLevel() const { return mMultisampleLevel; } 
-
-   // Whether or not the Direct3D device was created with Direct3D9Ex support
-#if !defined(TORQUE_OS_XENON)
-   virtual bool isD3D9Ex() { return mD3DEx != NULL; }
-#else
-   virtual bool isD3D9Ex() { return false; }
-#endif
-
-   // Get the backbuffer, currently only access for WPF support
-   virtual IDirect3DSurface9* getBackBuffer() { return mDeviceBackbuffer; }
-
+   DWORD getMultisampleLevel() const { return mMultisampleLevel; }
 };
 
-
-#endif // _GFXD3D9DEVICE_H_
+#endif

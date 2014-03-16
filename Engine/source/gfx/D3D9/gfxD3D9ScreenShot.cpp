@@ -20,25 +20,18 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#include "platform/platform.h"
-#include "gfx/D3D9/screenshotD3D9.h"
+//-----------------------------------------------------------------------------
+// Partial refactor by: Anis A. Hireche (C) 2014 - anishireche@gmail.com
+//-----------------------------------------------------------------------------
 
+#include "platform/platform.h"
+#include "gfx/D3D9/gfxD3D9screenShot.h"
 #include "gfx/D3D9/gfxD3D9Device.h"
 
-#include <d3d9.h>
-#include <d3dx9core.h>
-#include <d3dx9tex.h>
-
-
-GBitmap* ScreenShotD3D::_captureBackBuffer()
+GBitmap* GFXD3D9ScreenShot::_captureBackBuffer()
 {
-#ifdef TORQUE_OS_XENON
-   return NULL;
-#else
-   LPDIRECT3DDEVICE9 D3DDevice = dynamic_cast<GFXD3D9Device *>(GFX)->getDevice();
-
    IDirect3DSurface9 * backBuffer;
-   D3DDevice->GetBackBuffer( 0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer );
+   static_cast<GFXD3D9Device *>(GFX)->getDevice()->GetBackBuffer( 0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer );
 
    // Figure the size we're snagging.
    D3DSURFACE_DESC desc;
@@ -57,18 +50,28 @@ GBitmap* ScreenShotD3D::_captureBackBuffer()
 
    // grab the top level surface of tex 0
    GFXD3D9TextureObject *to = (GFXD3D9TextureObject *) &(*tex[0]);
-   D3D9Assert( to->get2DTex()->GetSurfaceLevel( 0, &surface[0] ), NULL );
+   HRESULT hr = to->get2DTex()->GetSurfaceLevel( 0, &surface[0] );
+
+	if(FAILED(hr)) 
+	{
+		AssertFatal(false, "GetSurfaceLevel call failure");
+	}
 
    // use StretchRect because it allows a copy from a multisample surface
    // to a normal rendertarget surface
-   D3DDevice->StretchRect( backBuffer, NULL, surface[0], NULL, D3DTEXF_NONE );
+   static_cast<GFXD3D9Device *>(GFX)->getDevice()->StretchRect(backBuffer, NULL, surface[0], NULL, D3DTEXF_NONE);
 
    // grab the top level surface of tex 1
    to = (GFXD3D9TextureObject *) &(*tex[1]);
-   D3D9Assert( to->get2DTex()->GetSurfaceLevel( 0, &surface[1] ), NULL );
+   hr = to->get2DTex()->GetSurfaceLevel( 0, &surface[1] );
+
+	if(FAILED(hr)) 
+	{
+		AssertFatal(false, "GetSurfaceLevel call failure");
+	}
 
    // copy the data from the render target to the system memory texture
-   D3DDevice->GetRenderTargetData( surface[0], surface[1] );
+   static_cast<GFXD3D9Device *>(GFX)->getDevice()->GetRenderTargetData(surface[0], surface[1]);
 
    // Allocate a GBitmap and copy into it.
    GBitmap *gb = new GBitmap(size.x, size.y);
@@ -96,15 +99,10 @@ GBitmap* ScreenShotD3D::_captureBackBuffer()
 
    surface[1]->UnlockRect();
 
-   //  Also save it out with D3DX
-   //D3DXSaveSurfaceToFile( dT( "testScreen.png" ), D3DXIFF_PNG, surface[1], NULL, NULL );
-
-   // release the COM pointers
    surface[0]->Release();
    surface[1]->Release();
    backBuffer->Release();
 
    return gb;
-#endif
 }
 

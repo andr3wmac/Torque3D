@@ -29,12 +29,12 @@
 //*****************************************************************************
 namespace PrimBuild
 {
+bool              mNeedTexture;
 Vector<GFXVertexPCT> mTempVertBuff;
 GFXVertexBufferHandle<GFXVertexPCT> mVertBuff;
 GFXPrimitiveType  mType;
 U32               mCurVertIndex;
 ColorI            mCurColor( 255, 255, 255 );
-bool              mNeedTexture;
 Point2F           mCurTexCoord;
 const ColorI      _colWhite( 255, 255, 255, 255 );
 

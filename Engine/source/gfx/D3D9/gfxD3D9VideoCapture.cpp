@@ -20,36 +20,32 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#include "videoCaptureD3D9.h"
-#include "gfx/D3D9/gfxD3D9Device.h"
+//-----------------------------------------------------------------------------
+// Partial refactor by: Anis A. Hireche (C) 2014 - anishireche@gmail.com
+//-----------------------------------------------------------------------------
 
+#include "gfxD3D9VideoCapture.h"
+#include "gfx/D3D9/gfxD3D9Device.h"
 #include "platform/tmm_off.h"
 
-#include <d3d9.h>
-#include <d3dx9core.h>
-#include <d3dx9tex.h>
-
-VideoFrameGrabberD3D9::VideoFrameGrabberD3D9()
+GFXD3D9VideoFrameGrabber::GFXD3D9VideoFrameGrabber()
 {
-   GFXDevice::getDeviceEventSignal().notify( this, &VideoFrameGrabberD3D9::_handleGFXEvent );   
+   GFXDevice::getDeviceEventSignal().notify( this, &GFXD3D9VideoFrameGrabber::_handleGFXEvent );   
    mCurrentCapture = 0;
 }
 
-VideoFrameGrabberD3D9::~VideoFrameGrabberD3D9()
+GFXD3D9VideoFrameGrabber::~GFXD3D9VideoFrameGrabber()
 {
-   GFXDevice::getDeviceEventSignal().remove( this, &VideoFrameGrabberD3D9::_handleGFXEvent );
+   GFXDevice::getDeviceEventSignal().remove( this, &GFXD3D9VideoFrameGrabber::_handleGFXEvent );
 }
 
  
-void VideoFrameGrabberD3D9::captureBackBuffer()
+void GFXD3D9VideoFrameGrabber::captureBackBuffer()
 {
    AssertFatal( mCapture[mCurrentCapture].stage != eInSystemMemory, "Error! Trying to override a capture resource in \"SystemMemory\" stage!" );
 
-#ifndef TORQUE_OS_XENON
-   LPDIRECT3DDEVICE9 D3DDevice = dynamic_cast<GFXD3D9Device *>(GFX)->getDevice();
-
    IDirect3DSurface9 * backBuffer;
-   D3DDevice->GetBackBuffer( 0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer );
+   static_cast<GFXD3D9Device *>(GFX)->getDevice()->GetBackBuffer( 0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer );
 
    GFXTexHandle &vidMemTex = mCapture[mCurrentCapture].vidMemTex;
 
@@ -62,11 +58,16 @@ void VideoFrameGrabberD3D9::captureBackBuffer()
 
    // grab the top level surface of tex 0
    GFXD3D9TextureObject *to = (GFXD3D9TextureObject *) &(*vidMemTex);
-   D3D9Assert( to->get2DTex()->GetSurfaceLevel( 0, &surface ), NULL );
+   HRESULT hr = to->get2DTex()->GetSurfaceLevel( 0, &surface );
+
+	if(FAILED(hr)) 
+	{
+		AssertFatal(false, "GetSurfaceLevel call failure");
+	}
 
    // use StretchRect because it allows a copy from a multisample surface
    // to a normal rendertarget surface
-   D3DDevice->StretchRect( backBuffer, NULL, surface, NULL, D3DTEXF_LINEAR );
+   static_cast<GFXD3D9Device *>(GFX)->getDevice()->StretchRect( backBuffer, NULL, surface, NULL, D3DTEXF_LINEAR );
 
    // Reelase surfaces
    backBuffer->Release();
@@ -74,10 +75,9 @@ void VideoFrameGrabberD3D9::captureBackBuffer()
 
    // Update the stage
    mCapture[mCurrentCapture].stage = eInVideoMemory;
-#endif
 }
 
-void VideoFrameGrabberD3D9::makeBitmap()
+void GFXD3D9VideoFrameGrabber::makeBitmap()
 {    
    // Advance the stages for all resources, except the one used for the last capture
    for (U32 i=0; i<eNumStages; i++)
@@ -102,7 +102,7 @@ void VideoFrameGrabberD3D9::makeBitmap()
    AssertFatal( mCapture[mCurrentCapture].stage != eInSystemMemory, "Error! A capture resource with an invalid state was picked for making captures!" );
 }
 
-void VideoFrameGrabberD3D9::releaseTextures()
+void GFXD3D9VideoFrameGrabber::releaseTextures()
 {
    for (U32 i=0; i<eNumStages; i++)
    {
@@ -112,11 +112,10 @@ void VideoFrameGrabberD3D9::releaseTextures()
    }   
 }
 
-void VideoFrameGrabberD3D9::copyToSystemMemory(CaptureResource &capture)
+void GFXD3D9VideoFrameGrabber::copyToSystemMemory(CaptureResource &capture)
 {
    AssertFatal( capture.stage == eInVideoMemory, "Error! copyToSystemMemory() can only work in resources in 'eInVideoMemory' stage!" );
 
-#ifndef TORQUE_OS_XENON
    GFXTexHandle &vidMemTex = capture.vidMemTex;
    GFXTexHandle &sysMemTex = capture.sysMemTex;
 
@@ -130,15 +129,24 @@ void VideoFrameGrabberD3D9::copyToSystemMemory(CaptureResource &capture)
 
    // grab the top level surface of tex 0
    GFXD3D9TextureObject *to = (GFXD3D9TextureObject *) &(*vidMemTex);
-   D3D9Assert( to->get2DTex()->GetSurfaceLevel( 0, &surface[0] ), NULL );
+    HRESULT hr = to->get2DTex()->GetSurfaceLevel( 0, &surface[0] );
+
+	if(FAILED(hr)) 
+	{
+		AssertFatal(false, "GetSurfaceLevel call failure");
+	}
 
    // grab the top level surface of tex 1
    to = (GFXD3D9TextureObject *) &(*sysMemTex);
-   D3D9Assert( to->get2DTex()->GetSurfaceLevel( 0, &surface[1] ), NULL );
+   hr = to->get2DTex()->GetSurfaceLevel( 0, &surface[1] );
+
+	if(FAILED(hr)) 
+	{
+		AssertFatal(false, "GetSurfaceLevel call failure");
+	}
 
    // copy the data from the render target to the system memory texture
-   LPDIRECT3DDEVICE9 D3DDevice = dynamic_cast<GFXD3D9Device *>(GFX)->getDevice();
-   D3DDevice->GetRenderTargetData( surface[0], surface[1] );
+   static_cast<GFXD3D9Device *>(GFX)->getDevice()->GetRenderTargetData( surface[0], surface[1] );
 
    // celease surfaces
    surface[0]->Release();
@@ -146,10 +154,9 @@ void VideoFrameGrabberD3D9::copyToSystemMemory(CaptureResource &capture)
 
    // Change the resource state
    capture.stage = eInSystemMemory;
-#endif
 }
 
-void VideoFrameGrabberD3D9::copyToBitmap(CaptureResource &capture)
+void GFXD3D9VideoFrameGrabber::copyToBitmap(CaptureResource &capture)
 {
    AssertFatal( capture.stage == eInSystemMemory, "Error! copyToBitmap() can only work in resources in 'eInSystemMemory' stage!" );
 
@@ -160,8 +167,13 @@ void VideoFrameGrabberD3D9::copyToBitmap(CaptureResource &capture)
    IDirect3DSurface9 *surface;
 
    GFXD3D9TextureObject *to = (GFXD3D9TextureObject *) &(*sysMemTex);
-   D3D9Assert( to->get2DTex()->GetSurfaceLevel( 0, &surface ), NULL );
+   HRESULT hr = to->get2DTex()->GetSurfaceLevel( 0, &surface );
    
+	if(FAILED(hr)) 
+	{
+		AssertFatal(false, "GetSurfaceLevel call failure");
+	}
+
    // Lock the system memory surface
    D3DLOCKED_RECT r;
    D3DSURFACE_DESC d;
@@ -194,7 +206,7 @@ void VideoFrameGrabberD3D9::copyToBitmap(CaptureResource &capture)
    capture.stage = eReadyToCapture;
 }
 
-bool VideoFrameGrabberD3D9::_handleGFXEvent( GFXDevice::GFXDeviceEventType event_ )
+bool GFXD3D9VideoFrameGrabber::_handleGFXEvent( GFXDevice::GFXDeviceEventType event_ )
 {
    switch ( event_ )
    {

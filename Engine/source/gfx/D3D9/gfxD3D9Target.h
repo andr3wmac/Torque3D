@@ -19,38 +19,30 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+// Partial refactor by: Anis A. Hireche (C) 2014 - anishireche@gmail.com
+//-----------------------------------------------------------------------------
+
 #ifndef _GFX_D3D_GFXD3D9TARGET_H_
 #define _GFX_D3D_GFXD3D9TARGET_H_
 
-#ifndef _GFXTARGET_H_
+#include "gfx/D3D9/gfxD3D9Device.h"
+#include "gfx/D3D9/gfxD3D9TextureObject.h"
 #include "gfx/gfxTarget.h"
-#endif
-#ifndef _MPOINT3_H_
 #include "math/mPoint3.h"
-#endif
-#ifndef _MPOINT2_H_
 #include "math/mPoint2.h"
-#endif
-#include <d3d9.h>
 
-struct IDirect3DSurface9;
-struct IDirect3DSwapChain9;
-class GFXD3D9TextureObject;
-
-
-class GFXPCD3D9TextureTarget : public GFXTextureTarget
+class GFXD3D9TextureTarget : public GFXTextureTarget
 {
-   friend class GFXPCD3D9Device;
+   friend class GFXD3D9Device;
 
    // Array of target surfaces, this is given to us by attachTexture
-   IDirect3DSurface9 * mTargets[MaxRenderSlotId];
+   IDirect3DSurface9* mTargets[MaxRenderSlotId];
 
    // Array of texture objects which correspond to the target surfaces above,
    // needed for copy from RenderTarget to texture situations.  Current only valid in those situations
    GFXD3D9TextureObject* mResolveTargets[MaxRenderSlotId];
-
-   /// Owning d3d device.
-   GFXD3D9Device *mDevice;
 
    Point2I mTargetSize;
 
@@ -58,8 +50,8 @@ class GFXPCD3D9TextureTarget : public GFXTextureTarget
 
 public:
 
-   GFXPCD3D9TextureTarget();
-   ~GFXPCD3D9TextureTarget();
+   GFXD3D9TextureTarget();
+   ~GFXD3D9TextureTarget();
 
    // Public interface.
    virtual const Point2I getSize() { return mTargetSize; }
@@ -78,9 +70,9 @@ public:
    void resurrect();
 };
 
-class GFXPCD3D9WindowTarget : public GFXWindowTarget
+class GFXD3D9WindowTarget : public GFXWindowTarget
 {
-   friend class GFXPCD3D9Device;
+   friend class GFXD3D9Device;
 
    /// Our depth stencil buffer, if any.
    IDirect3DSurface9 *mDepthStencil;
@@ -97,19 +89,13 @@ class GFXPCD3D9WindowTarget : public GFXWindowTarget
    /// D3D presentation info.
    D3DPRESENT_PARAMETERS mPresentationParams;
 
-   /// Owning d3d device.
-   GFXD3D9Device  *mDevice;
-
-   /// Is this the implicit swap chain?
-   bool mImplicit;
-
    /// Internal interface that notifies us we need to reset our video mode.
    void resetMode();
 
 public:
 
-   GFXPCD3D9WindowTarget();
-   ~GFXPCD3D9WindowTarget();
+   GFXD3D9WindowTarget();
+   ~GFXD3D9WindowTarget();
  
    virtual const Point2I getSize();
    virtual GFXFormat getFormat();
@@ -117,7 +103,6 @@ public:
 
    void initPresentationParams();
    void setImplicitSwapChain();
-   void createAdditionalSwapChain();
 
    virtual void activate();   
 
@@ -127,4 +112,4 @@ public:
    virtual void resolveTo( GFXTextureObject *tex );
 };
 
-#endif // _GFX_D3D_GFXD3D9TARGET_H_
+#endif
