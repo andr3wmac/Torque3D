@@ -1,4 +1,3 @@
-<?php
 //-----------------------------------------------------------------------------
 // Copyright (c) 2012 GarageGames, LLC
 //
@@ -21,19 +20,23 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-beginModule( 'dsound' );
-
-   if ( Generator::$platform == "win32" )
-   {
-      addEngineSrcDir('sfx/dsound');
-
-      // Temporarily Disabled
-      //addEngineSrcDir('sfx/xaudio');
-      //addProjectLibInput('x3daudio.lib');
-   }
-   else if ( Generator::$platform == "360" )
-      addEngineSrcDir('sfx/xaudio');
-
-endModule();
-
-?>
+struct Appdata
+{
+	float4 position   : POSITION;
+	float4 color      : COLOR;
+	float2 texCoord   : TEXCOORD0;
+};
+struct Conn
+{
+   float4 HPOS             : POSITION;
+   float4 color            : COLOR;
+   float2 texCoord         : TEXCOORD0;
+};
+Conn main( Appdata In, uniform float4x4 modelview : register(C0) )
+{
+   Conn Out;
+   Out.HPOS = mul(modelview, In.position);
+   Out.color = In.color;
+   Out.texCoord = In.texCoord;
+   return Out;
+}

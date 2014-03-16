@@ -1,4 +1,3 @@
-<?php
 //-----------------------------------------------------------------------------
 // Copyright (c) 2012 GarageGames, LLC
 //
@@ -21,19 +20,8 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-beginModule( 'dsound' );
-
-   if ( Generator::$platform == "win32" )
-   {
-      addEngineSrcDir('sfx/dsound');
-
-      // Temporarily Disabled
-      //addEngineSrcDir('sfx/xaudio');
-      //addProjectLibInput('x3daudio.lib');
-   }
-   else if ( Generator::$platform == "360" )
-      addEngineSrcDir('sfx/xaudio');
-
-endModule();
-
-?>
+float4 main( float2 texCoord_in : TEXCOORD0,
+             uniform sampler2D diffuseMap : register(S0) ) : COLOR0
+{
+   return tex2D(diffuseMap, texCoord_in);
+}

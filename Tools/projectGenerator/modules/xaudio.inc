@@ -22,7 +22,9 @@
 //-----------------------------------------------------------------------------
 
 // XAudio
-addEngineSrcDir('sfx/xaudio');
-addProjectLibInput('x3daudio.lib');
+
+// Disabled For Now.
+//addEngineSrcDir('sfx/xaudio');
+//addProjectLibInput('x3daudio.lib');
 
 ?>
