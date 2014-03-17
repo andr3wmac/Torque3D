@@ -11,7 +11,7 @@ OpenGL Support by Luis Anton Rebollo
 ----------------
 * Based on https://github.com/BeamNG/Torque3D/tree/dev_linux_opengl
 
-D3D-Refactor by Anis
+D3D-Refactor by Anis Hireche
 ----------------
 
 * Better *.cpp organization / code cleaning
@@ -27,7 +27,7 @@ D3D-Refactor by Anis
 * Removed fixed pipeline (deprecated by Microsoft since DX10)
 * Many other minor bug fixed.
 
-DirectX 11 Support
+DirectX 11 Support by Anis Hireche
 ----------------
 
 * gfxD3D11CardProfiler - OK
