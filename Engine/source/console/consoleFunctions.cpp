@@ -479,7 +479,7 @@ DefineConsoleFunction( strreplace, const char*, ( const char* source, const char
       if(!scan)
       {
          dStrcpy(ret + dstp, source + scanp);
-         return ret;
+         break;
       }
       U32 len = scan - (source + scanp);
       dStrncpy(ret + dstp, source + scanp, len);
@@ -1586,15 +1586,6 @@ DefineEngineFunction( displaySplashWindow, bool, (const char* path), ("art/gui/s
    "@ingroup Platform" )
 {
    return Platform::displaySplashWindow(path);
-}
-
-DefineEngineFunction( closeSplashWindow, void, (),,
-   "Display a startup splash window suitable for showing while the engine still starts up.\n\n"
-   "@note This is currently only implemented on Windows.\n\n"
-   "@return True if the splash window could be successfully initialized.\n\n"
-   "@ingroup Platform" )
-{
-    Platform::closeSplashWindow();
 }
 
 //-----------------------------------------------------------------------------

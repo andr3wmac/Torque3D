@@ -48,7 +48,6 @@ GFXD3D11TextureObject::GFXD3D11TextureObject( GFXDevice * d, GFXTextureProfile *
 
    mD3DTexture = NULL;
    mLocked = false;
-
    mD3DSurface = NULL;
 }
 
@@ -76,13 +75,13 @@ GFXLockedRect *GFXD3D11TextureObject::lock(U32 mipLevel /*= 0*/, RectI *inRect /
 
       PROFILE_START(GFXD3D11TextureObject_lockRT);
 
-	  //ID3D11Texture2D *source;
-	  D3D11_TEXTURE2D_DESC sourceDesc;
+	   ID3D11Texture2D *source;
+	   D3D11_TEXTURE2D_DESC sourceDesc;
       get2DTex()->GetDesc( &sourceDesc );
 
       //ID3D11Texture2D *dest;
-      //GFXD3D11TextureObject *to = (GFXD3D11TextureObject *) &(*mLockTex);
-      //hr = to->get2DTex()->GetSurfaceLevel( 0, &dest );
+      GFXD3D11TextureObject *to = (GFXD3D11TextureObject *) &(*mLockTex);
+      //to->get2DTex()->
 
       //if(FAILED(hr)) 
 	  {
