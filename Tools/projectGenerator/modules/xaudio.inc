@@ -21,8 +21,8 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-// XAudio
-addEngineSrcDir('sfx/xaudio');
-addProjectLibInput('x3daudio.lib');
+// XAudio - Temporarily Disabled during DX11 upgrade.
+//addEngineSrcDir('sfx/xaudio');
+//addProjectLibInput('x3daudio.lib');
 
 ?>

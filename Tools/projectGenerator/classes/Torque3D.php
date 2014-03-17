@@ -179,14 +179,10 @@ class Torque3D
             addProjectLibInput('WSOCK32.LIB');
             addProjectLibInput('vfw32.lib');
             addProjectLibInput('Imm32.lib');
-            addProjectLibInput('d3d9.lib');
-            addProjectLibInput('d3dx9.lib');
-            addProjectLibInput('DxErr.lib');
             addProjectLibInput('ole32.lib');
             addProjectLibInput('shell32.lib');
             addProjectLibInput('oleaut32.lib');
             addProjectLibInput('version.lib');
-			
 			addProjectLibInput( 'OpenGL32.lib' );
         }
 		

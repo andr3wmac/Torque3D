@@ -70,7 +70,7 @@
       <AdditionalOptions>/MP4 %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>{foreach item=def from=$projIncludes}{$def};{/foreach}$(DXSDK_DIR)/Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>{foreach item=def from=$projIncludes}{$def};{/foreach}%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>{foreach item=def from=$projDefines}{$def};{/foreach}TORQUE_DEBUG;TORQUE_DEBUG_GUARD;D3D_DEBUG_INFO;TORQUE_NET_STATS;UNICODE;_CRT_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -98,7 +98,7 @@
       <AdditionalDependencies>{foreach item=def from=$projLibsDebug}{$def};{/foreach}%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir){$projOutName}_DEBUG.dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>{foreach item=def from=$projLibDirs}{$def};{/foreach}{$projectOffset}../Link/VC2010.$(Configuration).$(PlatformName);$(DXSDK_DIR)/Lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>{foreach item=def from=$projLibDirs}{$def};{/foreach}{$projectOffset}../Link/VC2010.$(Configuration).$(PlatformName);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;{foreach item=def from=$projLibsIgnore}{$def};{/foreach}%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>{$projModuleDefinitionFile}</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>

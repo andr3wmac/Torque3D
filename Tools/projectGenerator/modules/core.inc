@@ -142,10 +142,8 @@ addEngineSrcDir( 'shaderGen' );
 switch( TorqueGenerator::$platform )
 {
    case "win32":
-      //addEngineSrcDir( 'gfx/D3D8' );
-      addEngineSrcDir( 'gfx/D3D' );
       addEngineSrcDir( 'gfx/D3D9' );
-      addEngineSrcDir( 'gfx/D3D9/pc' );
+      addEngineSrcDir( 'gfx/D3D11' );
       addEngineSrcDir( 'shaderGen/HLSL' );
 	  
 	  // GFX - GGL
