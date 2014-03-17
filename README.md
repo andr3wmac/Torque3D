@@ -43,3 +43,8 @@ DirectX 11 Support by Anis Hireche
 * gfxD3D11TextureManager - TODO
 * gfxD3D11TextureObject - TODO
 * gfxD3D11VertexBuffer - OK
+
+Additional Features
+----------------
+
+* Microsoft Visual Studio 2013 Fixes by Signmotion
