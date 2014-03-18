@@ -44,6 +44,7 @@
 #include "materials/shaderData.h"
 #include "gfx/gl/gfxGLStateCache.h"
 #include "gfx/gl/gfxGLVertexAttribLocation.h"
+#include "gfx/gl/gfxGLVertexDecl.h"
 
 GFXAdapter::CreateDeviceInstanceDelegate GFXGLDevice::mCreateDeviceInstance(GFXGLDevice::createInstance); 
 
@@ -158,8 +159,11 @@ GFXGLDevice::GFXGLDevice(U32 adapterIndex) :
    mCurrentShader( NULL ),
    mNeedUpdateVertexAttrib(false)
 {
-   for(int i = 0; i < MAX_STREAMS; ++i)      
-      mCurrentVB[i] = NULL;   
+   for(int i = 0; i < MAX_VERTEX_STREAMS; ++i)
+   {
+      mCurrentVB[i] = NULL;
+      mCurrentVB_Divisor[i] = 0;
+   }
 
    loadGLCore();
 
@@ -179,7 +183,7 @@ GFXGLDevice::GFXGLDevice(U32 adapterIndex) :
 
    mTextureCoordStartTop = false;
    mTexelPixelOffset = false;
-   mVertexStreamSupported = MAX_STREAMS;
+   mVertexStreamSupported = MAX_VERTEX_STREAMS;
 
    for(int i = 0; i < GS_COUNT; ++i)
       mModelViewProjSC[i] = NULL;
@@ -191,7 +195,7 @@ GFXGLDevice::~GFXGLDevice()
 {
    mCurrentStateBlock = NULL;
 
-   for(int i = 0; i < MAX_STREAMS; ++i)      
+   for(int i = 0; i < MAX_VERTEX_STREAMS; ++i)      
       mCurrentVB[i] = NULL;
    mCurrentPB = NULL;
    
@@ -237,7 +241,7 @@ void GFXGLDevice::zombify()
 {
    mTextureManager->zombify();
 
-   for(int i = 0; i < MAX_STREAMS; ++i)   
+   for(int i = 0; i < MAX_VERTEX_STREAMS; ++i)   
       if(mCurrentVB[i])
          mCurrentVB[i]->finish();
    if(mCurrentPB)
@@ -261,7 +265,7 @@ void GFXGLDevice::resurrect()
       walk->resurrect();
       walk = walk->getNextResource();
    }
-   for(int i = 0; i < MAX_STREAMS; ++i)   
+   for(int i = 0; i < MAX_VERTEX_STREAMS; ++i)   
       if(mCurrentVB[i])
          mCurrentVB[i]->prepare();
    if(mCurrentPB)
@@ -324,28 +328,38 @@ GFXPrimitiveBuffer *GFXGLDevice::allocPrimitiveBuffer( U32 numIndices, U32 numPr
 
 void GFXGLDevice::setVertexStream( U32 stream, GFXVertexBuffer *buffer, U32 frequency )
 {
-   // Reset the state the old VB required, then set the state the new VB requires.
-   if ( mCurrentVB[stream] )
-   {
-      mNeedUpdateVertexAttrib = true;
-      mCurrentVB[stream]->finish();
-   }
+   AssertFatal(stream <= 1, "GFXGLDevice::setVertexStream only support 2 stream (0: data, 1: instancing)");
 
-   mCurrentVB[stream] = static_cast<GFXGLVertexBuffer*>( buffer );   
-
-   if ( mCurrentVB[stream])
+   if(mCurrentVB[stream] != buffer)
    {
-      if(frequency == 1 && stream) // never get instanced data on stream 0
-         mCurrentVB[stream]->mDivisor = 1; // is istances data
-      else
-      {
-         mCurrentVB[stream]->mDivisor = 0; // non instanced, is vertex buffer
-         mDrawInstancesCount = frequency; // instances count
+      // Reset the state the old VB required, then set the state the new VB requires.
+      if( mCurrentVB[stream] )
+      {     
+         mCurrentVB[stream]->finish();
       }
 
-      mCurrentVB[stream]->prepare();
+      mCurrentVB[stream] = static_cast<GFXGLVertexBuffer*>( buffer );   
+
+      if( mCurrentVB[stream])
+      {
+         if( stream == 0 )
+         {
+            mCurrentVB_Divisor[stream] = 0; // non instanced, is vertex buffer
+         }
+         else
+         {
+            AssertFatal( stream == 1 && frequency == 1, "GFXGLDevice::setVertexStream - instancing stream(1) need a frequency of 1");
+            mCurrentVB_Divisor[stream] = 1; // is istances data
+         }
+
+         mCurrentVB[stream]->prepare(stream, mCurrentVB_Divisor[stream]);
+      }
+
       mNeedUpdateVertexAttrib = true;
    }
+
+   if( stream == 0 && mCurrentVB[stream] )
+      mDrawInstancesCount = frequency; // instances count   
 }
 
 GFXCubemap* GFXGLDevice::createCubemap()
@@ -436,6 +450,24 @@ inline GLsizei GFXGLDevice::primCountToIndexCount(GFXPrimitiveType primType, U32
    return 0;
 }
 
+GFXVertexDecl* GFXGLDevice::allocVertexDecl( const GFXVertexFormat *vertexFormat ) 
+{
+   typedef Map<void*, GFXGLVertexDecl> GFXGLVertexDeclMap;
+   static GFXGLVertexDeclMap declMap;   
+   GFXGLVertexDeclMap::Iterator itr = declMap.find( (void*)vertexFormat->getDescription().c_str() ); // description string are interned, safe to use c_str()
+   if(itr != declMap.end())
+      return &itr->value;
+
+   GFXGLVertexDecl &decl = declMap[(void*)vertexFormat->getDescription().c_str()];   
+   decl.init(vertexFormat);
+   return &decl;
+}
+
+void GFXGLDevice::setVertexDecl( const GFXVertexDecl *decl )
+{
+   static_cast<const GFXGLVertexDecl*>(decl)->prepareVertexFormat();
+}
+
 inline void GFXGLDevice::preDrawPrimitive()
 {
    if( mStateDirty )
@@ -446,47 +478,30 @@ inline void GFXGLDevice::preDrawPrimitive()
    if(mCurrentShaderConstBuffer)
       setShaderConstBufferInternal(mCurrentShaderConstBuffer);
 
-   if(mNeedUpdateVertexAttrib)
+   if( !gglHasExtension(ARB_vertex_attrib_binding) )
    {
-      U32 verxtexAttribActiveMask = 0;
-      for(int i = 0; i < MAX_STREAMS; ++i)
+      if( mNeedUpdateVertexAttrib )
       {
-          if(!mCurrentVB[i])
-             continue;
-
-          AssertFatal(!(verxtexAttribActiveMask & mCurrentVB[i]->getVertexAttribActiveMask()), "GFXGLDevice::preDrawPrimitive - vertex attribute index are duplicated");
-          verxtexAttribActiveMask |= mCurrentVB[i]->getVertexAttribActiveMask();
-      }
-
-      AssertFatal(verxtexAttribActiveMask, "GFXGLDevice::preDrawPrimitive - No vertex attribute are active");
-
-      U32 lastActiveVerxtexAttrib = GFXGL->getOpenglCache()->getCacheVertexAttribActive();
-
-      for(int i = 0; i < Torque::GL_VertexAttrib_COUNT; ++i)
-      {
-         //if is active but not in last mask
-         if( ( verxtexAttribActiveMask & BIT(i) ) && !( lastActiveVerxtexAttrib & BIT(i) ) )
+         AssertFatal(mCurrVertexDecl, "");
+         const GFXGLVertexDecl* decl = static_cast<const GFXGLVertexDecl*>(mCurrVertexDecl);
+      
+         for(int i = 0; i < getVertexStreamSupported(); ++i)
          {
-            glEnableVertexAttribArray(i);
+            if(mCurrentVB[i])
+               decl->prepareBuffer_old( i, mCurrentVB[i]->mBuffer, mCurrentVB_Divisor[i] );
          }
-         // if not active but in last mask
-         else if( !( verxtexAttribActiveMask & BIT(i) ) && ( lastActiveVerxtexAttrib & BIT(i) ) )
-         {
-             glDisableVertexAttribArray(i);
-         }
+
+         decl->updateActiveVertexAttrib( GFXGL->getOpenglCache()->getCacheVertexAttribActive() );         
       }
-
-      GFXGL->getOpenglCache()->setCacheVertexAttribActive(verxtexAttribActiveMask);
-
-      mNeedUpdateVertexAttrib = false;
    }
+
+   mNeedUpdateVertexAttrib = false;
 }
 
 inline void GFXGLDevice::postDrawPrimitive(U32 primitiveCount)
 {
    mDeviceStatistics.mDrawCalls++;
    mDeviceStatistics.mPolyCount += primitiveCount;
-   mDrawInstancesCount = 0;
 }
 
 void GFXGLDevice::drawPrimitive( GFXPrimitiveType primType, U32 vertexStart, U32 primitiveCount ) 

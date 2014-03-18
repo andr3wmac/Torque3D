@@ -40,6 +40,7 @@ class GFXGLPrimitiveBuffer;
 class GFXGLTextureTarget;
 class GFXGLCubemap;
 class GFXGLStateCache;
+class GFXGLVertexDecl;
 
 class GFXGLDevice : public GFXDevice
 {
@@ -135,6 +136,8 @@ public:
    bool supportsAnisotropic() const { return mSupportsAnisotropic; }
 
    GFXGLStateCache* getOpenglCache() { return mOpenglStateCache; }
+
+   static const U32 MAX_VERTEX_STREAMS = 4; // TODO OPENGL revise
       
 protected:   
    /// Called by GFXDevice to create a device specific stateblock
@@ -170,16 +173,11 @@ protected:
    // NOTE: The GL device doesn't need a vertex declaration at
    // this time, but we need to return something to keep the system
    // from retrying to allocate one on every call.
-   virtual GFXVertexDecl* allocVertexDecl( const GFXVertexFormat *vertexFormat ) 
-   {
-      static GFXVertexDecl decl;
-      return &decl; 
-   }
+   virtual GFXVertexDecl* allocVertexDecl( const GFXVertexFormat *vertexFormat );
 
-   virtual void setVertexDecl( const GFXVertexDecl *decl ) { }
+   virtual void setVertexDecl( const GFXVertexDecl *decl );
 
    virtual void setVertexStream( U32 stream, GFXVertexBuffer *buffer, U32 frequency );
-   virtual void setVertexStreamFrequency( U32 stream, U32 frequency ) {};
 
 private:
    typedef GFXDevice Parent;
@@ -193,8 +191,9 @@ private:
    static GFXAdapter::CreateDeviceInstanceDelegate mCreateDeviceInstance; 
 
    U32 mAdapterIndex;
-   static const U32 MAX_STREAMS = 4; // TODO OPENGL revise
-   StrongRefPtr<GFXGLVertexBuffer> mCurrentVB[MAX_STREAMS];
+   
+   StrongRefPtr<GFXGLVertexBuffer> mCurrentVB[MAX_VERTEX_STREAMS];
+   U32 mCurrentVB_Divisor[MAX_VERTEX_STREAMS];
    bool mNeedUpdateVertexAttrib;
    StrongRefPtr<GFXGLPrimitiveBuffer> mCurrentPB;
    U32 mDrawInstancesCount;

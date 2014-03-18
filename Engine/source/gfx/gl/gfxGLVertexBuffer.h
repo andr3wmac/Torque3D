@@ -43,36 +43,22 @@ public:
 
 	virtual void lock(U32 vertexStart, U32 vertexEnd, void **vertexPtr); ///< calls glMapBuffer and offsets the pointer by vertex start
 	virtual void unlock(); ///< calls glUnmapBuffer, unbinds the buffer
-	virtual void prepare(); ///< Binds the buffer
-   virtual void finish(); ///< We're done here
+	virtual void prepare(); ///< Do nothing. Use void prepare(U32 stream, U32 divisor).
+   virtual void finish(); ///< Do nothing.
+
+   void prepare(U32 stream, U32 divisor);
 
 	GLvoid* getBuffer(); ///< returns NULL
 
    // GFXResource interface
    virtual void zombify();
    virtual void resurrect();
-   GLuint mDivisor;
-   U32 getVertexAttribActiveMask() const { return mVertexAttribActiveMask; }
 
 private:
    friend class GFXGLDevice;
 	/// GL buffer handle
 	GLuint mBuffer;
    U8* mZombieCache;
-
-   struct glVertexDecl
-   {
-      GLint attrIndex;
-      GLint elementCount; // 1 - 4
-      GLenum type; // GL_FLOAT...
-      GLboolean normalized;
-      GLsizei stride;
-      GLvoid *pointerFirst;
-   };
-
-   U32 mVertexAttribActiveMask;
-   Vector<glVertexDecl> glVerticesFormat;  
-   void _initVerticesFormat();
 
    //FrameAllocator
    U32 mFrameAllocatorMark;
