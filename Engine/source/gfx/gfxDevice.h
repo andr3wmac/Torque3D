@@ -586,9 +586,6 @@ protected:
    /// Sets the vertex buffer on the device.
    virtual void setVertexStream( U32 stream, GFXVertexBuffer *buffer, U32 frequency ) = 0;
 
-   /// Set the vertex stream frequency on the device.
-   virtual void setVertexStreamFrequency( U32 stream, U32 frequency ) = 0;
-
    /// The maximum number of supported vertex streams which
    /// may be more than the device supports.
    static const U32 VERTEX_STREAM_COUNT = 4;
