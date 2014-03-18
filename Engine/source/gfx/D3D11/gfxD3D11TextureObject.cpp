@@ -65,8 +65,11 @@ GFXLockedRect *GFXD3D11TextureObject::lock(U32 mipLevel /*= 0*/, RectI *inRect /
 {
    AssertFatal( !mLocked, "GFXD3D11TextureObject::lock - The texture is already locked!" );
 
+   D3D11_MAPPED_SUBRESOURCE mapInfo;
+
    if( mProfile->isRenderTarget() )
    {
+      AssertFatal( 0, "GFXD3D11TextureObject::lock - Need to handle mapping render targets" );
       if( !mLockTex || 
           mLockTex->getWidth() != getWidth() ||
           mLockTex->getHeight() != getHeight() )
@@ -75,42 +78,6 @@ GFXLockedRect *GFXD3D11TextureObject::lock(U32 mipLevel /*= 0*/, RectI *inRect /
       }
 
       PROFILE_START(GFXD3D11TextureObject_lockRT);
-
-	  //ID3D11Texture2D *source;
-	  D3D11_TEXTURE2D_DESC sourceDesc;
-      get2DTex()->GetDesc( &sourceDesc );
-
-      //ID3D11Texture2D *dest;
-      //GFXD3D11TextureObject *to = (GFXD3D11TextureObject *) &(*mLockTex);
-      //hr = to->get2DTex()->GetSurfaceLevel( 0, &dest );
-
-      //if(FAILED(hr)) 
-	  {
-		 // AssertFatal(false, "GFXD3D11TextureObject::lock - failed to get dest texture's surface.");
-	  }
-
-      //HRESULT rtLockRes = static_cast<GFXD3D11Device *>(GFX)->getDeviceContext()->CopyResource( dest, source );
-      //source->Release();
-
-      //if(!SUCCEEDED(rtLockRes))
-      {
-         // This case generally occurs if the device is lost. The lock failed
-         // so clean up and return NULL.
-         //dest->Release();
-         //PROFILE_END();
-         //return NULL;
-      }
-
-      //hr = dest->LockRect( &mLockRect, NULL, D3DLOCK_READONLY );
-
-      //if(FAILED(hr)) 
-	  {
-		  //AssertFatal(false, "LockRect call failure");
-	  }
-
-      //dest->Release();
-      mLocked = true;
-
       PROFILE_END();
    }
    else
@@ -125,19 +92,17 @@ GFXLockedRect *GFXD3D11TextureObject::lock(U32 mipLevel /*= 0*/, RectI *inRect /
          r.right  = inRect->point.x + inRect->extent.x;
       }
 
-      //HRESULT hr = get2DTex()->LockRect(mipLevel, &mLockRect, inRect ? &r : NULL, 0);
-
-      //if(FAILED(hr)) 
-	  {
-		  //AssertFatal(false, "GFXD3D11TextureObject::lock - could not lock non-RT texture!");
-	  }
-
+      mLockedSubresource = D3D11CalcSubresource(mipLevel, 0, getMipLevels());
+      HRESULT hResult = static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->Map(mD3DTexture, mLockedSubresource, D3D11_MAP_WRITE, 0, &mapInfo); 
+      
       mLocked = true;
 
    }
 
-   // GFXLockedRect is set up to correspond to DXGI_MAPPED_RECT, so this is ok.
-   return (GFXLockedRect*)&mLockRect; 
+   mLockRect.pBits = static_cast<U8*>(mapInfo.pData);
+   mLockRect.Pitch = mapInfo.RowPitch;
+
+   return (GFXLockedRect*)&mLockRect;
 }
 
 void GFXD3D11TextureObject::unlock(U32 mipLevel)
@@ -146,29 +111,12 @@ void GFXD3D11TextureObject::unlock(U32 mipLevel)
 
    if( mProfile->isRenderTarget() )
    {
-      //IDirect3DSurface9 *dest;
-      //GFXD3D11TextureObject *to = (GFXD3D11TextureObject *) &(*mLockTex);
-      //HRESULT hr = to->get2DTex()->GetSurfaceLevel( 0, &dest );
-
-      //if(FAILED(hr)) 
-	  {
-		  AssertFatal(false, "GetSurfaceLevel call failure");
-	  }
-
-      //dest->UnlockRect();
-      //dest->Release();
-
+      AssertFatal( 0, "GFXD3D11TextureObject::unlock - Need to handle mapping render targets" );
       mLocked = false;
    }
    else
    {
-      //HRESULT hr = get2DTex()->UnlockRect(mipLevel);
-
-	  //if(FAILED(hr)) 
-	  {
-		  //AssertFatal(false, "GFXD3D11TextureObject::unlock - could not unlock non-RT texture.");
-	  }
-
+      static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->Unmap(get2DTex(), mLockedSubresource);
       mLocked = false;
    }
 }

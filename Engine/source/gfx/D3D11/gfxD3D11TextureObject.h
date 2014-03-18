@@ -34,26 +34,36 @@
 class GFXD3D11TextureObject : public GFXTextureObject
 {
 protected:
-   static U32		mTexCount;
-   GFXTexHandle		mLockTex;
-   DXGI_MAPPED_RECT mLockRect;
-   bool				mLocked;
+   static U32		      mTexCount;
+   GFXTexHandle		   mLockTex;
+   DXGI_MAPPED_RECT     mLockRect;
+   bool				      mLocked;
 
-   ID3D11Texture1D *mD3DTexture;
+   U32                  mLockedSubresource;
+
+   ID3D11Device         *mD3DDevice;
+   ID3D11Texture1D      *mD3DTexture;
 
    // used for z buffers...
-   ID3D11Texture2D *mD3DSurface;
+   ID3D11Texture2D      *mD3DSurface;
+
+public:
+   bool                 isManaged;
 
 public:
 
    GFXD3D11TextureObject( GFXDevice * d, GFXTextureProfile *profile);
    ~GFXD3D11TextureObject();
 
+   void                 setTex(ID3D11Texture1D* val) { mD3DTexture = val; }
+   void                 setTex(ID3D11Texture2D* val) { mD3DTexture = (ID3D11Texture1D*)val; }
+   void                 setTex(ID3D11Texture3D* val) { mD3DTexture = (ID3D11Texture1D*)val; }
    ID3D11Texture1D*     getTex(){ return mD3DTexture; }
    ID3D11Texture2D*     get2DTex(){ return (ID3D11Texture2D*) mD3DTexture; }
    ID3D11Texture2D**    get2DTexPtr(){ return (ID3D11Texture2D**) &mD3DTexture; }
    ID3D11Texture3D*		get3DTex(){ return (ID3D11Texture3D*) mD3DTexture; }
-   ID3D11Texture3D**	get3DTexPtr(){ return (ID3D11Texture3D**) &mD3DTexture; }
+   ID3D11Texture3D**	   get3DTexPtr(){ return (ID3D11Texture3D**) &mD3DTexture; }
+   
 
    void release();
 
@@ -61,8 +71,8 @@ public:
    virtual void unlock(U32 mipLevel = 0 );
 
    virtual bool			copyToBmp(GBitmap* bmp);
-   ID3D11Texture2D*		getSurface() {return mD3DSurface;}
-   ID3D11Texture2D**	getSurfacePtr() {return &mD3DSurface;}
+   ID3D11Texture2D*		getSurface() { return mD3DSurface; }
+   ID3D11Texture2D**	   getSurfacePtr() { return &mD3DSurface; }
 
    // GFXResource
    void zombify();

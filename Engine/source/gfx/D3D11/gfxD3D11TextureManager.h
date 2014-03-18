@@ -59,7 +59,8 @@ protected:
    bool _freeTexture(GFXTextureObject *texture, bool zombify = false);
 
 private:
-   U32 mCurTexSet[TEXTURE_STAGE_COUNT];
+   ID3D11Device     *mD3DDevice;
+   U32              mCurTexSet[TEXTURE_STAGE_COUNT];
 
    void _innerCreateTexture(GFXD3D11TextureObject *obj, U32 height, U32 width, U32 depth, GFXFormat format, GFXTextureProfile *profile, U32 numMipLevels, bool forceMips = false, S32 antialiasLevel = 0);
 };
