@@ -93,8 +93,10 @@ GFXLockedRect *GFXD3D11TextureObject::lock(U32 mipLevel /*= 0*/, RectI *inRect /
       }
 
       mLockedSubresource = D3D11CalcSubresource(mipLevel, 0, getMipLevels());
-      HRESULT hResult = static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->Map(mD3DTexture, mLockedSubresource, D3D11_MAP_WRITE, 0, &mapInfo); 
-      
+      HRESULT hr = static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->Map(mD3DTexture, mLockedSubresource, D3D11_MAP_WRITE, 0, &mapInfo); 
+      if ( FAILED(hr) )
+         AssertFatal(false, "GFXD3D11TextureObject::lock - Failed to map subresource.");
+
       mLocked = true;
 
    }

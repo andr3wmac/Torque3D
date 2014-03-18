@@ -124,9 +124,9 @@ void GFXD3D11TextureManager::_innerCreateTexture( GFXD3D11TextureObject *retTex,
       sTexDesc3D.MiscFlags			= misc;
 
       ID3D11Texture3D* tex3D;
-      HRESULT hResult = mD3DDevice->CreateTexture3D(&sTexDesc3D, NULL, &tex3D);
-
-      AssertFatal(hResult, "GFXD3D11TextureManager::_createTexture - failed to create volume texture!");
+      HRESULT hr = mD3DDevice->CreateTexture3D(&sTexDesc3D, NULL, &tex3D);
+      if ( FAILED(hr) )
+         AssertFatal(false, "GFXD3D11TextureManager::_createTexture - failed to create volume texture!");
 
       retTex->setTex(tex3D);
       retTex->mTextureSize.set( width, height, depth );
@@ -154,30 +154,31 @@ void GFXD3D11TextureManager::_innerCreateTexture( GFXD3D11TextureObject *retTex,
             sTexDesc2D.SampleDesc.Quality = 0;
             sTexDesc2D.SampleDesc.Count = 1;
             break;
+
          case AA_MATCH_BACKBUFFER :
             sTexDesc2D.SampleDesc.Quality = 0;
             sTexDesc2D.SampleDesc.Count = 1;
             //sTexDesc2D.SampleDesc = d3d->getMultisampleInfo();
             break;
+
          default :
          {
-               sTexDesc2D.SampleDesc.Quality = 0;
-               sTexDesc2D.SampleDesc.Count = antialiasLevel;
+            sTexDesc2D.SampleDesc.Quality = 0;
+            sTexDesc2D.SampleDesc.Count = antialiasLevel;
 #ifdef TORQUE_DEBUG
-               UINT numQualityLevels;
-               mD3DDevice->CheckMultisampleQualityLevels(d3dTextureFormat, antialiasLevel, &numQualityLevels);
-               AssertFatal(numQualityLevels, "Invalid AA level!");
+            UINT numQualityLevels;
+            mD3DDevice->CheckMultisampleQualityLevels(d3dTextureFormat, antialiasLevel, &numQualityLevels);
+            AssertFatal(numQualityLevels, "Invalid AA level!");
 #endif
-               break;
+            break;
          }
       }
 
       ID3D11Texture2D* tex2D;
-
-      HRESULT hResult = mD3DDevice->CreateTexture2D(&sTexDesc2D, NULL, &tex2D);
-
-      AssertFatal(hResult, "Failed to create texture");
-
+      HRESULT hr = mD3DDevice->CreateTexture2D(&sTexDesc2D, NULL, &tex2D);
+      if( FAILED(hr) )
+         AssertFatal(false, "Failed to create texture!");
+      
       retTex->setTex(tex2D);
       retTex->mFormat = format;
       retTex->mMipLevels = numMipLevels;
@@ -245,34 +246,33 @@ bool GFXD3D11TextureManager::_loadTexture(GFXTextureObject *aTexture, GBitmap *p
    {
       U32 subresource = D3D11CalcSubresource(i, 0, aTexture->mMipLevels);
 
-	  DXGI_MAPPED_RECT lockedRect;
-	  D3D11_MAPPED_SUBRESOURCE* mapping;
-	  dev->getDeviceContext()->Map(texture->get2DTex(), subresource, D3D11_MAP_WRITE, 0, mapping);
+      DXGI_MAPPED_RECT lockedRect;
+      D3D11_MAPPED_SUBRESOURCE* mapping;
+      dev->getDeviceContext()->Map(texture->get2DTex(), subresource, D3D11_MAP_WRITE, 0, mapping);
 
       switch( texture->mFormat )
       {
-      case GFXFormatR8G8B8:
+         case GFXFormatR8G8B8:
          {
-			 PROFILE_SCOPE(Swizzle24_Upload);
-             AssertFatal(pDL->getFormat() == GFXFormatR8G8B8, "Assumption failed");
+            PROFILE_SCOPE(Swizzle24_Upload);
+            AssertFatal(pDL->getFormat() == GFXFormatR8G8B8, "Assumption failed");
 
-			 U8* Bits = new U8[pDL->getWidth(i) * pDL->getHeight(i) * 4];
-             dMemcpy(Bits, pDL->getBits(i), pDL->getWidth(i) * pDL->getHeight(i) * 3);
-			 bitmapConvertRGB_to_RGBX(&Bits, pDL->getWidth(i) * pDL->getHeight(i));
-
-             GFX->getDeviceSwizzle32()->ToBuffer(lockedRect.pBits, Bits, pDL->getWidth(i) * pDL->getHeight(i) * 4);
+			   U8* Bits = new U8[pDL->getWidth(i) * pDL->getHeight(i) * 4];
+            dMemcpy(Bits, pDL->getBits(i), pDL->getWidth(i) * pDL->getHeight(i) * 3);
+            bitmapConvertRGB_to_RGBX(&Bits, pDL->getWidth(i) * pDL->getHeight(i));
+            GFX->getDeviceSwizzle32()->ToBuffer(lockedRect.pBits, Bits, pDL->getWidth(i) * pDL->getHeight(i) * 4);
          }
          break;
 
-      case GFXFormatR8G8B8A8:
-      case GFXFormatR8G8B8X8:
+         case GFXFormatR8G8B8A8:
+         case GFXFormatR8G8B8X8:
          {
             PROFILE_SCOPE(Swizzle32_Upload);
             GFX->getDeviceSwizzle32()->ToBuffer(lockedRect.pBits, pDL->getBits(i), pDL->getWidth(i) * pDL->getHeight(i) * pDL->getBytesPerPixel());
          }
          break;
 
-      default:
+         default:
          {
             // Just copy the bits in no swizzle or padding
             PROFILE_SCOPE(SwizzleNull_Upload);
@@ -281,7 +281,7 @@ bool GFXD3D11TextureManager::_loadTexture(GFXTextureObject *aTexture, GBitmap *p
          }
       }
 
-	  dev->getDeviceContext()->Unmap(texture->get2DTex(), subresource);
+      dev->getDeviceContext()->Unmap(texture->get2DTex(), subresource);
    }
 
    return true;          
@@ -397,16 +397,13 @@ bool GFXD3D11TextureManager::_loadTexture(GFXTextureObject *aTexture, DDSFile *d
    PROFILE_SCOPE(GFXD3D11TextureManager_loadTextureDDS);
 
    GFXD3D11TextureObject *texture = static_cast<GFXD3D11TextureObject*>(aTexture);
-
    GFXD3D11Device* dev = static_cast<GFXD3D11Device *>(GFX);
 
    // Fill the texture...
    for( int i = 0; i < aTexture->mMipLevels; i++ )
    {
       PROFILE_SCOPE(GFXD3DTexMan_loadSurface);
-
       U32 subresource = D3D11CalcSubresource(i, 0, aTexture->mMipLevels);
-
       dev->getDeviceContext()->UpdateSubresource(texture->get2DTex(), subresource, 0, dds->mSurfaces[0]->mMips[i], dds->getSurfacePitch(i), 0);
    }
 
