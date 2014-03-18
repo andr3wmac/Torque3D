@@ -23,12 +23,12 @@
 
 beginModule( 'dsound' );
 
-   if ( TorqueGenerator::$platform == "win32" )
+   if ( Generator::$platform == "win32" )
    {
       addEngineSrcDir('sfx/dsound');
       addEngineSrcDir('sfx/xaudio');
    }
-   else if ( TorqueGenerator::$platform == "360" )
+   else if ( Generator::$platform == "360" )
       addEngineSrcDir('sfx/xaudio');
 
 endModule();
