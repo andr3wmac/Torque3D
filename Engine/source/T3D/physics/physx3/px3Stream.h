@@ -1,4 +1,3 @@
-<?php
 //-----------------------------------------------------------------------------
 // Copyright (c) 2012 GarageGames, LLC
 //
@@ -21,16 +20,58 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-beginModule( 'dsound' );
+#ifndef _T3D_PHYSICS_PX3STREAM_H_
+#define _T3D_PHYSICS_PX3STREAM_H_
 
-   if ( TorqueGenerator::$platform == "win32" )
-   {
-      addEngineSrcDir('sfx/dsound');
-      addEngineSrcDir('sfx/xaudio');
-   }
-   else if ( TorqueGenerator::$platform == "360" )
-      addEngineSrcDir('sfx/xaudio');
+#ifndef _PHYSX3_H_
+#include "T3D/physics/physx3/px3.h"
+#endif
+#ifndef _MEMSTREAM_H_
+#include "core/stream/memStream.h"
+#endif
 
-endModule();
 
-?>
+class Px3MemOutStream : public physx::PxOutputStream
+{
+public:
+   
+   Px3MemOutStream();
+	virtual ~Px3MemOutStream();
+			
+   void resetPosition();
+
+	virtual physx::PxU32  write(const void *src, physx::PxU32 count);
+	physx::PxU32 getSize() const {return mMemStream.getStreamSize();}
+	physx::PxU8* getData() const {return (physx::PxU8*)mMemStream.getBuffer();}
+
+protected:
+
+   mutable MemStream mMemStream;
+};
+
+class Px3MemInStream: public physx::PxInputData
+{
+	public:
+		Px3MemInStream(physx::PxU8* data, physx::PxU32 length);
+		virtual physx::PxU32 read(void* dest, physx::PxU32 count);
+		physx::PxU32 getLength() const;
+		virtual void seek(physx::PxU32 pos);
+		virtual physx::PxU32 tell() const;
+protected:
+   mutable MemStream mMemStream;
+
+	};
+
+class Px3ConsoleStream : public physx::PxDefaultErrorCallback
+{
+protected:
+
+  virtual void reportError( physx::PxErrorCode code, const char *message, const char* file, int line );
+
+public:
+
+   Px3ConsoleStream();
+   virtual ~Px3ConsoleStream();
+};
+
+#endif

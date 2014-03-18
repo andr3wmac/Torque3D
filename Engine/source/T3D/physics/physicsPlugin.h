@@ -42,6 +42,8 @@
 #include "T3D/physics/physicsCommon.h"
 #endif
 
+#include "T3D/physics/physicsCloth.h"
+#include "ts/tsShapeInstance.h"
 
 class Player;
 class SceneRenderState;
@@ -130,6 +132,9 @@ public:
    virtual void destroyWorld( const String &worldName ) = 0;
 
    virtual PhysicsWorld* getWorld( const String &worldName ) const = 0;
+
+   // andrewmac: Cloth
+   virtual PhysicsCloth* createCloth(TSShapeInstance* shapeInst, const MatrixF &transform) = 0;
 
 protected:
 

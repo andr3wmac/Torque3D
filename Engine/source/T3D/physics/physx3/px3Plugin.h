@@ -1,4 +1,3 @@
-<?php
 //-----------------------------------------------------------------------------
 // Copyright (c) 2012 GarageGames, LLC
 //
@@ -21,16 +20,44 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-beginModule( 'dsound' );
+#ifndef _T3D_PHYSICS_PX3PLUGIN_H_
+#define _T3D_PHYSICS_PX3PLUGIN_H_
 
-   if ( TorqueGenerator::$platform == "win32" )
-   {
-      addEngineSrcDir('sfx/dsound');
-      addEngineSrcDir('sfx/xaudio');
-   }
-   else if ( TorqueGenerator::$platform == "360" )
-      addEngineSrcDir('sfx/xaudio');
+#ifndef _T3D_PHYSICS_PHYSICSPLUGIN_H_
+#include "T3D/physics/physicsPlugin.h"
+#endif
 
-endModule();
+class Px3ClothShape;
 
-?>
+class Px3Plugin : public PhysicsPlugin
+{
+public:
+
+   Px3Plugin();
+   ~Px3Plugin();
+
+   /// Create function for factory.
+   static PhysicsPlugin* create();
+
+   // PhysicsPlugin
+   virtual void destroyPlugin();
+   virtual void reset();
+   virtual PhysicsCollision* createCollision();
+   virtual PhysicsBody* createBody();
+   virtual PhysicsPlayer* createPlayer();
+   virtual bool isSimulationEnabled() const;
+   virtual void enableSimulation( const String &worldName, bool enable );
+   virtual void setTimeScale( const F32 timeScale );
+   virtual const F32 getTimeScale() const;
+   virtual bool createWorld( const String &worldName );
+   virtual void destroyWorld( const String &worldName );
+   virtual PhysicsWorld* getWorld( const String &worldName ) const;
+   virtual PhysicsWorld* getWorld() const;
+   virtual U32 getWorldCount() const;
+
+
+   // andrewmac: Cloth		
+   PhysicsCloth* createCloth(TSShapeInstance* shapeInst, const MatrixF &transform);
+};
+
+#endif 

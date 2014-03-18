@@ -24,25 +24,26 @@
 #define _TSSTATIC_H_
 
 #ifndef _SCENEOBJECT_H_
-#include "scene/sceneObject.h"
+    #include "scene/sceneObject.h"
 #endif
 #ifndef _CONVEX_H_
-#include "collision/convex.h"
+    #include "collision/convex.h"
 #endif
 #ifndef __RESOURCE_H__
-#include "core/resource.h"
+    #include "core/resource.h"
 #endif
 #ifndef _NETSTRINGTABLE_H_
    #include "sim/netStringTable.h"
 #endif
 #ifndef _TSSHAPE_H_
-#include "ts/tsShape.h"
+    #include "ts/tsShape.h"
 #endif
 
 class TSShapeInstance;
 class TSThread;
 class TSStatic;
 class PhysicsBody;
+class PhysicsCloth;
 struct ObjectRenderInst;
 
 
@@ -151,6 +152,13 @@ protected:
 
    bool              mPlayAmbient;
    TSThread*         mAmbientThread;
+
+   // andrewmac: PhysX3 Cloth Add-on
+   bool              mEnablePhysicsRep;
+   bool              mClothEnabled;
+   PhysicsCloth*     mCloth;
+   void              _enableCloth();
+   void              _disableCloth();
 
    /// The type of mesh data to return for collision queries.
    MeshType mCollisionType;

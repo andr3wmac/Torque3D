@@ -1,6 +1,6 @@
-<?php
 //-----------------------------------------------------------------------------
-// Copyright (c) 2012 GarageGames, LLC
+// Authors: 
+//        Andrew MacIntyre - Aldyre Studios - aldyre.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to
@@ -21,16 +21,27 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-beginModule( 'dsound' );
+#ifndef _T3D_PHYSICS_PHYSICSCLOTH_H_
+#define _T3D_PHYSICS_PHYSICSCLOTH_H_
 
-   if ( TorqueGenerator::$platform == "win32" )
-   {
-      addEngineSrcDir('sfx/dsound');
-      addEngineSrcDir('sfx/xaudio');
-   }
-   else if ( TorqueGenerator::$platform == "360" )
-      addEngineSrcDir('sfx/xaudio');
+#ifndef _T3D_PHYSICSCOMMON_H_
+#include "T3D/physics/physicsCommon.h"
+#endif
+#ifndef _T3D_PHYSICS_PHYSICSOBJECT_H_
+#include "T3D/physics/physicsObject.h"
+#endif
 
-endModule();
+#include "ts/tsShapeInstance.h"
 
-?>
+class PhysicsCloth
+{
+public:
+   virtual ~PhysicsCloth() {}
+
+   virtual bool init(TSShapeInstance* shapeInst, const MatrixF &transform) { return false; }
+   virtual void release() {}
+   virtual void processTick() {}
+   virtual void setTransform( const MatrixF &mat ) {}
+};
+
+#endif // _T3D_PHYSICS_PHYSICSBODY_H_

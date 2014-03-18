@@ -534,8 +534,8 @@ void TSShapeInstance::render( const TSRenderState &rdata, S32 dl, F32 intraDL )
    for (i=start; i<end; i++)
    {
       // following line is handy for debugging, to see what part of the shape that it is rendering
-      const char *name = mShape->names[ mMeshObjects[i].object->nameIndex ];
-      mMeshObjects[i].render( od, mMaterialList, rdata, mAlphaAlways ? mAlphaAlwaysValue : 1.0f, name );
+      // const char *name = mShape->names[ mMeshObjects[i].object->nameIndex ];
+      mMeshObjects[i].render( od, mMaterialList, rdata, mAlphaAlways ? mAlphaAlwaysValue : 1.0f );
    }
 }
 
@@ -715,8 +715,7 @@ void TSShapeInstance::ObjectInstance::render( S32, TSMaterialList *, const TSRen
 void TSShapeInstance::MeshObjectInstance::render(  S32 objectDetail, 
                                                    TSMaterialList *materials, 
                                                    const TSRenderState &rdata, 
-                                                   F32 alpha,
-                                                   const char* meshName )
+                                                   F32 alpha )
 {
    PROFILE_SCOPE( TSShapeInstance_MeshObjectInstance_render );
 
@@ -748,13 +747,14 @@ void TSShapeInstance::MeshObjectInstance::render(  S32 objectDetail,
    const U32 currTime = Sim::getCurrentTime();
    bool isSkinDirty = currTime != mLastTime;
 
-   mesh->render(  materials, 
-                  rdata, 
-                  isSkinDirty,
-                  *mTransforms, 
-                  mVertexBuffer,
-                  mPrimitiveBuffer,
-                  meshName );
+	// andrewmac: Vertex Override
+	mesh->render(  materials, 
+					rdata, 
+					isSkinDirty,
+					*mTransforms, 
+					mVertexBuffer,
+					mPrimitiveBuffer, 
+					vertexOverride );
 
    // Update the last render time.
    mLastTime = currTime;
@@ -764,7 +764,8 @@ void TSShapeInstance::MeshObjectInstance::render(  S32 objectDetail,
 
 TSShapeInstance::MeshObjectInstance::MeshObjectInstance() 
    : meshList(0), object(0), frame(0), matFrame(0),
-     visible(1.0f), forceHidden(false), mLastTime( 0 )
+     visible(1.0f), forceHidden(false), mLastTime( 0 ),
+	 vertexOverride(NULL) // andrewmac: vertex override.
 {
 }
 
@@ -780,3 +781,17 @@ void TSShapeInstance::prepCollision()
    }
 }
 
+// andremwac : Find Mesh Instances by name.
+Vector<TSShapeInstance::MeshObjectInstance*> TSShapeInstance::findMeshInstances(const String& meshPrefix)
+{
+	Vector<TSShapeInstance::MeshObjectInstance*> results;
+	for ( U32 i = 0; i < mMeshObjects.size(); i++ )
+    {
+		TSShapeInstance::MeshObjectInstance* mesh = &mMeshObjects[i];
+		if ( mShape->getMeshName(i).startsWith(meshPrefix) )
+		{
+			results.push_back(mesh);
+		}
+	}
+	return results;
+}

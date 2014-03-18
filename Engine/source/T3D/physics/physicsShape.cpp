@@ -76,6 +76,7 @@ PhysicsShapeData::PhysicsShapeData()
       angularSleepThreshold( 1.0f ),
       waterDampingScale( 1.0f ),
       buoyancyDensity( 0.0f ),
+      ccdEnabled( false ),
       simType( SimType_ClientServer )      
 {
 }
@@ -106,7 +107,12 @@ void PhysicsShapeData::initPersistFields()
    endGroup("Media");
 
    addGroup( "Physics" );
-      
+
+      addField( "ccd", TypeBool, Offset( ccdEnabled, PhysicsShapeData ),
+         "@brief Enable CCD support for this body.\n\n"
+         "Continuous Collision Detection support for fast moving objects.\n"
+         "@note Currently only supported in the PhysX 3 physics plugin.");
+
       addField( "mass", TypeF32, Offset( mass, PhysicsShapeData ),
          "@brief Value representing the mass of the shape.\n\n"
          "A shape's mass influences the magnitude of any force exerted on it. "
@@ -192,6 +198,7 @@ void PhysicsShapeData::packData( BitStream *stream )
    stream->write( angularSleepThreshold );
    stream->write( waterDampingScale );
    stream->write( buoyancyDensity );
+   stream->write( ccdEnabled );
 
    stream->writeInt( simType, SimType_Bits );
 
@@ -216,6 +223,7 @@ void PhysicsShapeData::unpackData( BitStream *stream )
    stream->read( &angularSleepThreshold );
    stream->read( &waterDampingScale );
    stream->read( &buoyancyDensity );
+   stream->read( &ccdEnabled );
 
    simType = (SimType)stream->readInt( SimType_Bits );
 
@@ -739,11 +747,14 @@ bool PhysicsShape::_createShape()
       return true;
 
    mWorld = PHYSICSMGR->getWorld( isServerObject() ? "server" : "client" );
-      
+   U32 bodyFlags = isDynamic ? 0 : PhysicsBody::BF_KINEMATIC; 
+   if(db->ccdEnabled)
+      bodyFlags |= PhysicsBody::BF_CCD;
+
    mPhysicsRep = PHYSICSMGR->createBody();
    mPhysicsRep->init(   db->colShape, 
                         db->mass, 
-                        isDynamic ? 0 : PhysicsBody::BF_KINEMATIC,  
+                        bodyFlags,  
                         this, 
                         mWorld );
 

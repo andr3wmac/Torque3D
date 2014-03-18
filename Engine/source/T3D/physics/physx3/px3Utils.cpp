@@ -1,4 +1,3 @@
-<?php
 //-----------------------------------------------------------------------------
 // Copyright (c) 2012 GarageGames, LLC
 //
@@ -21,16 +20,13 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-beginModule( 'dsound' );
+#include "platform/platform.h"
+#include "T3D/physics/physx3/px3Utils.h"
+#include "T3D/physics/physx3/px3.h"
 
-   if ( TorqueGenerator::$platform == "win32" )
-   {
-      addEngineSrcDir('sfx/dsound');
-      addEngineSrcDir('sfx/xaudio');
-   }
-   else if ( TorqueGenerator::$platform == "360" )
-      addEngineSrcDir('sfx/xaudio');
-
-endModule();
-
-?>
+physx::PxShape* px3GetFirstShape(physx::PxRigidActor *actor)
+{
+	physx::PxShape *shapes[1];
+	actor->getShapes(shapes, 1);
+	return shapes[0];
+}

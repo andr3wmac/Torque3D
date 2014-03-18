@@ -44,17 +44,6 @@ public:
 
 protected:
 
-   /// Extended SFXDeviceInfo to also store some 
-   /// extra XAudio specific data.
-   struct XADeviceInfo : SFXDeviceInfo
-   {
-      UINT32 deviceIndex;
-
-      XAUDIO2_DEVICE_ROLE role;
-
-      WAVEFORMATEXTENSIBLE format;
-   };
-
    /// Helper for creating the XAudio engine.
    static bool _createXAudio( IXAudio2 **xaudio );
 
@@ -99,27 +88,13 @@ void SFXXAudioProvider::init()
       return;
    }
 
-   // Add the devices to the info list.
-   UINT32 count = 0;
-   xAudio->GetDeviceCount( &count );
-   for ( UINT32 i = 0; i < count; i++ )
-   {
-      XAUDIO2_DEVICE_DETAILS details;
-      HRESULT hr = xAudio->GetDeviceDetails( i, &details );
-      if ( FAILED( hr ) )
-         continue;
-
-      // Add a device to the info list.
-      XADeviceInfo* info = new XADeviceInfo;
-      info->deviceIndex = i;
-      info->driver = String( "XAudio" );
-      info->name = String( details.DisplayName );
-      info->hasHardware = false;
-      info->maxBuffers = 64;
-      info->role = details.Role;
-      info->format = details.OutputFormat;
-      mDeviceInfo.push_back( info );
-   }
+    // Add a device to the info list.
+    SFXDeviceInfo* info = new SFXDeviceInfo;
+    info->driver = String( "XAudio" );
+    info->name = String( "XAudio" );
+    info->hasHardware = false;
+    info->maxBuffers = 64;
+    mDeviceInfo.push_back( info );
 
    // We're done with XAudio for now.
    SAFE_RELEASE( xAudio );
@@ -138,14 +113,6 @@ void SFXXAudioProvider::init()
 
 bool SFXXAudioProvider::_createXAudio( IXAudio2 **xaudio )
 {
-   // In debug builds enable the debug version 
-   // of the XAudio engine.
-   #ifdef TORQUE_DEBUG
-      #define XAUDIO_FLAGS XAUDIO2_DEBUG_ENGINE
-   #else
-      #define XAUDIO_FLAGS 0
-   #endif
-
 #ifndef TORQUE_OS_XENON
    // This must be called first... it doesn't hurt to 
    // call it more than once.
@@ -153,7 +120,7 @@ bool SFXXAudioProvider::_createXAudio( IXAudio2 **xaudio )
 #endif
 
    // Try creating the xaudio engine.
-   HRESULT hr = XAudio2Create( xaudio, XAUDIO_FLAGS, XAUDIO2_DEFAULT_PROCESSOR );
+   HRESULT hr = XAudio2Create( xaudio );
 
    return SUCCEEDED( hr ) && (*xaudio);
 }
@@ -167,7 +134,7 @@ SFXDevice* SFXXAudioProvider::createDevice( const String& deviceName, bool useHa
    devName = deviceName;
 #endif
 
-   XADeviceInfo* info = dynamic_cast< XADeviceInfo* >( _findDeviceInfo( devName ) );
+   SFXDeviceInfo* info = _findDeviceInfo( devName );
 
    // Do we find one to create?
    if ( info )
@@ -183,8 +150,6 @@ SFXDevice* SFXXAudioProvider::createDevice( const String& deviceName, bool useHa
       return new SFXXAudioDevice(   this,
                                     devName,
                                     xAudio, 
-                                    info->deviceIndex,
-                                    info->format.dwChannelMask,
                                     maxBuffers );
    }
 

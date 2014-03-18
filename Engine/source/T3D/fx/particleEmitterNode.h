@@ -67,6 +67,8 @@ class ParticleEmitterNode : public GameBase
 {
    typedef GameBase Parent;
 
+protected:
+
    enum MaskBits
    {
       StateMask      = Parent::NextFreeMask << 0,
@@ -74,10 +76,8 @@ class ParticleEmitterNode : public GameBase
       NextFreeMask   = Parent::NextFreeMask << 2,
    };
 
-  private:
    ParticleEmitterNodeData* mDataBlock;
 
-  protected:
    bool onAdd();
    void onRemove();
    bool onNewDataBlock( GameBaseData *dptr, bool reload );
@@ -111,8 +111,7 @@ class ParticleEmitterNode : public GameBase
    inline bool getActive( void )        { return mActive;                             };
    inline void setActive( bool active ) { mActive = active; setMaskBits( StateMask ); };
 
-   void setEmitterDataBlock(ParticleEmitterData* data);
+   virtual void setEmitterDataBlock(ParticleEmitterData* data);
 };
 
 #endif // _H_PARTICLEEMISSIONDUMMY
-

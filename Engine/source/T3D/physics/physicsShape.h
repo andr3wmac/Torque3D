@@ -112,6 +112,9 @@ public:
    // The density of this object used for water buoyancy effects.
    F32 buoyancyDensity;
 
+   // Continuous Collision Detection support,ignored if not supported by underlying plugin
+   bool ccdEnabled;
+
 
    enum SimType
    {

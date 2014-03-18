@@ -152,7 +152,7 @@ class ParticleEmitter : public GameBase
    void setColors( ColorF *colorList );
 
    ParticleEmitterData *getDataBlock(){ return mDataBlock; }
-   bool onNewDataBlock( GameBaseData *dptr, bool reload );
+   virtual bool onNewDataBlock( GameBaseData *dptr, bool reload );
 
    /// By default, a particle renderer will wait for it's owner to delete it.  When this
    /// is turned on, it will delete itself as soon as it's particle count drops to zero.
@@ -197,7 +197,7 @@ class ParticleEmitter : public GameBase
    /// @param   axis
    /// @param   vel   Initial velocity
    /// @param   axisx
-   void addParticle(const Point3F &pos, const Point3F &axis, const Point3F &vel, const Point3F &axisx);
+   virtual void addParticle(const Point3F &pos, const Point3F &axis, const Point3F &vel, const Point3F &axisx);
 
 
    inline void setupBillboard( Particle *part,
@@ -220,25 +220,24 @@ class ParticleEmitter : public GameBase
 
    /// @}
   protected:
-   bool onAdd();
-   void onRemove();
+   virtual bool onAdd();
+   virtual void onRemove();
 
-   void processTick(const Move *move);
-   void advanceTime(F32 dt);
+   virtual void processTick(const Move *move);
+   virtual void advanceTime(F32 dt);
 
    // Rendering
   protected:
-   void prepRenderImage( SceneRenderState *state );
+   virtual void prepRenderImage( SceneRenderState *state );
    void copyToVB( const Point3F &camPos, const ColorF &ambientColor );
 
    // PEngine interface
-  private:
+  protected:
 
-   void update( U32 ms );
+   virtual void update(U32 ms);
+
    inline void updateKeyData( Particle *part );
  
-
-  private:
 
    /// Constant used to calculate particle 
    /// rotation from spin and age.
@@ -284,4 +283,3 @@ class ParticleEmitter : public GameBase
 };
 
 #endif // _H_PARTICLE_EMITTER
-

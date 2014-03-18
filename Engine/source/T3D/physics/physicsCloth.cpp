@@ -1,6 +1,6 @@
-<?php
 //-----------------------------------------------------------------------------
-// Copyright (c) 2012 GarageGames, LLC
+// Authors: 
+//        Andrew MacIntyre - Aldyre Studios - aldyre.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to
@@ -21,16 +21,5 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-beginModule( 'dsound' );
-
-   if ( TorqueGenerator::$platform == "win32" )
-   {
-      addEngineSrcDir('sfx/dsound');
-      addEngineSrcDir('sfx/xaudio');
-   }
-   else if ( TorqueGenerator::$platform == "360" )
-      addEngineSrcDir('sfx/xaudio');
-
-endModule();
-
-?>
+#include "platform/platform.h"
+#include "T3D/physics/physicsCloth.h"

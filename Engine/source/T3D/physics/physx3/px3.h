@@ -1,4 +1,3 @@
-<?php
 //-----------------------------------------------------------------------------
 // Copyright (c) 2012 GarageGames, LLC
 //
@@ -21,16 +20,34 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-beginModule( 'dsound' );
+#ifndef _PHYSX3_H_
+#define _PHYSX3_H_
 
-   if ( TorqueGenerator::$platform == "win32" )
-   {
-      addEngineSrcDir('sfx/dsound');
-      addEngineSrcDir('sfx/xaudio');
-   }
-   else if ( TorqueGenerator::$platform == "360" )
-      addEngineSrcDir('sfx/xaudio');
+//-------------------------------------------------------------------------
+//defines to keep PhysX happy and compiling
+#if defined(TORQUE_OS_MAC) && !defined(__APPLE__)
+   #define __APPLE__
+#elif defined(TORQUE_OS_LINUX) && !defined(LINUX)
+   #define LINUX
+#elif defined(TORQUE_OS_WIN32) && !defined(WIN32)
+   #define WIN32
+#endif
 
-endModule();
+//-------------------------------------------------------------------------
 
-?>
+#include <PxPhysicsAPI.h>
+#include <extensions/PxExtensionsAPI.h>
+#include <extensions/PxDefaultErrorCallback.h>
+#include <extensions/PxDefaultAllocator.h>
+#include <extensions/PxDefaultSimulationFilterShader.h>
+#include <extensions/PxDefaultCpuDispatcher.h>
+#include <extensions/PxShapeExt.h>
+#include <extensions/PxSimpleFactory.h>
+#include <foundation/PxFoundation.h>
+#include <characterkinematic/PxController.h>
+#include <common/PxIO.h> 
+
+
+extern physx::PxPhysics* gPhysics3SDK;
+
+#endif

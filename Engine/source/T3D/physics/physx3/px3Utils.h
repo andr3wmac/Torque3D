@@ -1,4 +1,3 @@
-<?php
 //-----------------------------------------------------------------------------
 // Copyright (c) 2012 GarageGames, LLC
 //
@@ -21,16 +20,16 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-beginModule( 'dsound' );
+#ifndef _PHYSX3_UTILS_H_
+#define _PHYSX3_UTILS_H_
 
-   if ( TorqueGenerator::$platform == "win32" )
-   {
-      addEngineSrcDir('sfx/dsound');
-      addEngineSrcDir('sfx/xaudio');
-   }
-   else if ( TorqueGenerator::$platform == "360" )
-      addEngineSrcDir('sfx/xaudio');
+namespace physx
+{
+	class PxRigidActor;
+   class PxShape;
+}
 
-endModule();
+extern physx::PxShape* px3GetFirstShape(physx::PxRigidActor *actor);
 
-?>
+
+#endif

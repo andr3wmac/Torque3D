@@ -103,6 +103,17 @@ class TSMesh
    friend class TSShape;
   public:
    struct TSMeshVertexArray;
+
+   // andrewmac: Vertex Info contains no duplicate
+   //   vertices. mapsTo provides a list of duplicates
+   //   that it applys to.
+   struct TSMeshVertexInfo
+   {
+	   Point3F point;
+	   S32 bone;
+	   F32 weight;
+	   Vector<U32> mapsTo;
+   };
   protected:
 
    U32 meshType;
@@ -120,7 +131,8 @@ class TSMesh
    GFXPrimitiveBufferHandle mPB;
 
    void _convertToAlignedMeshData( TSMeshVertexArray &vertexData, const Vector<Point3F> &_verts, const Vector<Point3F> &_norms );
-   void _createVBIB( TSVertexBufferHandle &vb, GFXPrimitiveBufferHandle &pb );
+   // andrewmac: Vertex Override
+   void _createVBIB( TSVertexBufferHandle &vb, GFXPrimitiveBufferHandle &pb, TSMeshVertexArray* vertexOverride = NULL ); 
 
   public:
 
@@ -287,9 +299,9 @@ class TSMesh
                         const Vector<MatrixF> &transforms, 
                         TSVertexBufferHandle &vertexBuffer,
                         GFXPrimitiveBufferHandle &primitiveBuffer,
-                        const char* meshName = 0 );
+						TSMeshVertexArray* vertexOverride = NULL); // andrewmac: Vertex Override
 
-   void innerRender( TSMaterialList *, const TSRenderState &data, TSVertexBufferHandle &vb, GFXPrimitiveBufferHandle &pb, const char* meshName = 0 );
+   void innerRender( TSMaterialList *, const TSRenderState &data, TSVertexBufferHandle &vb, GFXPrimitiveBufferHandle &pb );
 
    /// @}
 
@@ -510,6 +522,13 @@ public:
    Vector<S32> boneIndex;
    Vector<S32> vertexIndex;
 
+   // andrewmac: Requirements for cloth mesh.
+   bool mHasSkinned;
+   bool hasSkinned();
+   TSMeshVertexArray* getVertexData();
+   Vector<TSMesh::TSMeshVertexInfo> getVertexInfo();
+   Vector<U32>* getIndices();
+
    /// set verts and normals...
    void updateSkin( const Vector<MatrixF> &transforms, TSVertexBufferHandle &instanceVB, GFXPrimitiveBufferHandle &instancePB );
 
@@ -521,7 +540,7 @@ public:
                   const Vector<MatrixF> &transforms, 
                   TSVertexBufferHandle &vertexBuffer,
                   GFXPrimitiveBufferHandle &primitiveBuffer,
-                  const char* meshName = 0);
+   				  TSMeshVertexArray* vertexOverride = NULL); // andrewmac: Vertex Override
 
    // collision methods...
    bool buildPolyList( S32 frame, AbstractPolyList *polyList, U32 &surfaceKey, TSMaterialList *materials );
