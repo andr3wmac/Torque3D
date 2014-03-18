@@ -11,6 +11,10 @@ OpenGL Support by Luis Anton Rebollo
 ----------------
 * Based on https://github.com/BeamNG/Torque3D/tree/dev_linux_opengl
 
+PhysX 3.3 Support
+----------------
+* Based on https://github.com/rextimmy/Torque3D/tree/physx3
+
 D3D-Refactor by Anis Hireche
 ----------------
 
