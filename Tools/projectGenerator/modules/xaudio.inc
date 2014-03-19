@@ -22,6 +22,6 @@
 //-----------------------------------------------------------------------------
 
 // XAudio
-addEngineSrcDir('sfx/xaudio');
+//addEngineSrcDir('sfx/xaudio');
 
 ?>
