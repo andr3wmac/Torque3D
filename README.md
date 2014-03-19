@@ -3,7 +3,8 @@ Torque 3D Next-Gen Edition
 
 This branch combines the efforts of many community members into a single branch to work towards the development of next generation features for Torque3D. 
 
-This version requires Windows 8 SDK to be installed instead of DirectX SDK since it is now deprecated.
+This version requires Windows 8.1 SDK to be installed instead of DirectX SDK:
+http://msdn.microsoft.com/en-us/windows/desktop/bg162891.aspx
 
 Based on Torque3D v3.5.1
 
@@ -52,3 +53,4 @@ Additional Features
 ----------------
 
 * Microsoft Visual Studio 2013 Fixes by Signmotion
+* Updated version of Project Manager thanks to rextimmy
