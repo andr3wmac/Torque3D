@@ -34,7 +34,6 @@
 class GFXD3D9TextureObject : public GFXTextureObject
 {
 protected:
-   static U32 mTexCount;
    GFXTexHandle   mLockTex;
    D3DLOCKED_RECT mLockRect;
    bool           mLocked;
@@ -56,8 +55,6 @@ public:
    IDirect3DVolumeTexture9 ** get3DTexPtr(){ return (LPDIRECT3DVOLUMETEXTURE9*) &mD3DTexture; }
 
    void release();
-
-   bool isManaged;
 
    virtual GFXLockedRect * lock(U32 mipLevel = 0, RectI *inRect = NULL);
    virtual void unlock(U32 mipLevel = 0 );
