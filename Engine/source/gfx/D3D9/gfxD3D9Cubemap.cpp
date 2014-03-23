@@ -31,205 +31,224 @@
 
 static D3DCUBEMAP_FACES faceList[6] = 
 { 
-   D3DCUBEMAP_FACE_POSITIVE_X, D3DCUBEMAP_FACE_NEGATIVE_X,
-   D3DCUBEMAP_FACE_POSITIVE_Y, D3DCUBEMAP_FACE_NEGATIVE_Y,
-   D3DCUBEMAP_FACE_POSITIVE_Z, D3DCUBEMAP_FACE_NEGATIVE_Z
+	D3DCUBEMAP_FACE_POSITIVE_X, D3DCUBEMAP_FACE_NEGATIVE_X,
+	D3DCUBEMAP_FACE_POSITIVE_Y, D3DCUBEMAP_FACE_NEGATIVE_Y,
+	D3DCUBEMAP_FACE_POSITIVE_Z, D3DCUBEMAP_FACE_NEGATIVE_Z
 };
 
 GFXD3D9Cubemap::GFXD3D9Cubemap()
 {
-   GFXD3D9Device *dev = static_cast<GFXD3D9Device *>(GFX);    
-
-   mSupportsAutoMips = dev->getCardProfiler()->queryProfile("autoMipMapLevel", true);
-
-   mCubeTex = NULL;
-   mDynamic = false;
-   mFaceFormat = GFXFormatR8G8B8A8;
+	mSupportsAutoMips = GFX->getCardProfiler()->queryProfile("autoMipMapLevel", true);
+	mCubeTex = NULL;
+	mFaceFormat = GFXFormatR8G8B8A8;
 }
 
 GFXD3D9Cubemap::~GFXD3D9Cubemap()
 {
-   releaseSurfaces();
+	releaseSurfaces();
 }
 
 void GFXD3D9Cubemap::releaseSurfaces()
 {
-   if (!mCubeTex)
-      return;
-
-   if (mDynamic)
-      GFXTextureManager::removeEventDelegate(this, &GFXD3D9Cubemap::_onTextureEvent);
-
-   mCubeTex->Release();
-   mCubeTex = NULL;
-}
-
-void GFXD3D9Cubemap::_onTextureEvent(GFXTexCallbackCode code)
-{
-   if (code == GFXZombify)
-      releaseSurfaces();
-   else if (code == GFXResurrect)
-      initDynamic(mTexSize);
+	SAFE_RELEASE(mCubeTex);
 }
 
 void GFXD3D9Cubemap::initStatic(GFXTexHandle *faces)
 {
-    AssertFatal( faces, "GFXD3D9Cubemap::initStatic - Got null GFXTexHandle!" );
-	AssertFatal( *faces, "empty texture passed to CubeMap::create" );
+    AssertFatal(faces, "GFXD3D9Cubemap::initStatic(GFXTexHandle *faces) - Got null GFXTexHandle!");
+	AssertFatal(*faces, "GFXD3D9Cubemap::initStatic(GFXTexHandle *faces) - empty texture passed to CubeMap::create");
   
 	// NOTE - check tex sizes on all faces - they MUST be all same size
 	mTexSize = faces->getWidth();
 	mFaceFormat = faces->getFormat();
 
-	HRESULT hr = static_cast<GFXD3D9Device*>(GFX)->getDevice()->CreateCubeTexture(	mTexSize, 
-																					0, 
-																					mSupportsAutoMips ? D3DUSAGE_AUTOGENMIPMAP : 0, 
-																					GFXD3D9TextureFormat[mFaceFormat], 
-																					D3DPOOL_MANAGED, 
-																					&mCubeTex, 
-																					NULL	);
-
-	if(mSupportsAutoMips) mCubeTex->GenerateMipSubLevels();
+	HRESULT hr = D3D9DEVICE->CreateCubeTexture(	mTexSize, 
+												0, 
+												mSupportsAutoMips ? D3DUSAGE_AUTOGENMIPMAP : 0, 
+												GFXD3D9TextureFormat[mFaceFormat], 
+												D3DPOOL_DEFAULT, 
+												&mCubeTex, 
+												NULL	);
 
 	if(FAILED(hr)) 
 	{
-		AssertFatal(false, "CreateCubeTexture call failure");
+		AssertFatal(false, "GFXD3D9Cubemap::initStatic(GFXTexHandle *faces) - CreateCubeTexture call failure");
 	}
 
-    for(U32 i=0; i<6; i++)
+	if(mSupportsAutoMips) mCubeTex->GenerateMipSubLevels();
+
+    for(U32 i = 0; i < 6; i++)
     {
-      // get cube face surface
-      IDirect3DSurface9 *cubeSurf = NULL;
+		  // get cube face surface
+		  IDirect3DSurface9 *cubeSurf;
 
-      hr = mCubeTex->GetCubeMapSurface(faceList[i], 0, &cubeSurf);
+		  hr = mCubeTex->GetCubeMapSurface(faceList[i], 0, &cubeSurf);
 
-	  if(FAILED(hr)) 
-	  {
-	 	  AssertFatal(false, "GetCubeMapSurface call failure");
-	  }
+		  if(FAILED(hr)) 
+		  {
+	 		  AssertFatal(false, "GFXD3D9Cubemap::initStatic(GFXTexHandle *faces) - GetCubeMapSurface call failure");
+		  }
 
-      GFXD3D9TextureObject *texObj = static_cast<GFXD3D9TextureObject*>((GFXTextureObject*)faces[i]);
-      IDirect3DSurface9 *inSurf;
-      hr = texObj->get2DTex()->GetSurfaceLevel(0, &inSurf);
+		  GFXD3D9TextureObject *texObj = static_cast<GFXD3D9TextureObject*>((GFXTextureObject*)faces[i]);
 
-	  if(FAILED( hr )) 
-	  {
-	 	  AssertFatal(false, "GetSurfaceLevel call failure");
-	  }
+		  IDirect3DSurface9 *inSurf;
+		  hr = texObj->get2DTex()->GetSurfaceLevel(0, &inSurf);
 
-      // Lock the dest surface.
-      D3DLOCKED_RECT lockedRect;
-      cubeSurf->LockRect(&lockedRect, NULL, 0);
-	  
-	  D3DLOCKED_RECT lockedRect2;
-      inSurf->LockRect(&lockedRect2, NULL, 0);
+		  if(FAILED(hr)) 
+		  {
+	 		  AssertFatal(false, "GFXD3D9Cubemap::initStatic(GFXTexHandle *faces) - GetSurfaceLevel call failure");
+		  }
 
-	  // Do a row-by-row copy.
-	  U32 srcPitch = lockedRect2.Pitch;
-	  U32 srcHeight = texObj->getBitmapHeight();
-	  U8* srcBytes = (U8*)lockedRect2.pBits;
-	  U8* dstBytes = (U8*)lockedRect.pBits;
-	  
-	  for (U32 j = 0; j<srcHeight; j++)          
-	  {
-		memcpy(dstBytes, srcBytes, srcPitch);
-		dstBytes += lockedRect.Pitch;
-		srcBytes += srcPitch;
-	  }
+		  HRESULT hr = D3D9DEVICE->StretchRect(inSurf, NULL, cubeSurf, NULL, D3DTEXF_NONE);
 
-	  cubeSurf->UnlockRect();
-	  inSurf->UnlockRect();
+		  if(FAILED(hr)) 
+		  {
+	 		  AssertFatal(false, "GFXD3D9Cubemap::initStatic(GFXTexHandle *faces) - StretchRect call failure");
+		  }
 
-      cubeSurf->Release();
-      inSurf->Release();
+		  cubeSurf->Release();
+		  inSurf->Release();
     }
 }
 
 void GFXD3D9Cubemap::initStatic(DDSFile *dds)
 {
-   AssertFatal(dds, "GFXD3D9Cubemap::initStatic - Got null DDS file!");
-   AssertFatal(dds->isCubemap(), "GFXD3D9Cubemap::initStatic - Got non-cubemap DDS file!");
-   AssertFatal(dds->mSurfaces.size() == 6, "GFXD3D9Cubemap::initStatic - DDS has less than 6 surfaces!");  
+	AssertFatal(dds, "GFXD3D9Cubemap::initStatic(DDSFile *dds) - Got null DDS file!");
+	AssertFatal(dds->isCubemap(), "GFXD3D9Cubemap::initStatic(DDSFile *dds) - Got non-cubemap DDS file!");
+	AssertFatal(dds->mSurfaces.size() == 6, "GFXD3D9Cubemap::initStatic(DDSFile *dds) - DDS has less than 6 surfaces!");  
    
-   // NOTE - check tex sizes on all faces - they MUST be all same size
-   mTexSize = dds->getWidth();
-   mFaceFormat = dds->getFormat();
-   U32 levels = dds->getMipLevels();
+	// NOTE - check tex sizes on all faces - they MUST be all same size
+	mTexSize = dds->getWidth();
+	mFaceFormat = dds->getFormat();
+	U32 levels = dds->getMipLevels();
 
-   if(levels > 0) mSupportsAutoMips = false;
+	if(levels > 1) mSupportsAutoMips = false; // anis -> already have mipmaps. don't ask to generate it for us from d3d driver.
 
-   HRESULT hr = static_cast<GFXD3D9Device*>(GFX)->getDevice()->CreateCubeTexture(	mTexSize, 
-																					levels, 
-																					mSupportsAutoMips ? D3DUSAGE_AUTOGENMIPMAP : 0, 
-																					GFXD3D9TextureFormat[mFaceFormat], 
-																					D3DPOOL_MANAGED, 
-																					&mCubeTex, 
-																					NULL);
+	HRESULT hr = D3D9DEVICE->CreateCubeTexture(	mTexSize, 
+												levels, 
+												mSupportsAutoMips ? D3DUSAGE_AUTOGENMIPMAP : 0, 
+												GFXD3D9TextureFormat[mFaceFormat], 
+												D3DPOOL_DEFAULT, 
+												&mCubeTex, 
+												NULL);
 
-   if(FAILED(hr)) 
-   {
-	   AssertFatal(false, "CreateCubeTexture call failure");
-   }
+	if(FAILED(hr)) 
+	{
+		AssertFatal(false, "GFXD3D9Cubemap::initStatic(DDSFile *dds) - CreateCubeTexture call failure");
+	}
 
-   if(mSupportsAutoMips) mCubeTex->GenerateMipSubLevels();
+	if(mSupportsAutoMips) mCubeTex->GenerateMipSubLevels();
 
-   for(U32 i=0; i<6; i++)
-   {
-      if (!dds->mSurfaces[i]) 
-		  continue;
+	for(U32 i = 0; i < 6; i++)
+	{
+		if(!dds->mSurfaces[i])
+		{
+			// TODO: The DDS can skip surfaces, but i'm unsure what i should
+			// do here when creating the cubemap. Ignore it for now.
+			continue;
+		}
 
-      for(U32 j = 0; j < levels; j++)
-      {
-         IDirect3DSurface9 *cubeSurf = NULL;
-         hr = mCubeTex->GetCubeMapSurface(faceList[i], j, &cubeSurf);
+		for(U32 j = 0; j < levels; j++)
+		{
+			IDirect3DSurface9 *cubeSurf;
+			hr = mCubeTex->GetCubeMapSurface(faceList[i], j, &cubeSurf);
 
-		 if(FAILED(hr)) 
-		 {
-			AssertFatal(false, "GFXD3D9Cubemap::initStatic - Get cubemap surface failed!");
-		 }
+			if(FAILED(hr)) 
+			{
+				AssertFatal(false, "GFXD3D9Cubemap::initStatic(DDSFile *dds) - GetCubeMapSurface call failure");
+			}
 
-         D3DLOCKED_RECT lockedRect;
-         hr = cubeSurf->LockRect(&lockedRect, NULL, 0);
+			IDirect3DTexture9 *tempText;
+			hr = D3D9DEVICE->CreateTexture(	mTexSize,
+											mTexSize,
+											0, 
+											0, 
+											GFXD3D9TextureFormat[mFaceFormat], 
+											D3DPOOL_SYSTEMMEM, 
+											&tempText, 
+											NULL );
 
-		 if(FAILED(hr)) 
-		 {
-			AssertFatal(false, "GFXD3D9Cubemap::initStatic - Failed to lock surface level for load!");
-		 }
+			if(FAILED(hr)) 
+			{
+				AssertFatal(false, "GFXD3D9Cubemap::initStatic(DDSFile *dds) - CreateTexture call failure");
+			}
 
-         memcpy(lockedRect.pBits, dds->mSurfaces[i]->mMips[j], dds->getSurfaceSize(j));
+			IDirect3DSurface9 *inSurf;
+			hr = tempText->GetSurfaceLevel(0, &inSurf);
 
-         cubeSurf->UnlockRect();
-         cubeSurf->Release();
-      }
-   }
+			if(FAILED(hr)) 
+			{
+	 			AssertFatal(false, "GFXD3D9Cubemap::initStatic(DDSFile *dds) - GetSurfaceLevel call failure");
+			}
+
+			D3DLOCKED_RECT lockedRect;
+			hr = inSurf->LockRect(&lockedRect, NULL, 0);
+
+			if(FAILED(hr))
+			{
+				AssertFatal(false, "GFXD3D9Cubemap::initStatic(DDSFile *dds) - LockRect call failure");
+			}
+
+			if(dds->getSurfacePitch(j) != lockedRect.Pitch)
+			{
+				// Do a row-by-row copy.
+				U32 srcPitch = dds->getSurfacePitch(j);
+				U32 srcHeight = dds->getHeight(j);
+				U8* srcBytes = dds->mSurfaces[i]->mMips[j];
+				U8* dstBytes = (U8*)lockedRect.pBits;
+				for (U32 i = 0; i < srcHeight; ++i)          
+				{
+					dMemcpy(dstBytes, srcBytes, srcPitch);
+					dstBytes += lockedRect.Pitch;
+					srcBytes += srcPitch;
+				}           
+			}
+
+			else
+			{
+				dMemcpy(lockedRect.pBits, dds->mSurfaces[i]->mMips[j], dds->getSurfaceSize(j));
+			}
+
+			hr = inSurf->UnlockRect();
+
+			if(FAILED(hr))
+			{
+				AssertFatal(false, "GFXD3D9Cubemap::initStatic(DDSFile *dds) - UnlockRect call failure");
+			}
+
+			hr = D3D9DEVICE->UpdateSurface(inSurf, NULL, cubeSurf, NULL);
+
+			if(FAILED(hr))
+			{
+				AssertFatal(false, "GFXD3D9Cubemap::initStatic(DDSFile *dds) - UpdateSurface call failure");
+			}
+
+			inSurf->Release();
+			tempText->Release();
+			cubeSurf->Release();
+		}
+	}
 }
 
 void GFXD3D9Cubemap::initDynamic(U32 texSize, GFXFormat faceFormat)
 {
-   if(mCubeTex)
-      return;
+	mTexSize = texSize;
+	mFaceFormat = faceFormat;
 
-   if(!mDynamic)
-      GFXTextureManager::addEventDelegate( this, &GFXD3D9Cubemap::_onTextureEvent);
-
-   mDynamic = true;
-   mTexSize = texSize;
-   mFaceFormat = faceFormat;
-
-   HRESULT hr = static_cast<GFXD3D9Device*>(GFX)->getDevice()->CreateCubeTexture(	texSize,
-																					0,
-																					mSupportsAutoMips ? (D3DUSAGE_AUTOGENMIPMAP | D3DUSAGE_RENDERTARGET) : D3DUSAGE_RENDERTARGET,
-																					GFXD3D9TextureFormat[faceFormat],
-																					D3DPOOL_DEFAULT, 
-																					&mCubeTex, 
-																					NULL);
-
-    if(mSupportsAutoMips) mCubeTex->GenerateMipSubLevels();
+	HRESULT hr = D3D9DEVICE->CreateCubeTexture(	mTexSize,
+												0,
+												(mSupportsAutoMips ? D3DUSAGE_AUTOGENMIPMAP : 0) | D3DUSAGE_RENDERTARGET,
+												GFXD3D9TextureFormat[mFaceFormat],
+												D3DPOOL_DEFAULT, 
+												&mCubeTex, 
+												NULL);
 
 	if(FAILED(hr)) 
 	{
-		AssertFatal(false, "CreateCubeTexture call failure");
+		AssertFatal(false, "GFXD3D9Cubemap::initDynamic - CreateCubeTexture call failure");
 	}
+
+    if(mSupportsAutoMips) mCubeTex->GenerateMipSubLevels();
 }
 
 //-----------------------------------------------------------------------------
@@ -237,19 +256,13 @@ void GFXD3D9Cubemap::initDynamic(U32 texSize, GFXFormat faceFormat)
 //-----------------------------------------------------------------------------
 void GFXD3D9Cubemap::setToTexUnit(U32 tuNum)
 {
-   static_cast<GFXD3D9Device *>(GFX)->getDevice()->SetTexture( tuNum, mCubeTex );
+	D3D9DEVICE->SetTexture(tuNum, mCubeTex);
 }
 
 void GFXD3D9Cubemap::zombify()
 {
-   // Static cubemaps are handled by D3D
-   if( mDynamic )
-      releaseSurfaces();
 }
 
 void GFXD3D9Cubemap::resurrect()
 {
-   // Static cubemaps are handled by D3D
-   if( mDynamic )
-      initDynamic( mTexSize, mFaceFormat );
 }
