@@ -146,34 +146,8 @@ GFXD3D9PrimitiveBuffer::~GFXD3D9PrimitiveBuffer()
 
 void GFXD3D9PrimitiveBuffer::zombify()
 {
-   if(mBufferType == GFXBufferTypeStatic)
-      return;
-            
-   AssertFatal(!mLocked, "GFXD3D9PrimitiveBuffer::zombify - Cannot zombify a locked buffer!");
-
-   if (mBufferType == GFXBufferTypeVolatile)
-   {
-      // We must null the volatile buffer else we're holding
-      // a dead pointer which can be set on the device.      
-      ib = NULL;
-      return;
-   }
-
-   // Dynamic buffers get released.
-   SAFE_RELEASE(ib);
 }
 
 void GFXD3D9PrimitiveBuffer::resurrect()
 {
-	if(mBufferType != GFXBufferTypeDynamic)
-		return;
-      
-	U32 usage = D3DUSAGE_WRITEONLY | D3DUSAGE_DYNAMIC;
-
-	HRESULT hr = (static_cast<GFXD3D9Device*>(GFX)->getDevice()->CreateIndexBuffer(sizeof(U16) * mIndexCount ,  usage, D3DFMT_INDEX16, D3DPOOL_DEFAULT, &ib, 0));
-
-	if(FAILED(hr)) 
-	{
-		AssertFatal(false, "GFXD3D9PrimitiveBuffer::resurrect - Failed to allocate an index buffer.");
-	}
 }
