@@ -41,7 +41,7 @@
 #include "gfx/gfxResource.h"
 #include "platform/tmm_on.h"
 
-#define GFXD3DX static_cast<GFXD3D9Device *>(GFX)->smD3DX 
+#define D3D9DEVICE static_cast<GFXD3D9Device*>(GFX)->getDevice()
 
 class PlatformWindow;
 class GFXD3D9ShaderConstBuffer;
@@ -116,8 +116,8 @@ protected:
 
    S32 mCreateFenceType;
 
-   LPDIRECT3D9       mD3D;
-   LPDIRECT3DDEVICE9 mD3DDevice;
+   LPDIRECT3D9EX       mD3D;
+   LPDIRECT3DDEVICE9EX mD3DDevice;
 
    GFXShaderConstBufferRef mGenericShaderBuffer[GS_COUNT];
    GFXShaderConstHandle *mModelViewProjSC[GS_COUNT];
@@ -125,8 +125,7 @@ protected:
    U32  mAdapterIndex;
 
    F32 mPixVersion;
-   U32 mNumSamplers;       ///< Profiled (via caps)
-   U32 mNumRenderTargets;  ///< Profiled (via caps)
+   U32 mNumRenderTargets;
 
    D3DMULTISAMPLE_TYPE mMultisampleType;
    DWORD mMultisampleLevel;
@@ -134,7 +133,10 @@ protected:
    bool mOcclusionQuerySupported;
 
    /// The current adapter display mode.
-   D3DDISPLAYMODE mDisplayMode;
+   D3DDISPLAYMODEEX mDisplayMode;
+
+   /// The current adapter display rotation.
+   D3DDISPLAYROTATION mDisplayRotation;
 
    /// To manage creating and re-creating of these when device is aquired
    void reacquireDefaultPoolResources();
@@ -187,18 +189,30 @@ protected:
    
 public:
 
+   static bool IsWin7OrLater() // anis -> from microsoft example
+   {
+		OSVERSIONINFO version;
+		ZeroMemory(&version, sizeof(version));
+		version.dwOSVersionInfoSize = sizeof(version);
+		GetVersionEx(&version);
+
+		// Sample would run only on Win7 or higher
+		// Flip Model present and its associated present statistics behavior are only available on Windows 7 or higher OS
+		return (version.dwMajorVersion > 6) || ((version.dwMajorVersion == 6) && (version.dwMinorVersion >= 1));
+   }
+
    static GFXDevice *createInstance( U32 adapterIndex );
 
    static void enumerateAdapters( Vector<GFXAdapter*> &adapterList );
 
    GFXTextureObject* createRenderSurface( U32 width, U32 height, GFXFormat format, U32 mipLevel );
 
-   const D3DDISPLAYMODE& getDisplayMode() const { return mDisplayMode; }
+   const D3DDISPLAYMODEEX& getDisplayMode() const { return mDisplayMode; }
 
    /// Constructor
    /// @param   d3d   Direct3D object to instantiate this device with
    /// @param   index   Adapter index since D3D can use multiple graphics adapters
-   GFXD3D9Device( LPDIRECT3D9 d3d, U32 index );
+   GFXD3D9Device(LPDIRECT3D9EX d3d, U32 index);
    virtual ~GFXD3D9Device();
 
    // Activate/deactivate
@@ -217,7 +231,7 @@ public:
    virtual void setPixelShaderVersion( F32 version ){ mPixVersion = version;} 
 
    virtual void setShader( GFXShader *shader );
-   virtual U32  getNumSamplers() const { return mNumSamplers; }
+   virtual U32  getNumSamplers() const { return 16; }
    virtual U32  getNumRenderTargets() const { return mNumRenderTargets; }
    // }
 
@@ -262,11 +276,11 @@ public:
    virtual void drawPrimitive( GFXPrimitiveType primType, U32 vertexStart, U32 primitiveCount );
    // }
 
-   LPDIRECT3DDEVICE9 getDevice(){ return mD3DDevice; }
-   LPDIRECT3D9 getD3D() { return mD3D; }
+   LPDIRECT3DDEVICE9EX getDevice(){ return mD3DDevice; }
+   LPDIRECT3D9EX getD3D() { return mD3D; }
 
    /// Reset
-   void reset( D3DPRESENT_PARAMETERS &d3dpp );
+   void reset(D3DPRESENT_PARAMETERS &d3dpp);
 
    GFXShaderRef mGenericShader[GS_COUNT];
 
