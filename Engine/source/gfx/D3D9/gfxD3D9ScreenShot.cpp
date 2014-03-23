@@ -31,7 +31,7 @@
 GBitmap* GFXD3D9ScreenShot::_captureBackBuffer()
 {
    IDirect3DSurface9 * backBuffer;
-   static_cast<GFXD3D9Device *>(GFX)->getDevice()->GetBackBuffer( 0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer );
+   D3D9DEVICE->GetBackBuffer( 0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer );
 
    // Figure the size we're snagging.
    D3DSURFACE_DESC desc;
@@ -59,7 +59,7 @@ GBitmap* GFXD3D9ScreenShot::_captureBackBuffer()
 
    // use StretchRect because it allows a copy from a multisample surface
    // to a normal rendertarget surface
-   static_cast<GFXD3D9Device *>(GFX)->getDevice()->StretchRect(backBuffer, NULL, surface[0], NULL, D3DTEXF_NONE);
+   D3D9DEVICE->StretchRect(backBuffer, NULL, surface[0], NULL, D3DTEXF_NONE);
 
    // grab the top level surface of tex 1
    to = (GFXD3D9TextureObject *) &(*tex[1]);
@@ -71,7 +71,7 @@ GBitmap* GFXD3D9ScreenShot::_captureBackBuffer()
 	}
 
    // copy the data from the render target to the system memory texture
-   static_cast<GFXD3D9Device *>(GFX)->getDevice()->GetRenderTargetData(surface[0], surface[1]);
+   D3D9DEVICE->GetRenderTargetData(surface[0], surface[1]);
 
    // Allocate a GBitmap and copy into it.
    GBitmap *gb = new GBitmap(size.x, size.y);
