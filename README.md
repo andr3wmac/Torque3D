@@ -18,6 +18,12 @@ D3D-Refactor by Anis
 * Some performance improvement (especially under a lot of dynamic_cast used in wrong context)
 * Removed fixed pipeline (deprecated by Microsoft since DX10)
 * Many other minor bug fixed.
+* Removed managed memory pool. (Now all resources are placed on video memory)
+* Port to DirectX9Ex.
+* gfxD3D9TextureManager.cpp rewrite.
+
+TODO:
+* Remove D3DPT_TRIANGLEFAN topology support and place it a triangle list/strip instead.
 
 DirectX 11 Support
 ----------------
