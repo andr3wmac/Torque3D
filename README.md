@@ -22,6 +22,7 @@ D3D-Refactor by Anis
 * Port to DirectX9Ex.
 * gfxD3D9TextureManager.cpp rewrite.
 * gfxD3D9Target.cpp rewrite.
+* gfxD3D9EnumTranslate.cpp -> understandable enum mapping!
 
 TODO:
 * Remove D3DPT_TRIANGLEFAN topology support and place it a triangle list/strip instead.
