@@ -37,7 +37,7 @@ private:
    mutable IDirect3DQuery9 *mQuery;
 
 public:
-   GFXD3D9QueryFence( GFXDevice *device ) : GFXFence( device ), mQuery( NULL ) {};
+   GFXD3D9QueryFence(GFXDevice *device) : GFXFence(device), mQuery(NULL) {};
    virtual ~GFXD3D9QueryFence();
 
    virtual void issue();
