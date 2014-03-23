@@ -37,26 +37,22 @@
 
 /*
 	anis -> GFXFormatR8G8B8 has now the same behaviour as GFXFormatR8G8B8X8. 
-	This is because 24 bit format are now deprecated by microsoft, for data alignment reason there's no changes beetween 24 and 32 bit formats.
+	This is because 24 bit format are now deprecated by microsoft, for data alignment reason there's no difference beetween 24 and 32 bit formats.
 	DirectX 10-11 both have 24 bit format no longer.
 */
 
 GFXD3D9TextureManager::GFXD3D9TextureManager() 
 {
-   dMemset( mCurTexSet, 0, sizeof( mCurTexSet ) );   
-   static_cast<GFXD3D9Device*>( GFX )->getDevice()->GetDeviceCaps(&mDeviceCaps);
+	dMemset(mCurTexSet, 0, sizeof(mCurTexSet));
 }
 
 GFXD3D9TextureManager::~GFXD3D9TextureManager()
 {
-   // Destroy texture table now so just in case some texture objects
-   // are still left, we don't crash on a pure virtual method call.
-   SAFE_DELETE_ARRAY( mHashTable );
+	// Destroy texture table now so just in case some texture objects
+	// are still left, we don't crash on a pure virtual method call.
+	SAFE_DELETE_ARRAY(mHashTable);
 }
 
-//-----------------------------------------------------------------------------
-// _innerCreateTexture
-//-----------------------------------------------------------------------------
 void GFXD3D9TextureManager::_innerCreateTexture( GFXD3D9TextureObject *retTex, 
                                                U32 height, 
                                                U32 width, 
@@ -67,168 +63,118 @@ void GFXD3D9TextureManager::_innerCreateTexture( GFXD3D9TextureObject *retTex,
                                                bool forceMips,
                                                S32 antialiasLevel)
 {
-   GFXD3D9Device* d3d = static_cast<GFXD3D9Device*>(GFX);
+	GFXD3D9Device* d3d = static_cast<GFXD3D9Device*>(GFX);
 
-   // Some relevant helper information...
-   bool supportsAutoMips = GFX->getCardProfiler()->queryProfile("autoMipMapLevel", true);
-   
-   DWORD usage = 0;
-   D3DPOOL pool = D3DPOOL_DEFAULT;
+	DWORD usage = D3DUSAGE_DYNAMIC;
+	D3DPOOL pool = D3DPOOL_DEFAULT;
 
-   retTex->mProfile = profile;
+	retTex->mProfile = profile;
+	bool supportsAutoMips = GFX->getCardProfiler()->queryProfile("autoMipMapLevel", true);
 
-   D3DFORMAT d3dTextureFormat = GFXD3D9TextureFormat[format];
+	D3DFORMAT d3dTextureFormat = GFXD3D9TextureFormat[format];
 
-   if( retTex->mProfile->isDynamic() )
-   {
-      usage = D3DUSAGE_DYNAMIC;
-   }
-   else
-   {
-      usage = 0;
-      pool = D3DPOOL_MANAGED;
-   }
+	if(retTex->mProfile->isRenderTarget())
+	{
+		usage |= D3DUSAGE_RENDERTARGET;
+	}
 
-   if( retTex->mProfile->isRenderTarget() )
-   {
-      usage |= D3DUSAGE_RENDERTARGET;
-      pool = D3DPOOL_DEFAULT;
-   }
+	if(retTex->mProfile->isZTarget())
+	{
+		usage |= D3DUSAGE_DEPTHSTENCIL;
+	}
 
-   if(retTex->mProfile->isZTarget())
-   {
-      usage |= D3DUSAGE_DEPTHSTENCIL;
-      pool = D3DPOOL_DEFAULT;
-   }
+	if(retTex->mProfile->isSystemMemory())
+	{
+		pool = D3DPOOL_SYSTEMMEM;
+	}
 
-   if( retTex->mProfile->isSystemMemory() )
-   {
-      pool = D3DPOOL_SYSTEMMEM;
-   }
+	if( supportsAutoMips && 
+		!forceMips &&
+		!retTex->mProfile->isSystemMemory() &&
+		numMipLevels == 0 &&
+		!(depth > 0) )
+	{
+		usage |= D3DUSAGE_AUTOGENMIPMAP;
+	}
 
-   if( supportsAutoMips && 
-       !forceMips &&
-       !retTex->mProfile->isSystemMemory() &&
-       numMipLevels == 0 &&
-       !(depth > 0) )
-   {
-      usage |= D3DUSAGE_AUTOGENMIPMAP;
-   }
+	if(depth > 0)
+	{
+		HRESULT hr = D3D9DEVICE->CreateVolumeTexture(width, height, depth, numMipLevels, usage, d3dTextureFormat, pool, retTex->get3DTexPtr(), NULL);
 
-   // Set the managed flag...
-   retTex->isManaged = (pool == D3DPOOL_MANAGED);
-   
-   if(depth > 0)
-   {
-		HRESULT hr = static_cast<GFXD3D9Device*>(GFX)->getDevice()->CreateVolumeTexture(width, height, depth, numMipLevels, usage, d3dTextureFormat, pool, retTex->get3DTexPtr(), NULL);
+		if(FAILED(hr)) 
+		{
+			AssertFatal(false, "GFXD3D9TextureManager::_createTexture - failed to create volume texture!");
+		}
 
-	    if(FAILED(hr)) 
-	    {
-		   AssertFatal(false, "GFXD3D9TextureManager::_createTexture - failed to create volume texture!");
-	    }
+		retTex->mTextureSize.set(width, height, depth);
+		retTex->mMipLevels = retTex->get3DTex()->GetLevelCount();
+		int format = d3dTextureFormat;
+		GFXREVERSE_LOOKUP(GFXD3D9TextureFormat, GFXFormat, format);
+		retTex->mFormat = (GFXFormat)format;
+	}
+	else
+	{
+		D3DMULTISAMPLE_TYPE mstype;
+		DWORD mslevel;
 
-        retTex->mTextureSize.set(width, height, depth);
-        retTex->mMipLevels = retTex->get3DTex()->GetLevelCount();
-        // required for 3D texture support - John Kabus
-	    retTex->mFormat = format;
-   }
-   else
-   {
-      // Figure out AA settings for depth and render targets
-      D3DMULTISAMPLE_TYPE mstype;
-      DWORD mslevel;
-
-      switch (antialiasLevel)
-      {
-         case 0 :
-            mstype = D3DMULTISAMPLE_NONE;
-            mslevel = 0;
-            break;
-         case AA_MATCH_BACKBUFFER :
-            mstype = d3d->getMultisampleType();
-            mslevel = d3d->getMultisampleLevel();
-            break;
-         default :
-            {
-               mstype = D3DMULTISAMPLE_NONMASKABLE;
-               mslevel = antialiasLevel;
-            }
-            break;
-      }
+		switch(antialiasLevel)
+		{
+			case 0:
+				mstype = D3DMULTISAMPLE_NONE;
+				mslevel = 0;
+				break;
+			case AA_MATCH_BACKBUFFER:
+				mstype = d3d->getMultisampleType();
+				mslevel = d3d->getMultisampleLevel();
+				break;
+			default:
+				mstype = D3DMULTISAMPLE_NONMASKABLE;
+				mslevel = antialiasLevel;
+				break;
+		}
      
-      if(retTex->mProfile->isZTarget())
-      {
-            HRESULT hr = static_cast<GFXD3D9Device*>( GFX )->getDevice()->CreateDepthStencilSurface(width, height, d3dTextureFormat, mstype, mslevel, retTex->mProfile->canDiscard(), retTex->getSurfacePtr(), NULL);
+		if(retTex->mProfile->isZTarget())
+		{
+			HRESULT hr = D3D9DEVICE->CreateDepthStencilSurfaceEx(width, height, d3dTextureFormat, mstype, mslevel, retTex->mProfile->canDiscard(), retTex->getSurfacePtr(), NULL, 0);
 
 			if(FAILED(hr)) 
 			{
 				AssertFatal(false, "Failed to create Z surface");
 			}
+		}
 
-			retTex->mFormat = format; // Assigning format like this should be fine.
-      }
-      else
-      {
-		 HRESULT hr = static_cast<GFXD3D9Device*>( GFX )->getDevice()->CreateTexture(width, height, numMipLevels, usage, d3dTextureFormat, pool, retTex->get2DTexPtr(), NULL);
-
-		 if(FAILED(hr)) 
-		 {
-			AssertFatal(false, "GFXD3D9TextureManager::_createTexture - failed to create texture!");
-		 }
-
-         // If this is a render target, and it wants AA or wants to match the backbuffer (for example, to share the z)
-         // Check the caps though, if we can't stretchrect between textures, use the old RT method.  (Which hopefully means
-         // that they can't force AA on us as well.)
-         if (retTex->mProfile->isRenderTarget() && mslevel != 0 && (mDeviceCaps.Caps2 && D3DDEVCAPS2_CAN_STRETCHRECT_FROM_TEXTURES))
-         {
-            HRESULT hr = static_cast<GFXD3D9Device*>( GFX )->getDevice()->CreateRenderTarget(width, height, d3dTextureFormat, mstype, mslevel, false, retTex->getSurfacePtr(), NULL);
+		else
+		{
+			HRESULT hr = D3D9DEVICE->CreateTexture(width, height, numMipLevels, usage, d3dTextureFormat, pool, retTex->get2DTexPtr(), NULL);
 
 			if(FAILED(hr)) 
 			{
-				AssertFatal(false, "GFXD3D9TextureManager::_createTexture - unable to create render target");
+				usage ^= D3DUSAGE_DYNAMIC; // anis -> ok... HACK ;)
+
+				hr = D3D9DEVICE->CreateTexture(width, height, numMipLevels, usage, d3dTextureFormat, pool, retTex->get2DTexPtr(), NULL);
+
+				if(FAILED(hr))
+					AssertFatal(false, "GFXD3D9TextureManager::_createTexture - failed to create texture!");
 			}
 
-         }
+			if(retTex->mProfile->isRenderTarget())
+			{
+				HRESULT hr = D3D9DEVICE->CreateRenderTargetEx(width, height, d3dTextureFormat, mstype, mslevel, false, retTex->getSurfacePtr(), NULL, 0);
 
-         // All done!
-         retTex->mMipLevels = retTex->get2DTex()->GetLevelCount();
-      }
+				if(FAILED(hr))
+					AssertFatal(false, "GFXD3D9TextureManager::_createTexture - unable to create render target");
+			}
 
-      // Get the actual size of the texture...
-      D3DSURFACE_DESC probeDesc;
-      ZeroMemory(&probeDesc, sizeof probeDesc);
+			retTex->mMipLevels = retTex->get2DTex()->GetLevelCount();
+		}
 
-      if( retTex->get2DTex() != NULL )
-	  {
-		 HRESULT hr = retTex->get2DTex()->GetLevelDesc(0, &probeDesc);
-
-		 if(FAILED(hr)) 
-		 {
-			AssertFatal(false, "Failed to get surface description");
-		 }
-	  }
-      else if( retTex->getSurface() != NULL )
-	  {
-         HRESULT hr = retTex->getSurface()->GetDesc(&probeDesc);
-
-		 if(FAILED(hr)) 
-		 {
-			AssertFatal(false, "Failed to get surface description");
-		 }
-	  }
-
-      retTex->mTextureSize.set(probeDesc.Width, probeDesc.Height, 0);
-      
-      int fmt = probeDesc.Format;
-
-      GFXREVERSE_LOOKUP( GFXD3D9TextureFormat, GFXFormat, fmt );
-      retTex->mFormat = (GFXFormat)fmt;
-   }
+		retTex->mTextureSize.set(width, height, 0);
+		int format = d3dTextureFormat;
+		GFXREVERSE_LOOKUP(GFXD3D9TextureFormat, GFXFormat, format);
+		retTex->mFormat = (GFXFormat)format;
+	}
 }
 
-//-----------------------------------------------------------------------------
-// createTexture
-//-----------------------------------------------------------------------------
 GFXTextureObject *GFXD3D9TextureManager::_createTextureObject( U32 height, 
                                                                U32 width,
                                                                U32 depth,
@@ -237,13 +183,14 @@ GFXTextureObject *GFXD3D9TextureManager::_createTextureObject( U32 height,
                                                                U32 numMipLevels,
                                                                bool forceMips, 
                                                                S32 antialiasLevel,
-                                                               GFXTextureObject *inTex )
+                                                               GFXTextureObject *inTex)
 {
    GFXD3D9TextureObject *retTex;
-   if ( inTex )
+
+   if (inTex)
    {
-      AssertFatal(static_cast<GFXD3D9TextureObject*>( inTex ), "GFXD3D9TextureManager::_createTexture() - Bad inTex type!");
-      retTex = static_cast<GFXD3D9TextureObject*>( inTex );
+      AssertFatal(static_cast<GFXD3D9TextureObject*>(inTex), "GFXD3D9TextureManager::_createTexture() - Bad inTex type!");
+      retTex = static_cast<GFXD3D9TextureObject*>(inTex);
       retTex->release();
    }      
    else
@@ -273,60 +220,85 @@ bool GFXD3D9TextureManager::_loadTexture(GFXTextureObject *aTexture, GBitmap *pD
    U32 maxDownloadMip = pDL->getNumMipLevels();
    U32 nbMipMapLevel  = pDL->getNumMipLevels();
 
-   if( supportsAutoMips && !isCompressedTexFmt )
+   if(supportsAutoMips && !isCompressedTexFmt)
    {
       maxDownloadMip = 1;
       nbMipMapLevel  = aTexture->mMipLevels;
    }
 
    // Fill the texture...
-   for( int i = 0; i < maxDownloadMip; i++ )
+   for(int i = 0; i < maxDownloadMip; ++i)
    {
-		LPDIRECT3DSURFACE9 surf = NULL;
-		HRESULT hr = texture->get2DTex()->GetSurfaceLevel( i, &surf );
+		LPDIRECT3DSURFACE9 surface;
+		HRESULT hr = texture->get2DTex()->GetSurfaceLevel(i, &surface);
 
 		if(FAILED(hr)) 
 		{
 			AssertFatal(false, "Failed to get surface");
 		}
 
-	  D3DLOCKED_RECT lockedRect;
-      surf->LockRect( &lockedRect, NULL, 0 );
+		FrameAllocatorMarker fam;
+		void* buffer = static_cast<void*>(fam.alloc(pDL->getWidth(i) * pDL->getHeight(i) * pDL->getBytesPerPixel()));
 
-      switch( texture->mFormat )
-      {
-      case GFXFormatR8G8B8:
-         {
-			 PROFILE_SCOPE(Swizzle24_Upload);
-             AssertFatal(pDL->getFormat() == GFXFormatR8G8B8, "Assumption failed");
+		switch(texture->mFormat)
+		{
+			case GFXFormatR8G8B8:
+				{
+					pDL->setFormat(GFXFormatR8G8B8X8);
+					texture->mFormat = pDL->getFormat();
+				}
 
-			 U8* Bits = new U8[pDL->getWidth(i) * pDL->getHeight(i) * 4];
-             dMemcpy(Bits, pDL->getBits(i), pDL->getWidth(i) * pDL->getHeight(i) * 3);
-			 bitmapConvertRGB_to_RGBX(&Bits, pDL->getWidth(i) * pDL->getHeight(i));
+			case GFXFormatR8G8B8A8:
+			case GFXFormatR8G8B8X8:
+				{
+					GFX->getDeviceSwizzle32()->ToBuffer(buffer, pDL->getBits(i), pDL->getWidth(i) * pDL->getHeight(i) * pDL->getBytesPerPixel());
+				}
+				break;
 
-             GFX->getDeviceSwizzle32()->ToBuffer(lockedRect.pBits, Bits, pDL->getWidth(i) * pDL->getHeight(i) * 4);
-         }
-         break;
+			default:
+				{
+					// Just copy the bits in no swizzle or padding
+					AssertFatal(pDL->getFormat() == texture->mFormat, "Format mismatch");
+					dMemcpy(buffer, pDL->getBits(i), pDL->getWidth(i) * pDL->getHeight(i) * pDL->getBytesPerPixel());
+				}
+		}
 
-      case GFXFormatR8G8B8A8:
-      case GFXFormatR8G8B8X8:
-         {
-            PROFILE_SCOPE(Swizzle32_Upload);
-            GFX->getDeviceSwizzle32()->ToBuffer(lockedRect.pBits, pDL->getBits(i), pDL->getWidth(i) * pDL->getHeight(i) * pDL->getBytesPerPixel());
-         }
-         break;
+		D3DLOCKED_RECT lock;
+		surface->LockRect(&lock, NULL, 0);
 
-      default:
-         {
-            // Just copy the bits in no swizzle or padding
-            PROFILE_SCOPE(SwizzleNull_Upload);
-            AssertFatal( pDL->getFormat() == texture->mFormat, "Format mismatch");
-            dMemcpy( lockedRect.pBits, pDL->getBits(i), pDL->getWidth(i) * pDL->getHeight(i) * pDL->getBytesPerPixel() );
-         }
-      }
+		if(FAILED(hr)) 
+		{
+			AssertFatal(false, "GFXD3D9TextureManager::_loadTexture - Failed LockRect");
+		}
 
-      surf->UnlockRect();
-      surf->Release();
+        if(pDL->getBytesPerPixel() * pDL->getWidth(i) != lock.Pitch)
+        {
+			// Do a row-by-row copy.
+			U32 srcPitch = pDL->getBytesPerPixel() * pDL->getWidth(i);
+			U32 srcHeight = pDL->getHeight(i);
+			U8* srcBytes = (U8*)buffer;
+			U8* dstBytes = (U8*)lock.pBits;
+			for (U32 i = 0; i < srcHeight; ++i)          
+			{
+				dMemcpy(dstBytes, srcBytes, srcPitch);
+				dstBytes += lock.Pitch;
+				srcBytes += srcPitch;
+			}           
+        }
+
+		else
+		{
+			dMemcpy(lock.pBits, buffer, pDL->getWidth(i) * pDL->getHeight(i) * pDL->getBytesPerPixel());
+		}
+
+		surface->UnlockRect();
+
+		if(FAILED(hr)) 
+		{
+			AssertFatal(false, "GFXD3D9TextureManager::_loadTexture - Failed UnlockRect");
+		}
+
+		surface->Release();
    }
 
    return true;          
@@ -336,7 +308,7 @@ bool GFXD3D9TextureManager::_loadTexture(GFXTextureObject *inTex, void *raw)
 {
    PROFILE_SCOPE(GFXD3D9TextureManager_loadTextureRaw);
 
-   GFXD3D9TextureObject *texture = (GFXD3D9TextureObject *) inTex;
+   GFXD3D9TextureObject *texture = (GFXD3D9TextureObject*) inTex;
 
    // currently only for volume textures...
    if(texture->getDepth() < 1) return false;
@@ -426,17 +398,13 @@ bool GFXD3D9TextureManager::_freeTexture(GFXTextureObject *texture, bool zombify
    AssertFatal(static_cast<GFXD3D9TextureObject *>(texture),"Not an actual d3d texture object!");
    GFXD3D9TextureObject *tex = static_cast<GFXD3D9TextureObject *>( texture );
 
-   // If it's a managed texture and we're zombifying, don't blast it, D3D allows
-   // us to keep it.
-   if(zombify && tex->isManaged)
+   if(zombify)
       return true;
 
    tex->release();
-
    return true;
 }
 
-/// Load a texture from a proper DDSFile instance.
 bool GFXD3D9TextureManager::_loadTexture(GFXTextureObject *aTexture, DDSFile *dds)
 {
    PROFILE_SCOPE(GFXD3D9TextureManager_loadTextureDDS);
@@ -444,50 +412,54 @@ bool GFXD3D9TextureManager::_loadTexture(GFXTextureObject *aTexture, DDSFile *dd
    GFXD3D9TextureObject *texture = static_cast<GFXD3D9TextureObject*>(aTexture);
 
    // Fill the texture...
-   for( int i = 0; i < aTexture->mMipLevels; i++ )
+   for(int i = 0; i < aTexture->mMipLevels; i++)
    {
 		PROFILE_SCOPE(GFXD3DTexMan_loadSurface);
 
-		LPDIRECT3DSURFACE9 surf = NULL;
-		HRESULT hr = texture->get2DTex()->GetSurfaceLevel( i, &surf );
+		LPDIRECT3DSURFACE9 surface;
+		HRESULT hr = texture->get2DTex()->GetSurfaceLevel(i, &surface);
 
-		if(FAILED(hr)) 
+		if(FAILED(hr))
 		{
 			AssertFatal(false, "Failed to get surface");
 		}
 
-		D3DLOCKED_RECT lockedRect;
-		hr = surf->LockRect( &lockedRect, NULL, 0 );
+		D3DLOCKED_RECT lock;
+		surface->LockRect(&lock, NULL, 0);
 
 		if(FAILED(hr)) 
 		{
-			AssertFatal(false, "Failed to lock surface level for load");
+			AssertFatal(false, "GFXD3D9TextureManager::_loadTexture - Failed LockRect");
 		}
 
-		AssertFatal( dds->mSurfaces.size() > 0, "Assumption failed. DDSFile has no surfaces." );
-
-		if ( dds->getSurfacePitch( i ) != lockedRect.Pitch )
-		{
+        if(dds->getSurfacePitch(i) != lock.Pitch)
+        {
 			// Do a row-by-row copy.
-			U32 srcPitch = dds->getSurfacePitch( i );
-			U32 srcHeight = dds->getHeight();
+			U32 srcPitch = dds->getSurfacePitch(i);
+			U32 srcHeight = dds->getHeight(i);
 			U8* srcBytes = dds->mSurfaces[0]->mMips[i];
-			U8* dstBytes = (U8*)lockedRect.pBits;
-			for (U32 i = 0; i<srcHeight; i++)          
+			U8* dstBytes = (U8*)lock.pBits;
+			for (U32 i = 0; i < srcHeight; ++i)          
 			{
-				dMemcpy( dstBytes, srcBytes, srcPitch );
-				dstBytes += lockedRect.Pitch;
+				dMemcpy(dstBytes, srcBytes, srcPitch);
+				dstBytes += lock.Pitch;
 				srcBytes += srcPitch;
 			}           
-			surf->UnlockRect();
-			surf->Release();
-			return true;
+        }
+
+		else
+		{
+			dMemcpy(lock.pBits, dds->mSurfaces[0]->mMips[i], dds->getSurfaceSize(i));
 		}
 
-		dMemcpy(lockedRect.pBits, dds->mSurfaces[0]->mMips[i], dds->getSurfaceSize(i));
+		hr = surface->UnlockRect();
 
-		surf->UnlockRect();
-		surf->Release();
+		if(FAILED(hr)) 
+		{
+			AssertFatal(false, "GFXD3D9TextureManager::_loadTexture - Failed UnlockRect");
+		}
+
+		surface->Release();
    }
 
    return true;
