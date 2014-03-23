@@ -43,7 +43,7 @@ GFXD3D9CardProfiler::~GFXD3D9CardProfiler()
 
 void GFXD3D9CardProfiler::init()
 {
-   AssertISV(static_cast<GFXD3D9Device*>(GFX)->getDevice(), "GFXD3D9CardProfiler::init() - No D3D9 Device found!");
+   AssertISV(D3D9DEVICE, "GFXD3D9CardProfiler::init() - No D3D9 Device found!");
 
    WMIVideoInfo wmiVidInfo;
    if(wmiVidInfo.profileAdapters())
@@ -62,7 +62,7 @@ void GFXD3D9CardProfiler::init()
 void GFXD3D9CardProfiler::setupCardCapabilities()
 {
    D3DCAPS9 caps;
-   static_cast<GFXD3D9Device*>( GFX )->getDevice()->GetDeviceCaps(&caps);
+   D3D9DEVICE->GetDeviceCaps(&caps);
 
    setCapability( "autoMipMapLevel", ( caps.Caps2 & D3DCAPS2_CANAUTOGENMIPMAP ? 1 : 0 ) );
    setCapability( "maxTextureWidth", caps.MaxTextureWidth );
@@ -80,53 +80,14 @@ void GFXD3D9CardProfiler::setupCardCapabilities()
 
 bool GFXD3D9CardProfiler::_queryCardCap(const String &query, U32 &foundResult)
 {
-   return 0;
+   return false;
 }
 
-bool GFXD3D9CardProfiler::_queryFormat( const GFXFormat fmt, const GFXTextureProfile *profile, bool &inOutAutogenMips )
+bool GFXD3D9CardProfiler::_queryFormat(const GFXFormat fmt, const GFXTextureProfile *profile, bool &inOutAutogenMips)
 {
-   LPDIRECT3D9 pD3D = static_cast<GFXD3D9Device *>(GFX)->getD3D();
-   D3DDISPLAYMODE displayMode = static_cast<GFXD3D9Device *>(GFX)->getDisplayMode();
+   // anis -> just tell to gfx if d3d9 can generate hardware mipmaps. if it can't, a software solution will be used.
 
-   DWORD usage = 0;
-   D3DRESOURCETYPE rType = D3DRTYPE_TEXTURE;
-   D3DFORMAT adapterFormat = displayMode.Format;
-   D3DFORMAT texFormat = GFXD3D9TextureFormat[fmt];
-
-   if( profile->isRenderTarget() )
-      usage |= D3DUSAGE_RENDERTARGET;
-   else if( profile->isZTarget() )
-   {
-      usage |= D3DUSAGE_DEPTHSTENCIL;
-      rType = D3DRTYPE_SURFACE;
-   }
-   
-   if( inOutAutogenMips )
-      usage |= D3DUSAGE_AUTOGENMIPMAP;
-
-   // Early-check to see if the enum translation table has an unsupported value
-   if(texFormat == (_D3DFORMAT)GFX_UNSUPPORTED_VAL)
-      return false;
-
-   HRESULT hr = pD3D->CheckDeviceFormat( mAdapterOrdinal, D3DDEVTYPE_HAL, adapterFormat, usage, rType, texFormat );
-
-   bool retVal = SUCCEEDED( hr );
-
-   // If check device format failed, and auto gen mips were requested, try again
-   // without autogen mips.
-   if( !retVal && inOutAutogenMips )
-   {
-      usage ^= D3DUSAGE_AUTOGENMIPMAP;
-
-      hr = pD3D->CheckDeviceFormat(mAdapterOrdinal, D3DDEVTYPE_HAL, adapterFormat, usage, D3DRTYPE_TEXTURE, GFXD3D9TextureFormat[fmt]);
-
-      retVal = SUCCEEDED( hr );
-
-      // If this one passed, auto gen mips are not supported with this format, 
-      // so set the variable properly
-      if( retVal )
-         inOutAutogenMips = false;
-   }
-
-   return retVal;
+   D3DCAPS9 caps;
+   D3D9DEVICE->GetDeviceCaps(&caps);
+   return (caps.Caps2 & D3DCAPS2_CANAUTOGENMIPMAP) && fmt != D3DFMT_UNKNOWN;
 }
