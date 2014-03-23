@@ -29,10 +29,6 @@
 #include "platform/profiler.h"
 #include "console/console.h"
 
-#ifdef TORQUE_DEBUG
-U32 GFXD3D9TextureObject::mTexCount = 0;
-#endif
-
 /*
 	anis -> GFXFormatR8G8B8 has now the same behaviour as GFXFormatR8G8B8X8. 
 	This is because 24 bit format are now deprecated by microsoft, for data alignment reason there's no changes beetween 24 and 32 bit formats.
@@ -41,108 +37,94 @@ U32 GFXD3D9TextureObject::mTexCount = 0;
 
 GFXD3D9TextureObject::GFXD3D9TextureObject( GFXDevice * d, GFXTextureProfile *profile) : GFXTextureObject( d, profile )
 {
-#ifdef TORQUE_DEBUG
-   mTexCount++;
-   Con::printf("+ texMake %d %x", mTexCount, this);
-#endif
-
-   isManaged = false;
    mD3DTexture = NULL;
    mLocked = false;
-
    mD3DSurface = NULL;
 }
 
 GFXD3D9TextureObject::~GFXD3D9TextureObject()
 {
    kill();
-#ifdef TORQUE_DEBUG
-   mTexCount--;
-   Con::printf("+ texkill %d %x", mTexCount, this);
-#endif
 }
 
 GFXLockedRect *GFXD3D9TextureObject::lock(U32 mipLevel /*= 0*/, RectI *inRect /*= NULL*/)
 {
-   AssertFatal( !mLocked, "GFXD3D9TextureObject::lock - The texture is already locked!" );
+	AssertFatal(!mLocked, "GFXD3D9TextureObject::lock - The texture is already locked!");
 
-   if( mProfile->isRenderTarget() )
-   {
-      if( !mLockTex || 
-          mLockTex->getWidth() != getWidth() ||
-          mLockTex->getHeight() != getHeight() )
-      {
-         mLockTex.set( getWidth(), getHeight(), mFormat, &GFXSystemMemProfile, avar("%s() - mLockTex (line %d)", __FUNCTION__, __LINE__) );
-      }
+	if(mProfile->isRenderTarget())
+	{
+		if(!mLockTex || mLockTex->getWidth() != getWidth() || mLockTex->getHeight() != getHeight())
+		{
+			mLockTex.set(getWidth(), getHeight(), mFormat, &GFXSystemMemProfile, avar("%s() - mLockTex (line %d)", __FUNCTION__, __LINE__));
+		}
 
-      PROFILE_START(GFXD3D9TextureObject_lockRT);
+		PROFILE_START(GFXD3D9TextureObject_lockRT);
 
-      IDirect3DSurface9 *source;
-      HRESULT hr = get2DTex()->GetSurfaceLevel( 0, &source );
+		IDirect3DSurface9 *source;
+		HRESULT hr = get2DTex()->GetSurfaceLevel( 0, &source );
 
-      if(FAILED(hr)) 
-	  {
-		  AssertFatal(false, "GFXD3D9TextureObject::lock - failed to get our own texture's surface.");
-	  }
+		if(FAILED(hr)) 
+		{
+			AssertFatal(false, "GFXD3D9TextureObject::lock - failed to get our own texture's surface.");
+		}
 
-      IDirect3DSurface9 *dest;
-      GFXD3D9TextureObject *to = (GFXD3D9TextureObject *) &(*mLockTex);
-      hr = to->get2DTex()->GetSurfaceLevel( 0, &dest );
+		IDirect3DSurface9 *dest;
+		GFXD3D9TextureObject *to = (GFXD3D9TextureObject*) &(*mLockTex);
+		hr = to->get2DTex()->GetSurfaceLevel(0, &dest);
 
-      if(FAILED(hr)) 
-	  {
-		  AssertFatal(false, "GFXD3D9TextureObject::lock - failed to get dest texture's surface.");
-	  }
+		if(FAILED(hr)) 
+		{
+			AssertFatal(false, "GFXD3D9TextureObject::lock - failed to get dest texture's surface.");
+		}
 
-      HRESULT rtLockRes = static_cast<GFXD3D9Device *>(GFX)->getDevice()->GetRenderTargetData( source, dest );
-      source->Release();
+		HRESULT rtLockRes = D3D9DEVICE->GetRenderTargetData(source, dest);
+		source->Release();
 
-      if(!SUCCEEDED(rtLockRes))
-      {
-         // This case generally occurs if the device is lost. The lock failed
-         // so clean up and return NULL.
-         dest->Release();
-         PROFILE_END();
-         return NULL;
-      }
+		if(!SUCCEEDED(rtLockRes))
+		{
+			// This case generally occurs if the device is lost. The lock failed
+			// so clean up and return NULL.
+			dest->Release();
+			PROFILE_END();
+			return NULL;
+		}
 
-      hr = dest->LockRect( &mLockRect, NULL, D3DLOCK_READONLY );
+		hr = dest->LockRect( &mLockRect, NULL, D3DLOCK_READONLY );
 
-      if(FAILED(hr)) 
-	  {
-		  AssertFatal(false, "LockRect call failure");
-	  }
+		if(FAILED(hr)) 
+		{
+			AssertFatal(false, "LockRect call failure");
+		}
 
-      dest->Release();
-      mLocked = true;
+		dest->Release();
+		mLocked = true;
 
-      PROFILE_END();
-   }
-   else
-   {
-      RECT r;
+		PROFILE_END();
+	}
+	else
+	{
+		RECT r;
 
-      if(inRect)
-      {
-         r.top  = inRect->point.y;
-         r.left = inRect->point.x;
-         r.bottom = inRect->point.y + inRect->extent.y;
-         r.right  = inRect->point.x + inRect->extent.x;
-      }
+		if(inRect)
+		{
+			r.top  = inRect->point.y;
+			r.left = inRect->point.x;
+			r.bottom = inRect->point.y + inRect->extent.y;
+			r.right  = inRect->point.x + inRect->extent.x;
+		}
 
-      HRESULT hr = get2DTex()->LockRect(mipLevel, &mLockRect, inRect ? &r : NULL, 0);
+		HRESULT hr = get2DTex()->LockRect(mipLevel, &mLockRect, inRect ? &r : NULL, 0);
 
-      if(FAILED(hr)) 
-	  {
-		  AssertFatal(false, "GFXD3D9TextureObject::lock - could not lock non-RT texture!");
-	  }
+		if(FAILED(hr)) 
+		{
+			AssertFatal(false, "GFXD3D9TextureObject::lock - could not lock non-RT texture!");
+		}
 
-      mLocked = true;
+		mLocked = true;
+	}
 
-   }
-
-   // GFXLockedRect is set up to correspond to D3DLOCKED_RECT, so this is ok.
-   return (GFXLockedRect*)&mLockRect; 
+	// GFXLockedRect is set up to correspond to D3DLOCKED_RECT, so this is ok.
+	return (GFXLockedRect*)&mLockRect; 
 }
 
 void GFXD3D9TextureObject::unlock(U32 mipLevel)
@@ -186,21 +168,10 @@ void GFXD3D9TextureObject::release()
 
 void GFXD3D9TextureObject::zombify()
 {
-   // Managed textures are managed by D3D
-   AssertFatal(!mLocked, "GFXD3D9TextureObject::zombify - Cannot zombify a locked texture!");
-   if(isManaged)
-      return;
-
-   release();
 }
 
 void GFXD3D9TextureObject::resurrect()
 {
-   // Managed textures are managed by D3D
-   if(isManaged)
-      return;
-
-   static_cast<GFXD3D9TextureManager*>(TEXMGR)->refreshTexture(this);
 }
 
 bool GFXD3D9TextureObject::copyToBmp(GBitmap* bmp)
