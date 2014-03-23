@@ -63,7 +63,7 @@ bool GFXD3D9OcclusionQuery::begin()
 
    if(mQuery == NULL)
    {
-      HRESULT hRes = static_cast<GFXD3D9Device*>(GFX)->getDevice()->CreateQuery(D3DQUERYTYPE_OCCLUSION, &mQuery);
+      HRESULT hRes = D3D9DEVICE->CreateQuery(D3DQUERYTYPE_OCCLUSION, &mQuery);
       AssertFatal(hRes != D3DERR_NOTAVAILABLE, "GFXD3D9OcclusionQuery::begin - Hardware does not support D3D9 Occlusion-Queries, this should be caught before this type is created");
       AssertISV(hRes != E_OUTOFMEMORY, "GFXD3D9OcclusionQuery::begin - Out of memory");
    }
@@ -106,10 +106,10 @@ GFXD3D9OcclusionQuery::OcclusionQueryStatus GFXD3D9OcclusionQuery::getStatus(boo
    // of time to render an individual frame you could have problems.
    PROFILE_SCOPE(GFXD3D9OcclusionQuery_getStatus);
 
-   if (GFXDevice::getDisableOcclusionQuery())
+   if(GFXDevice::getDisableOcclusionQuery())
       return NotOccluded;
 
-   if (mQuery == NULL)
+   if(mQuery == NULL)
       return Unset;
 
 #ifdef TORQUE_GATHER_METRICS
@@ -122,7 +122,7 @@ GFXD3D9OcclusionQuery::OcclusionQueryStatus GFXD3D9OcclusionQuery::getStatus(boo
    HRESULT hRes;
    DWORD dwOccluded = 0;
 
-   if ( block )
+   if(block)
    {      
       while((hRes = mQuery->GetData(&dwOccluded, sizeof(DWORD), D3DGETDATA_FLUSH)) == S_FALSE);
    }
@@ -131,15 +131,15 @@ GFXD3D9OcclusionQuery::OcclusionQueryStatus GFXD3D9OcclusionQuery::getStatus(boo
       hRes = mQuery->GetData(&dwOccluded, sizeof(DWORD), 0);
    }
 
-   if (hRes == S_OK)   
+   if(hRes == S_OK)   
    {
-      if (data != NULL)
+      if(data != NULL)
          *data = dwOccluded;
 
       return dwOccluded > 0 ? NotOccluded : Occluded;   
    }
 
-   if (hRes == S_FALSE)
+   if(hRes == S_FALSE)
       return Waiting;
 
    return Error;   
@@ -147,7 +147,6 @@ GFXD3D9OcclusionQuery::OcclusionQueryStatus GFXD3D9OcclusionQuery::getStatus(boo
 
 void GFXD3D9OcclusionQuery::zombify()
 {
-   SAFE_RELEASE( mQuery );
 }
 
 void GFXD3D9OcclusionQuery::resurrect()
