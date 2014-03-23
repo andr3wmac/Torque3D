@@ -505,25 +505,25 @@ void GFXD3D9ShaderConstBuffer::activate( GFXD3D9ShaderConstBuffer *prevShaderBuf
    if ( mVertexConstBufferF->isDirty() )
    {
       buf = mVertexConstBufferF->getDirtyBuffer( &start, &bufferSize );
-      static_cast<GFXD3D9Device*>( GFX )->getDevice()->SetVertexShaderConstantF( start / bytesToFloat4, (float*)buf, bufferSize / bytesToFloat4 );
+      D3D9DEVICE->SetVertexShaderConstantF( start / bytesToFloat4, (float*)buf, bufferSize / bytesToFloat4 );
    }
 
    if ( mPixelConstBufferF->isDirty() )    
    {
       buf = mPixelConstBufferF->getDirtyBuffer( &start, &bufferSize );
-      static_cast<GFXD3D9Device*>( GFX )->getDevice()->SetPixelShaderConstantF( start / bytesToFloat4, (float*)buf, bufferSize / bytesToFloat4 );      
+      D3D9DEVICE->SetPixelShaderConstantF( start / bytesToFloat4, (float*)buf, bufferSize / bytesToFloat4 );      
    }
 
    if ( mVertexConstBufferI->isDirty() )
    {
       buf = mVertexConstBufferI->getDirtyBuffer( &start, &bufferSize );
-      static_cast<GFXD3D9Device*>( GFX )->getDevice()->SetVertexShaderConstantI( start / bytesToInt4, (int*)buf, bufferSize / bytesToInt4 );
+      D3D9DEVICE->SetVertexShaderConstantI( start / bytesToInt4, (int*)buf, bufferSize / bytesToInt4 );
    }
 
    if ( mPixelConstBufferI->isDirty() )    
    {
       buf = mPixelConstBufferI->getDirtyBuffer( &start, &bufferSize );
-      static_cast<GFXD3D9Device*>( GFX )->getDevice()->SetPixelShaderConstantI( start / bytesToInt4, (int*)buf, bufferSize / bytesToInt4 );      
+      D3D9DEVICE->SetPixelShaderConstantI( start / bytesToInt4, (int*)buf, bufferSize / bytesToInt4 );      
    }
 
    #ifdef TORQUE_DEBUG
@@ -572,7 +572,7 @@ GFXD3D9Shader::GFXD3D9Shader()
 {
    VECTOR_SET_ASSOCIATION( mShaderConsts );
 
-   AssertFatal(static_cast<GFXD3D9Device*>( GFX )->getDevice(), "Invalid device for shader.");
+   AssertFatal(D3D9DEVICE, "Invalid device for shader.");
    mVertShader = NULL;
    mPixShader = NULL;
    mVertexConstBufferLayoutF = NULL;
@@ -717,7 +717,7 @@ bool GFXD3D9Shader::_compileShader( const Torque::Path &filePath,
 
 #ifdef TORQUE_DEBUG
 
-   // anis note:
+   // anis -> note:
 
    /*
 		warning: Using D3DCOMPILE_SKIP_OPTIMIZATION (tested on directx9)
@@ -867,9 +867,9 @@ bool GFXD3D9Shader::_compileShader( const Torque::Path &filePath,
       #endif
 
       if (target.compare("ps_", 3) == 0)      
-         res = static_cast<GFXD3D9Device*>(GFX)->getDevice()->CreatePixelShader((DWORD*)code->GetBufferPointer(), &mPixShader);
+         res = D3D9DEVICE->CreatePixelShader((DWORD*)code->GetBufferPointer(), &mPixShader);
       else
-         res = static_cast<GFXD3D9Device*>(GFX)->getDevice()->CreateVertexShader((DWORD*)code->GetBufferPointer(), &mVertShader);
+         res = D3D9DEVICE->CreateVertexShader((DWORD*)code->GetBufferPointer(), &mVertShader);
 
       if (SUCCEEDED(res) && HasValidConstants)
          _getShaderConstants(bufferLayoutF, bufferLayoutI, samplerDescriptions);
@@ -1142,9 +1142,9 @@ bool GFXD3D9Shader::_loadCompiledOutput( const Torque::Path &filePath,
 
    HRESULT res;
    if (target.compare("ps_", 3) == 0)      
-      res = static_cast<GFXD3D9Device*>( GFX )->getDevice()->CreatePixelShader(buffer, &mPixShader );
+      res = D3D9DEVICE->CreatePixelShader(buffer, &mPixShader );
    else
-      res = static_cast<GFXD3D9Device*>( GFX )->getDevice()->CreateVertexShader(buffer, &mVertShader );
+      res = D3D9DEVICE->CreateVertexShader(buffer, &mVertShader );
    AssertFatal(SUCCEEDED(res), "Unable to load shader!");
 
    FrameAllocator::setWaterMark(waterMark);
@@ -1350,10 +1350,8 @@ U32 GFXD3D9Shader::getAlignmentValue(const GFXShaderConstType constType) const
 
 void GFXD3D9Shader::zombify()
 {
-   // Shaders don't need zombification
 }
 
 void GFXD3D9Shader::resurrect()
 {
-   // Shaders are never zombies, and therefore don't have to be brought back.
 }
