@@ -45,7 +45,7 @@ void GFXD3D9VideoFrameGrabber::captureBackBuffer()
    AssertFatal( mCapture[mCurrentCapture].stage != eInSystemMemory, "Error! Trying to override a capture resource in \"SystemMemory\" stage!" );
 
    IDirect3DSurface9 * backBuffer;
-   static_cast<GFXD3D9Device *>(GFX)->getDevice()->GetBackBuffer( 0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer );
+   D3D9DEVICE->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer);
 
    GFXTexHandle &vidMemTex = mCapture[mCurrentCapture].vidMemTex;
 
@@ -67,7 +67,7 @@ void GFXD3D9VideoFrameGrabber::captureBackBuffer()
 
    // use StretchRect because it allows a copy from a multisample surface
    // to a normal rendertarget surface
-   static_cast<GFXD3D9Device *>(GFX)->getDevice()->StretchRect( backBuffer, NULL, surface, NULL, D3DTEXF_LINEAR );
+   D3D9DEVICE->StretchRect( backBuffer, NULL, surface, NULL, D3DTEXF_LINEAR );
 
    // Reelase surfaces
    backBuffer->Release();
@@ -121,15 +121,15 @@ void GFXD3D9VideoFrameGrabber::copyToSystemMemory(CaptureResource &capture)
 
    // Initialize system memory texture if necessary
    Point2I size = vidMemTex.getWidthHeight();
-   if (sysMemTex.isNull() || sysMemTex.getWidthHeight() != size)
-      sysMemTex.set( size.x, size.y, GFXFormatR8G8B8X8, &GFXSystemMemProfile, avar("%s() - tex (line %d)", __FUNCTION__, __LINE__) );
+   if(sysMemTex.isNull() || sysMemTex.getWidthHeight() != size)
+      sysMemTex.set(size.x, size.y, GFXFormatR8G8B8X8, &GFXSystemMemProfile, avar("%s() - tex (line %d)", __FUNCTION__, __LINE__));
 
    // set up the 2 copy surfaces   
    IDirect3DSurface9 *surface[2];
 
    // grab the top level surface of tex 0
    GFXD3D9TextureObject *to = (GFXD3D9TextureObject *) &(*vidMemTex);
-    HRESULT hr = to->get2DTex()->GetSurfaceLevel( 0, &surface[0] );
+    HRESULT hr = to->get2DTex()->GetSurfaceLevel(0, &surface[0]);
 
 	if(FAILED(hr)) 
 	{
@@ -146,7 +146,7 @@ void GFXD3D9VideoFrameGrabber::copyToSystemMemory(CaptureResource &capture)
 	}
 
    // copy the data from the render target to the system memory texture
-   static_cast<GFXD3D9Device *>(GFX)->getDevice()->GetRenderTargetData( surface[0], surface[1] );
+   D3D9DEVICE->GetRenderTargetData( surface[0], surface[1] );
 
    // celease surfaces
    surface[0]->Release();
