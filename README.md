@@ -21,6 +21,7 @@ D3D-Refactor by Anis
 * Removed managed memory pool. (Now all resources are placed on video memory)
 * Port to DirectX9Ex.
 * gfxD3D9TextureManager.cpp rewrite.
+* gfxD3D9Target.cpp rewrite.
 
 TODO:
 * Remove D3DPT_TRIANGLEFAN topology support and place it a triangle list/strip instead.
