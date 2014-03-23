@@ -57,10 +57,10 @@ void GFXD3D9VertexBuffer::lock(U32 vertexStart, U32 vertexEnd, void **vertexPtr)
    case GFXBufferTypeVolatile:
 
       // Get or create the volatile buffer...
-      mVolatileBuffer = static_cast<GFXD3D9Device*>( GFX )->findVBPool( &mVertexFormat, vertexEnd );
+      mVolatileBuffer = static_cast<GFXD3D9Device*>(GFX)->findVBPool( &mVertexFormat, vertexEnd );
 
       if( !mVolatileBuffer )
-         mVolatileBuffer = static_cast<GFXD3D9Device*>( GFX )->createVBPool( &mVertexFormat, mVertexSize );
+         mVolatileBuffer = static_cast<GFXD3D9Device*>(GFX)->createVBPool( &mVertexFormat, mVertexSize );
 
       vb = mVolatileBuffer->vb;
 
@@ -175,30 +175,9 @@ void GFXD3D9VertexBuffer::unlock()
 
 void GFXD3D9VertexBuffer::zombify()
 {
-   AssertFatal(lockedVertexStart == 0 && lockedVertexEnd == 0, "GFXD3D9VertexBuffer::zombify - Cannot zombify a locked buffer!");
-   // Static buffers are managed by D3D9 so we don't deal with them.
-   if(mBufferType == GFXBufferTypeDynamic)
-   {
-      SAFE_RELEASE(vb);
-   }
 }
 
 void GFXD3D9VertexBuffer::resurrect()
 {
-   // Static buffers are managed by D3D9 so we don't deal with them.
-   if(mBufferType == GFXBufferTypeDynamic)
-   {
-		HRESULT hr = static_cast<GFXD3D9Device*>( GFX )->getDevice()->CreateVertexBuffer(	mVertexSize * mNumVerts,
-																							D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, 
-																							0, 
-																							D3DPOOL_DEFAULT,
-																							&vb,
-																							NULL );
-
-	   if(FAILED(hr)) 
-	   {
-		  AssertFatal(false, "GFXD3D9VertexBuffer::resurrect - Failed to allocate VB");
-	   }
-   }
 }
 
