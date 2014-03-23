@@ -54,18 +54,13 @@ private:
    friend class GFXD3D9TextureTarget;
    friend class GFXD3D9Device;
 
-   LPDIRECT3DCUBETEXTURE9  mCubeTex;
+   LPDIRECT3DCUBETEXTURE9 mCubeTex;
 
-   bool mDynamic;
-   U32  mTexSize;
-   U32  mSupportsAutoMips;
+   U32 mTexSize;
+   U32 mSupportsAutoMips;
    GFXFormat mFaceFormat;
-   
-   void releaseSurfaces();
 
-   /// The callback used to get texture events.
-   /// @see GFXTextureManager::addEventDelegate
-   void _onTextureEvent(GFXTexCallbackCode code);
+   void releaseSurfaces();
 };
 
 #endif
