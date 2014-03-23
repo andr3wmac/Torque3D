@@ -74,17 +74,8 @@ class GFXD3D9WindowTarget : public GFXWindowTarget
 {
    friend class GFXD3D9Device;
 
-   /// Our depth stencil buffer, if any.
-   IDirect3DSurface9 *mDepthStencil;
-
-   /// Our backbuffer
-   IDirect3DSurface9 *mBackbuffer;
-
    /// Maximum size we can render to.
    Point2I mSize;
-
-   /// Our swap chain, potentially the implicit device swap chain.
-   IDirect3DSwapChain9 *mSwapChain;
 
    /// D3D presentation info.
    D3DPRESENT_PARAMETERS mPresentationParams;
@@ -102,7 +93,6 @@ public:
    virtual bool present();
 
    void initPresentationParams();
-   void setImplicitSwapChain();
 
    virtual void activate();   
 
