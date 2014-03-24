@@ -89,5 +89,5 @@ bool GFXD3D9CardProfiler::_queryFormat(const GFXFormat fmt, const GFXTextureProf
 
    D3DCAPS9 caps;
    D3D9DEVICE->GetDeviceCaps(&caps);
-   return (caps.Caps2 & D3DCAPS2_CANAUTOGENMIPMAP) && fmt != D3DFMT_UNKNOWN;
+   return (caps.Caps2 & D3DCAPS2_CANAUTOGENMIPMAP);
 }
