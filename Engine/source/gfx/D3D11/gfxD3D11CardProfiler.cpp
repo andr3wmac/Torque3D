@@ -72,5 +72,5 @@ bool GFXD3D11CardProfiler::_queryCardCap(const String &query, U32 &foundResult)
 bool GFXD3D11CardProfiler::_queryFormat( const GFXFormat fmt, const GFXTextureProfile *profile, bool &inOutAutogenMips )
 {
    // anis -> D3D11 feature level should guarantee that any format is valid!
-   return GFXD3D11TextureFormat[fmt] != DXGI_FORMAT_UNKNOWN;
+   return true;
 }
