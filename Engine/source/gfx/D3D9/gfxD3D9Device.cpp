@@ -691,7 +691,6 @@ GFXStateBlockRef GFXD3D9Device::createStateBlockInternal(const GFXStateBlockDesc
 /// Activates a stateblock
 void GFXD3D9Device::setStateBlockInternal(GFXStateBlock* block, bool force)
 {
-   AssertFatal(static_cast<GFXD3D9StateBlock*>(block), "Incorrect stateblock type for this device!");
    GFXD3D9StateBlock* d3dBlock = static_cast<GFXD3D9StateBlock*>(block);
    GFXD3D9StateBlock* d3dCurrent = static_cast<GFXD3D9StateBlock*>(mCurrentStateBlock.getPointer());
    if (force)
@@ -705,7 +704,6 @@ void GFXD3D9Device::setShaderConstBufferInternal(GFXShaderConstBuffer* buffer)
    if(buffer)
    {
       PROFILE_SCOPE(GFXD3D9Device_setShaderConstBufferInternal);
-      AssertFatal(static_cast<GFXD3D9ShaderConstBuffer*>(buffer), "Incorrect shader const buffer type for this device!");
       GFXD3D9ShaderConstBuffer* d3dBuffer = static_cast<GFXD3D9ShaderConstBuffer*>(buffer);
 
       d3dBuffer->activate(mCurrentConstBuffer);
