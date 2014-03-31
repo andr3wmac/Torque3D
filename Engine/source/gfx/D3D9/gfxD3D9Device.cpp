@@ -965,7 +965,7 @@ void GFXD3D9Device::setClipRect(const RectI &inRect)
    setViewport(mClipRect);
 }
 
-void GFXD3D9Device::setVertexStream(U32 stream, GFXVertexBuffer *buffer)
+void GFXD3D9Device::setVertexStream(U32 stream, GFXVertexBuffer *buffer, U32 frequency)
 {
    GFXD3D9VertexBuffer *d3dBuffer = static_cast<GFXD3D9VertexBuffer*>(buffer);
 
@@ -979,6 +979,22 @@ void GFXD3D9Device::setVertexStream(U32 stream, GFXVertexBuffer *buffer)
          mVolatileVB = NULL;
    }
 
+   // Set Stream Frequency.
+   if (frequency == 0)
+       frequency = 1;
+   else
+   {
+       if ( stream == 0 )
+           frequency = D3DSTREAMSOURCE_INDEXEDDATA | frequency;
+       else
+           frequency = D3DSTREAMSOURCE_INSTANCEDATA | frequency;
+   }
+
+   HRESULT freq_hr = mD3DDevice->SetStreamSourceFreq(stream, frequency);
+
+   if(FAILED(freq_hr))
+       AssertFatal(false, "GFXD3D9Device::setVertexStreamFrequency - Failed to set stream frequency.");
+
    // NOTE: We do not use the stream offset here for stream 0
    // as that feature is *supposedly* not as well supported as 
    // using the start index in drawPrimitive.
@@ -990,29 +1006,9 @@ void GFXD3D9Device::setVertexStream(U32 stream, GFXVertexBuffer *buffer)
                                              d3dBuffer ? d3dBuffer->vb : NULL,
                                              d3dBuffer && stream != 0 ? d3dBuffer->mVolatileStart * d3dBuffer->mVertexSize : 0, 
                                              d3dBuffer ? d3dBuffer->mVertexSize : 0 );
-   if(FAILED(hr)) 
+   if(FAILED(hr))
    {
        AssertFatal(false, "GFXD3D9Device::setVertexStream - Failed to set stream source.");
-   }
-}
-
-void GFXD3D9Device::setVertexStreamFrequency(U32 stream, U32 frequency)
-{
-   if(frequency == 0)
-      frequency = 1;
-   else
-   {
-      if(stream == 0)
-         frequency = D3DSTREAMSOURCE_INDEXEDDATA | frequency;
-      else
-         frequency = D3DSTREAMSOURCE_INSTANCEDATA | frequency;
-   }
-
-   HRESULT hr = mD3DDevice->SetStreamSourceFreq(stream, frequency);
-
-   if(FAILED(hr)) 
-   {
-       AssertFatal(false, "GFXD3D9Device::setVertexStreamFrequency - Failed to set stream frequency.");
    }
 }
 
