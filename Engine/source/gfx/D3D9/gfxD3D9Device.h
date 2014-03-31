@@ -119,6 +119,8 @@ protected:
    LPDIRECT3D9EX       mD3D;
    LPDIRECT3DDEVICE9EX mD3DDevice;
 
+   GFXShader* mCurrentShader;
+   GFXShaderRef mGenericShader[GS_COUNT];
    GFXShaderConstBufferRef mGenericShaderBuffer[GS_COUNT];
    GFXShaderConstHandle *mModelViewProjSC[GS_COUNT];
 
@@ -280,8 +282,6 @@ public:
 
    /// Reset
    void reset(D3DPRESENT_PARAMETERS &d3dpp);
-
-   GFXShaderRef mGenericShader[GS_COUNT];
 
    virtual void setupGenericShaders( GenericShaderType type  = GSColor );
 
