@@ -92,9 +92,6 @@ void GFXD3D9TextureTarget::attachTexture( RenderSlot slot, GFXTextureObject *tex
    }
    else
    {
-      // Cast the texture object to D3D...
-      AssertFatal(static_cast<GFXD3D9TextureObject*>(tex), "GFXD3D9TextureTarget::attachTexture - invalid texture object.");
-
       GFXD3D9TextureObject *d3dto = static_cast<GFXD3D9TextureObject*>(tex);
 
       // Grab the surface level.
