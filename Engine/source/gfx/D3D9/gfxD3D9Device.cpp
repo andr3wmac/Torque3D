@@ -573,6 +573,8 @@ GFXD3D9Device::GFXD3D9Device(LPDIRECT3D9EX d3d, U32 index) : mVideoFrameGrabber(
    for(int i = 0; i < GS_COUNT; ++i)
       mModelViewProjSC[i] = NULL;
 
+   mCurrentShader = NULL;
+
    // Set up the Enum translation tables
    GFXD3D9EnumTranslate::init();
 }
@@ -1095,6 +1097,9 @@ GFXShader* GFXD3D9Device::createShader()
 //-----------------------------------------------------------------------------
 void GFXD3D9Device::setShader(GFXShader *shader)
 {
+   if(mCurrentShader == shader)
+       return;
+
    if(shader)
    {
 	   GFXD3D9Shader *d3dShader = static_cast<GFXD3D9Shader*>(shader);
@@ -1110,6 +1115,8 @@ void GFXD3D9Device::setShader(GFXShader *shader)
 		  mD3DDevice->SetVertexShader( d3dShader->mVertShader );
 		  mLastVertShader = d3dShader->mVertShader;
 	   }
+
+	   mCurrentShader = shader;
    }
 
    else
