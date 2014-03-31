@@ -305,9 +305,11 @@ public:
    virtual ~GFXD3D9Shader();   
 
    // GFXShader
+
    virtual GFXShaderConstBufferRef allocConstBuffer();
    virtual const Vector<GFXShaderConstDesc>& getShaderConstDesc() const;
-   virtual GFXShaderConstHandle* getShaderConstHandle(const String& name); 
+   virtual GFXShaderConstHandle* getShaderConstHandle(const String& name);
+   virtual GFXShaderConstHandle* findShaderConstHandle(const String& name);
    virtual U32 getAlignmentValue(const GFXShaderConstType constType) const;
    virtual bool getDisassembly( String &outStr ) const;
 
