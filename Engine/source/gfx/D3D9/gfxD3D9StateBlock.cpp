@@ -139,17 +139,6 @@ void GFXD3D9StateBlock::activate(GFXD3D9StateBlock* oldState)
    if(!oldState || mDesc.fillMode != oldState->mDesc.fillMode)
 	   D3D9DEVICE->SetRenderState(D3DRS_FILLMODE, GFXD3D9FillMode[mDesc.fillMode]);
 
-   if(!oldState || mDesc.ffLighting != oldState->mDesc.ffLighting)
-	   D3D9DEVICE->SetRenderState(D3DRS_LIGHTING, mDesc.ffLighting);
-   if(!oldState || mDesc.vertexColorEnable != oldState->mDesc.vertexColorEnable)
-	   D3D9DEVICE->SetRenderState(D3DRS_COLORVERTEX, mDesc.vertexColorEnable);
-
-   static DWORD swzTemp;
-   getOwningDevice()->getDeviceSwizzle32()->ToBuffer( &swzTemp, &mDesc.textureFactor, sizeof(ColorI) );
-
-   if(!oldState || mDesc.textureFactor != oldState->mDesc.textureFactor)
-	   D3D9DEVICE->SetRenderState(D3DRS_TEXTUREFACTOR, swzTemp);
-
    for(U32 i = 0; i < getOwningDevice()->getNumSamplers(); i++)
    {      
       if (!oldState || oldState->mDesc.samplers[i].minFilter != mDesc.samplers[i].minFilter) 
