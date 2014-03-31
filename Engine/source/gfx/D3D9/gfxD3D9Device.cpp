@@ -981,22 +981,6 @@ void GFXD3D9Device::setVertexStream(U32 stream, GFXVertexBuffer *buffer, U32 fre
          mVolatileVB = NULL;
    }
 
-   // Set Stream Frequency.
-   if (frequency == 0)
-       frequency = 1;
-   else
-   {
-       if ( stream == 0 )
-           frequency = D3DSTREAMSOURCE_INDEXEDDATA | frequency;
-       else
-           frequency = D3DSTREAMSOURCE_INSTANCEDATA | frequency;
-   }
-
-   HRESULT freq_hr = mD3DDevice->SetStreamSourceFreq(stream, frequency);
-
-   if(FAILED(freq_hr))
-       AssertFatal(false, "GFXD3D9Device::setVertexStreamFrequency - Failed to set stream frequency.");
-
    // NOTE: We do not use the stream offset here for stream 0
    // as that feature is *supposedly* not as well supported as 
    // using the start index in drawPrimitive.
@@ -1011,6 +995,26 @@ void GFXD3D9Device::setVertexStream(U32 stream, GFXVertexBuffer *buffer, U32 fre
    if(FAILED(hr))
    {
        AssertFatal(false, "GFXD3D9Device::setVertexStream - Failed to set stream source.");
+   }
+}
+
+void GFXD3D9Device::setVertexStreamFrequency(U32 stream, U32 frequency)
+{
+   if(frequency == 0)
+      frequency = 1;
+   else
+   {
+      if(stream == 0)
+         frequency = D3DSTREAMSOURCE_INDEXEDDATA | frequency;
+      else
+         frequency = D3DSTREAMSOURCE_INSTANCEDATA | frequency;
+   }
+
+   HRESULT hr = mD3DDevice->SetStreamSourceFreq(stream, frequency);
+
+   if(FAILED(hr))
+   {
+      AssertFatal(false, "GFXD3D9Device::setVertexStreamFrequency - Failed to set stream frequency.");
    }
 }
 
