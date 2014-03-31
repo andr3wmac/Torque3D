@@ -372,10 +372,7 @@ void GFXDevice::updateStates(bool forceSetAll /*=false*/)
       setVertexDecl( mCurrVertexDecl );
 
       for ( U32 i=0; i < MAX_VERTEX_STREAM_COUNT; i++ )
-      {
-         setVertexStream( i, mCurrentVertexBuffer[i] );
-         setVertexStreamFrequency( i, mVertexBufferFrequency[i] );
-      }
+         setVertexStream( i, mCurrentVertexBuffer[i], mVertexBufferFrequency[i] );
 
       if( mCurrentPrimitiveBuffer.isValid() ) // This could be NULL when the device is initalizing
          mCurrentPrimitiveBuffer->prepare();
