@@ -967,7 +967,7 @@ void GFXD3D9Device::setClipRect(const RectI &inRect)
    setViewport(mClipRect);
 }
 
-void GFXD3D9Device::setVertexStream(U32 stream, GFXVertexBuffer *buffer, U32 frequency)
+void GFXD3D9Device::setVertexStream(U32 stream, GFXVertexBuffer *buffer)
 {
    GFXD3D9VertexBuffer *d3dBuffer = static_cast<GFXD3D9VertexBuffer*>(buffer);
 
