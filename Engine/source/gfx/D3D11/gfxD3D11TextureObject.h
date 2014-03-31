@@ -48,9 +48,6 @@ protected:
    ID3D11Texture2D      *mD3DSurface;
 
 public:
-   bool                 isManaged;
-
-public:
 
    GFXD3D11TextureObject( GFXDevice * d, GFXTextureProfile *profile);
    ~GFXD3D11TextureObject();
@@ -62,7 +59,7 @@ public:
    ID3D11Texture2D*     get2DTex(){ return (ID3D11Texture2D*) mD3DTexture; }
    ID3D11Texture2D**    get2DTexPtr(){ return (ID3D11Texture2D**) &mD3DTexture; }
    ID3D11Texture3D*		get3DTex(){ return (ID3D11Texture3D*) mD3DTexture; }
-   ID3D11Texture3D**	   get3DTexPtr(){ return (ID3D11Texture3D**) &mD3DTexture; }
+   ID3D11Texture3D**	get3DTexPtr(){ return (ID3D11Texture3D**) &mD3DTexture; }
    
 
    void release();
