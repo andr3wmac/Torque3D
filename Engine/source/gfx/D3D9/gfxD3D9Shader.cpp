@@ -1306,6 +1306,17 @@ GFXShaderConstHandle* GFXD3D9Shader::getShaderConstHandle(const String& name)
    }      
 }
 
+GFXShaderConstHandle* GFXD3D9Shader::findShaderConstHandle(const String& name)
+{
+   HandleMap::Iterator i = mHandles.find(name);
+   if(i != mHandles.end())
+      return i->value;
+   else
+   {
+      return NULL;
+   }
+}
+
 const Vector<GFXShaderConstDesc>& GFXD3D9Shader::getShaderConstDesc() const
 {
    return mShaderConsts;
