@@ -395,7 +395,6 @@ bool GFXD3D9TextureManager::_refreshTexture(GFXTextureObject *texture)
 
 bool GFXD3D9TextureManager::_freeTexture(GFXTextureObject *texture, bool zombify)
 {
-   AssertFatal(static_cast<GFXD3D9TextureObject *>(texture),"Not an actual d3d texture object!");
    GFXD3D9TextureObject *tex = static_cast<GFXD3D9TextureObject *>( texture );
 
    if(zombify)
