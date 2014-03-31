@@ -49,6 +49,7 @@ void GFXD3D9EnumTranslate::init()
    GFXD3D9TextureFormat[GFXFormatR8G8B8] = D3DFMT_X8R8G8B8; // anis -> behaviour like d3d11 (using 24 bit format, in any case, we still allocate 32 bit for data alignment reason)
    GFXD3D9TextureFormat[GFXFormatR8G8B8A8] = D3DFMT_A8R8G8B8;
    GFXD3D9TextureFormat[GFXFormatR8G8B8X8] = D3DFMT_X8R8G8B8;
+   GFXD3D9TextureFormat[GFXFormatB8G8R8A8] = D3DFMT_A8R8G8B8;
    GFXD3D9TextureFormat[GFXFormatR5G6B5] = D3DFMT_R5G6B5;
    GFXD3D9TextureFormat[GFXFormatR5G5B5A1] = D3DFMT_A1R5G5B5;
    GFXD3D9TextureFormat[GFXFormatR5G5B5X1] = D3DFMT_X1R5G5B5;
