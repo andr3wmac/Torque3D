@@ -107,9 +107,6 @@ void GFXD3D11TextureManager::_innerCreateTexture( GFXD3D11TextureObject *retTex,
       //static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->GenerateMips();
    }
 
-   // Set the managed flag...
-   retTex->isManaged = false;
-   
    if( depth > 0 )
    {
       D3D11_TEXTURE3D_DESC sTexDesc3D;
@@ -378,16 +375,12 @@ bool GFXD3D11TextureManager::_refreshTexture(GFXTextureObject *texture)
 
 bool GFXD3D11TextureManager::_freeTexture(GFXTextureObject *texture, bool zombify)
 {
-   AssertFatal(dynamic_cast<GFXD3D11TextureObject *>(texture),"Not an actual d3d texture object!");
    GFXD3D11TextureObject *tex = static_cast<GFXD3D11TextureObject *>( texture );
 
-   // If it's a managed texture and we're zombifying, don't blast it, D3D allows
-   // us to keep it.
-   if(zombify && tex->isManaged)
+   if(zombify)
       return true;
 
    tex->release();
-
    return true;
 }
 
