@@ -904,7 +904,7 @@ void GFXD3D11Device::setClipRect( const RectI &inRect )
    setViewport( mClipRect );
 }
 
-void GFXD3D11Device::setVertexStream( U32 stream, GFXVertexBuffer *buffer, U32 frequency )
+void GFXD3D11Device::setVertexStream( U32 stream, GFXVertexBuffer *buffer )
 {
 	GFXD3D11VertexBuffer *d3dBuffer = static_cast<GFXD3D11VertexBuffer*>( buffer );
 
@@ -936,6 +936,11 @@ void GFXD3D11Device::setVertexStream( U32 stream, GFXVertexBuffer *buffer, U32 f
 		AssertFatal(false, "GFXD3D11Device::setVertexStream - Failed to set stream source.");
 	}
 	*/
+}
+
+void GFXD3D11Device::setVertexStreamFrequency( U32 stream, U32 frequency )
+{
+
 }
 
 void GFXD3D11Device::_setPrimitiveBuffer( GFXPrimitiveBuffer *buffer ) 
