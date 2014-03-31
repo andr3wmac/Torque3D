@@ -360,7 +360,6 @@ void GFXD3D9ShaderConstBuffer::set(GFXShaderConstHandle* handle, const MatrixF& 
    AssertFatal(handle, "Handle is NULL!" );
    AssertFatal(handle->isValid(), "Handle is not valid!" );
 
-   AssertFatal(static_cast<const GFXD3D9ShaderConstHandle*>(handle), "Incorrect const buffer type!"); 
    const GFXD3D9ShaderConstHandle* h = static_cast<const GFXD3D9ShaderConstHandle*>(handle); 
    AssertFatal(!h->isSampler(), "Handle is sampler constant!" );
    AssertFatal(h->mShader == mShader, "Mismatched shaders!"); 
@@ -388,7 +387,6 @@ void GFXD3D9ShaderConstBuffer::set(GFXShaderConstHandle* handle, const MatrixF* 
    AssertFatal(handle, "Handle is NULL!" );
    AssertFatal(handle->isValid(), "Handle is not valid!" );
 
-   AssertFatal(static_cast<const GFXD3D9ShaderConstHandle*>(handle), "Incorrect const buffer type!"); 
    const GFXD3D9ShaderConstHandle* h = static_cast<const GFXD3D9ShaderConstHandle*>(handle); 
    AssertFatal(!h->isSampler(), "Handle is sampler constant!" );
    AssertFatal(h->mShader == mShader, "Mismatched shaders!"); 
