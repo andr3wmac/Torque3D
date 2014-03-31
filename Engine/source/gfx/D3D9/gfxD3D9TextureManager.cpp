@@ -149,7 +149,7 @@ void GFXD3D9TextureManager::_innerCreateTexture( GFXD3D9TextureObject *retTex,
 
 			if(FAILED(hr)) 
 			{
-				usage ^= D3DUSAGE_DYNAMIC; // anis -> ok... HACK ;)
+				usage &= ~D3DUSAGE_DYNAMIC; // anis -> ok... HACK: trying it without dynamic flag ;)
 
 				hr = D3D9DEVICE->CreateTexture(width, height, numMipLevels, usage, d3dTextureFormat, pool, retTex->get2DTexPtr(), NULL);
 
