@@ -33,7 +33,7 @@
 
 GFXD3D11CardProfiler::GFXD3D11CardProfiler(U32 adapterIndex) : GFXCardProfiler()
 {
-   mAdapterOrdinal = adapterIndex;
+	mAdapterOrdinal = adapterIndex;
 }
 
 GFXD3D11CardProfiler::~GFXD3D11CardProfiler()
@@ -43,20 +43,18 @@ GFXD3D11CardProfiler::~GFXD3D11CardProfiler()
 
 void GFXD3D11CardProfiler::init()
 {
-   AssertISV(static_cast<GFXD3D11Device*>(GFX)->getDevice(), "GFXD3D11CardProfiler::init() - No D3D11 Device found!");
+	WMIVideoInfo wmiVidInfo;
+	if(wmiVidInfo.profileAdapters())
+	{
+		const PlatformVideoInfo::PVIAdapter &adapter = wmiVidInfo.getAdapterInformation(mAdapterOrdinal);
 
-   WMIVideoInfo wmiVidInfo;
-   if(wmiVidInfo.profileAdapters())
-   {
-      const PlatformVideoInfo::PVIAdapter &adapter = wmiVidInfo.getAdapterInformation(mAdapterOrdinal);
+		mCardDescription = adapter.description;
+		mChipSet = adapter.chipSet;
+		mVersionString = adapter.driverVersion;
+		mVideoMemory = adapter.vram;
+	}
 
-      mCardDescription = adapter.description;
-      mChipSet = adapter.chipSet;
-      mVersionString = adapter.driverVersion;
-      mVideoMemory = adapter.vram;
-   }
-
-   Parent::init();
+	Parent::init();
 }
 
 void GFXD3D11CardProfiler::setupCardCapabilities()
@@ -66,11 +64,15 @@ void GFXD3D11CardProfiler::setupCardCapabilities()
 
 bool GFXD3D11CardProfiler::_queryCardCap(const String &query, U32 &foundResult)
 {
-   return 0;
+	return false;
 }
 
 bool GFXD3D11CardProfiler::_queryFormat( const GFXFormat fmt, const GFXTextureProfile *profile, bool &inOutAutogenMips )
 {
-   // anis -> D3D11 feature level should guarantee that any format is valid!
-   return true;
+	/* 
+		anis -> D3D11 feature level should guarantee that any format and any mipmap generation is valid! (almost)
+		http://msdn.microsoft.com/en-us/library/windows/desktop/bb173569(v=vs.85).aspx
+	*/
+
+	return true;
 }
