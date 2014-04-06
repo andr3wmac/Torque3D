@@ -34,10 +34,9 @@
 class GFXD3D11TextureObject : public GFXTextureObject
 {
 protected:
-   static U32		      mTexCount;
-   GFXTexHandle		   mLockTex;
+   GFXTexHandle			mLockTex;
    DXGI_MAPPED_RECT     mLockRect;
-   bool				      mLocked;
+   bool				    mLocked;
 
    U32                  mLockedSubresource;
 
@@ -69,7 +68,7 @@ public:
 
    virtual bool			copyToBmp(GBitmap* bmp);
    ID3D11Texture2D*		getSurface() { return mD3DSurface; }
-   ID3D11Texture2D**	   getSurfacePtr() { return &mD3DSurface; }
+   ID3D11Texture2D**	getSurfacePtr() { return &mD3DSurface; }
 
    // GFXResource
    void zombify();
