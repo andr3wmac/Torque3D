@@ -40,7 +40,9 @@
 #include "gfx/gfxResource.h"
 #include "platform/tmm_on.h"
 
-#define GFXD3DX static_cast<GFXD3D11Device *>(GFX)->smD3DX 
+#define D3D11 static_cast<GFXD3D11Device*>(GFX)
+#define D3D11DEVICE static_cast<GFXD3D11Device*>(GFX)->getDevice()
+#define D3D11DEVICECONTEXT static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()
 
 class PlatformWindow;
 class GFXD3D11ShaderConstBuffer;
@@ -120,14 +122,15 @@ protected:
    ID3D11Device* mD3DDevice;
    ID3D11DeviceContext* mD3DDeviceContext;
 
+   GFXShader* mCurrentShader;
+   GFXShaderRef mGenericShader[GS_COUNT];
    GFXShaderConstBufferRef mGenericShaderBuffer[GS_COUNT];
    GFXShaderConstHandle *mModelViewProjSC[GS_COUNT];
 
    U32  mAdapterIndex;
 
    F32 mPixVersion;
-   U32 mNumSamplers;       ///< Profiled (via caps)
-   U32 mNumRenderTargets;  ///< Profiled (via caps)
+   U32 mNumRenderTargets;
 
    DXGI_SAMPLE_DESC mMultisampleDesc;
 
@@ -191,8 +194,6 @@ public:
 
    static void enumerateAdapters( Vector<GFXAdapter*> &adapterList );
 
-   GFXTextureObject* createRenderSurface( U32 width, U32 height, GFXFormat format, U32 mipLevel );
-
    const DXGI_MODE_DESC& getDisplayMode() const { return mDisplayMode; }
 
    ID3D11DepthStencilView* getDepthStencilView() { return mDeviceDepthStencilView; }
@@ -220,7 +221,7 @@ public:
    virtual void setPixelShaderVersion( F32 version ){ mPixVersion = version;} 
 
    virtual void setShader( GFXShader *shader );
-   virtual U32  getNumSamplers() const { return mNumSamplers; }
+   virtual U32  getNumSamplers() const { return 16; }
    virtual U32  getNumRenderTargets() const { return mNumRenderTargets; }
    // }
 
@@ -255,6 +256,7 @@ public:
 
    virtual void setVertexStream( U32 stream, GFXVertexBuffer *buffer );
    virtual void setVertexStreamFrequency( U32 stream, U32 frequency );
+
    // }
 
    virtual U32 getMaxDynamicVerts() { return MAX_DYNAMIC_VERTS; }
@@ -270,8 +272,6 @@ public:
 
    /// Reset
    void reset( DXGI_SWAP_CHAIN_DESC &d3dpp );
-
-   GFXShaderRef mGenericShader[GS_COUNT];
 
    virtual void setupGenericShaders( GenericShaderType type  = GSColor );
 
