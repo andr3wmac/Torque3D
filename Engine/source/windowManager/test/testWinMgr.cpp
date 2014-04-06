@@ -133,11 +133,11 @@ CreateInteractiveTest(TestWinMgrGFXInit, "WindowManager/SimpleGFX")
 
       // Create a device.
       GFXAdapter a;
-      a.mType = Direct3D9;
+      a.mType = Direct3D11;
       a.mIndex = 0;
 
       mDevice = GFXInit::createDevice(&a);
-      test(mDevice, "Unable to create d3d9 device #0.");
+      test(mDevice, "Unable to create d3d11 device #0.");
 
       // Initialize the window...
       GFXVideoMode vm;
@@ -214,11 +214,11 @@ CreateInteractiveTest(TestWinMgrGFXInitMultiWindow, "WindowManager/GFXMultiWindo
 
       // Create a device.
       GFXAdapter a;
-      a.mType = Direct3D9;
+      a.mType = Direct3D11;
       a.mIndex = 0;
 
       mDevice = GFXInit::createDevice(&a);
-      test(mDevice, "Unable to create d3d9 device #0.");
+      test(mDevice, "Unable to create d3d11 device #0.");
 
       // Initialize the windows...
       GFXVideoMode vm;
@@ -339,7 +339,7 @@ CreateInteractiveTest(TestJournaledMultiWindowGFX, "WindowManager/GFXJournaledMu
 
       // Create a device.
       GFXAdapter a;
-      a.mType = Direct3D9;
+      a.mType = Direct3D11;
       a.mIndex = 0;
 
       mDevice = GFXInit::createDevice(&a);
@@ -494,11 +494,11 @@ CreateInteractiveTest(GFXTestFullscreenToggle, "GFX/TestFullscreenToggle")
 
       // Create a device.
       GFXAdapter a;
-      a.mType = Direct3D9;
+      a.mType = Direct3D11;
       a.mIndex = 0;
 
       mDevice = GFXInit::createDevice(&a);
-      test(mDevice, "Unable to create d3d9 device #0.");
+      test(mDevice, "Unable to create d3d11 device #0.");
 
       // Initialize the windows...
       GFXVideoMode vm;
