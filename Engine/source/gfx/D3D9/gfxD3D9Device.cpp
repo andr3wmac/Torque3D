@@ -139,7 +139,7 @@ D3DPRESENT_PARAMETERS GFXD3D9Device::setupPresentParams(const GFXVideoMode &mode
 	d3dpp.BackBufferWidth  = mode.resolution.x;
 	d3dpp.BackBufferHeight = mode.resolution.y;
 	d3dpp.BackBufferFormat = fmt;
-	d3dpp.BackBufferCount  = 2;	// anis -> triple buffering to avoid tearing! NOTE: would be cool to set it from graphics options...
+	d3dpp.BackBufferCount  = !smDisableVSync ? 2 : 1; // anis -> triple buffering to avoid tearing when vsync is off! NOTE: would be cool to set it from graphics options...
 	d3dpp.MultiSampleType  = aatype;
 	d3dpp.MultiSampleQuality = aalevel;
 	d3dpp.SwapEffect       = /* IsWin7OrLater() ? D3DSWAPEFFECT_FLIPEX : */ D3DSWAPEFFECT_DISCARD; // NOTE: anis -> DirectX9Ex support for windows 7 or more current
@@ -562,7 +562,6 @@ GFXD3D9Device::GFXD3D9Device(LPDIRECT3D9EX d3d, U32 index) : mVideoFrameGrabber(
 
    mDeviceDepthStencil = NULL;
    mDeviceBackbuffer = NULL;
-   mDeviceColor = NULL;
 
    mCreateFenceType = -1; // Unknown, test on first allocate
 
@@ -605,7 +604,6 @@ GFXD3D9Device::~GFXD3D9Device()
    // And release our D3D resources.
    SAFE_RELEASE(mDeviceDepthStencil);
    SAFE_RELEASE(mDeviceBackbuffer)
-   SAFE_RELEASE(mDeviceColor);
    SAFE_RELEASE(mD3DDevice);
    SAFE_RELEASE(mD3D);
 
