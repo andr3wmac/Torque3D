@@ -141,7 +141,6 @@ void GFXD3D11EnumTranslate::init()
    GFXD3D11PrimType[GFXLineStrip] = D3D_PRIMITIVE_TOPOLOGY_LINESTRIP;
    GFXD3D11PrimType[GFXTriangleList] = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
    GFXD3D11PrimType[GFXTriangleStrip] = D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
-   GFXD3D11PrimType[GFXTriangleFan] = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
    GFXD3D11TextureAddress[GFXAddressWrap] = D3D11_TEXTURE_ADDRESS_WRAP;
