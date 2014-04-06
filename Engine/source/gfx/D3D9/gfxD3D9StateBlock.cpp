@@ -37,14 +37,10 @@ GFXD3D9StateBlock::GFXD3D9StateBlock(const GFXStateBlockDesc& desc)
 
    // Color writes
    mColorMask = 0; 
-   mColorMask |= ( mDesc.colorWriteRed   ? GFXCOLORWRITEENABLE_RED   : 0 );
-   mColorMask |= ( mDesc.colorWriteGreen ? GFXCOLORWRITEENABLE_GREEN : 0 );
-   mColorMask |= ( mDesc.colorWriteBlue  ? GFXCOLORWRITEENABLE_BLUE  : 0 );
-   mColorMask |= ( mDesc.colorWriteAlpha ? GFXCOLORWRITEENABLE_ALPHA : 0 );
-
-   // Z*bias
-   mZBias = *((U32*)&mDesc.zBias);
-   mZSlopeBias = *((U32*)&mDesc.zSlopeBias);
+   mColorMask |= ( mDesc.colorWriteRed   ? D3DCOLORWRITEENABLE_RED   : 0 );
+   mColorMask |= ( mDesc.colorWriteGreen ? D3DCOLORWRITEENABLE_GREEN : 0 );
+   mColorMask |= ( mDesc.colorWriteBlue  ? D3DCOLORWRITEENABLE_BLUE  : 0 );
+   mColorMask |= ( mDesc.colorWriteAlpha ? D3DCOLORWRITEENABLE_ALPHA : 0 );
 }
 
 GFXD3D9StateBlock::~GFXD3D9StateBlock()
@@ -114,10 +110,10 @@ void GFXD3D9StateBlock::activate(GFXD3D9StateBlock* oldState)
    if(!oldState || mDesc.zFunc != oldState->mDesc.zFunc)
 	   D3D9DEVICE->SetRenderState(D3DRS_ZFUNC, GFXD3D9CmpFunc[mDesc.zFunc]);
 
-   if(!oldState || mZBias != oldState->mZBias)
-	   D3D9DEVICE->SetRenderState(D3DRS_DEPTHBIAS, mZBias);
-   if(!oldState || mZSlopeBias != oldState->mZSlopeBias)
-	   D3D9DEVICE->SetRenderState(D3DRS_SLOPESCALEDEPTHBIAS, mZSlopeBias);
+   if(!oldState || mDesc.zBias != oldState->mDesc.zBias)
+	   D3D9DEVICE->SetRenderState(D3DRS_DEPTHBIAS, *((U32*)&mDesc.zBias));
+   if(!oldState || mDesc.zSlopeBias != oldState->mDesc.zSlopeBias)
+	   D3D9DEVICE->SetRenderState(D3DRS_SLOPESCALEDEPTHBIAS, *((U32*)&mDesc.zSlopeBias));
 
    // stencil
    if(!oldState || mDesc.stencilEnable != oldState->mDesc.stencilEnable)
@@ -149,10 +145,8 @@ void GFXD3D9StateBlock::activate(GFXD3D9StateBlock* oldState)
       if (!oldState || oldState->mDesc.samplers[i].mipFilter != mDesc.samplers[i].mipFilter) 
 		  D3D9DEVICE->SetSamplerState(i, D3DSAMP_MIPFILTER, GFXD3D9TextureFilter[mDesc.samplers[i].mipFilter]);
 
-      F32 bias = mDesc.samplers[i].mipLODBias;
-      DWORD dwBias = *( (LPDWORD)(&bias) );
       if (!oldState || oldState->mDesc.samplers[i].mipLODBias != mDesc.samplers[i].mipLODBias) 
-		  D3D9DEVICE->SetSamplerState(i, D3DSAMP_MIPMAPLODBIAS, dwBias);
+		  D3D9DEVICE->SetSamplerState(i, D3DSAMP_MIPMAPLODBIAS, *((LPDWORD)(&mDesc.samplers[i].mipLODBias)));
 
       if (!oldState || oldState->mDesc.samplers[i].maxAnisotropy != mDesc.samplers[i].maxAnisotropy) 
 		  D3D9DEVICE->SetSamplerState(i, D3DSAMP_MAXANISOTROPY, mDesc.samplers[i].maxAnisotropy);
