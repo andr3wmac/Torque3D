@@ -332,13 +332,12 @@ void GFXD3D11Device::init(const GFXVideoMode &mode, PlatformWindow *window)
 
 	EnumAdapter->Release();
 
-	mTextureManager = new GFXD3D11TextureManager(mAdapterIndex);
+	mTextureManager = new GFXD3D11TextureManager();
 
 	// Now reacquire all the resources we trashed earlier
 	reacquireDefaultPoolResources();
 
 	mPixVersion = 5.0;
-	mNumSamplers = 16;
 	mNumRenderTargets = 8; 	// detect max number of simultaneous render targets
 
 	D3D11_QUERY_DESC queryDesc;
@@ -484,7 +483,6 @@ GFXD3D11Device::GFXD3D11Device(U32 index)
    mResourceListHead = NULL;
 
    mPixVersion = 0.0;
-   mNumSamplers = 0;
    mNumRenderTargets = 0;
 
    mCardProfiler = NULL;
@@ -1082,7 +1080,7 @@ GFXPrimitiveBuffer * GFXD3D11Device::allocPrimitiveBuffer(U32 numIndices, U32 nu
 		desc.MiscFlags = 0;
 		desc.StructureByteStride = 0;
 
-		HRESULT hr = static_cast<GFXD3D11Device*>(GFX)->getDevice()->CreateBuffer(&desc, NULL, &res->ib);
+		HRESULT hr = mD3DDevice->CreateBuffer(&desc, NULL, &res->ib);
 
 		if(FAILED(hr)) 
 		{
@@ -1149,7 +1147,7 @@ GFXVertexBuffer * GFXD3D11Device::allocVertexBuffer(U32 numVerts, const GFXVerte
 		desc.MiscFlags = 0;
 		desc.StructureByteStride = 0;
 
-		HRESULT hr = static_cast<GFXD3D11Device*>(GFX)->getDevice()->CreateBuffer(&desc, NULL, &res->vb);
+		HRESULT hr = mD3DDevice->CreateBuffer(&desc, NULL, &res->vb);
 
 		if(FAILED(hr)) 
 		{
@@ -1246,21 +1244,14 @@ void GFXD3D11Device::setVertexDecl( const GFXVertexDecl *decl )
 //-----------------------------------------------------------------------------
 void GFXD3D11Device::setTextureInternal( U32 textureUnit, const GFXTextureObject *texture)
 {
-   if( texture == NULL )
+   if(texture == NULL)
    {
-      /*
-	  HRESULT hr = mD3DDevice->SetTexture(textureUnit, NULL);
-
-	  if(FAILED(hr)) 
-	  {
-		AssertFatal(false, "Failed to set texture to null!");
-	  }
-	  */
+	  mD3DDeviceContext->PSSetShaderResources(textureUnit, 0, NULL);
       return;
    }
 
-	//GFXD3D11TextureObject *tex = (GFXD3D11TextureObject *) texture;
-	//HRESULT hr = mD3DDevice->SetTexture(textureUnit, tex->getTex());
+	GFXD3D11TextureObject *tex = (GFXD3D11TextureObject *) texture;
+	//mD3DDeviceContext->PSSetShaderResources(textureUnit, 1, tex->getTex());
 
 	//if(FAILED(hr)) 
 	//{
