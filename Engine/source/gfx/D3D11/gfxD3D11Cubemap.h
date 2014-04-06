@@ -57,17 +57,11 @@ private:
    ID3D11Texture2D*				m_pTexture;
    ID3D11ShaderResourceView*	m_pShaderResourceView;
    ID3D11RenderTargetView*		m_pSurfaces[6];
-   ID3D11DepthStencilView*		m_pDepthStencilSurfaces;
 
-   bool mDynamic;
    U32  mTexSize;
    GFXFormat mFaceFormat;
    
    void releaseSurfaces();
-
-   /// The callback used to get texture events.
-   /// @see GFXTextureManager::addEventDelegate
-   void _onTextureEvent(GFXTexCallbackCode code);
 };
 
 #endif
