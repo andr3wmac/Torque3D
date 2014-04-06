@@ -31,7 +31,7 @@
 
 void GFXD3D9PrimitiveBuffer::prepare()
 {
-	static_cast<GFXD3D9Device*>(GFX)->_setPrimitiveBuffer(this);
+	D3D9->_setPrimitiveBuffer(this);
 }
 
 void GFXD3D9PrimitiveBuffer::lock(U32 indexStart, U32 indexEnd, void **indexPtr)
@@ -54,7 +54,7 @@ void GFXD3D9PrimitiveBuffer::lock(U32 indexStart, U32 indexEnd, void **indexPtr)
       AssertFatal(indexEnd < MAX_DYNAMIC_INDICES, "Cannot get more than MAX_DYNAMIC_INDICES in a volatile buffer. Up the constant!");
 
       // Get the primtive buffer
-      mVolatileBuffer = static_cast<GFXD3D9Device*>(GFX)->mDynamicPB;
+      mVolatileBuffer = D3D9->mDynamicPB;
 
       AssertFatal( mVolatileBuffer, "GFXD3D9PrimitiveBuffer::lock - No dynamic primitive buffer was available!");
 
