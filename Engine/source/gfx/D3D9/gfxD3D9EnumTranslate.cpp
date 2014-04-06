@@ -141,7 +141,6 @@ void GFXD3D9EnumTranslate::init()
    GFXD3D9PrimType[GFXLineStrip] = D3DPT_LINESTRIP;
    GFXD3D9PrimType[GFXTriangleList] = D3DPT_TRIANGLELIST;
    GFXD3D9PrimType[GFXTriangleStrip] = D3DPT_TRIANGLESTRIP;
-   GFXD3D9PrimType[GFXTriangleFan] = D3DPT_TRIANGLEFAN; // anis -> we need to avoid this... it has been removed on the latest directx 10/11
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
    GFXD3D9TextureAddress[GFXAddressWrap] = D3DTADDRESS_WRAP ;
