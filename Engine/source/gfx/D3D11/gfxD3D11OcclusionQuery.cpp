@@ -67,7 +67,7 @@ bool GFXD3D11OcclusionQuery::begin()
       queryDesc.Query = D3D11_QUERY_OCCLUSION;
       queryDesc.MiscFlags = 0;
 
-      HRESULT hRes = static_cast<GFXD3D11Device*>(GFX)->getDevice()->CreateQuery(&queryDesc, &mQuery);
+      HRESULT hRes = D3D11DEVICE->CreateQuery(&queryDesc, &mQuery);
 
 	  if(FAILED(hRes))
 	  {
@@ -78,7 +78,7 @@ bool GFXD3D11OcclusionQuery::begin()
    }
 
    // Add a begin marker to the command buffer queue.
-   static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->Begin(mQuery);
+   D3D11DEVICECONTEXT->Begin(mQuery);
 
 #ifdef TORQUE_GATHER_METRICS
    mBeginFrame = GuiTSCtrl::getFrameCount();
@@ -93,7 +93,7 @@ void GFXD3D11OcclusionQuery::end()
       return;
 
    // Add an end marker to the command buffer queue.
-   static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->End(mQuery);
+   D3D11DEVICECONTEXT->End(mQuery);
 
 #ifdef TORQUE_GATHER_METRICS
    AssertFatal( mBeginFrame == GuiTSCtrl::getFrameCount(), "GFXD3D11OcclusionQuery::end - ended query on different frame than begin!" );   
@@ -133,11 +133,11 @@ GFXD3D11OcclusionQuery::OcclusionQueryStatus GFXD3D11OcclusionQuery::getStatus(b
 
    if ( block )
    {      
-      while((hRes = static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->GetData(mQuery, &dwOccluded, sizeof(DWORD), 0)) == S_FALSE);
+      while((hRes = D3D11DEVICECONTEXT->GetData(mQuery, &dwOccluded, sizeof(DWORD), 0)) == S_FALSE);
    }
    else
    {
-      hRes = static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->GetData(mQuery, &dwOccluded, sizeof(DWORD), 0);
+      hRes = D3D11DEVICECONTEXT->GetData(mQuery, &dwOccluded, sizeof(DWORD), 0);
    }
 
    if (hRes == S_OK)   
@@ -156,7 +156,6 @@ GFXD3D11OcclusionQuery::OcclusionQueryStatus GFXD3D11OcclusionQuery::getStatus(b
 
 void GFXD3D11OcclusionQuery::zombify()
 {
-   SAFE_RELEASE( mQuery );
 }
 
 void GFXD3D11OcclusionQuery::resurrect()
