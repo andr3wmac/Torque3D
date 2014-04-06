@@ -57,10 +57,10 @@ void GFXD3D11VertexBuffer::lock(U32 vertexStart, U32 vertexEnd, void **vertexPtr
    case GFXBufferTypeVolatile:
 
       // Get or create the volatile buffer...
-      mVolatileBuffer = static_cast<GFXD3D11Device*>( GFX )->findVBPool( &mVertexFormat, vertexEnd );
+      mVolatileBuffer = D3D11->findVBPool( &mVertexFormat, vertexEnd );
 
       if( !mVolatileBuffer )
-         mVolatileBuffer = static_cast<GFXD3D11Device*>( GFX )->createVBPool( &mVertexFormat, mVertexSize );
+         mVolatileBuffer = D3D11->createVBPool( &mVertexFormat, mVertexSize );
 
       vb = mVolatileBuffer->vb;
 
@@ -101,7 +101,7 @@ void GFXD3D11VertexBuffer::lock(U32 vertexStart, U32 vertexEnd, void **vertexPtr
    D3D11_MAPPED_SUBRESOURCE pVertexData;
    ZeroMemory(&pVertexData, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
-   HRESULT hr = static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->Map(vb, 0, flags, 0, &pVertexData);
+   HRESULT hr = D3D11DEVICECONTEXT->Map(vb, 0, flags, 0, &pVertexData);
 
    if(FAILED(hr)) 
    {
@@ -156,7 +156,7 @@ void GFXD3D11VertexBuffer::unlock()
 
    #endif // TORQUE_DEBUG
 
-   static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->Unmap(vb,0);
+   D3D11DEVICECONTEXT->Unmap(vb,0);
 
    mIsFirstLock = false;
 
@@ -175,33 +175,8 @@ void GFXD3D11VertexBuffer::unlock()
 
 void GFXD3D11VertexBuffer::zombify()
 {
-   AssertFatal(lockedVertexStart == 0 && lockedVertexEnd == 0, "GFXD3D11VertexBuffer::zombify - Cannot zombify a locked buffer!");
-   // Static buffers are managed by D3D11 so we don't deal with them.
-   if(mBufferType == GFXBufferTypeDynamic)
-   {
-      SAFE_RELEASE(vb);
-   }
 }
 
 void GFXD3D11VertexBuffer::resurrect()
 {
-   // Static buffers are managed by D3D11 so we don't deal with them.
-   if(mBufferType == GFXBufferTypeDynamic)
-   {
-		D3D11_BUFFER_DESC desc;
-		desc.ByteWidth = mVertexSize * mNumVerts;
-		desc.Usage = D3D11_USAGE_DYNAMIC;
-		desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		desc.MiscFlags = 0;
-		desc.StructureByteStride = 0;
-
-		HRESULT hr = static_cast<GFXD3D11Device*>(GFX)->getDevice()->CreateBuffer(&desc, NULL, &vb);
-
-	    if(FAILED(hr)) 
-	    {
-		   AssertFatal(false, "GFXD3D11VertexBuffer::resurrect - Failed to allocate VB");
-	    }
-   }
 }
-
