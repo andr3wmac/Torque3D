@@ -61,10 +61,7 @@ public:
 private:
    GFXStateBlockDesc mDesc;
    U32 mCachedHashValue;
-   // Cached D3D specific things, these are "calculated" from GFXStateBlock
    U32 mColorMask; 
-   U32 mZBias;
-   U32 mZSlopeBias;
 };
 
 typedef StrongRefPtr<GFXD3D9StateBlock> GFXD3D9StateBlockRef;
