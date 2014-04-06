@@ -31,7 +31,7 @@
 
 void GFXD3D11PrimitiveBuffer::prepare()
 {
-	static_cast<GFXD3D11Device*>(GFX)->_setPrimitiveBuffer(this);
+	D3D11->_setPrimitiveBuffer(this);
 }
 
 void GFXD3D11PrimitiveBuffer::lock(U32 indexStart, U32 indexEnd, void **indexPtr)
@@ -54,7 +54,7 @@ void GFXD3D11PrimitiveBuffer::lock(U32 indexStart, U32 indexEnd, void **indexPtr
 		AssertFatal(indexEnd < MAX_DYNAMIC_INDICES, "Cannot get more than MAX_DYNAMIC_INDICES in a volatile buffer. Up the constant!");
 
 		// Get the primtive buffer
-		mVolatileBuffer = static_cast<GFXD3D11Device*>(GFX)->mDynamicPB;
+		mVolatileBuffer = D3D11->mDynamicPB;
 
 		AssertFatal( mVolatileBuffer, "GFXD3D11PrimitiveBuffer::lock - No dynamic primitive buffer was available!");
 
@@ -81,7 +81,7 @@ void GFXD3D11PrimitiveBuffer::lock(U32 indexStart, U32 indexEnd, void **indexPtr
 	D3D11_MAPPED_SUBRESOURCE pIndexData;
 	ZeroMemory(&pIndexData, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
-	HRESULT hr = static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->Map(ib, 0, flags, 0, &pIndexData);
+	HRESULT hr = D3D11DEVICECONTEXT->Map(ib, 0, flags, 0, &pIndexData);
 
 	if(FAILED(hr)) 
 	{
@@ -135,7 +135,7 @@ void GFXD3D11PrimitiveBuffer::unlock()
 
    #endif // TORQUE_DEBUG
 
-   static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->Unmap(ib,0);
+   D3D11DEVICECONTEXT->Unmap(ib,0);
    mLocked = false;
    mIsFirstLock = false;
    mVolatileBuffer = NULL;
@@ -151,40 +151,8 @@ GFXD3D11PrimitiveBuffer::~GFXD3D11PrimitiveBuffer()
 
 void GFXD3D11PrimitiveBuffer::zombify()
 {
-   if(mBufferType == GFXBufferTypeStatic)
-      return;
-            
-   AssertFatal(!mLocked, "GFXD3D11PrimitiveBuffer::zombify - Cannot zombify a locked buffer!");
-
-   if (mBufferType == GFXBufferTypeVolatile)
-   {
-      // We must null the volatile buffer else we're holding
-      // a dead pointer which can be set on the device.      
-      ib = NULL;
-      return;
-   }
-
-   // Dynamic buffers get released.
-   SAFE_RELEASE(ib);
 }
 
 void GFXD3D11PrimitiveBuffer::resurrect()
 {
-	if ( mBufferType != GFXBufferTypeDynamic )
-		return;
-
-	D3D11_BUFFER_DESC desc;
-	desc.ByteWidth = sizeof(U16) * mIndexCount;
-	desc.Usage = D3D11_USAGE_DYNAMIC;
-	desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	desc.MiscFlags = 0;
-	desc.StructureByteStride = 0;
-
-	HRESULT hr = static_cast<GFXD3D11Device*>(GFX)->getDevice()->CreateBuffer(&desc, NULL, &ib);
-
-	if(FAILED(hr)) 
-	{
-		AssertFatal(false, "GFXD3D11PrimitiveBuffer::resurrect - Failed to allocate an index buffer.");
-	}
 }
