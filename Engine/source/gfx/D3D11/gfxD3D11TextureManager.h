@@ -24,60 +24,44 @@
 // D3D11 layer created by: Anis A. Hireche (C) 2014 - anishireche@gmail.com
 //-----------------------------------------------------------------------------
 
-#ifndef _GFXD3D11TEXTUREOBJECT_H_
-#define _GFXD3D11TEXTUREOBJECT_H_
+#ifndef _GFXD3DTEXTUREMANAGER_H_
+#define _GFXD3DTEXTUREMANAGER_H_
 
-#include "gfx/D3D11/gfxD3D11Device.h"
-#include "gfx/gfxTextureHandle.h"
-#include "gfx/gfxTextureManager.h"
+#include "gfx/D3D11/gfxD3D11TextureObject.h"
+#include "core/util/safeRelease.h"
 
-class GFXD3D11TextureObject : public GFXTextureObject
+class GFXD3D11TextureManager : public GFXTextureManager 
 {
-protected:
-   GFXTexHandle			mLockTex;
-   DXGI_MAPPED_RECT     mLockRect;
-   bool				    mLocked;
+   friend class GFXD3D11TextureObject;
 
-   U32                  mLockedSubresource;
-
-   ID3D11Device         *mD3DDevice;
-   ID3D11Texture1D      *mD3DTexture;
-
-   // used for z buffers...
-   ID3D11Texture2D      *mD3DSurface;
+   U32 mAdapterIndex;
 
 public:
+   GFXD3D11TextureManager();
+   virtual ~GFXD3D11TextureManager();
 
-   GFXD3D11TextureObject( GFXDevice * d, GFXTextureProfile *profile);
-   ~GFXD3D11TextureObject();
+protected:
 
-   void                 setTex(ID3D11Texture1D* val) { mD3DTexture = val; }
-   void                 setTex(ID3D11Texture2D* val) { mD3DTexture = (ID3D11Texture1D*)val; }
-   void                 setTex(ID3D11Texture3D* val) { mD3DTexture = (ID3D11Texture1D*)val; }
-   ID3D11Texture1D*     getTex(){ return mD3DTexture; }
-   ID3D11Texture2D*     get2DTex(){ return (ID3D11Texture2D*) mD3DTexture; }
-   ID3D11Texture2D**    get2DTexPtr(){ return (ID3D11Texture2D**) &mD3DTexture; }
-   ID3D11Texture3D*		get3DTex(){ return (ID3D11Texture3D*) mD3DTexture; }
-   ID3D11Texture3D**	get3DTexPtr(){ return (ID3D11Texture3D**) &mD3DTexture; }
-   
+   // GFXTextureManager
+   GFXTextureObject *_createTextureObject(   U32 height, 
+                                             U32 width,
+                                             U32 depth,
+                                             GFXFormat format,
+                                             GFXTextureProfile *profile,
+                                             U32 numMipLevels,
+                                             bool forceMips = false,
+                                             S32 antialiasLevel = 0,
+                                             GFXTextureObject *inTex = NULL );
+   bool _loadTexture(GFXTextureObject *texture, DDSFile *dds);
+   bool _loadTexture(GFXTextureObject *texture, GBitmap *bmp);
+   bool _loadTexture(GFXTextureObject *texture, void *raw);
+   bool _refreshTexture(GFXTextureObject *texture);
+   bool _freeTexture(GFXTextureObject *texture, bool zombify = false);
 
-   void release();
+private:
+   U32 mCurTexSet[TEXTURE_STAGE_COUNT];
 
-   virtual GFXLockedRect * lock(U32 mipLevel = 0, RectI *inRect = NULL);
-   virtual void unlock(U32 mipLevel = 0 );
-
-   virtual bool			copyToBmp(GBitmap* bmp);
-   ID3D11Texture2D*		getSurface() { return mD3DSurface; }
-   ID3D11Texture2D**	getSurfacePtr() { return &mD3DSurface; }
-
-   // GFXResource
-   void zombify();
-   void resurrect();
-
-#ifdef TORQUE_DEBUG
-   virtual void pureVirtualCrash() {};
-#endif
+   void _innerCreateTexture(GFXD3D11TextureObject *obj, U32 height, U32 width, U32 depth, GFXFormat format, GFXTextureProfile *profile, U32 numMipLevels, bool forceMips = false, S32 antialiasLevel = 0);
 };
-
 
 #endif
