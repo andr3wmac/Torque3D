@@ -57,10 +57,10 @@ void GFXD3D9VertexBuffer::lock(U32 vertexStart, U32 vertexEnd, void **vertexPtr)
    case GFXBufferTypeVolatile:
 
       // Get or create the volatile buffer...
-      mVolatileBuffer = static_cast<GFXD3D9Device*>(GFX)->findVBPool( &mVertexFormat, vertexEnd );
+      mVolatileBuffer = D3D9->findVBPool( &mVertexFormat, vertexEnd );
 
       if( !mVolatileBuffer )
-         mVolatileBuffer = static_cast<GFXD3D9Device*>(GFX)->createVBPool( &mVertexFormat, mVertexSize );
+         mVolatileBuffer = D3D9->createVBPool( &mVertexFormat, mVertexSize );
 
       vb = mVolatileBuffer->vb;
 
