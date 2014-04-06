@@ -35,18 +35,16 @@
 #include "console/console.h"
 #include "core/resourceManager.h"
 
-GFXD3D11TextureManager::GFXD3D11TextureManager( U32 adapterIndex ) 
+GFXD3D11TextureManager::GFXD3D11TextureManager() 
 {
-   mAdapterIndex = adapterIndex;
-   dMemset( mCurTexSet, 0, sizeof( mCurTexSet ) );   
-   mD3DDevice = static_cast<GFXD3D11Device*>(GFX)->getDevice();
+   dMemset(mCurTexSet, 0, sizeof(mCurTexSet)); 
 }
 
 GFXD3D11TextureManager::~GFXD3D11TextureManager()
 {
    // Destroy texture table now so just in case some texture objects
    // are still left, we don't crash on a pure virtual method call.
-   SAFE_DELETE_ARRAY( mHashTable );
+   SAFE_DELETE_ARRAY(mHashTable);
 }
 
 void GFXD3D11TextureManager::_innerCreateTexture( GFXD3D11TextureObject *retTex, 
@@ -59,11 +57,6 @@ void GFXD3D11TextureManager::_innerCreateTexture( GFXD3D11TextureObject *retTex,
                                                bool forceMips,
                                                S32 antialiasLevel)
 {
-   //GFXD3D11Device* d3d = static_cast<GFXD3D11Device*>(GFX);
-
-   // Some relevant helper information...
-   bool supportsAutoMips = GFX->getCardProfiler()->queryProfile("autoMipMapLevel", true);
-   
    D3D11_USAGE usage = D3D11_USAGE_DEFAULT;
    UINT bind = D3D11_BIND_SHADER_RESOURCE;
    UINT cpuAccess = 0;
@@ -87,16 +80,15 @@ void GFXD3D11TextureManager::_innerCreateTexture( GFXD3D11TextureObject *retTex,
 
    if( retTex->mProfile->isRenderTarget() )
    {
-      bind |= D3D11_BIND_DEPTH_STENCIL;
+      bind |= D3D11_BIND_RENDER_TARGET;
    }
 
    if(retTex->mProfile->isZTarget())
    {
-      bind |= D3D11_BIND_RENDER_TARGET;
+      bind |= D3D11_BIND_DEPTH_STENCIL;
    }
 
-   if( supportsAutoMips && 
-       !forceMips &&
+   if( !forceMips &&
        !retTex->mProfile->isSystemMemory() &&
        numMipLevels == 0 &&
        !(depth > 0) )
@@ -121,7 +113,7 @@ void GFXD3D11TextureManager::_innerCreateTexture( GFXD3D11TextureObject *retTex,
       sTexDesc3D.MiscFlags			= misc;
 
       ID3D11Texture3D* tex3D;
-      HRESULT hr = mD3DDevice->CreateTexture3D(&sTexDesc3D, NULL, &tex3D);
+      HRESULT hr = D3D11DEVICE->CreateTexture3D(&sTexDesc3D, NULL, &tex3D);
       if ( FAILED(hr) )
          AssertFatal(false, "GFXD3D11TextureManager::_createTexture - failed to create volume texture!");
 
@@ -164,7 +156,7 @@ void GFXD3D11TextureManager::_innerCreateTexture( GFXD3D11TextureObject *retTex,
             sTexDesc2D.SampleDesc.Count = antialiasLevel;
 #ifdef TORQUE_DEBUG
             UINT numQualityLevels;
-            mD3DDevice->CheckMultisampleQualityLevels(d3dTextureFormat, antialiasLevel, &numQualityLevels);
+            D3D11DEVICE->CheckMultisampleQualityLevels(d3dTextureFormat, antialiasLevel, &numQualityLevels);
             AssertFatal(numQualityLevels, "Invalid AA level!");
 #endif
             break;
@@ -172,7 +164,7 @@ void GFXD3D11TextureManager::_innerCreateTexture( GFXD3D11TextureObject *retTex,
       }
 
       ID3D11Texture2D* tex2D;
-      HRESULT hr = mD3DDevice->CreateTexture2D(&sTexDesc2D, NULL, &tex2D);
+      HRESULT hr = D3D11DEVICE->CreateTexture2D(&sTexDesc2D, NULL, &tex2D);
       if( FAILED(hr) )
          AssertFatal(false, "Failed to create texture!");
       
