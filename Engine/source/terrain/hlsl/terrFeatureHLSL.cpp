@@ -30,15 +30,16 @@
 #include "shaderGen/langElement.h"
 #include "shaderGen/shaderOp.h"
 #include "shaderGen/featureMgr.h"
+#include "shaderGen/shaderGen.h"
 #include "core/module.h"
 
-
-MODULE_BEGIN( TerrainFeatHLSL )
-
-   MODULE_INIT_AFTER( ShaderGenFeatureMgr )
-
-   MODULE_INIT
+namespace 
+{
+   void register_hlsl_shader_features_for_terrain(GFXAdapterType type)
    {
+      if(type != Direct3D11)
+         return;
+
       FEATUREMGR->registerFeature( MFT_TerrainBaseMap, new TerrainBaseMapFeatHLSL );
       FEATUREMGR->registerFeature( MFT_TerrainParallaxMap, new NamedFeatureHLSL( "Terrain Parallax Texture" ) );   
       FEATUREMGR->registerFeature( MFT_TerrainDetailMap, new TerrainDetailMapFeatHLSL );
@@ -46,7 +47,18 @@ MODULE_BEGIN( TerrainFeatHLSL )
       FEATUREMGR->registerFeature( MFT_TerrainMacroMap, new TerrainMacroMapFeatHLSL );
       FEATUREMGR->registerFeature( MFT_TerrainLightMap, new TerrainLightMapFeatHLSL );
       FEATUREMGR->registerFeature( MFT_TerrainSideProject, new NamedFeatureHLSL( "Terrain Side Projection" ) );
-      FEATUREMGR->registerFeature( MFT_TerrainAdditive, new TerrainAdditiveFeatHLSL );
+      FEATUREMGR->registerFeature( MFT_TerrainAdditive, new TerrainAdditiveFeatHLSL );     
+   }
+
+};
+
+MODULE_BEGIN( TerrainFeatHLSL )
+
+   MODULE_INIT_AFTER( ShaderGen )
+
+   MODULE_INIT
+   {      
+      SHADERGEN->getFeatureInitSignal().notify(&register_hlsl_shader_features_for_terrain);
    }
 
 MODULE_END;
@@ -530,11 +542,11 @@ void TerrainDetailMapFeatHLSL::processPix(   Vector<ShaderComponent*> &component
    meta->addStatement( new GenOp( "      @ *= @.y * @.w;\r\n",
                                     detailColor, detailInfo, inDet ) );
 
-   //Var *baseColor = (Var*)LangElement::find( "baseColor" );
+   Var *baseColor = (Var*)LangElement::find( "baseColor" );
    Var *outColor = (Var*)LangElement::find( "col" );
 
-   meta->addStatement(new GenOp("      @ = lerp( @, @ + @, @ );\r\n",
-		outColor, outColor, outColor, detailColor, detailBlend));
+   meta->addStatement( new GenOp( "      @ = lerp( @, @ + @, @ );\r\n",
+                                    outColor, outColor, baseColor, detailColor, detailBlend ) );
 
    meta->addStatement( new GenOp( "   }\r\n" ) );
 
