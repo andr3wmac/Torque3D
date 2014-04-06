@@ -43,7 +43,7 @@ void GFXD3D11QueryFence::issue()
 	  QueryDesc.Query = D3D11_QUERY_EVENT;
 	  QueryDesc.MiscFlags = 0;
 
-	  HRESULT hRes = static_cast<GFXD3D11Device*>(GFX)->getDevice()->CreateQuery(&QueryDesc, &mQuery);
+	  HRESULT hRes = D3D11DEVICE->CreateQuery(&QueryDesc, &mQuery);
 
 	  if(FAILED(hRes))
 	  {
@@ -54,7 +54,7 @@ void GFXD3D11QueryFence::issue()
    }
 
    // Issue the query
-   static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->End(mQuery);
+   D3D11DEVICECONTEXT->End(mQuery);
    PROFILE_END();
 }
 
@@ -63,7 +63,7 @@ GFXFence::FenceStatus GFXD3D11QueryFence::getStatus() const
    if(mQuery == NULL)
       return GFXFence::Unset;
 
-   HRESULT hRes = static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->GetData(mQuery, NULL, 0, 0);
+   HRESULT hRes = D3D11DEVICECONTEXT->GetData(mQuery, NULL, 0, 0);
 
    return (hRes == S_OK ? GFXFence::Processed : GFXFence::Pending);
 }
@@ -77,40 +77,15 @@ void GFXD3D11QueryFence::block()
       return;
 
    HRESULT hRes;
-   while((hRes = static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->GetData(mQuery, NULL, 0, 0)) == S_FALSE); //D3DGETDATA_FLUSH
-
-   //Anis -> Since dx10 device will never lost
-
-   // Check for D3DERR_DEVICELOST, if we lost the device, the fence will get 
-   // re-created next issue()
-   //if( hRes == D3DERR_DEVICELOST )
-      //SAFE_RELEASE( mQuery );
+   while((hRes = D3D11DEVICECONTEXT->GetData(mQuery, NULL, 0, 0)) == S_FALSE); //D3DGETDATA_FLUSH
 }
 
 void GFXD3D11QueryFence::zombify()
 {
-   // Release our query
-   SAFE_RELEASE( mQuery );
 }
 
 void GFXD3D11QueryFence::resurrect()
 {
-   // Recreate the query
-   if(mQuery == NULL)
-   {
-	  D3D11_QUERY_DESC QueryDesc;
-	  QueryDesc.Query = D3D11_QUERY_EVENT;
-	  QueryDesc.MiscFlags = 0;
-
-	  HRESULT hRes = static_cast<GFXD3D11Device*>(GFX)->getDevice()->CreateQuery(&QueryDesc, &mQuery);
-
-	  if(FAILED(hRes))
-	  {
-		 AssertFatal(false, "GFXD3D11QueryFence::resurrect - Hardware does not support D3D11 Queries, this should be caught before this fence type is created");
-	  }
-
-      AssertISV(hRes != E_OUTOFMEMORY, "GFXD3D11QueryFence::resurrect - Out of memory");
-   }
 }
 
 const String GFXD3D11QueryFence::describeSelf() const
