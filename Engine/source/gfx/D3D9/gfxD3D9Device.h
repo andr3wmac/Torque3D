@@ -41,6 +41,7 @@
 #include "gfx/gfxResource.h"
 #include "platform/tmm_on.h"
 
+#define D3D9 static_cast<GFXD3D9Device*>(GFX)
 #define D3D9DEVICE static_cast<GFXD3D9Device*>(GFX)->getDevice()
 
 class PlatformWindow;
@@ -102,7 +103,6 @@ protected:
 
    IDirect3DSurface9 *mDeviceBackbuffer;
    IDirect3DSurface9 *mDeviceDepthStencil;
-   IDirect3DSurface9 *mDeviceColor;
 
    /// The stream 0 vertex buffer used for volatile VB offseting.
    GFXD3D9VertexBuffer *mVolatileVB;
@@ -206,8 +206,6 @@ public:
    static GFXDevice *createInstance( U32 adapterIndex );
 
    static void enumerateAdapters( Vector<GFXAdapter*> &adapterList );
-
-   GFXTextureObject* createRenderSurface( U32 width, U32 height, GFXFormat format, U32 mipLevel );
 
    const D3DDISPLAYMODEEX& getDisplayMode() const { return mDisplayMode; }
 
