@@ -218,7 +218,7 @@ GFXAdapter* GFXInit::chooseAdapter( GFXAdapterType type, const char* outputDevic
 
 const char* GFXInit::getAdapterNameFromType(GFXAdapterType type)
 {
-   static const char* _names[] = { "OpenGL", "D3D11", "D3D9", "D3D8", "NullDevice", "Xenon" };
+   static const char* _names[] = { "OpenGL", "D3D11", "NullDevice", "Xenon" };
    
    if( type < 0 || type >= GFXAdapterType_Count )
    {
@@ -420,7 +420,7 @@ DefineEngineStaticMethod( GFXInit, getAdapterOutputName, String, ( S32 index ),,
 }
 
 DefineEngineStaticMethod( GFXInit, getAdapterType, GFXAdapterType, ( S32 index ),,
-   "Returns the type (D3D9, D3D8, GL, Null) of a graphics adapter.\n"
+   "Returns the type (D3D11, OpenGL, Null) of a graphics adapter.\n"
    "@param index The index of the adapter." )
 {
    Vector<GFXAdapter*> adapters( __FILE__, __LINE__ );
