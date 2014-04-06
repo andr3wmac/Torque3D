@@ -29,36 +29,16 @@
 #include "platform/profiler.h"
 #include "console/console.h"
 
-#ifdef TORQUE_DEBUG
-U32 GFXD3D11TextureObject::mTexCount = 0;
-#endif
-
-/*
-	anis -> GFXFormatR8G8B8 has now the same behaviour as GFXFormatR8G8B8X8. 
-	This is because 24 bit format are now deprecated by microsoft, for data alignment reason there's no changes beetween 24 and 32 bit formats.
-	DirectX 10-11 both have 24 bit format no longer.
-*/
-
 GFXD3D11TextureObject::GFXD3D11TextureObject( GFXDevice * d, GFXTextureProfile *profile) : GFXTextureObject( d, profile )
 {
-#ifdef TORQUE_DEBUG
-   mTexCount++;
-   Con::printf("+ texMake %d %x", mTexCount, this);
-#endif
-
    mD3DTexture = NULL;
    mLocked = false;
-
    mD3DSurface = NULL;
 }
 
 GFXD3D11TextureObject::~GFXD3D11TextureObject()
 {
    kill();
-#ifdef TORQUE_DEBUG
-   mTexCount--;
-   Con::printf("+ texkill %d %x", mTexCount, this);
-#endif
 }
 
 GFXLockedRect *GFXD3D11TextureObject::lock(U32 mipLevel /*= 0*/, RectI *inRect /*= NULL*/)
