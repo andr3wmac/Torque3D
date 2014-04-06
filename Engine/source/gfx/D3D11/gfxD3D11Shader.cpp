@@ -31,18 +31,6 @@
 #include "core/util/safeDelete.h"
 #include "console/console.h"
 
-/*
-	anis -> note:
-
-	To use shaders we need support of shader model 3 (directx9 level).
-	Today almost any videocard support it.
-	
-	from GFXD3D11Device::init:
-
-	Platform::AlertOK("DirectX Error!", "Failed to initialize Direct3D! Make sure you have DirectX 9 installed, and are running a graphics card that supports Shader Model 3.");
-	So, if garage games already say this, it's ok! :D
-*/
-
 extern bool gDisassembleAllShaders;
 
 #pragma comment(lib, "d3dcompiler.lib")
@@ -225,7 +213,7 @@ GFXD3D11ShaderConstBuffer::GFXD3D11ShaderConstBuffer( GFXD3D11Shader* shader,
 	cbDescVF.MiscFlags = 0;
 	cbDescVF.StructureByteStride = 0;
 
-	hr = static_cast<GFXD3D11Device*>(GFX)->getDevice()->CreateBuffer(&cbDescVF, NULL, &mConstantBuffersVF);
+	hr = D3D11DEVICE->CreateBuffer(&cbDescVF, NULL, &mConstantBuffersVF);
 
 	if(FAILED(hr))
 	{
@@ -241,7 +229,7 @@ GFXD3D11ShaderConstBuffer::GFXD3D11ShaderConstBuffer( GFXD3D11Shader* shader,
 	cbDescVI.MiscFlags = 0;
 	cbDescVI.StructureByteStride = 0;
 
-	hr = static_cast<GFXD3D11Device*>(GFX)->getDevice()->CreateBuffer(&cbDescVI, NULL, &mConstantBuffersVI);
+	hr = D3D11DEVICE->CreateBuffer(&cbDescVI, NULL, &mConstantBuffersVI);
 
 	if(FAILED(hr))
 	{
@@ -257,7 +245,7 @@ GFXD3D11ShaderConstBuffer::GFXD3D11ShaderConstBuffer( GFXD3D11Shader* shader,
 	cbDescPF.MiscFlags = 0;
 	cbDescPF.StructureByteStride = 0;
 
-	hr = static_cast<GFXD3D11Device*>(GFX)->getDevice()->CreateBuffer(&cbDescPF, NULL, &mConstantBuffersPF);
+	hr = D3D11DEVICE->CreateBuffer(&cbDescPF, NULL, &mConstantBuffersPF);
 
 	if(FAILED(hr))
 	{
@@ -273,7 +261,7 @@ GFXD3D11ShaderConstBuffer::GFXD3D11ShaderConstBuffer( GFXD3D11Shader* shader,
 	cbDescPI.MiscFlags = 0;
 	cbDescPI.StructureByteStride = 0;
 
-	hr = static_cast<GFXD3D11Device*>(GFX)->getDevice()->CreateBuffer(&cbDescPI, NULL, &mConstantBuffersPI);
+	hr = D3D11DEVICE->CreateBuffer(&cbDescPI, NULL, &mConstantBuffersPI);
 
 	if(FAILED(hr))
 	{
@@ -581,7 +569,7 @@ void GFXD3D11ShaderConstBuffer::activate( GFXD3D11ShaderConstBuffer *prevShaderB
    if(mVertexConstBufferF->isDirty())
    {
       buf = mVertexConstBufferF->getDirtyBuffer(&start, &bufferSize );
-	  hr = static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->Map(mConstantBuffersVF, 0, D3D11_MAP_WRITE_DISCARD, NULL, &pConstData);
+	  hr = D3D11DEVICECONTEXT->Map(mConstantBuffersVF, 0, D3D11_MAP_WRITE_DISCARD, NULL, &pConstData);
 
 	  if(FAILED(hr))
 	  {
@@ -590,14 +578,14 @@ void GFXD3D11ShaderConstBuffer::activate( GFXD3D11ShaderConstBuffer *prevShaderB
 					
 	  memcpy(&(((char*)(pConstData.pData))[start / bytesToFloat4]), (void*)buf, bufferSize / bytesToFloat4);
 
-	  static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->Unmap(mConstantBuffersVF, 0);
-	  static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->VSSetConstantBuffers(0, 1, &mConstantBuffersVF);
+	  D3D11DEVICECONTEXT->Unmap(mConstantBuffersVF, 0);
+	  D3D11DEVICECONTEXT->VSSetConstantBuffers(0, 1, &mConstantBuffersVF);
    }
 
    if(mPixelConstBufferF->isDirty())    
    {
       buf = mPixelConstBufferF->getDirtyBuffer(&start, &bufferSize);
-	  hr = static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->Map(mConstantBuffersPF, 0, D3D11_MAP_WRITE_DISCARD, NULL, &pConstData);
+	  hr = D3D11DEVICECONTEXT->Map(mConstantBuffersPF, 0, D3D11_MAP_WRITE_DISCARD, NULL, &pConstData);
 
 	  if(FAILED(hr))
 	  {
@@ -606,14 +594,14 @@ void GFXD3D11ShaderConstBuffer::activate( GFXD3D11ShaderConstBuffer *prevShaderB
 					
 	  memcpy(&(((char*)(pConstData.pData))[start / bytesToFloat4]), (void*)buf, bufferSize / bytesToFloat4);
 
-	  static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->Unmap(mConstantBuffersPF, 0);
-	  static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->PSSetConstantBuffers(0, 1, &mConstantBuffersPF);       
+	  D3D11DEVICECONTEXT->Unmap(mConstantBuffersPF, 0);
+	  D3D11DEVICECONTEXT->PSSetConstantBuffers(0, 1, &mConstantBuffersPF);       
    }
 
    if(mVertexConstBufferI->isDirty() )
    {
       buf = mVertexConstBufferI->getDirtyBuffer(&start, &bufferSize );
-	  hr = static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->Map(mConstantBuffersVI, 0, D3D11_MAP_WRITE_DISCARD, NULL, &pConstData);
+	  hr = D3D11DEVICECONTEXT->Map(mConstantBuffersVI, 0, D3D11_MAP_WRITE_DISCARD, NULL, &pConstData);
 
 	  if(FAILED(hr))
 	  {
@@ -622,14 +610,14 @@ void GFXD3D11ShaderConstBuffer::activate( GFXD3D11ShaderConstBuffer *prevShaderB
 					
 	  memcpy(&(((char*)(pConstData.pData))[start / bytesToInt4]), (void*)buf, bufferSize / bytesToInt4);
 
-	  static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->Unmap(mConstantBuffersVI, 0);
-	  static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->VSSetConstantBuffers(0, 1, &mConstantBuffersVI);
+	  D3D11DEVICECONTEXT->Unmap(mConstantBuffersVI, 0);
+	  D3D11DEVICECONTEXT->VSSetConstantBuffers(0, 1, &mConstantBuffersVI);
    }
 
    if(mPixelConstBufferI->isDirty())    
    {
       buf = mPixelConstBufferI->getDirtyBuffer(&start, &bufferSize);
-	  hr = static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->Map(mConstantBuffersPI, 0, D3D11_MAP_WRITE_DISCARD, NULL, &pConstData);
+	  hr = D3D11DEVICECONTEXT->Map(mConstantBuffersPI, 0, D3D11_MAP_WRITE_DISCARD, NULL, &pConstData);
 
 	  if(FAILED(hr))
 	  {
@@ -638,8 +626,8 @@ void GFXD3D11ShaderConstBuffer::activate( GFXD3D11ShaderConstBuffer *prevShaderB
 					
 	  memcpy(&(((char*)(pConstData.pData))[start / bytesToInt4]), (void*)buf, bufferSize / bytesToInt4);
 
-	  static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->Unmap(mConstantBuffersPI, 0);
-	  static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->PSSetConstantBuffers(0, 1, &mConstantBuffersPI);       
+	  D3D11DEVICECONTEXT->Unmap(mConstantBuffersPI, 0);
+	  D3D11DEVICECONTEXT->PSSetConstantBuffers(0, 1, &mConstantBuffersPI);       
    }
 
    #ifdef TORQUE_DEBUG
@@ -695,7 +683,7 @@ void GFXD3D11ShaderConstBuffer::onShaderReload( GFXD3D11Shader *shader )
 	cbDescVF.MiscFlags = 0;
 	cbDescVF.StructureByteStride = 0;
 
-	hr = static_cast<GFXD3D11Device*>(GFX)->getDevice()->CreateBuffer(&cbDescVF, NULL, &mConstantBuffersVF);
+	hr = D3D11DEVICE->CreateBuffer(&cbDescVF, NULL, &mConstantBuffersVF);
 
 	if(FAILED(hr))
 	{
@@ -711,7 +699,7 @@ void GFXD3D11ShaderConstBuffer::onShaderReload( GFXD3D11Shader *shader )
 	cbDescVI.MiscFlags = 0;
 	cbDescVI.StructureByteStride = 0;
 
-	hr = static_cast<GFXD3D11Device*>(GFX)->getDevice()->CreateBuffer(&cbDescVI, NULL, &mConstantBuffersVI);
+	hr = D3D11DEVICE->CreateBuffer(&cbDescVI, NULL, &mConstantBuffersVI);
 
 	if(FAILED(hr))
 	{
@@ -727,7 +715,7 @@ void GFXD3D11ShaderConstBuffer::onShaderReload( GFXD3D11Shader *shader )
 	cbDescPF.MiscFlags = 0;
 	cbDescPF.StructureByteStride = 0;
 
-	hr = static_cast<GFXD3D11Device*>(GFX)->getDevice()->CreateBuffer(&cbDescPF, NULL, &mConstantBuffersPF);
+	hr = D3D11DEVICE->CreateBuffer(&cbDescPF, NULL, &mConstantBuffersPF);
 
 	if(FAILED(hr))
 	{
@@ -743,7 +731,7 @@ void GFXD3D11ShaderConstBuffer::onShaderReload( GFXD3D11Shader *shader )
 	cbDescPI.MiscFlags = 0;
 	cbDescPI.StructureByteStride = 0;
 
-	hr = static_cast<GFXD3D11Device*>(GFX)->getDevice()->CreateBuffer(&cbDescPI, NULL, &mConstantBuffersPI);
+	hr = D3D11DEVICE->CreateBuffer(&cbDescPI, NULL, &mConstantBuffersPI);
 
 	if(FAILED(hr))
 	{
