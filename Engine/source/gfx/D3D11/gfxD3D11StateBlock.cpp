@@ -30,17 +30,17 @@
 
 GFXD3D11StateBlock::GFXD3D11StateBlock(const GFXStateBlockDesc& desc)
 {
-	AssertFatal(static_cast<GFXD3D11Device*>(GFX)->getDevice(), "Invalid D3DDevice!");
+	AssertFatal(D3D11DEVICE, "Invalid D3DDevice!");
 
 	mDesc = desc;
 	mCachedHashValue = desc.getHashValue();
 
 	// Color writes
 	mColorMask = 0; 
-	mColorMask |= ( mDesc.colorWriteRed   ? GFXCOLORWRITEENABLE_RED   : 0 );
-	mColorMask |= ( mDesc.colorWriteGreen ? GFXCOLORWRITEENABLE_GREEN : 0 );
-	mColorMask |= ( mDesc.colorWriteBlue  ? GFXCOLORWRITEENABLE_BLUE  : 0 );
-	mColorMask |= ( mDesc.colorWriteAlpha ? GFXCOLORWRITEENABLE_ALPHA : 0 );
+    mColorMask |= ( mDesc.colorWriteRed   ? D3D11_COLOR_WRITE_ENABLE_RED   : 0 );
+    mColorMask |= ( mDesc.colorWriteGreen ? D3D11_COLOR_WRITE_ENABLE_GREEN : 0 );
+    mColorMask |= ( mDesc.colorWriteBlue  ? D3D11_COLOR_WRITE_ENABLE_BLUE  : 0 );
+    mColorMask |= ( mDesc.colorWriteAlpha ? D3D11_COLOR_WRITE_ENABLE_ALPHA : 0 );
 
 	// Z*bias
 	mZBias = *((U32*)&mDesc.zBias);
@@ -56,7 +56,7 @@ GFXD3D11StateBlock::GFXD3D11StateBlock(const GFXStateBlockDesc& desc)
 	mBlendDesc.RenderTarget[0].DestBlendAlpha = GFXD3D11Blend[mDesc.separateAlphaBlendDest];
 	mBlendDesc.RenderTarget[0].SrcBlend = GFXD3D11Blend[mDesc.blendSrc];
 	mBlendDesc.RenderTarget[0].SrcBlendAlpha = GFXD3D11Blend[mDesc.separateAlphaBlendSrc];
-	mBlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	mBlendDesc.RenderTarget[0].RenderTargetWriteMask = mColorMask;
 
 	HRESULT hr = static_cast<GFXD3D11Device*>(GFX)->getDevice()->CreateBlendState(&mBlendDesc, &mBlendState);
 
@@ -114,8 +114,8 @@ GFXD3D11StateBlock::GFXD3D11StateBlock(const GFXStateBlockDesc& desc)
 		DWORD dwBias = *( (LPDWORD)(&bias) );
 
 		mSamplerDesc[i].MipLODBias = dwBias;
-		mSamplerDesc[i].MinLOD = -FLT_MAX;
-		mSamplerDesc[i].MinLOD = FLT_MAX;
+		mSamplerDesc[i].MinLOD = FLT_MIN;
+		mSamplerDesc[i].MaxLOD = FLT_MAX;
 		mSamplerDesc[i].Filter = D3D11_FILTER_ANISOTROPIC;
 		mSamplerDesc[i].BorderColor[0] = 1.0f;
 		mSamplerDesc[i].BorderColor[1] = 1.0f;
@@ -213,12 +213,9 @@ void GFXD3D11StateBlock::activate(GFXD3D11StateBlock* oldState)
 		mSamplerDesc[i].AddressW = GFXD3D11TextureAddress[mDesc.samplers[i].addressModeW];
 		mSamplerDesc[i].MaxAnisotropy = mDesc.samplers[i].maxAnisotropy;
 
-		F32 bias = mDesc.samplers[i].mipLODBias;
-		DWORD dwBias = *( (LPDWORD)(&bias) );
-
-		mSamplerDesc[i].MipLODBias = dwBias;
-		mSamplerDesc[i].MinLOD = -FLT_MAX;
-		mSamplerDesc[i].MinLOD = FLT_MAX;
+		mSamplerDesc[i].MipLODBias = mDesc.samplers[i].mipLODBias;
+		mSamplerDesc[i].MinLOD = FLT_MIN;
+		mSamplerDesc[i].MaxLOD = FLT_MAX;
 		mSamplerDesc[i].Filter = D3D11_FILTER_ANISOTROPIC;
 		mSamplerDesc[i].BorderColor[0] = 1.0f;
 		mSamplerDesc[i].BorderColor[1] = 1.0f;
