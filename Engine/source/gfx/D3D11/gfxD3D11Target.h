@@ -74,17 +74,8 @@ class GFXD3D11WindowTarget : public GFXWindowTarget
 {
    friend class GFXD3D11Device;
 
-   /// Our depth stencil buffer, if any.
-   ID3D11Texture2D *mDepthStencil;
-
-   /// Our backbuffer
-   ID3D11Texture2D *mBackbuffer;
-
    /// Maximum size we can render to.
    Point2I mSize;
-
-   /// Our swap chain, potentially the implicit device swap chain.
-   IDXGISwapChain *mSwapChain;
 
    /// D3D presentation info.
    DXGI_SWAP_CHAIN_DESC mPresentationParams;
@@ -102,14 +93,13 @@ public:
    virtual bool present();
 
    void initPresentationParams();
-   void setImplicitSwapChain();
 
    virtual void activate();   
 
    void zombify();
    void resurrect();
 
-   virtual void resolveTo( GFXTextureObject *tex );
+   virtual void resolveTo(GFXTextureObject *tex);
 };
 
 #endif
