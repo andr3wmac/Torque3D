@@ -32,11 +32,6 @@
 GFXD3D11Cubemap::GFXD3D11Cubemap() : m_pTexture(NULL), m_pShaderResourceView(NULL)
 {
 	mFaceFormat = GFXFormatR8G8B8A8;
-
-	for(U32 i = 0; i < 6; i++)
-	{
-		m_pSurfaces[i] = NULL;
-	}
 }
 
 GFXD3D11Cubemap::~GFXD3D11Cubemap()
@@ -46,11 +41,6 @@ GFXD3D11Cubemap::~GFXD3D11Cubemap()
 
 void GFXD3D11Cubemap::releaseSurfaces()
 {
-	for (U32 i = 0; i < 6; i++)
-	{
-		SAFE_RELEASE(m_pSurfaces[i]);
-	}
-
 	SAFE_RELEASE(m_pShaderResourceView);
 	SAFE_RELEASE(m_pTexture);
 }
