@@ -106,7 +106,7 @@ void GFXD3D9TextureTarget::attachTexture( RenderSlot slot, GFXTextureObject *tex
          // getSurface will almost always return NULL. It will only return non-NULL
          // if the surface that it needs to render to is different than the mip level
          // in the actual texture. This will happen with MSAA.
-         if( d3dto->getSurface() == NULL )
+         if(d3dto->getSurface() == NULL)
          {
             HRESULT hr = d3dto->get2DTex()->GetSurfaceLevel(mipLevel, &mTargets[slot]);
 
@@ -154,7 +154,7 @@ void GFXD3D9TextureTarget::attachTexture( RenderSlot slot, GFXTextureObject *tex
 
 void GFXD3D9TextureTarget::attachTexture(RenderSlot slot, GFXCubemap *tex, U32 face, U32 mipLevel/*=0*/)
 {
-   GFXDEBUGEVENT_SCOPE( GFXPCD3D9TextureTarget_attachTexture_Cubemap, ColorI::RED );
+   GFXDEBUGEVENT_SCOPE(GFXPCD3D9TextureTarget_attachTexture_Cubemap, ColorI::RED);
 
    AssertFatal(slot < MaxRenderSlotId, "GFXD3D9TextureTarget::attachTexture - out of range slot.");
 
@@ -231,7 +231,7 @@ void GFXD3D9TextureTarget::activate()
    }
 
    // Now set all the new surfaces into the appropriate slots.
-   for(U32 i = 0; i < static_cast<GFXD3D9Device*>(GFX)->getNumRenderTargets(); i++)
+   for(U32 i = 0; i < D3D9->getNumRenderTargets(); i++)
    {
       IDirect3DSurface9 *target = mTargets[GFXTextureTarget::Color0 + i];
       if(target)
@@ -404,14 +404,14 @@ void GFXD3D9WindowTarget::activate()
 {
 	GFXDEBUGEVENT_SCOPE(GFXPCD3D9WindowTarget_activate, ColorI::RED);
 
-	HRESULT hr = D3D9DEVICE->SetRenderTarget(0, static_cast<GFXD3D9Device*>(GFX)->mDeviceBackbuffer);
+	HRESULT hr = D3D9DEVICE->SetRenderTarget(0, D3D9->mDeviceBackbuffer);
 
 	if(FAILED(hr)) 
 	{
 		AssertFatal(false, "GFXD3D9WindowTarget::activate() - Failed to set backbuffer target!");
 	}
 
-	hr = D3D9DEVICE->SetDepthStencilSurface(static_cast<GFXD3D9Device*>(GFX)->mDeviceDepthStencil);
+	hr = D3D9DEVICE->SetDepthStencilSurface(D3D9->mDeviceDepthStencil);
 
 	if(FAILED(hr)) 
 	{
