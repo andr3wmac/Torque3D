@@ -76,8 +76,6 @@ protected:
 
    static GFXAdapter::CreateDeviceInstanceDelegate mCreateDeviceInstance;
 
-   void _validateMultisampleParams(DXGI_FORMAT format, DXGI_SAMPLE_DESC& aadesc) const;
-
    MatrixF mTempMatrix;    ///< Temporary matrix, no assurances on value at all
    RectI mClipRect;
 
@@ -109,8 +107,7 @@ protected:
    /// The stream 0 vertex buffer used for volatile VB offseting.
    GFXD3D11VertexBuffer *mVolatileVB;
 
-   //-----------------------------------------------------------------------
-   StrongRefPtr<GFXD3D11PrimitiveBuffer> mDynamicPB;                       ///< Dynamic index buffer
+   StrongRefPtr<GFXD3D11PrimitiveBuffer> mDynamicPB;  ///< Dynamic index buffer
    GFXD3D11PrimitiveBuffer *mCurrentPB;
 
    ID3D11VertexShader *mLastVertShader;
@@ -196,13 +193,13 @@ public:
 
    const DXGI_MODE_DESC& getDisplayMode() const { return mDisplayMode; }
 
-   ID3D11DepthStencilView* getDepthStencilView() { return mDeviceDepthStencilView; }
-   ID3D11RenderTargetView* getRenderTargetView() { return mDeviceRenderTargetView; }
-
+   ID3D11DepthStencilView*  getDepthStencilView()		{ return mDeviceDepthStencilView; }
+   ID3D11RenderTargetView*  getRenderTargetView()		{ return mDeviceRenderTargetView; }
+   ID3D11RenderTargetView** getRenderTargetViewPtr()	{ return &mDeviceRenderTargetView; }
    /// Constructor
    /// @param   d3d   Direct3D object to instantiate this device with
    /// @param   index   Adapter index since D3D can use multiple graphics adapters
-   GFXD3D11Device( U32 index );
+   GFXD3D11Device(U32 index);
    virtual ~GFXD3D11Device();
 
    // Activate/deactivate
@@ -218,20 +215,20 @@ public:
    virtual GFXCubemap *createCubemap();
 
    virtual F32  getPixelShaderVersion() const { return mPixVersion; }
-   virtual void setPixelShaderVersion( F32 version ){ mPixVersion = version;} 
+   virtual void setPixelShaderVersion(F32 version){ mPixVersion = version;} 
 
-   virtual void setShader( GFXShader *shader );
+   virtual void setShader(GFXShader *shader);
    virtual U32  getNumSamplers() const { return 16; }
    virtual U32  getNumRenderTargets() const { return mNumRenderTargets; }
    // }
 
    // Misc rendering control
    // {
-   virtual void clear( U32 flags, ColorI color, F32 z, U32 stencil );
+   virtual void clear(U32 flags, ColorI color, F32 z, U32 stencil);
    virtual bool beginSceneInternal();
    virtual void endSceneInternal();
 
-   virtual void setClipRect( const RectI &rect );
+   virtual void setClipRect(const RectI &rect);
    virtual const RectI& getClipRect() const { return mClipRect; }
 
    // }
@@ -251,11 +248,11 @@ public:
                                                       U32 numPrimitives, 
                                                       GFXBufferType bufferType );
 
-   virtual GFXVertexDecl* allocVertexDecl( const GFXVertexFormat *vertexFormat );
-   virtual void setVertexDecl( const GFXVertexDecl *decl );
+   virtual GFXVertexDecl* allocVertexDecl(const GFXVertexFormat *vertexFormat);
+   virtual void setVertexDecl(const GFXVertexDecl *decl);
 
-   virtual void setVertexStream( U32 stream, GFXVertexBuffer *buffer );
-   virtual void setVertexStreamFrequency( U32 stream, U32 frequency );
+   virtual void setVertexStream(U32 stream, GFXVertexBuffer *buffer);
+   virtual void setVertexStreamFrequency(U32 stream, U32 frequency);
 
    // }
 
@@ -264,16 +261,17 @@ public:
 
    // Rendering
    // {
-   virtual void drawPrimitive( GFXPrimitiveType primType, U32 vertexStart, U32 primitiveCount );
+   virtual void drawPrimitive(GFXPrimitiveType primType, U32 vertexStart, U32 primitiveCount);
    // }
 
+   IDXGISwapChain* getSwapChain(){ return mSwapChain; }
    ID3D11DeviceContext* getDeviceContext(){ return mD3DDeviceContext; }
    ID3D11Device* getDevice(){ return mD3DDevice; }
 
    /// Reset
-   void reset( DXGI_SWAP_CHAIN_DESC &d3dpp );
+   void reset(DXGI_SWAP_CHAIN_DESC &d3dpp);
 
-   virtual void setupGenericShaders( GenericShaderType type  = GSColor );
+   virtual void setupGenericShaders(GenericShaderType type  = GSColor);
 
    inline virtual F32 getFillConventionOffset() const { return 0.5f; }
    virtual void doParanoidStateCheck() {};
