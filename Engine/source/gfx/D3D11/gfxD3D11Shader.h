@@ -311,6 +311,7 @@ public:
    virtual GFXShaderConstHandle* findShaderConstHandle(const String& name);
    virtual U32 getAlignmentValue(const GFXShaderConstType constType) const;
    virtual bool getDisassembly( String &outStr ) const;
+   virtual bool getCompiled( String &outStr ) const;
 
    // GFXResource
    virtual void zombify();
@@ -339,6 +340,9 @@ protected:
    /// The shader disassembly from DX when this shader is compiled.
    /// We only store this data in non-release builds.
    String mDissasembly;
+
+   /// Compiled bytecode
+   String mCompiled;
 
    /// Vector of sampler type descriptions consolidated from _compileShader.
    Vector<GFXShaderConstDesc> mSamplerDescriptions;
@@ -381,10 +385,16 @@ protected:
    void _buildInstancingShaderConstantHandles();
 };
 
-inline bool GFXD3D11Shader::getDisassembly( String &outStr ) const
+inline bool GFXD3D11Shader::getDisassembly(String &outStr) const
 {
    outStr = mDissasembly;
-   return ( outStr.isNotEmpty() );
+   return (outStr.isNotEmpty());
+}
+
+inline bool GFXD3D11Shader::getCompiled(String &outStr) const
+{
+   outStr = mCompiled;
+   return (outStr.isNotEmpty());
 }
 
 /// The D3D11 implementation of a shader constant buffer.
