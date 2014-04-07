@@ -70,7 +70,7 @@ bool GFXD3D11CardProfiler::_queryCardCap(const String &query, U32 &foundResult)
 bool GFXD3D11CardProfiler::_queryFormat( const GFXFormat fmt, const GFXTextureProfile *profile, bool &inOutAutogenMips )
 {
 	/* 
-		anis -> D3D11 feature level should guarantee that any format and any mipmap generation is valid! (almost)
+		anis -> D3D11 feature level should guarantee that almost any format and mipmap generation is valid!
 		http://msdn.microsoft.com/en-us/library/windows/desktop/bb173569(v=vs.85).aspx
 	*/
 
