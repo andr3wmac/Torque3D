@@ -91,7 +91,7 @@ void GFXD3D11TextureTarget::attachTexture( RenderSlot slot, GFXTextureObject *te
    // Take care of default targets
    if( tex == GFXTextureTarget::sDefaultDepthStencil )
    {
-      mTargets[slot] = static_cast<GFXD3D11Device*>(GFX)->mDeviceDepthStencil;
+      mTargets[slot] = D3D11->mDeviceDepthStencil;
       mTargets[slot]->AddRef();
    }
    else
@@ -104,7 +104,7 @@ void GFXD3D11TextureTarget::attachTexture( RenderSlot slot, GFXTextureObject *te
       // Grab the surface level.
       if( slot == DepthStencil )
       {
-         mTargets[slot] = d3dto->getSurface();
+         mTargets[slot] = d3dto->get2DTex();
          if ( mTargets[slot] )
             mTargets[slot]->AddRef();
       }
@@ -126,7 +126,7 @@ void GFXD3D11TextureTarget::attachTexture( RenderSlot slot, GFXTextureObject *te
          } 
          else 
          {
-            mTargets[slot] = d3dto->getSurface();
+            mTargets[slot] = d3dto->get2DTex();
             mTargets[slot]->AddRef();
 
             // Only assign resolve target if d3dto has a surface to give us.
@@ -229,7 +229,7 @@ void GFXD3D11TextureTarget::activate()
    //ID3D11Texture2D *depth = mTargets[GFXTextureTarget::DepthStencil];
    
    // First clear the non-primary targets to make the debug DX runtime happy.
-   for(U32 i = 1; i < static_cast<GFXD3D11Device*>(GFX)->getNumRenderTargets(); i++)
+   for(U32 i = 1; i < D3D11->getNumRenderTargets(); i++)
    {
 		//HRESULT hr = static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->OMSetRenderTargets(i, NULL);
 
@@ -240,7 +240,7 @@ void GFXD3D11TextureTarget::activate()
    }
 
    // Now set all the new surfaces into the appropriate slots.
-   for(U32 i = 0; i < static_cast<GFXD3D11Device*>(GFX)->getNumRenderTargets(); i++)
+   for(U32 i = 0; i < D3D11->getNumRenderTargets(); i++)
    {
       ID3D11Texture2D *target = mTargets[GFXTextureTarget::Color0 + i];
       if(target)
@@ -258,7 +258,7 @@ void GFXD3D11TextureTarget::activate()
    // render targets.  Are we getting performance hit from setting it
    // multiple times... aside from the function call?
 
-   //HRESULT hr = static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->SetDepthStencilSurface(depth);
+   //HRESULT hr = D3D11DEVICECONTEXT->SetDepthStencilSurface(depth);
 
    //if(FAILED(hr)) 
    //{
@@ -274,13 +274,13 @@ void GFXD3D11TextureTarget::deactivate()
 
 void GFXD3D11TextureTarget::resolve()
 {
-   GFXDEBUGEVENT_SCOPE( GFXPCD3D11TextureTarget_resolve, ColorI::RED );
+   GFXDEBUGEVENT_SCOPE(GFXPCD3D11TextureTarget_resolve, ColorI::RED);
 
-   for (U32 i = 0; i < MaxRenderSlotId; i++)
+   for(U32 i = 0; i < MaxRenderSlotId; i++)
    {
       // We use existance @ mResolveTargets as a flag that we need to copy
       // data from the rendertarget into the texture.
-      if (mResolveTargets[i])
+      if(mResolveTargets[i])
       {
          //ID3D11Texture2D *surf;
          //HRESULT hr = mResolveTargets[i]->get2DTex()->GetSurfaceLevel( 0, &surf );
@@ -290,18 +290,18 @@ void GFXD3D11TextureTarget::resolve()
 			//AssertFatal(false, "GFXD3D11TextureTarget::resolve() - GetSurfaceLevel failed!");
 		 //}
 
-		 //static_cast<GFXD3D11Device*>( GFX )->getDeviceContext()->CopyResource( surf, mTargets[i] );
+		 //D3D11DEVICECONTEXT->CopyResource( surf, mTargets[i] );
 
          //surf->Release();
       }
    }
 }
 
-void GFXD3D11TextureTarget::resolveTo( GFXTextureObject *tex )
+void GFXD3D11TextureTarget::resolveTo(GFXTextureObject *tex)
 {
-   GFXDEBUGEVENT_SCOPE( GFXPCD3D11TextureTarget_resolveTo, ColorI::RED );
+   GFXDEBUGEVENT_SCOPE(GFXPCD3D11TextureTarget_resolveTo, ColorI::RED);
 
-   if ( mTargets[Color0] == NULL )
+   if (mTargets[Color0] == NULL)
       return;
 
     //IDirect3DSurface9 *surf;
@@ -312,7 +312,7 @@ void GFXD3D11TextureTarget::resolveTo( GFXTextureObject *tex )
 		//AssertFatal(false, "GFXD3D11TextureTarget::resolveTo() - GetSurfaceLevel failed!");
 	//}
 
-    //hr = static_cast<GFXD3D11Device*>( GFX )->getDevice()->StretchRect( mTargets[Color0], NULL, surf, NULL, D3DTEXF_NONE );
+    //hr = D3D11DEVICECONTEXT->StretchRect( mTargets[Color0], NULL, surf, NULL, D3DTEXF_NONE );
 
 	//if(FAILED(hr)) 
 	//{
@@ -335,36 +335,23 @@ void GFXD3D11TextureTarget::resurrect()
 
 GFXD3D11WindowTarget::GFXD3D11WindowTarget(IDXGISwapChain* SwapChain)
 {
-   mSwapChain = SwapChain;
-   mSwapChain->AddRef();
-
-   mDepthStencil = NULL;
-   mWindow       = NULL;
-   mBackbuffer   = NULL;
+   mWindow = NULL;
 }
 
 GFXD3D11WindowTarget::~GFXD3D11WindowTarget()
 {
-   SAFE_RELEASE(mSwapChain);
-   SAFE_RELEASE(mDepthStencil);
-   SAFE_RELEASE(mBackbuffer);
 }
 
 void GFXD3D11WindowTarget::initPresentationParams()
 {
    // Get some video mode related info.
    GFXVideoMode vm = mWindow->getVideoMode();
-
    Win32Window* win = static_cast<Win32Window*>(mWindow);
-
    HWND hwnd = win->getHWND();
 
-   // At some point, this will become GFXD3D11WindowTarget like trunk has,
-   // so this cast isn't as bad as it looks. ;) BTR
-   mPresentationParams = static_cast<GFXD3D11Device*>(GFX)->setupPresentParams(vm, hwnd);
-
-   static_cast<GFXD3D11Device*>(GFX)->mMultisampleDesc.Count = mPresentationParams.SampleDesc.Count;
-   static_cast<GFXD3D11Device*>(GFX)->mMultisampleDesc.Quality = mPresentationParams.SampleDesc.Quality;
+   mPresentationParams = D3D11->setupPresentParams(vm, hwnd);
+   D3D11->mMultisampleDesc.Count = mPresentationParams.SampleDesc.Count;
+   D3D11->mMultisampleDesc.Quality = mPresentationParams.SampleDesc.Quality;
 }
 
 const Point2I GFXD3D11WindowTarget::getSize()
@@ -381,105 +368,45 @@ GFXFormat GFXD3D11WindowTarget::getFormat()
 
 bool GFXD3D11WindowTarget::present()
 {
-   AssertFatal(mSwapChain, "GFXD3D11WindowTarget::present - no swap chain present to present!");
-   HRESULT res = mSwapChain->Present(!static_cast<GFXD3D11Device*>(GFX)->smDisableVSync, 0);
-
-   return SUCCEEDED(res);
-}
-
-void GFXD3D11WindowTarget::setImplicitSwapChain()
-{
-   if(!mSwapChain)
-      //static_cast<GFXD3D11Device*>(GFX)->getDevice()->GetSwapChain(0, &mSwapChain);
-   if(!mDepthStencil)
-      //static_cast<GFXD3D11Device*>(GFX)->getDevice()->GetDepthStencilSurface(&mDepthStencil);
-   if (!mBackbuffer)      
-      mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&mBackbuffer);
+   return (D3D11->getSwapChain()->Present(!static_cast<GFXD3D11Device*>(GFX)->smDisableVSync, 0) == S_OK);
 }
 
 void GFXD3D11WindowTarget::resetMode()
 {
-   mWindow->setSuppressReset(true);
+	mWindow->setSuppressReset(true);
 
-   if (mSwapChain)
-   {
-      // The current video settings.
-      DXGI_SWAP_CHAIN_DESC pp;
-      mSwapChain->GetDesc(&pp);      
-      bool ppFullscreen = !pp.Windowed;
-	  Point2I backbufferSize(pp.BufferDesc.Width, pp.BufferDesc.Height);
+	// Setup our presentation params.
+	initPresentationParams();
 
-      // The settings we are now applying.
-      const GFXVideoMode &mode = mWindow->getVideoMode();
-      
-      // Convert the current multisample parameters into something
-      // we can compare with our GFXVideoMode.antialiasLevel value.
-      U32 ppAntiAliaseLevel = 0;
-	  if ( pp.SampleDesc.Count != 0 )      
-         ppAntiAliaseLevel = pp.SampleDesc.Quality + 1;
+	// Otherwise, we have to reset the device, if we're the implicit swapchain.
+	D3D11->reset(mPresentationParams);
 
-      // Early out if none of the settings which require a device reset
-      // have changed.      
-      if ( backbufferSize == getSize() && ppFullscreen == mode.fullScreen && ppAntiAliaseLevel == mode.antialiasLevel )
-         return;   
-   }
+	// Update our size, too.
+    mSize = Point2I(mPresentationParams.BufferDesc.Width, mPresentationParams.BufferDesc.Height);      
 
-   // Setup our presentation params.
-   initPresentationParams();
-
-   // Otherwise, we have to reset the device, if we're the implicit swapchain.
-   static_cast<GFXD3D11Device*>(GFX)->reset(mPresentationParams);
-
-   // Update our size, too.
-   mSize = Point2I(mPresentationParams.BufferDesc.Width, mPresentationParams.BufferDesc.Height);      
-
-   mWindow->setSuppressReset(false);
+	mWindow->setSuppressReset(false);
 }
 
 void GFXD3D11WindowTarget::zombify()
 {
-   // Release our resources
-   SAFE_RELEASE(mSwapChain);
-   SAFE_RELEASE(mDepthStencil);
-   SAFE_RELEASE(mBackbuffer);
 }
 
 void GFXD3D11WindowTarget::resurrect()
 {
-   setImplicitSwapChain();
 }
 
 void GFXD3D11WindowTarget::activate()
 {
-   GFXDEBUGEVENT_SCOPE( GFXPCD3D11WindowTarget_activate, ColorI::RED );
-   /*
-   HRESULT hr;
+	GFXDEBUGEVENT_SCOPE(GFXPCD3D9WindowTarget_activate, ColorI::RED);
 
-   hr = static_cast<GFXD3D11Device*>(GFX)->getDevice()->SetRenderTarget(0, mBackbuffer);
+	D3D11DEVICECONTEXT->OMSetRenderTargets(1, D3D11->getRenderTargetViewPtr(), D3D11->getDepthStencilView());
 
-   if(FAILED(hr)) 
-   {
-      AssertFatal(false, "GFXD3D11WindowTarget::activate() - Failed to set backbuffer target!");
-   }
-
-   hr = static_cast<GFXD3D11Device*>(GFX)->getDevice()->SetDepthStencilSurface(mDepthStencil);
-
-   if(FAILED(hr)) 
-   {
-      AssertFatal(false, "GFXD3D11WindowTarget::activate() - Failed to set depthstencil target!");
-   }
-   */
-
-   DXGI_SWAP_CHAIN_DESC pp;
-   mSwapChain->GetDesc(&pp);
-
-   // Update our video mode here, too.
-   GFXVideoMode vm;
-   vm = mWindow->getVideoMode();
-   vm.resolution.x = pp.BufferDesc.Width;
-   vm.resolution.y = pp.BufferDesc.Height;
-   vm.fullScreen = !pp.Windowed;
-   mSize = vm.resolution;
+	// Update our video mode here, too.
+	GFXVideoMode vm;
+	vm = mWindow->getVideoMode();
+	vm.resolution.x = mPresentationParams.BufferDesc.Width;
+	vm.resolution.y = mPresentationParams.BufferDesc.Height;
+	mSize = vm.resolution;
 }
 
 void GFXD3D11WindowTarget::resolveTo(GFXTextureObject *tex)
@@ -496,7 +423,7 @@ void GFXD3D11WindowTarget::resolveTo(GFXTextureObject *tex)
 		//AssertFatal(false, "GFXD3D11WindowTarget::resolveTo() - GetSurfaceLevel failed!");
 	//}
 
-	//hr = static_cast<GFXD3D11Device*>(GFX)->getDevice()->StretchRect(mBackbuffer, NULL, surf, NULL, D3DTEXF_NONE);
+	//hr = D3D11DEVICE->StretchRect(mBackbuffer, NULL, surf, NULL, D3DTEXF_NONE);
 
 	//if(FAILED(hr)) 
 	//{
