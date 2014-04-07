@@ -383,7 +383,7 @@ void GFXD3D9WindowTarget::resetMode()
 	// Setup our presentation params.
 	initPresentationParams();
 
-	// Otherwise, we have to reset the device, if we're the implicit swapchain.
+	// And update params
 	D3D9->reset(mPresentationParams);
 
 	// Update our size, too.
