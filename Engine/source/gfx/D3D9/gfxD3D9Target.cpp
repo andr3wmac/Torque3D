@@ -87,7 +87,7 @@ void GFXD3D9TextureTarget::attachTexture( RenderSlot slot, GFXTextureObject *tex
    // Take care of default targets
    if( tex == GFXTextureTarget::sDefaultDepthStencil )
    {
-      mTargets[slot] = static_cast<GFXD3D9Device*>(GFX)->mDeviceDepthStencil;
+      mTargets[slot] = D3D9->mDeviceDepthStencil;
       mTargets[slot]->AddRef();
    }
    else
@@ -212,7 +212,7 @@ void GFXD3D9TextureTarget::activate()
 {
    GFXDEBUGEVENT_SCOPE( GFXPCD3D9TextureTarget_activate, ColorI::RED );
 
-   AssertFatal( mTargets[GFXTextureTarget::Color0], "GFXD3D9TextureTarget::activate() - You can never have a NULL primary render target!" );
+   AssertFatal(mTargets[GFXTextureTarget::Color0], "GFXD3D9TextureTarget::activate() - You can never have a NULL primary render target!");
 
    // Clear the state indicator.
    stateApplied();
@@ -220,7 +220,7 @@ void GFXD3D9TextureTarget::activate()
    IDirect3DSurface9 *depth = mTargets[GFXTextureTarget::DepthStencil];
    
    // First clear the non-primary targets to make the debug DX runtime happy.
-   for(U32 i = 1; i < static_cast<GFXD3D9Device*>(GFX)->getNumRenderTargets(); i++)
+   for(U32 i = 1; i < D3D9->getNumRenderTargets(); i++)
    {
 		HRESULT hr = D3D9DEVICE->SetRenderTarget(i, NULL);
 
@@ -339,16 +339,14 @@ void GFXD3D9WindowTarget::initPresentationParams()
 {
    // Get some video mode related info.
    GFXVideoMode vm = mWindow->getVideoMode();
-
    Win32Window* win = static_cast<Win32Window*>(mWindow);
-
    HWND hwnd = win->getHWND();
 
    // At some point, this will become GFXD3D9WindowTarget like trunk has,
    // so this cast isn't as bad as it looks. ;) BTR
-   mPresentationParams = static_cast<GFXD3D9Device*>(GFX)->setupPresentParams(vm, hwnd);
-   static_cast<GFXD3D9Device*>(GFX)->mMultisampleType = mPresentationParams.MultiSampleType;
-   static_cast<GFXD3D9Device*>(GFX)->mMultisampleLevel = mPresentationParams.MultiSampleQuality;
+   mPresentationParams = D3D9->setupPresentParams(vm, hwnd);
+   D3D9->mMultisampleType = mPresentationParams.MultiSampleType;
+   D3D9->mMultisampleLevel = mPresentationParams.MultiSampleQuality;
 }
 
 const Point2I GFXD3D9WindowTarget::getSize()
@@ -386,7 +384,7 @@ void GFXD3D9WindowTarget::resetMode()
 	initPresentationParams();
 
 	// Otherwise, we have to reset the device, if we're the implicit swapchain.
-	static_cast<GFXD3D9Device*>(GFX)->reset(mPresentationParams);
+	D3D9->reset(mPresentationParams);
 
 	// Update our size, too.
 	mSize = Point2I(mPresentationParams.BackBufferWidth, mPresentationParams.BackBufferHeight);      
@@ -440,7 +438,7 @@ void GFXD3D9WindowTarget::resolveTo(GFXTextureObject *tex)
 		AssertFatal(false, "GFXD3D9WindowTarget::resolveTo() - GetSurfaceLevel failed!");
 	}
 
-	hr = D3D9DEVICE->StretchRect(static_cast<GFXD3D9Device*>(GFX)->mDeviceBackbuffer, NULL, surf, NULL, D3DTEXF_NONE);
+	hr = D3D9DEVICE->StretchRect(D3D9->mDeviceBackbuffer, NULL, surf, NULL, D3DTEXF_NONE);
 
 	if(FAILED(hr)) 
 	{
