@@ -32,14 +32,14 @@ DirectX 11 Support by Anis and Andrew
 
 * gfxD3D11CardProfiler - OK
 * gfxD3D11Cubemap - OK
-* gfxD3D11Device - UNFINISHED
+* gfxD3D11Device - OK
 * gfxD3D11EnumTranslate - OK
 * gfxD3D11IndexBuffer - OK
 * gfxD3D11OcclusionQuery - OK
 * gfxD3D11QueryFence - OK
 * gfxD3D11Shader - OK
-* gfxD3D11StateBlock - OK
+* gfxD3D11StateBlock - UNFINISHED
 * gfxD3D11Target - UNFINISHED
-* gfxD3D11TextureManager - TODO
-* gfxD3D11TextureObject - TODO
+* gfxD3D11TextureManager - UNFINISHED
+* gfxD3D11TextureObject - UNFINISHED
 * gfxD3D11VertexBuffer - OK
