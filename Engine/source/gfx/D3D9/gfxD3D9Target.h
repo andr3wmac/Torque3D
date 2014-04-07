@@ -99,7 +99,7 @@ public:
    void zombify();
    void resurrect();
 
-   virtual void resolveTo( GFXTextureObject *tex );
+   virtual void resolveTo(GFXTextureObject *tex);
 };
 
 #endif
