@@ -56,7 +56,6 @@ private:
 
    ID3D11Texture2D*				m_pTexture;
    ID3D11ShaderResourceView*	m_pShaderResourceView;
-   ID3D11RenderTargetView*		m_pSurfaces[6];
 
    U32  mTexSize;
    GFXFormat mFaceFormat;
