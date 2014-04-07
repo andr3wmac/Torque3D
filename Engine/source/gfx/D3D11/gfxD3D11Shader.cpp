@@ -1042,6 +1042,8 @@ bool GFXD3D11Shader::_compileShader( const Torque::Path &filePath,
 
       #endif
 
+	  mCompiled = (const char*)code->GetBufferPointer();
+
       if (target.compare("ps_", 3) == 0)      
          res = static_cast<GFXD3D11Device*>(GFX)->getDevice()->CreatePixelShader(code->GetBufferPointer(), code->GetBufferSize(), NULL,  &mPixShader);
       else
