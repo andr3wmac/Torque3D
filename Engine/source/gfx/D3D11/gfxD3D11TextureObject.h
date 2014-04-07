@@ -44,11 +44,11 @@ protected:
    ID3D11Texture1D      *mD3DTexture;
 
    // used for z buffers...
-   ID3D11Texture2D      *mD3DSurface;
+   ID3D11ShaderResourceView *mD3DSurface;
 
 public:
 
-   GFXD3D11TextureObject( GFXDevice * d, GFXTextureProfile *profile);
+   GFXD3D11TextureObject(GFXDevice * d, GFXTextureProfile *profile);
    ~GFXD3D11TextureObject();
 
    void                 setTex(ID3D11Texture1D* val) { mD3DTexture = val; }
@@ -66,9 +66,9 @@ public:
    virtual GFXLockedRect * lock(U32 mipLevel = 0, RectI *inRect = NULL);
    virtual void unlock(U32 mipLevel = 0 );
 
-   virtual bool			copyToBmp(GBitmap* bmp);
-   ID3D11Texture2D*		getSurface() { return mD3DSurface; }
-   ID3D11Texture2D**	getSurfacePtr() { return &mD3DSurface; }
+   virtual bool					copyToBmp(GBitmap* bmp);
+   ID3D11ShaderResourceView*	getSurface() { return mD3DSurface; }
+   ID3D11ShaderResourceView**	getSurfacePtr() { return &mD3DSurface; }
 
    // GFXResource
    void zombify();
