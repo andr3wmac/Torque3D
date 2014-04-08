@@ -55,9 +55,9 @@ GFXD3D11TextureTarget::~GFXD3D11TextureTarget()
    zombify();
 }
 
-void GFXD3D11TextureTarget::attachTexture( RenderSlot slot, GFXTextureObject *tex, U32 mipLevel/*=0*/, U32 zOffset /*= 0*/ )
+void GFXD3D11TextureTarget::attachTexture(RenderSlot slot, GFXTextureObject *tex, U32 mipLevel/*=0*/, U32 zOffset /*= 0*/)
 {
-   GFXDEBUGEVENT_SCOPE( GFXPCD3D11TextureTarget_attachTexture, ColorI::RED );
+   GFXDEBUGEVENT_SCOPE(GFXPCD3D11TextureTarget_attachTexture, ColorI::RED);
 
    AssertFatal(slot < MaxRenderSlotId, "GFXD3D11TextureTarget::attachTexture - out of range slot.");
 
@@ -77,8 +77,8 @@ void GFXD3D11TextureTarget::attachTexture( RenderSlot slot, GFXTextureObject *te
 
    if(slot == Color0)
    {
-      mTargetSize = Point2I::Zero;
-      mTargetFormat = GFXFormatR8G8B8A8;
+       mTargetSize = Point2I::Zero;
+       mTargetFormat = GFXFormatR8G8B8A8;
    }
 
    // Are we clearing?
@@ -89,40 +89,33 @@ void GFXD3D11TextureTarget::attachTexture( RenderSlot slot, GFXTextureObject *te
    }
 
    // Take care of default targets
-   if( tex == GFXTextureTarget::sDefaultDepthStencil )
+   if(tex == GFXTextureTarget::sDefaultDepthStencil)
    {
-      mTargets[slot] = D3D11->mDeviceDepthStencil;
-      mTargets[slot]->AddRef();
+       mTargets[slot] = D3D11->mDeviceDepthStencil;
+       mTargets[slot]->AddRef();
    }
+
    else
    {
-      // Cast the texture object to D3D...
-      AssertFatal(static_cast<GFXD3D11TextureObject*>(tex), "GFXD3D11TextureTarget::attachTexture - invalid texture object.");
-
       GFXD3D11TextureObject *d3dto = static_cast<GFXD3D11TextureObject*>(tex);
 
       // Grab the surface level.
-      if( slot == DepthStencil )
+      if(slot == DepthStencil)
       {
          mTargets[slot] = d3dto->get2DTex();
-         if ( mTargets[slot] )
+         if(mTargets[slot])
             mTargets[slot]->AddRef();
       }
       else
       {
+
          // getSurface will almost always return NULL. It will only return non-NULL
          // if the surface that it needs to render to is different than the mip level
          // in the actual texture. This will happen with MSAA.
-         if( d3dto->getSurface() == NULL )
+         if(d3dto->get2DTex() == NULL)
          {
-			D3D11_TEXTURE2D_DESC SourceSurfaceDesc;
-			//SourceSurface->Resource->GetDesc(&SourceSurfaceDesc);
-
-			//mipLevel, &mTargets[slot]
-
-            d3dto->get2DTex()->GetDesc(&SourceSurfaceDesc);
-
-			//static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->ResolveSubresource(
+            mTargets[slot] = d3dto->get2DTex();
+            mTargets[slot]->AddRef();
          } 
          else 
          {
@@ -147,9 +140,9 @@ void GFXD3D11TextureTarget::attachTexture( RenderSlot slot, GFXTextureObject *te
       if(slot == Color0)
       {
          ID3D11Texture2D *surface = mTargets[Color0];
-         if ( surface )
+         if(surface)
          {
-			D3D11_TEXTURE2D_DESC sd;
+            D3D11_TEXTURE2D_DESC sd;
             surface->GetDesc(&sd);
             mTargetSize = Point2I(sd.Width, sd.Height);
 
@@ -161,9 +154,9 @@ void GFXD3D11TextureTarget::attachTexture( RenderSlot slot, GFXTextureObject *te
    }
 }
 
-void GFXD3D11TextureTarget::attachTexture( RenderSlot slot, GFXCubemap *tex, U32 face, U32 mipLevel/*=0*/ )
+void GFXD3D11TextureTarget::attachTexture(RenderSlot slot, GFXCubemap *tex, U32 face, U32 mipLevel/*=0*/)
 {
-   GFXDEBUGEVENT_SCOPE( GFXPCD3D11TextureTarget_attachTexture_Cubemap, ColorI::RED );
+   GFXDEBUGEVENT_SCOPE(GFXPCD3D11TextureTarget_attachTexture_Cubemap, ColorI::RED);
 
    AssertFatal(slot < MaxRenderSlotId, "GFXD3D11TextureTarget::attachTexture - out of range slot.");
 
@@ -176,14 +169,14 @@ void GFXD3D11TextureTarget::attachTexture( RenderSlot slot, GFXCubemap *tex, U32
    mResolveTargets[slot] = NULL;
 
    // Cast the texture object to D3D...
-   AssertFatal(!tex || static_cast<GFXD3D11Cubemap*>(tex), "GFXD3DTextureTarget::attachTexture - invalid cubemap object.");
+   AssertFatal(!tex, "GFXD3D11TextureTarget::attachTexture - invalid cubemap object.");
 
-   //GFXD3D11Cubemap *cube = static_cast<GFXD3D11Cubemap*>(tex);
+   GFXD3D11Cubemap *cube = static_cast<GFXD3D11Cubemap*>(tex);
 
    if(slot == Color0)
    {
-      mTargetSize = Point2I::Zero;
-      mTargetFormat = GFXFormatR8G8B8A8;
+       mTargetSize = Point2I::Zero;
+       mTargetFormat = GFXFormatR8G8B8A8;
    }
 
    // Are we clearing?
@@ -193,25 +186,20 @@ void GFXD3D11TextureTarget::attachTexture( RenderSlot slot, GFXCubemap *tex, U32
       return;
    }
 
-    //HRESULT hr = cube->mCubeTex->GetCubeMapSurface( (D3DCUBEMAP_FACES)face, mipLevel, &mTargets[slot] );
-
-	//if(FAILED(hr)) 
-	//{
-		//AssertFatal(false, "GFXD3DTextureTarget::attachTexture - could not get surface level for the passed texture!");
-	//}
+   cube->m_pShaderResourceView->GetResource(reinterpret_cast<ID3D11Resource**>(&mTargets[slot]));
 
    // Update surface size
    if(slot == Color0)
    {
       ID3D11Texture2D *surface = mTargets[Color0];
-      if ( surface )
+      if(surface)
       {
          D3D11_TEXTURE2D_DESC sd;
          surface->GetDesc(&sd);
          mTargetSize = Point2I(sd.Width, sd.Height);
 
          S32 format = sd.Format;
-         GFXREVERSE_LOOKUP( GFXD3D11TextureFormat, GFXFormat, format );
+         GFXREVERSE_LOOKUP(GFXD3D11TextureFormat, GFXFormat, format);
          mTargetFormat = (GFXFormat)format;
       }
    }
@@ -219,51 +207,46 @@ void GFXD3D11TextureTarget::attachTexture( RenderSlot slot, GFXCubemap *tex, U32
 
 void GFXD3D11TextureTarget::activate()
 {
-   GFXDEBUGEVENT_SCOPE( GFXPCD3D11TextureTarget_activate, ColorI::RED );
+   GFXDEBUGEVENT_SCOPE(GFXPCD3D11TextureTarget_activate, ColorI::RED);
 
-   AssertFatal( mTargets[GFXTextureTarget::Color0], "GFXD3D11TextureTarget::activate() - You can never have a NULL primary render target!" );
+   AssertFatal(mTargets[GFXTextureTarget::Color0], "GFXD3D11TextureTarget::activate() - You can never have a NULL primary render target!");
 
    // Clear the state indicator.
    stateApplied();
 
-   //ID3D11Texture2D *depth = mTargets[GFXTextureTarget::DepthStencil];
+   ID3D11Texture2D *depth = mTargets[GFXTextureTarget::DepthStencil];
    
    // First clear the non-primary targets to make the debug DX runtime happy.
-   for(U32 i = 1; i < D3D11->getNumRenderTargets(); i++)
-   {
-		//HRESULT hr = static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->OMSetRenderTargets(i, NULL);
-
-		//if(FAILED(hr)) 
-		//{
-			//AssertFatal(false, avar("GFXD3D11TextureTarget::activate() - failed to clear texture target %d!", i));
-		//}
-   }
+   D3D11DEVICECONTEXT->OMSetRenderTargets(0, NULL, NULL);
 
    // Now set all the new surfaces into the appropriate slots.
    for(U32 i = 0; i < D3D11->getNumRenderTargets(); i++)
    {
       ID3D11Texture2D *target = mTargets[GFXTextureTarget::Color0 + i];
-      if(target)
-      {
-         //HRESULT hr = static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->OMSetRenderTargets(i, target);
 
-		 //if(FAILED(hr)) 
-		 //{
-		 	//AssertFatal(false, avar("GFXD3D11TextureTarget::activate() - failed to set slot %d for texture target!", i));
-		 //}
+      if(target && depth)
+      {
+		 HRESULT hr = D3D11DEVICE->CreateRenderTargetView(target, NULL, &mDeviceRenderTargetView);
+
+		 if(FAILED(hr)) 
+		 {
+			 AssertFatal(false, "GFXD3D11TextureTarget::activate - CreateRenderTargetView call failure");
+		 }
+
+		 hr = D3D11DEVICE->CreateDepthStencilView(depth, NULL, &mDeviceDepthStencilView);
+
+		 if(FAILED(hr)) 
+		 {
+			 AssertFatal(false, "GFXD3D11TextureTarget::activate - CreateDepthStencilView call failure");
+		 }
+
+         D3D11DEVICECONTEXT->OMSetRenderTargets(1, &mDeviceRenderTargetView, mDeviceDepthStencilView);
       }
    }
 
    // TODO: This is often the same shared depth buffer used by most
    // render targets.  Are we getting performance hit from setting it
    // multiple times... aside from the function call?
-
-   //HRESULT hr = D3D11DEVICECONTEXT->SetDepthStencilSurface(depth);
-
-   //if(FAILED(hr)) 
-   //{
-	   //AssertFatal(false, "GFXD3D11TextureTarget::activate() - failed to set depthstencil target!");
-   //}
 }
 
 void GFXD3D11TextureTarget::deactivate()
@@ -276,23 +259,13 @@ void GFXD3D11TextureTarget::resolve()
 {
    GFXDEBUGEVENT_SCOPE(GFXPCD3D11TextureTarget_resolve, ColorI::RED);
 
-   for(U32 i = 0; i < MaxRenderSlotId; i++)
+   for (U32 i = 0; i < MaxRenderSlotId; i++)
    {
       // We use existance @ mResolveTargets as a flag that we need to copy
       // data from the rendertarget into the texture.
-      if(mResolveTargets[i])
+      if (mResolveTargets[i])
       {
-         //ID3D11Texture2D *surf;
-         //HRESULT hr = mResolveTargets[i]->get2DTex()->GetSurfaceLevel( 0, &surf );
-
-		 //if(FAILED(hr)) 
-		 //{
-			//AssertFatal(false, "GFXD3D11TextureTarget::resolve() - GetSurfaceLevel failed!");
-		 //}
-
-		 //D3D11DEVICECONTEXT->CopyResource( surf, mTargets[i] );
-
-         //surf->Release();
+          D3D11DEVICECONTEXT->CopySubresourceRegion(mResolveTargets[i]->get2DTex(), 0, 0, 0, 0, mTargets[i], NULL, NULL);
       }
    }
 }
@@ -301,25 +274,10 @@ void GFXD3D11TextureTarget::resolveTo(GFXTextureObject *tex)
 {
    GFXDEBUGEVENT_SCOPE(GFXPCD3D11TextureTarget_resolveTo, ColorI::RED);
 
-   if (mTargets[Color0] == NULL)
+   if(mTargets[Color0] == NULL)
       return;
 
-    //IDirect3DSurface9 *surf;
-    //HRESULT hr = ((GFXD3D11TextureObject*)(tex))->get2DTex()->GetSurfaceLevel( 0, &surf );
-
-	//if(FAILED(hr)) 
-	//{
-		//AssertFatal(false, "GFXD3D11TextureTarget::resolveTo() - GetSurfaceLevel failed!");
-	//}
-
-    //hr = D3D11DEVICECONTEXT->StretchRect( mTargets[Color0], NULL, surf, NULL, D3DTEXF_NONE );
-
-	//if(FAILED(hr)) 
-	//{
-		//AssertFatal(false, "GFXD3D11TextureTarget::resolveTo() - StretchRect failed!");
-	//}
-
-   //surf->Release();     
+   D3D11DEVICECONTEXT->CopySubresourceRegion(static_cast<GFXD3D11TextureObject*>(tex)->get2DTex(), 0, 0, 0, 0, mTargets[Color0], NULL, NULL);
 }
 
 void GFXD3D11TextureTarget::zombify()
@@ -411,24 +369,7 @@ void GFXD3D11WindowTarget::activate()
 
 void GFXD3D11WindowTarget::resolveTo(GFXTextureObject *tex)
 {
-	GFXDEBUGEVENT_SCOPE( GFXPCD3D11WindowTarget_resolveTo, ColorI::RED );
+    GFXDEBUGEVENT_SCOPE(GFXPCD3D11WindowTarget_resolveTo, ColorI::RED);
 
-	//IDirect3DSurface9 *surf;
-	//HRESULT hr;
-
-	//hr = ((GFXD3D11TextureObject*)(tex))->get2DTex()->GetSurfaceLevel(0, &surf);
-
-	//if(FAILED(hr)) 
-	//{
-		//AssertFatal(false, "GFXD3D11WindowTarget::resolveTo() - GetSurfaceLevel failed!");
-	//}
-
-	//hr = D3D11DEVICE->StretchRect(mBackbuffer, NULL, surf, NULL, D3DTEXF_NONE);
-
-	//if(FAILED(hr)) 
-	//{
-		//AssertFatal(false, "GFXD3D11WindowTarget::resolveTo() - StretchRect failed!");
-	//}
-
-	//surf->Release();    
+    D3D11DEVICECONTEXT->CopySubresourceRegion(static_cast<GFXD3D11TextureObject*>(tex)->get2DTex(), 0, 0, 0, 0, D3D11->mDeviceBackbuffer, NULL, NULL);
 }
