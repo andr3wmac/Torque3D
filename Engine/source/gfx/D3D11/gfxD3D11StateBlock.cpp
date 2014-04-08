@@ -28,10 +28,65 @@
 #include "gfx/D3D11/gfxD3D11StateBlock.h"
 #include "gfx/D3D11/gfxD3D11EnumTranslate.h"
 
+inline D3D11_FILTER GetD3D11TextureFilter(const GFXTextureFilterType minFilter, const GFXTextureFilterType magFilter, const GFXTextureFilterType mipFilter, const bool comparison)
+{
+	bool anisotropic = false;
+
+	D3D11_FILTER_TYPE min, mag, mip;
+
+	switch(mipFilter)
+	{
+	case GFXTextureFilterNone:
+	case GFXTextureFilterPoint:
+		mip = D3D11_FILTER_TYPE_POINT;
+		break;
+
+	default:
+		mip = D3D11_FILTER_TYPE_LINEAR;
+		break;
+	}
+
+	switch(minFilter)
+	{
+	case GFXTextureFilterNone:
+	case GFXTextureFilterPoint:
+		min = D3D11_FILTER_TYPE_POINT;
+		break;
+
+	case GFXTextureFilterLinear:
+		min = D3D11_FILTER_TYPE_LINEAR;
+		break;
+
+	default:
+		min = D3D11_FILTER_TYPE_LINEAR;
+		anisotropic = true;
+		break;
+	}
+
+	switch (magFilter)
+	{
+	case GFXTextureFilterNone:
+	case GFXTextureFilterPoint:
+		mag = D3D11_FILTER_TYPE_POINT;
+		break;
+
+	case GFXTextureFilterLinear:
+		mag = D3D11_FILTER_TYPE_LINEAR;
+		break;
+
+	default:
+		mag = D3D11_FILTER_TYPE_LINEAR;
+		anisotropic = true;
+		break;
+	}
+
+	D3D11_FILTER filter = anisotropic ? D3D11_ENCODE_ANISOTROPIC_FILTER(comparison) : D3D11_ENCODE_BASIC_FILTER(min, mag, mip, comparison);
+
+	return filter;
+}
+
 GFXD3D11StateBlock::GFXD3D11StateBlock(const GFXStateBlockDesc& desc)
 {
-	AssertFatal(D3D11DEVICE, "Invalid D3DDevice!");
-
 	mDesc = desc;
 	mCachedHashValue = desc.getHashValue();
 
@@ -41,10 +96,6 @@ GFXD3D11StateBlock::GFXD3D11StateBlock(const GFXStateBlockDesc& desc)
     mColorMask |= ( mDesc.colorWriteGreen ? D3D11_COLOR_WRITE_ENABLE_GREEN : 0 );
     mColorMask |= ( mDesc.colorWriteBlue  ? D3D11_COLOR_WRITE_ENABLE_BLUE  : 0 );
     mColorMask |= ( mDesc.colorWriteAlpha ? D3D11_COLOR_WRITE_ENABLE_ALPHA : 0 );
-
-	// Z*bias
-	mZBias = *((U32*)&mDesc.zBias);
-	mZSlopeBias = *((U32*)&mDesc.zSlopeBias);
 
 	mBlendDesc.AlphaToCoverageEnable = false;
 	mBlendDesc.IndependentBlendEnable = false;
@@ -58,7 +109,7 @@ GFXD3D11StateBlock::GFXD3D11StateBlock(const GFXStateBlockDesc& desc)
 	mBlendDesc.RenderTarget[0].SrcBlendAlpha = GFXD3D11Blend[mDesc.separateAlphaBlendSrc];
 	mBlendDesc.RenderTarget[0].RenderTargetWriteMask = mColorMask;
 
-	HRESULT hr = static_cast<GFXD3D11Device*>(GFX)->getDevice()->CreateBlendState(&mBlendDesc, &mBlendState);
+	HRESULT hr = D3D11DEVICE->CreateBlendState(&mBlendDesc, &mBlendState);
 
 	if(FAILED(hr))
 	{
@@ -78,7 +129,7 @@ GFXD3D11StateBlock::GFXD3D11StateBlock(const GFXStateBlockDesc& desc)
 	mDepthStencilDesc.FrontFace.StencilPassOp = GFXD3D11StencilOp[mDesc.stencilPassOp];
 	mDepthStencilDesc.BackFace = mDepthStencilDesc.FrontFace;
 
-	hr = static_cast<GFXD3D11Device*>(GFX)->getDevice()->CreateDepthStencilState(&mDepthStencilDesc, &mDepthStencilState);
+	hr = D3D11DEVICE->CreateDepthStencilState(&mDepthStencilDesc, &mDepthStencilState);
 
 	if(FAILED(hr))
 	{
@@ -87,43 +138,43 @@ GFXD3D11StateBlock::GFXD3D11StateBlock(const GFXStateBlockDesc& desc)
 
 	mRasterizerDesc.CullMode = GFXD3D11CullMode[mDesc.cullMode];
 	mRasterizerDesc.FillMode = GFXD3D11FillMode[mDesc.fillMode];
-	mRasterizerDesc.DepthBias = mZBias;
-	mRasterizerDesc.SlopeScaledDepthBias = mZSlopeBias;
+	mRasterizerDesc.DepthBias = mDesc.zBias;
+	mRasterizerDesc.SlopeScaledDepthBias = mDesc.zSlopeBias;
 	mRasterizerDesc.AntialiasedLineEnable = FALSE;
 	mRasterizerDesc.MultisampleEnable = FALSE;
-	mRasterizerDesc.ScissorEnable = TRUE;
+	mRasterizerDesc.ScissorEnable = FALSE;
 	mRasterizerDesc.DepthClipEnable = TRUE;
-	mRasterizerDesc.FrontCounterClockwise = FALSE;
+	mRasterizerDesc.FrontCounterClockwise = TRUE;
 	mRasterizerDesc.DepthBiasClamp = D3D11_DEFAULT_DEPTH_BIAS_CLAMP;
 
-	hr = static_cast<GFXD3D11Device*>(GFX)->getDevice()->CreateRasterizerState(&mRasterizerDesc, &mRasterizerState);
+	hr = D3D11DEVICE->CreateRasterizerState(&mRasterizerDesc, &mRasterizerState);
 
 	if(FAILED(hr))
 	{
 		AssertFatal(false, "GFXD3D11StateBlock::GFXD3D11StateBlock - CreateDepthStencilState call failure.");
 	}
 
-	for ( U32 i = 0; i < getOwningDevice()->getNumSamplers(); i++ )
+	for (U32 i = 0; i < getOwningDevice()->getNumSamplers(); i++)
 	{
+		static const bool comparison = false; // unused
+
 		mSamplerDesc[i].AddressU = GFXD3D11TextureAddress[mDesc.samplers[i].addressModeU];
 		mSamplerDesc[i].AddressV = GFXD3D11TextureAddress[mDesc.samplers[i].addressModeV];
 		mSamplerDesc[i].AddressW = GFXD3D11TextureAddress[mDesc.samplers[i].addressModeW];
+
 		mSamplerDesc[i].MaxAnisotropy = mDesc.samplers[i].maxAnisotropy;
+		mSamplerDesc[i].MipLODBias = mDesc.samplers[i].mipLODBias;
+		mSamplerDesc[i].MinLOD = 0.0f;
+		mSamplerDesc[i].MaxLOD = D3D11_FLOAT32_MAX;
 
-		F32 bias = mDesc.samplers[i].mipLODBias;
-		DWORD dwBias = *( (LPDWORD)(&bias) );
-
-		mSamplerDesc[i].MipLODBias = dwBias;
-		mSamplerDesc[i].MinLOD = FLT_MIN;
-		mSamplerDesc[i].MaxLOD = FLT_MAX;
-		mSamplerDesc[i].Filter = D3D11_FILTER_ANISOTROPIC;
-		mSamplerDesc[i].BorderColor[0] = 1.0f;
-		mSamplerDesc[i].BorderColor[1] = 1.0f;
-		mSamplerDesc[i].BorderColor[2] = 1.0f;
-		mSamplerDesc[i].BorderColor[3] = 1.0f;
+		mSamplerDesc[i].Filter = GetD3D11TextureFilter(mDesc.samplers[i].minFilter, mDesc.samplers[i].magFilter, mDesc.samplers[i].mipFilter, comparison);
+		mSamplerDesc[i].BorderColor[0] = D3D11_DEFAULT_BORDER_COLOR_COMPONENT;
+		mSamplerDesc[i].BorderColor[1] = D3D11_DEFAULT_BORDER_COLOR_COMPONENT;
+		mSamplerDesc[i].BorderColor[2] = D3D11_DEFAULT_BORDER_COLOR_COMPONENT;
+		mSamplerDesc[i].BorderColor[3] = D3D11_DEFAULT_BORDER_COLOR_COMPONENT;
 		mSamplerDesc[i].ComparisonFunc = D3D11_COMPARISON_NEVER;
 
-		hr = static_cast<GFXD3D11Device*>(GFX)->getDevice()->CreateSamplerState(&mSamplerDesc[i], &mSamplerStates[i]);
+		hr = D3D11DEVICE->CreateSamplerState(&mSamplerDesc[i], &mSamplerStates[i]);
 
 		if(FAILED(hr))
 		{
@@ -134,14 +185,12 @@ GFXD3D11StateBlock::GFXD3D11StateBlock(const GFXStateBlockDesc& desc)
 
 GFXD3D11StateBlock::~GFXD3D11StateBlock()
 {
-   mBlendState->Release();
-   mRasterizerState->Release();
-   mDepthStencilState->Release();
+   SAFE_RELEASE(mBlendState)
+   SAFE_RELEASE(mRasterizerState);
+   SAFE_RELEASE(mDepthStencilState);
 
-   for(U32 i = 0; i < 16; ++i)
-   {
-		mSamplerStates[i]->Release();
-   }
+   for(U32 i = 0; i < getOwningDevice()->getNumSamplers(); ++i)
+       SAFE_RELEASE(mSamplerStates[i]);
 }
 
 /// Returns the hash value of the desc that created this block
@@ -153,14 +202,13 @@ U32 GFXD3D11StateBlock::getHashValue() const
 /// Returns a GFXStateBlockDesc that this block represents
 const GFXStateBlockDesc& GFXD3D11StateBlock::getDesc() const
 {
-   return mDesc;      
+   return mDesc;
 }
 
 /// Called by D3D11 device to active this state block.
-/// @param oldState  The current state, used to make sure we don't set redundant states on the device.  Pass NULL to reset all states.
 void GFXD3D11StateBlock::activate(GFXD3D11StateBlock* oldState)
 {
-	PROFILE_SCOPE( GFXD3D11StateBlock_Activate );
+	PROFILE_SCOPE(GFXD3D11StateBlock_Activate);
 
 	mBlendDesc.AlphaToCoverageEnable = false;
 	mBlendDesc.IndependentBlendEnable = false;
@@ -172,11 +220,11 @@ void GFXD3D11StateBlock::activate(GFXD3D11StateBlock* oldState)
 	mBlendDesc.RenderTarget[0].DestBlendAlpha = GFXD3D11Blend[mDesc.separateAlphaBlendDest];
 	mBlendDesc.RenderTarget[0].SrcBlend = GFXD3D11Blend[mDesc.blendSrc];
 	mBlendDesc.RenderTarget[0].SrcBlendAlpha = GFXD3D11Blend[mDesc.separateAlphaBlendSrc];
-	mBlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	mBlendDesc.RenderTarget[0].RenderTargetWriteMask = mColorMask;
 
-	float blendFactor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	static const float blendFactor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 
-	static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->OMSetBlendState(mBlendState, blendFactor , 0xFFFFFFFF);
+	D3D11DEVICECONTEXT->OMSetBlendState(mBlendState, blendFactor , 0xFFFFFFFF);
 
 	mDepthStencilDesc.DepthWriteMask = mDesc.zWriteEnable ? D3D11_DEPTH_WRITE_MASK_ALL : D3D11_DEPTH_WRITE_MASK_ZERO;
 	mDepthStencilDesc.DepthEnable = mDesc.zEnable;
@@ -191,38 +239,41 @@ void GFXD3D11StateBlock::activate(GFXD3D11StateBlock* oldState)
 	mDepthStencilDesc.FrontFace.StencilPassOp = GFXD3D11StencilOp[mDesc.stencilPassOp];
 	mDepthStencilDesc.BackFace = mDepthStencilDesc.FrontFace;
 
-	static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->OMSetDepthStencilState(mDepthStencilState, mDesc.stencilRef);
+	D3D11DEVICECONTEXT->OMSetDepthStencilState(mDepthStencilState, mDesc.stencilRef);
 
 	mRasterizerDesc.CullMode = GFXD3D11CullMode[mDesc.cullMode];
 	mRasterizerDesc.FillMode = GFXD3D11FillMode[mDesc.fillMode];
-	mRasterizerDesc.DepthBias = mZBias;
-	mRasterizerDesc.SlopeScaledDepthBias = mZSlopeBias;
+	mRasterizerDesc.DepthBias = mDesc.zBias;
+	mRasterizerDesc.SlopeScaledDepthBias = mDesc.zSlopeBias;
 	mRasterizerDesc.AntialiasedLineEnable = FALSE;
 	mRasterizerDesc.MultisampleEnable = FALSE;
-	mRasterizerDesc.ScissorEnable = TRUE;
+	mRasterizerDesc.ScissorEnable = FALSE;
 	mRasterizerDesc.DepthClipEnable = TRUE;
-	mRasterizerDesc.FrontCounterClockwise = FALSE;
+	mRasterizerDesc.FrontCounterClockwise = TRUE;
 	mRasterizerDesc.DepthBiasClamp = D3D11_DEFAULT_DEPTH_BIAS_CLAMP;
 
-    static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->RSSetState(mRasterizerState);
+    D3D11DEVICECONTEXT->RSSetState(mRasterizerState);
 
-	for ( U32 i = 0; i < getOwningDevice()->getNumSamplers(); i++ )
+	for (U32 i = 0; i < getOwningDevice()->getNumSamplers(); i++)
 	{
+		static const bool comparison = false; // unused
+
 		mSamplerDesc[i].AddressU = GFXD3D11TextureAddress[mDesc.samplers[i].addressModeU];
 		mSamplerDesc[i].AddressV = GFXD3D11TextureAddress[mDesc.samplers[i].addressModeV];
 		mSamplerDesc[i].AddressW = GFXD3D11TextureAddress[mDesc.samplers[i].addressModeW];
-		mSamplerDesc[i].MaxAnisotropy = mDesc.samplers[i].maxAnisotropy;
 
+		mSamplerDesc[i].MaxAnisotropy = mDesc.samplers[i].maxAnisotropy;
 		mSamplerDesc[i].MipLODBias = mDesc.samplers[i].mipLODBias;
-		mSamplerDesc[i].MinLOD = FLT_MIN;
-		mSamplerDesc[i].MaxLOD = FLT_MAX;
-		mSamplerDesc[i].Filter = D3D11_FILTER_ANISOTROPIC;
-		mSamplerDesc[i].BorderColor[0] = 1.0f;
-		mSamplerDesc[i].BorderColor[1] = 1.0f;
-		mSamplerDesc[i].BorderColor[2] = 1.0f;
-		mSamplerDesc[i].BorderColor[3] = 1.0f;
+		mSamplerDesc[i].MinLOD = 0.0f;
+		mSamplerDesc[i].MaxLOD = D3D11_FLOAT32_MAX;
+
+		mSamplerDesc[i].Filter = GetD3D11TextureFilter(mDesc.samplers[i].minFilter, mDesc.samplers[i].magFilter, mDesc.samplers[i].mipFilter, comparison);
+		mSamplerDesc[i].BorderColor[0] = D3D11_DEFAULT_BORDER_COLOR_COMPONENT;
+		mSamplerDesc[i].BorderColor[1] = D3D11_DEFAULT_BORDER_COLOR_COMPONENT;
+		mSamplerDesc[i].BorderColor[2] = D3D11_DEFAULT_BORDER_COLOR_COMPONENT;
+		mSamplerDesc[i].BorderColor[3] = D3D11_DEFAULT_BORDER_COLOR_COMPONENT;
 		mSamplerDesc[i].ComparisonFunc = D3D11_COMPARISON_NEVER;
 
-		static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->PSSetSamplers(i, 1, &mSamplerStates[i]);
+		D3D11DEVICECONTEXT->PSSetSamplers(i, 1, &mSamplerStates[i]);
 	}
 }
