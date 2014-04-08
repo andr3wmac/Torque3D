@@ -29,7 +29,6 @@ TODO:
 
 DirectX 11 Support by Anis and Andrew
 I'd like to give special thanks to: Paolo Milani
-
 ----------------
 
 * gfxD3D11CardProfiler - OK
