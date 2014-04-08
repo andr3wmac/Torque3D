@@ -38,7 +38,6 @@ public:
    virtual ~GFXD3D11StateBlock();
 
    /// Called by D3D11 device to active this state block.
-   /// @param oldState  The current state, used to make sure we don't set redundant states on the device.  Pass NULL to reset all states.
    void activate(GFXD3D11StateBlock* oldState);
 
 
@@ -72,10 +71,7 @@ private:
 
    GFXStateBlockDesc mDesc;
    U32 mCachedHashValue;
-   // Cached D3D specific things, these are "calculated" from GFXStateBlock
-   U32 mColorMask; 
-   U32 mZBias;
-   U32 mZSlopeBias;
+   U8 mColorMask; 
 };
 
 typedef StrongRefPtr<GFXD3D11StateBlock> GFXD3D11StateBlockRef;
