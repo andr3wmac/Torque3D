@@ -28,6 +28,8 @@ TODO:
 * Remove D3DPT_TRIANGLEFAN topology support and place it a triangle list/strip instead.
 
 DirectX 11 Support by Anis and Andrew
+I'd like to give special thanks to: Paolo Milani
+
 ----------------
 
 * gfxD3D11CardProfiler - OK
@@ -38,7 +40,7 @@ DirectX 11 Support by Anis and Andrew
 * gfxD3D11OcclusionQuery - OK
 * gfxD3D11QueryFence - OK
 * gfxD3D11Shader - OK
-* gfxD3D11StateBlock - UNFINISHED
+* gfxD3D11StateBlock - OK
 * gfxD3D11Target - UNFINISHED
 * gfxD3D11TextureManager - UNFINISHED
 * gfxD3D11TextureObject - UNFINISHED
