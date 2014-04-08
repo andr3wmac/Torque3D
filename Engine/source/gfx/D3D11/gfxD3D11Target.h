@@ -37,6 +37,9 @@ class GFXD3D11TextureTarget : public GFXTextureTarget
 {
    friend class GFXD3D11Device;
 
+   ID3D11RenderTargetView* mDeviceRenderTargetView;
+   ID3D11DepthStencilView* mDeviceDepthStencilView;
+
    // Array of target surfaces, this is given to us by attachTexture
    ID3D11Texture2D* mTargets[MaxRenderSlotId];
 
