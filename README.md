@@ -23,9 +23,7 @@ D3D-Refactor by Anis
 * gfxD3D9TextureManager.cpp rewrite.
 * gfxD3D9Target.cpp rewrite.
 * gfxD3D9EnumTranslate.cpp -> understandable enum mapping!
-
-TODO:
-* Remove D3DPT_TRIANGLEFAN topology support and place it a triangle list/strip instead.
+* Removed D3DPT_TRIANGLEFAN topology (replaced with triangle strip).
 
 DirectX 11 Support by Anis and Andrew
 ----------------
@@ -41,7 +39,7 @@ I'd like to give special thanks to: Paolo Milani
 * gfxD3D11QueryFence - OK
 * gfxD3D11Shader - OK
 * gfxD3D11StateBlock - OK
-* gfxD3D11Target - UNFINISHED
+* gfxD3D11Target - OK
 * gfxD3D11TextureManager - UNFINISHED
 * gfxD3D11TextureObject - UNFINISHED
 * gfxD3D11VertexBuffer - OK
