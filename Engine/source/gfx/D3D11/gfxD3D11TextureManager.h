@@ -34,15 +34,12 @@ class GFXD3D11TextureManager : public GFXTextureManager
 {
    friend class GFXD3D11TextureObject;
 
-   U32 mAdapterIndex;
-
 public:
    GFXD3D11TextureManager();
    virtual ~GFXD3D11TextureManager();
 
 protected:
 
-   // GFXTextureManager
    GFXTextureObject *_createTextureObject(   U32 height, 
                                              U32 width,
                                              U32 depth,
