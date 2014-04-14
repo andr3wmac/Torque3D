@@ -43,62 +43,69 @@ GFXD3D11TextureObject::~GFXD3D11TextureObject()
 
 GFXLockedRect *GFXD3D11TextureObject::lock(U32 mipLevel /*= 0*/, RectI *inRect /*= NULL*/)
 {
-   AssertFatal( !mLocked, "GFXD3D11TextureObject::lock - The texture is already locked!" );
+	AssertFatal(!mLocked, "GFXD3D9TextureObject::lock - The texture is already locked!");
 
-   D3D11_MAPPED_SUBRESOURCE mapInfo;
+	D3D11_MAPPED_SUBRESOURCE mapInfo;
 
-   if( mProfile->isRenderTarget() )
-   {
-      AssertFatal( 0, "GFXD3D11TextureObject::lock - Need to handle mapping render targets" );
-      if( !mLockTex || 
-          mLockTex->getWidth() != getWidth() ||
-          mLockTex->getHeight() != getHeight() )
-      {
-         mLockTex.set( getWidth(), getHeight(), mFormat, &GFXSystemMemProfile, avar("%s() - mLockTex (line %d)", __FUNCTION__, __LINE__) );
-      }
+	if(mProfile->isRenderTarget())
+	{
+		if(!mLockTex || mLockTex->getWidth() != getWidth() || mLockTex->getHeight() != getHeight())
+		{
+			mLockTex.set(getWidth(), getHeight(), mFormat, &GFXSystemMemProfile, avar("%s() - mLockTex (line %d)", __FUNCTION__, __LINE__));
+		}
 
-      PROFILE_START(GFXD3D11TextureObject_lockRT);
-      PROFILE_END();
-   }
-   else
-   {
-      RECT r;
+		PROFILE_START(GFXD3D11TextureObject_lockRT);
 
-      if(inRect)
-      {
-         r.top  = inRect->point.y;
-         r.left = inRect->point.x;
-         r.bottom = inRect->point.y + inRect->extent.y;
-         r.right  = inRect->point.x + inRect->extent.x;
-      }
+		GFXD3D11TextureObject *to = (GFXD3D11TextureObject*) &(*mLockTex);
 
-      mLockedSubresource = D3D11CalcSubresource(mipLevel, 0, getMipLevels());
-      HRESULT hr = static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->Map(mD3DTexture, mLockedSubresource, D3D11_MAP_WRITE, 0, &mapInfo); 
-      if ( FAILED(hr) )
-         AssertFatal(false, "GFXD3D11TextureObject::lock - Failed to map subresource.");
+		D3D11DEVICECONTEXT->CopyResource(to->get2DTex(), get2DTex());
 
-      mLocked = true;
+		mLockedSubresource = D3D11CalcSubresource(mipLevel, 0, getMipLevels());
 
-   }
+		D3D11DEVICECONTEXT->Map(get2DTex(), mLockedSubresource, D3D11_MAP_READ, 0, &mapInfo);
 
-   mLockRect.pBits = static_cast<U8*>(mapInfo.pData);
-   mLockRect.Pitch = mapInfo.RowPitch;
+		mLocked = true;
 
-   return (GFXLockedRect*)&mLockRect;
+		PROFILE_END();
+	}
+	else
+	{
+		RECT r;
+
+		if(inRect)
+		{
+			r.top  = inRect->point.y;
+			r.left = inRect->point.x;
+			r.bottom = inRect->point.y + inRect->extent.y;
+			r.right  = inRect->point.x + inRect->extent.x;
+		}
+
+		mLockedSubresource = D3D11CalcSubresource(mipLevel, 0, getMipLevels());
+
+		D3D11DEVICECONTEXT->Map(get2DTex(), mLockedSubresource, D3D11_MAP_READ, 0, &mapInfo);
+
+		mLocked = true;
+	}
+
+	mLockRect.pBits = static_cast<U8*>(mapInfo.pData);
+	mLockRect.Pitch = mapInfo.RowPitch;
+
+	return (GFXLockedRect*)&mLockRect;
 }
 
 void GFXD3D11TextureObject::unlock(U32 mipLevel)
 {
-   AssertFatal( mLocked, "GFXD3D11TextureObject::unlock - Attempting to unlock a surface that has not been locked" );
+   AssertFatal(mLocked, "GFXD3D9TextureObject::unlock - Attempting to unlock a surface that has not been locked");
 
-   if( mProfile->isRenderTarget() )
+   if(mProfile->isRenderTarget())
    {
-      AssertFatal( 0, "GFXD3D11TextureObject::unlock - Need to handle mapping render targets" );
+      GFXD3D11TextureObject *to = (GFXD3D11TextureObject*) &(*mLockTex);
+      D3D11DEVICECONTEXT->Unmap(to->get2DTex(), mLockedSubresource);
       mLocked = false;
    }
    else
    {
-      static_cast<GFXD3D11Device*>(GFX)->getDeviceContext()->Unmap(get2DTex(), mLockedSubresource);
+      D3D11DEVICECONTEXT->Unmap(get2DTex(), mLockedSubresource);
       mLocked = false;
    }
 }
@@ -107,20 +114,14 @@ void GFXD3D11TextureObject::release()
 {
    SAFE_RELEASE(mD3DTexture);
    SAFE_RELEASE(mD3DSurface);
-   mD3DTexture = NULL;
-   mD3DSurface = NULL;
 }
 
 void GFXD3D11TextureObject::zombify()
 {
-   // Managed textures are managed by D3D
-   AssertFatal(!mLocked, "GFXD3D11TextureObject::zombify - Cannot zombify a locked texture!");
-   release();
 }
 
 void GFXD3D11TextureObject::resurrect()
 {
-   static_cast<GFXD3D11TextureManager*>(TEXMGR)->refreshTexture(this);
 }
 
 bool GFXD3D11TextureObject::copyToBmp(GBitmap* bmp)
@@ -158,7 +159,7 @@ bool GFXD3D11TextureObject::copyToBmp(GBitmap* bmp)
 
 
    // lock the texture
-   DXGI_MAPPED_RECT* lockRect = (DXGI_MAPPED_RECT*) lock();
+   DXGI_MAPPED_RECT* lockRect = (DXGI_MAPPED_RECT*)lock();
 
    // set pointers
    U8* srcPtr = (U8*)lockRect->pBits;
