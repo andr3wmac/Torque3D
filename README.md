@@ -41,5 +41,5 @@ I'd like to give special thanks to: Paolo Milani
 * gfxD3D11StateBlock - OK
 * gfxD3D11Target - OK
 * gfxD3D11TextureManager - UNFINISHED
-* gfxD3D11TextureObject - UNFINISHED
+* gfxD3D11TextureObject - OK
 * gfxD3D11VertexBuffer - OK
