@@ -24,8 +24,8 @@
 // D3D11 layer created by: Anis A. Hireche (C) 2014 - anishireche@gmail.com
 //-----------------------------------------------------------------------------
 
-#ifndef _GFX_D3D_GFXD3D11TARGET_H_
-#define _GFX_D3D_GFXD3D11TARGET_H_
+#ifndef _GFX_D3D11GFXD3D11TARGET_H_
+#define _GFX_D3D11GFXD3D11TARGET_H_
 
 #include "gfx/D3D11/gfxD3D11Device.h"
 #include "gfx/D3D11/gfxD3D11TextureObject.h"
