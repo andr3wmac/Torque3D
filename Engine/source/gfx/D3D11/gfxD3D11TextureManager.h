@@ -24,8 +24,8 @@
 // D3D11 layer created by: Anis A. Hireche (C) 2014 - anishireche@gmail.com
 //-----------------------------------------------------------------------------
 
-#ifndef _GFXD3DTEXTUREMANAGER_H_
-#define _GFXD3DTEXTUREMANAGER_H_
+#ifndef _GFXD3D11TEXTUREMANAGER_H_
+#define _GFXD3D11TEXTUREMANAGER_H_
 
 #include "gfx/D3D11/gfxD3D11TextureObject.h"
 #include "core/util/safeRelease.h"
