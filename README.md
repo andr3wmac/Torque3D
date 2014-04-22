@@ -1,5 +1,5 @@
-Torque 3D v3.5
-==============
+Torque 3D v3.5.1 ![Build status](http://builds.garagegames.com/app/rest/builds/buildType:(id:bt79)/statusIcon)
+================
 
 MIT Licensed Open Source version of [Torque 3D](http://www.garagegames.com/products/torque-3d) from [GarageGames](http://www.garagegames.com)
 
@@ -21,8 +21,8 @@ Pre-compiled Version
 
 In addition to GitHub we also have a couple of pre-packaged files for you to download if you would prefer to not compile the code yourself:
  
-* [Complete Torque 3D 3.0 zip package](http://mit.garagegames.com/Torque3D-3-0.zip) with updated TorqueScript documentation, the *Project Manager*, and compiled versions of the templates.
-* [Torque 3D Project Manager v2.0](http://mit.garagegames.com/T3DProjectManager-2-0.zip) on its own for use in your T3D forks.
+* [Complete Torque 3D 3.5.1 zip package](http://mit.garagegames.com/Torque3D-3-5-1.zip) with updated TorqueScript documentation, the *Project Manager*, and compiled versions of the templates.
+* [Torque 3D Project Manager v2.1](http://mit.garagegames.com/T3DProjectManager-2-1.zip) on its own for use in your T3D forks.
 
 If you're looking for an older release see the [Torque 3D Archive](https://github.com/GarageGames/Torque3D/wiki/Torque-3D-Archive)
 
