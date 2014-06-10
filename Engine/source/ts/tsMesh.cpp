@@ -1158,7 +1158,7 @@ TSMesh::TSMesh() : meshType( StandardMeshType )
    mNumVerts = 0;
 
    // andrewmac: Shadow Batching
-   mShadowBatchDirty = false;
+   mShadowBatchScore = 0;
 }
 
 //-----------------------------------------------------
@@ -2466,7 +2466,7 @@ void TSMesh::_createVBIB( TSVertexBufferHandle &vb, GFXPrimitiveBufferHandle &pb
    }
 
    // andrewmac: Shadow Batching
-   mShadowBatchDirty = true;
+   mShadowBatchScore++;
 }
 
 void TSMesh::assemble( bool skip )
@@ -3124,7 +3124,7 @@ void TSMesh::_convertToAlignedMeshData( TSMeshVertexArray &vertexData, const Vec
 
 // andrewmac: Shadow Batching
 void TSMesh::shadowRender( MatrixF* nodeTransform, Vector<__TSMeshVertexBase> &vertData, 
-                          Vector<U32> &indexData, Vector<GFXPrimitive> &primData )
+                          Vector< U32 > &indicesData, Vector<GFXPrimitive> &primData)
 {
    if ( !mVertexData.isReady() || mNumVerts == 0 || !GFXDevice::devicePresent() )
       return;
@@ -3182,9 +3182,6 @@ void TSMesh::shadowRender( MatrixF* nodeTransform, Vector<__TSMeshVertexBase> &v
       primData.push_back( pInfo );
    }
 
-   // Gather all indicies
-   for(U32 i = 0; i < indices.size(); ++i)
-      indexData.push_back(indices[i]);
-
-   mShadowBatchDirty = false;
+   for( U32 n = 0; n < indices.size(); ++n)
+      indicesData.push_back(indices[n]);
 }

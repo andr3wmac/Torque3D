@@ -405,9 +405,9 @@ class TSMesh
    static const F32 VISIBILITY_EPSILON; 
 
    // andrewmac: Shadow Batching
-   bool mShadowBatchDirty;
-   void shadowRender( MatrixF* nodeTransform, Vector<__TSMeshVertexBase> &vertData, Vector<U32> &indexData, Vector<GFXPrimitive> &primData );
-   bool isShadowBatchDirty() { return mShadowBatchDirty; }
+   void shadowRender( MatrixF* nodeTransform, Vector<__TSMeshVertexBase> &vertData, Vector< U32 > &indicesData, Vector<GFXPrimitive> &primData  );
+   S32 mShadowBatchScore;
+   S32 getShadowBatchScore() { return mShadowBatchScore; }
 };
 
 

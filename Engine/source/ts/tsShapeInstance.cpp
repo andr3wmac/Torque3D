@@ -41,7 +41,6 @@
 #include "core/module.h"
 #include "renderInstance/renderPassManager.h"
 #include "ts/tsMesh.h"
-#include "ts/instancingMatHook.h"
 
 MODULE_BEGIN( TSShapeInstance )
 
@@ -120,6 +119,8 @@ TSShapeInstance::TSShapeInstance( const Resource<TSShape> &shape, bool loadMater
    VECTOR_SET_ASSOCIATION(mThreadList);
    VECTOR_SET_ASSOCIATION(mTransitionThreads);
 
+   mShadowBatchScore = -1;
+
    mShapeResource = shape;
    mShape = mShapeResource;
    buildInstanceData( mShape, loadMaterials );
@@ -136,6 +137,9 @@ TSShapeInstance::TSShapeInstance( TSShape *shape, bool loadMaterials )
    VECTOR_SET_ASSOCIATION(mNodeReferenceArbitraryScaleRots);
    VECTOR_SET_ASSOCIATION(mThreadList);
    VECTOR_SET_ASSOCIATION(mTransitionThreads);
+
+   mShadowBatchScore = -1;
+   lastTime = 0;
 
    mShapeResource = NULL;
    mShape = shape;
@@ -531,17 +535,20 @@ void TSShapeInstance::render( const TSRenderState &rdata, S32 dl, F32 intraDL )
       return;
    }
 
-   // Check if this is the shadow pass and skip normal rendering.
+   S32 start = rdata.isNoRenderNonTranslucent() ? mShape->subShapeFirstTranslucentObject[ss] : mShape->subShapeFirstObject[ss];
+   S32 end   = rdata.isNoRenderTranslucent() ? mShape->subShapeFirstTranslucentObject[ss] : mShape->subShapeFirstObject[ss] + mShape->subShapeNumObjects[ss];
+
+   // Check if this is the shadow pass and we have more than one mesh
+   // then we skip shadow pass and use batch rendering.
    const SceneRenderState *state = rdata.getSceneState();
-   if ( state->isShadowPass() )
+   if ( state->isShadowPass() && end > 1 )
    {
       renderShadowBatch(rdata, dl, intraDL);
       return;
    }
 
    // run through the meshes   
-   S32 start = rdata.isNoRenderNonTranslucent() ? mShape->subShapeFirstTranslucentObject[ss] : mShape->subShapeFirstObject[ss];
-   S32 end   = rdata.isNoRenderTranslucent() ? mShape->subShapeFirstTranslucentObject[ss] : mShape->subShapeFirstObject[ss] + mShape->subShapeNumObjects[ss];
+
    for (i=start; i<end; i++)
    {
       // following line is handy for debugging, to see what part of the shape that it is rendering
@@ -794,6 +801,8 @@ void TSShapeInstance::prepCollision()
 // andrewmac: Shadow Batching
 void TSShapeInstance::_createShadowBatchVBIB(const TSRenderState &rdata, S32 dl, F32 intraDL)
 {
+   PROFILE_SCOPE( TSShapeInstance_createShadowBatchVBIB );
+
    const SceneRenderState *state = rdata.getSceneState();
    RenderPassManager *renderPass = state->getRenderPass();
 
@@ -802,8 +811,7 @@ void TSShapeInstance::_createShadowBatchVBIB(const TSRenderState &rdata, S32 dl,
    mShadowIndexData.clear();
    mShadowPrimData.clear();
 
-   // Collect new data.
-   AssertFatal( dl >= 0 && dl < mShape->details.size(),"TSShapeInstance::render" );
+   AssertFatal( dl >= 0 && dl < mShape->details.size(),"TSShapeInstance::_createShadowBatchVBIB" );
    const TSDetail * detail = &mShape->details[dl];
    S32 ss = detail->subShapeNum;
    S32 od = detail->objectDetailNum;
@@ -814,11 +822,14 @@ void TSShapeInstance::_createShadowBatchVBIB(const TSRenderState &rdata, S32 dl,
       MatrixF* nodeTransform = NULL;
       if ( mMeshObjects[i].nodeIndex > -1 && mMeshObjects[i].nodeIndex < mNodeTransforms.size() )
          nodeTransform = &mNodeTransforms[mMeshObjects[i].nodeIndex];
+
       mMeshObjects[i].shadowRender( od, mMaterialList, rdata, nodeTransform, mShadowVertexData, mShadowIndexData, mShadowPrimData );
    }
 
    // Resize our vertex buffer.
-   mShadowVB.set( GFX, mShadowVertexData.size(), GFXBufferTypeStatic );
+   const bool vertsChanged = ( mShadowVB && mShadowVB->mNumVerts < mShadowVertexData.size() );
+   if ( mShadowVB == NULL || vertsChanged )
+      mShadowVB.set( GFX, mShadowVertexData.size(), GFXBufferTypeDynamic );
 
    GFXVertexPNT *pVert = NULL;
    pVert = mShadowVB.lock();
@@ -860,35 +871,39 @@ void TSShapeInstance::_createShadowBatchVBIB(const TSRenderState &rdata, S32 dl,
    //SAFE_DELETE(newPrim);
 
    // indices + primitives
-   mShadowPB.set( GFX, mShadowIndexData.size(), mShadowPrimData.size(), GFXBufferTypeStatic );
+   mShadowPB.set( GFX, mShadowIndexData.size(), 1, GFXBufferTypeDynamic );
    U16 *ibIndices = NULL;
    GFXPrimitive *piInput = NULL;
    mShadowPB.lock( &ibIndices, &piInput );
    dCopyArray( ibIndices, mShadowIndexData.address(), mShadowIndexData.size() );
-   dMemcpy( piInput, mShadowPrimData.address(), mShadowPrimData.size() * sizeof(GFXPrimitive) );
+   dMemcpy( piInput, newPrim, sizeof(GFXPrimitive) );
    mShadowPB.unlock();
 }
 
 void TSShapeInstance::renderShadowBatch(const TSRenderState &rdata, S32 dl, F32 intraDL)
 {
-   // Check if shadow batch is dirty.
-   bool shadowBatchDirty = false;
+   PROFILE_SCOPE( TSShapeInstance_renderShadowBatch );
 
-   AssertFatal( dl >= 0 && dl < mShape->details.size(),"TSShapeInstance::render" );
+   // Check if shadow batch is dirty.
+   S32 shadowBatchScore = -1;
+
+   AssertFatal( dl >= 0 && dl < mShape->details.size(),"TSShapeInstance::renderShadowBatch" );
    const TSDetail * detail = &mShape->details[dl];
    S32 ss = detail->subShapeNum;
    S32 od = detail->objectDetailNum;
    S32 start = rdata.isNoRenderNonTranslucent() ? mShape->subShapeFirstTranslucentObject[ss] : mShape->subShapeFirstObject[ss];
    S32 end   = rdata.isNoRenderTranslucent() ? mShape->subShapeFirstTranslucentObject[ss] : mShape->subShapeFirstObject[ss] + mShape->subShapeNumObjects[ss];
    for (S32 i = start; i < end; i++)
-   {
-      if ( mMeshObjects[i].isShadowBatchDirty(od) )
-         shadowBatchDirty = true;
-   }
+      shadowBatchScore += mMeshObjects[i].getShadowBatchScore(od);
 
    // If dirty, build shadow batch buffers.
-   if ( shadowBatchDirty )
+   const U32 currTime = Sim::getCurrentTime();
+   if ( shadowBatchScore != mShadowBatchScore && ( currTime - lastTime > 64 ) )
+   {
       _createShadowBatchVBIB(rdata, dl, intraDL);
+      mShadowBatchScore = shadowBatchScore;
+      lastTime = currTime;
+   }
 
    if ( mShadowVertexData.size() < 1 )
       return;
@@ -915,9 +930,7 @@ void TSShapeInstance::renderShadowBatch(const TSRenderState &rdata, S32 dl, F32 
    TSMaterialList* pMatList = getMaterialList();
    BaseMatInstance *matInst = pMatList->getMaterialInst( 0 );
 
-   // Get the instancing material if this mesh qualifies.
    matInst = state->getOverrideMaterial( matInst );
-
    if ( !matInst || !matInst->isValid())
       return;
 
@@ -937,8 +950,8 @@ void TSShapeInstance::MeshObjectInstance::shadowRender(  S32 objectDetail,
                                                    TSMaterialList *materials, 
                                                    const TSRenderState &rdata, 
                                                    MatrixF* nodeTransform,
-                                                   Vector<TSMesh::__TSMeshVertexBase> &vertData,  
-                                                   Vector<U32> &indexData,
+                                                   Vector< TSMesh::__TSMeshVertexBase > &vertData, 
+                                                   Vector< U32 > &indicesData, 
                                                    Vector<GFXPrimitive> &primData )
 {
    if ( forceHidden )
@@ -958,17 +971,17 @@ void TSShapeInstance::MeshObjectInstance::shadowRender(  S32 objectDetail,
          return;
    }
 
-   mesh->shadowRender(nodeTransform, vertData, indexData, primData);
+   mesh->shadowRender(nodeTransform, vertData, indicesData, primData);
 }
 
-bool TSShapeInstance::MeshObjectInstance::isShadowBatchDirty(  S32 objectDetail )
+S32 TSShapeInstance::MeshObjectInstance::getShadowBatchScore(  S32 objectDetail )
 {
    if ( forceHidden )
-      return false;
+      return 0;
 
    TSMesh *mesh = getMesh(objectDetail);
    if ( !mesh )
-      return false;
+      return 0;
 
-   return mesh->isShadowBatchDirty();
+   return mesh->getShadowBatchScore();
 }

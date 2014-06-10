@@ -189,8 +189,11 @@ class TSShapeInstance
      /// @}
 
       // andrewmac: Shadow Batching
-      void shadowRender( S32 objectDetail, TSMaterialList *materials, const TSRenderState &rdata, MatrixF* nodeTransform, Vector<TSMesh::__TSMeshVertexBase> &vertData,  Vector<U32> &indexData, Vector<GFXPrimitive> &primData );
-      bool isShadowBatchDirty( S32 objectDetail );
+      void shadowRender( S32 objectDetail, TSMaterialList *materials, const TSRenderState &rdata, MatrixF* nodeTransform, 
+                                                   Vector< TSMesh::__TSMeshVertexBase > &vertData, 
+                                                   Vector< U32 > &indicesData, 
+                                                   Vector<GFXPrimitive> &primData );
+      S32 getShadowBatchScore( S32 objectDetail );
    };
 
    protected:
@@ -678,11 +681,13 @@ protected:
 
 // andrewmac: Shadow Batching
 protected:
+   S32 mShadowBatchScore;
    GFXVertexBufferHandle<GFXVertexPNT> mShadowVB;
    GFXPrimitiveBufferHandle mShadowPB;
-   Vector<TSMesh::__TSMeshVertexBase> mShadowVertexData;
-   Vector<U32> mShadowIndexData;
+   Vector< TSMesh::__TSMeshVertexBase > mShadowVertexData;
+   Vector< U32 > mShadowIndexData;
    Vector<GFXPrimitive> mShadowPrimData;
+   U32 lastTime;
 
 public:
    void _createShadowBatchVBIB(const TSRenderState &rdata, S32 dl, F32 intraDL);
