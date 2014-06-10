@@ -187,6 +187,10 @@ class TSShapeInstance
       bool buildConvexOpcode( const MatrixF &mat, S32 objectDetail, const Box3F &bounds, Convex *c, Convex *list );
 
      /// @}
+
+      // andrewmac: Shadow Batching
+      void shadowRender( S32 objectDetail, TSMaterialList *materials, const TSRenderState &rdata, MatrixF* nodeTransform, Vector<TSMesh::__TSMeshVertexBase> &vertData,  Vector<U32> &indexData, Vector<GFXPrimitive> &primData );
+      bool isShadowBatchDirty( S32 objectDetail );
    };
 
    protected:
@@ -671,6 +675,18 @@ protected:
    void *mData; ///< available for use by app...initialized to 0
 
    void prepCollision();
+
+// andrewmac: Shadow Batching
+protected:
+   GFXVertexBufferHandle<GFXVertexPNT> mShadowVB;
+   GFXPrimitiveBufferHandle mShadowPB;
+   Vector<TSMesh::__TSMeshVertexBase> mShadowVertexData;
+   Vector<U32> mShadowIndexData;
+   Vector<GFXPrimitive> mShadowPrimData;
+
+public:
+   void _createShadowBatchVBIB(const TSRenderState &rdata, S32 dl, F32 intraDL);
+   void renderShadowBatch(const TSRenderState &rdata, S32 dl, F32 intraDL);
 };
 
 

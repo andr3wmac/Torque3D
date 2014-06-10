@@ -403,6 +403,11 @@ class TSMesh
    bool castRayOpcode( const Point3F &start, const Point3F &end, RayInfo *rayInfo, TSMaterialList *materials );
 
    static const F32 VISIBILITY_EPSILON; 
+
+   // andrewmac: Shadow Batching
+   bool mShadowBatchDirty;
+   void shadowRender( MatrixF* nodeTransform, Vector<__TSMeshVertexBase> &vertData, Vector<U32> &indexData, Vector<GFXPrimitive> &primData );
+   bool isShadowBatchDirty() { return mShadowBatchDirty; }
 };
 
 

@@ -235,7 +235,7 @@ void TSMesh::innerRender( TSMaterialList *materials, const TSRenderState &rdata,
       TORQUE_UNUSED(indexed);
       TORQUE_UNUSED(type);
 #endif
-
+      
       const U32 matIndex = draw.matIndex & TSDrawPrimitive::MaterialMask;
       BaseMatInstance *matInst = materials->getMaterialInst( matIndex );
 
@@ -1156,6 +1156,9 @@ TSMesh::TSMesh() : meshType( StandardMeshType )
    mHasColor = false;
 
    mNumVerts = 0;
+
+   // andrewmac: Shadow Batching
+   mShadowBatchDirty = false;
 }
 
 //-----------------------------------------------------
@@ -2461,6 +2464,9 @@ void TSMesh::_createVBIB( TSVertexBufferHandle &vb, GFXPrimitiveBufferHandle &pb
 
       pb.unlock();
    }
+
+   // andrewmac: Shadow Batching
+   mShadowBatchDirty = true;
 }
 
 void TSMesh::assemble( bool skip )
@@ -3114,4 +3120,71 @@ void TSMesh::_convertToAlignedMeshData( TSMeshVertexArray &vertexData, const Vec
    tverts.free_memory();
    tverts2.free_memory();
    colors.free_memory();
+}
+
+// andrewmac: Shadow Batching
+void TSMesh::shadowRender( MatrixF* nodeTransform, Vector<__TSMeshVertexBase> &vertData, 
+                          Vector<U32> &indexData, Vector<GFXPrimitive> &primData )
+{
+   if ( !mVertexData.isReady() || mNumVerts == 0 || !GFXDevice::devicePresent() )
+      return;
+
+   for ( U32 n = 0; n < mVertexData.size(); ++n)
+   {
+      if ( nodeTransform )
+      {
+         Point3F newVertPos;
+         nodeTransform->mulP(mVertexData[n].vert(), &newVertPos);
+         TSMesh::__TSMeshVertexBase newVert(mVertexData[n]);
+         newVert.vert(newVertPos);
+         vertData.push_back(newVert);
+      } else {
+         vertData.push_back(mVertexData[n]);
+      }
+   }
+
+   // Gather all primitives.
+   GFXPrimitive pInfo;
+   U32 primitivesSize = primitives.size();
+   for ( U32 i = 0; i < primitivesSize; i++ )
+   {
+      const TSDrawPrimitive & draw = primitives[i];
+
+      GFXPrimitiveType drawType = getDrawType( draw.matIndex >> 30 );
+
+      switch( drawType )
+      {
+      case GFXTriangleList:
+         pInfo.type = drawType;
+         pInfo.numPrimitives = draw.numElements / 3;
+         pInfo.startIndex = draw.start;
+         // Use the first index to determine which 16-bit address space we are operating in
+         pInfo.startVertex = indices[draw.start] & 0xFFFF0000;
+         pInfo.minIndex = pInfo.startVertex;
+         pInfo.numVertices = getMin((U32)0x10000, mNumVerts - pInfo.startVertex);
+         break;
+
+      case GFXTriangleStrip:
+      case GFXTriangleFan:
+         pInfo.type = drawType;
+         pInfo.numPrimitives = draw.numElements - 2;
+         pInfo.startIndex = draw.start;
+         // Use the first index to determine which 16-bit address space we are operating in
+         pInfo.startVertex = indices[draw.start] & 0xFFFF0000;
+         pInfo.minIndex = pInfo.startVertex;
+         pInfo.numVertices = getMin((U32)0x10000, mNumVerts - pInfo.startVertex);
+         break;
+
+      default: 
+         AssertFatal( false, "WTF?!" );
+      }
+
+      primData.push_back( pInfo );
+   }
+
+   // Gather all indicies
+   for(U32 i = 0; i < indices.size(); ++i)
+      indexData.push_back(indices[i]);
+
+   mShadowBatchDirty = false;
 }
