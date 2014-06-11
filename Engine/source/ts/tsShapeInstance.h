@@ -681,15 +681,16 @@ protected:
 
 // andrewmac: Shadow Batching
 protected:
+   U32 lastTime;
    S32 mShadowBatchScore;
    GFXVertexBufferHandle<GFXVertexPNT> mShadowVB;
    GFXPrimitiveBufferHandle mShadowPB;
    Vector< TSMesh::__TSMeshVertexBase > mShadowVertexData;
    Vector< U32 > mShadowIndexData;
    Vector<GFXPrimitive> mShadowPrimData;
-   U32 lastTime;
 
 public:
+   static bool smEnableShadowBatching;
    void _createShadowBatchVBIB(const TSRenderState &rdata, S32 dl, F32 intraDL);
    void renderShadowBatch(const TSRenderState &rdata, S32 dl, F32 intraDL);
 };

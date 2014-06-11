@@ -21,6 +21,9 @@
 //-----------------------------------------------------------------------------
 
 #include "platform/platform.h"
+#include "console/console.h"
+#include "console/consoleInternal.h"
+#include "console/engineAPI.h"
 #include "ts/tsShapeInstance.h"
 
 #include "ts/tsLastDetail.h"
@@ -41,6 +44,9 @@
 #include "core/module.h"
 #include "renderInstance/renderPassManager.h"
 #include "ts/tsMesh.h"
+
+// andrewmac: Shadow Batching
+bool TSShapeInstance::smEnableShadowBatching = true;
 
 MODULE_BEGIN( TSShapeInstance )
 
@@ -540,11 +546,14 @@ void TSShapeInstance::render( const TSRenderState &rdata, S32 dl, F32 intraDL )
 
    // Check if this is the shadow pass and we have more than one mesh
    // then we skip shadow pass and use batch rendering.
-   const SceneRenderState *state = rdata.getSceneState();
-   if ( state->isShadowPass() && end > 1 )
+   if ( TSShapeInstance::smEnableShadowBatching )
    {
-      renderShadowBatch(rdata, dl, intraDL);
-      return;
+      const SceneRenderState *state = rdata.getSceneState();
+      if ( state->isShadowPass() && end > 1 )
+      {
+         renderShadowBatch(rdata, dl, intraDL);
+         return;
+      }
    }
 
    // run through the meshes   
@@ -984,4 +993,10 @@ S32 TSShapeInstance::MeshObjectInstance::getShadowBatchScore(  S32 objectDetail 
       return 0;
 
    return mesh->getShadowBatchScore();
+}
+
+DefineConsoleFunction( setShadowBatching, void, ( bool value ),,
+   "Enables/Disables shadow batching.\n" )
+{
+   TSShapeInstance::smEnableShadowBatching = value;
 }
