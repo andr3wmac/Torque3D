@@ -548,11 +548,22 @@ void TSShapeInstance::render( const TSRenderState &rdata, S32 dl, F32 intraDL )
    // then we skip shadow pass and use batch rendering.
    if ( TSShapeInstance::smEnableShadowBatching )
    {
-      const SceneRenderState *state = rdata.getSceneState();
-      if ( state->isShadowPass() && end > 1 )
+      bool isSkinMesh = false;
+      for (i=start; i<end; i++)
       {
-         renderShadowBatch(rdata, dl, intraDL);
-         return;
+         TSMesh* mesh = mMeshObjects[i].getMesh(0);
+         if ( mesh && mesh->getMeshType() == TSMesh::SkinMeshType )
+            isSkinMesh = true;
+      }
+
+      if ( !isSkinMesh )
+      {
+         const SceneRenderState *state = rdata.getSceneState();
+         if ( state->isShadowPass() && end > 1 )
+         {
+            renderShadowBatch(rdata, dl, intraDL);
+            return;
+         }
       }
    }
 
@@ -838,7 +849,7 @@ void TSShapeInstance::_createShadowBatchVBIB(const TSRenderState &rdata, S32 dl,
    // Resize our vertex buffer.
    const bool vertsChanged = ( mShadowVB && mShadowVB->mNumVerts < mShadowVertexData.size() );
    if ( mShadowVB == NULL || vertsChanged )
-      mShadowVB.set( GFX, mShadowVertexData.size(), GFXBufferTypeDynamic );
+      mShadowVB.set( GFX, mShadowVertexData.size(), GFXBufferTypeStatic );
 
    GFXVertexPNT *pVert = NULL;
    pVert = mShadowVB.lock();
@@ -880,7 +891,7 @@ void TSShapeInstance::_createShadowBatchVBIB(const TSRenderState &rdata, S32 dl,
    //SAFE_DELETE(newPrim);
 
    // indices + primitives
-   mShadowPB.set( GFX, mShadowIndexData.size(), 1, GFXBufferTypeDynamic );
+   mShadowPB.set( GFX, mShadowIndexData.size(), 1, GFXBufferTypeStatic );
    U16 *ibIndices = NULL;
    GFXPrimitive *piInput = NULL;
    mShadowPB.lock( &ibIndices, &piInput );
