@@ -2702,3 +2702,278 @@ void ImposterVertFeatureHLSL::determineFeature( Material *material,
       outFeatureData->features.addFeature( MFT_ImposterVert );
 }
 
+//****************************************************************************
+// PBS Base Texture
+//****************************************************************************
+
+void PBSBaseMapFeatHLSL::processVert( Vector<ShaderComponent*> &componentList, 
+                                       const MaterialFeatureData &fd )
+{
+   MultiLine *meta = new MultiLine;
+   getOutTexCoord(   "texCoord", 
+                     "float2", 
+                     true, 
+                     fd.features[MFT_TexAnim], 
+                     meta, 
+                     componentList );
+   output = meta;
+}
+
+void PBSBaseMapFeatHLSL::processPix(   Vector<ShaderComponent*> &componentList, 
+                                       const MaterialFeatureData &fd )
+{
+   // grab connector texcoord register
+   Var *inTex = getInTexCoord( "texCoord", "float2", true, componentList );
+
+   // create texture var
+   Var *diffuseMap = new Var;
+   diffuseMap->setType( "sampler2D" );
+   diffuseMap->setName( "albedo" );
+   diffuseMap->uniform = true;
+   diffuseMap->sampler = true;
+   diffuseMap->constNum = Var::getTexUnitNum();     // used as texture unit num here
+
+   if (  fd.features[MFT_CubeMap] )
+   {
+      MultiLine * meta = new MultiLine;
+      
+      // create sample color
+      Var *diffColor = new Var;
+      diffColor->setType( "float4" );
+      diffColor->setName( "diffuseColor" );
+      LangElement *colorDecl = new DecOp( diffColor );
+   
+      meta->addStatement(  new GenOp( "   @ = tex2D(@, @);\r\n", 
+                           colorDecl, 
+                           diffuseMap, 
+                           inTex ) );
+      
+      meta->addStatement( new GenOp( "   @;\r\n", assignColor( diffColor, Material::Mul ) ) );
+      output = meta;
+   }
+   else if(fd.features[MFT_DiffuseMapAtlas])
+   {   
+      // Handle atlased textures
+      // http://www.infinity-universe.com/Infinity/index.php?option=com_content&task=view&id=65&Itemid=47
+      MultiLine * meta = new MultiLine;
+      output = meta;
+
+      Var *atlasedTex = new Var;
+      atlasedTex->setName("atlasedTexCoord");
+      atlasedTex->setType("float2");
+      LangElement *atDecl = new DecOp(atlasedTex);
+
+      // Parameters of the texture atlas
+      Var *atParams  = new Var;
+      atParams->setType("float4");
+      atParams->setName("diffuseAtlasParams");
+      atParams->uniform = true;
+      atParams->constSortPos = cspPotentialPrimitive;
+
+      // Parameters of the texture (tile) this object is using in the atlas
+      Var *tileParams  = new Var;
+      tileParams->setType("float4");
+      tileParams->setName("diffuseAtlasTileParams");
+      tileParams->uniform = true;
+      tileParams->constSortPos = cspPotentialPrimitive;
+
+      const bool is_sm3 = (GFX->getPixelShaderVersion() > 2.0f);
+      if(is_sm3)
+      {
+         // Figure out the mip level
+         meta->addStatement(new GenOp("   float2 _dx = ddx(@ * @.z);\r\n", inTex, atParams));
+         meta->addStatement(new GenOp("   float2 _dy = ddy(@ * @.z);\r\n", inTex, atParams));
+         meta->addStatement(new GenOp("   float mipLod = 0.5 * log2(max(dot(_dx, _dx), dot(_dy, _dy)));\r\n"));
+         meta->addStatement(new GenOp("   mipLod = clamp(mipLod, 0.0, @.w);\r\n", atParams));
+
+         // And the size of the mip level
+         meta->addStatement(new GenOp("   float mipPixSz = pow(2.0, @.w - mipLod);\r\n", atParams));
+         meta->addStatement(new GenOp("   float2 mipSz = mipPixSz / @.xy;\r\n", atParams));
+      }
+      else
+      {
+         meta->addStatement(new GenOp("   float2 mipSz = float2(1.0, 1.0);\r\n"));
+      }
+
+      // Tiling mode
+      // TODO: Select wrap or clamp somehow
+      if( true ) // Wrap
+         meta->addStatement(new GenOp("   @ = frac(@);\r\n", atDecl, inTex));
+      else       // Clamp
+         meta->addStatement(new GenOp("   @ = saturate(@);\r\n", atDecl, inTex));
+
+      // Finally scale/offset, and correct for filtering
+      meta->addStatement(new GenOp("   @ = @ * ((mipSz * @.xy - 1.0) / mipSz) + 0.5 / mipSz + @.xy * @.xy;\r\n", 
+         atlasedTex, atlasedTex, atParams, atParams, tileParams));
+
+      // Add a newline
+      meta->addStatement(new GenOp( "\r\n"));
+
+      // For the rest of the feature...
+      inTex = atlasedTex;
+
+      // create sample color var
+      Var *diffColor = new Var;
+      diffColor->setType("float4");
+      diffColor->setName("diffuseColor");
+
+      // To dump out UV coords...
+//#define DEBUG_ATLASED_UV_COORDS
+#ifdef DEBUG_ATLASED_UV_COORDS
+      if(!fd.features[MFT_PrePassConditioner])
+      {
+         meta->addStatement(new GenOp("   @ = float4(@.xy, mipLod / @.w, 1.0);\r\n", new DecOp(diffColor), inTex, atParams));
+         meta->addStatement(new GenOp("   @; return OUT;\r\n", assignColor(diffColor, Material::Mul)));
+         return;
+      }
+#endif
+
+      if(is_sm3)
+      {
+         meta->addStatement(new GenOp( "   @ = tex2Dlod(@, float4(@, 0.0, mipLod));\r\n", 
+            new DecOp(diffColor), diffuseMap, inTex));
+      }
+      else
+      {
+         meta->addStatement(new GenOp( "   @ = tex2D(@, @);\r\n", 
+            new DecOp(diffColor), diffuseMap, inTex));
+      }
+
+      meta->addStatement(new GenOp( "   @;\r\n", assignColor(diffColor, Material::Mul)));
+   }
+   else
+   {
+      LangElement *statement = new GenOp( "tex2D(@, @)", diffuseMap, inTex );
+      output = new GenOp( "   @;\r\n", assignColor( statement, Material::Mul ) );
+   }
+   
+}
+
+ShaderFeature::Resources PBSBaseMapFeatHLSL::getResources( const MaterialFeatureData &fd )
+{
+   Resources res; 
+   res.numTex = 1;
+   res.numTexReg = 1;
+
+   return res;
+}
+
+void PBSBaseMapFeatHLSL::setTexData(   Material::StageData &stageDat,
+                                       const MaterialFeatureData &fd,
+                                       RenderPassData &passData,
+                                       U32 &texIndex )
+{
+   GFXTextureObject *tex = stageDat.getTex( MFT_PBSBaseMap );
+   if ( tex )
+      passData.mTexSlot[ texIndex++ ].texObject = tex;
+}
+
+//****************************************************************************
+// PBS Roughness Texture
+//****************************************************************************
+
+void PBSRoughnessMapHLSL::processVert( Vector<ShaderComponent*> &componentList, 
+                                       const MaterialFeatureData &fd )
+{
+   MultiLine *meta = new MultiLine;
+   getOutTexCoord(   "texCoord", 
+                     "float2", 
+                     true, 
+                     fd.features[MFT_TexAnim], 
+                     meta, 
+                     componentList );
+   output = meta;
+}
+
+void PBSRoughnessMapHLSL::processPix(   Vector<ShaderComponent*> &componentList, 
+                                       const MaterialFeatureData &fd )
+{
+   // grab connector texcoord register
+   Var *inTex = getInTexCoord( "texCoord", "float2", true, componentList );
+
+   // create texture var
+   Var *diffuseMap = new Var;
+   diffuseMap->setType( "sampler2D" );
+   diffuseMap->setName( "roughness" );
+   diffuseMap->uniform = true;
+   diffuseMap->sampler = true;
+   diffuseMap->constNum = Var::getTexUnitNum();     // used as texture unit num here
+
+   MultiLine * meta = new MultiLine;
+   meta->addStatement( new GenOp( "   // Fairly sure this one corresponds to the present specular alpha"));
+   output = meta;   
+}
+
+ShaderFeature::Resources PBSRoughnessMapHLSL::getResources( const MaterialFeatureData &fd )
+{
+   Resources res; 
+   res.numTex = 1;
+   res.numTexReg = 1;
+
+   return res;
+}
+
+void PBSRoughnessMapHLSL::setTexData(   Material::StageData &stageDat,
+                                       const MaterialFeatureData &fd,
+                                       RenderPassData &passData,
+                                       U32 &texIndex )
+{
+   GFXTextureObject *tex = stageDat.getTex( MFT_PBSBaseMap );
+   if ( tex )
+      passData.mTexSlot[ texIndex++ ].texObject = tex;
+}
+
+//****************************************************************************
+// PBS Roughness Texture
+//****************************************************************************
+
+void PBSMetallicMapHLSL::processVert( Vector<ShaderComponent*> &componentList, 
+                                       const MaterialFeatureData &fd )
+{
+   MultiLine *meta = new MultiLine;
+   getOutTexCoord(   "texCoord", 
+                     "float2", 
+                     true, 
+                     fd.features[MFT_TexAnim], 
+                     meta, 
+                     componentList );
+   output = meta;
+}
+
+void PBSMetallicMapHLSL::processPix(   Vector<ShaderComponent*> &componentList, 
+                                       const MaterialFeatureData &fd )
+{
+   // grab connector texcoord register
+   Var *inTex = getInTexCoord( "texCoord", "float2", true, componentList );
+
+   // create texture var
+   Var *diffuseMap = new Var;
+   diffuseMap->setType( "sampler2D" );
+   diffuseMap->setName( "metallic" );
+   diffuseMap->uniform = true;
+   diffuseMap->sampler = true;
+   diffuseMap->constNum = Var::getTexUnitNum();     // used as texture unit num here
+
+   MultiLine * meta = new MultiLine;
+   meta->addStatement( new GenOp( "   // from a bit of show and tell, it would seem this one replaces the specular map, and influences albedo vs light-source specular highlighting."));
+   output = meta;   
+}
+
+ShaderFeature::Resources PBSMetallicMapHLSL::getResources( const MaterialFeatureData &fd )
+{
+   Resources res; 
+   res.numTex = 1;
+   res.numTexReg = 1;
+
+   return res;
+}
+
+void PBSMetallicMapHLSL::setTexData(   Material::StageData &stageDat,
+                                       const MaterialFeatureData &fd,
+                                       RenderPassData &passData,
+                                       U32 &texIndex )
+{
+   GFXTextureObject *tex = stageDat.getTex( MFT_PBSBaseMap );
+   if ( tex )
+      passData.mTexSlot[ texIndex++ ].texObject = tex;
+}
