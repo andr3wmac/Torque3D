@@ -461,6 +461,32 @@ void ProcessedMaterial::_setStageData()
          if(!mStages[i].getTex( MFT_EnvMap ))
             mMaterial->logError("Failed to load environment map %s for stage %i", _getTexturePath(mMaterial->mEnvMapFilename[i]).c_str(), i);
       }
+
+      // andrewmac: Physical Based Shading
+      if( mMaterial->mPBSBaseMapFilename[i].isNotEmpty() )
+      {
+         mStages[i].setTex( MFT_PBSBaseMap, _createTexture( mMaterial->mPBSBaseMapFilename[i], &GFXDefaultStaticDiffuseProfile ) );
+         if(!mStages[i].getTex( MFT_PBSBaseMap ))
+            mMaterial->logError("Failed to load PBS base map %s for stage %i", _getTexturePath(mMaterial->mPBSBaseMapFilename[i]).c_str(), i);
+      }
+      if( mMaterial->mPBSRoughnessMapFilename[i].isNotEmpty() )
+      {
+         mStages[i].setTex( MFT_PBSRoughnessMap, _createTexture( mMaterial->mPBSRoughnessMapFilename[i], &GFXDefaultStaticDiffuseProfile ) );
+         if(!mStages[i].getTex( MFT_PBSRoughnessMap ))
+            mMaterial->logError("Failed to load PBS roughness map %s for stage %i", _getTexturePath(mMaterial->mPBSRoughnessMapFilename[i]).c_str(), i);
+      }
+      if( mMaterial->mPBSMetallicMapFilename[i].isNotEmpty() )
+      {
+         mStages[i].setTex( MFT_PBSMetallicMap, _createTexture( mMaterial->mPBSMetallicMapFilename[i], &GFXDefaultStaticDiffuseProfile ) );
+         if(!mStages[i].getTex( MFT_PBSMetallicMap ))
+            mMaterial->logError("Failed to load PBS metallic map %s for stage %i", _getTexturePath(mMaterial->mPBSMetallicMapFilename[i]).c_str(), i);
+      }
+      if( mMaterial->mPBSSpecularMapFilename[i].isNotEmpty() )
+      {
+         mStages[i].setTex( MFT_PBSSpecularMap, _createTexture( mMaterial->mPBSSpecularMapFilename[i], &GFXDefaultStaticDiffuseProfile ) );
+         if(!mStages[i].getTex( MFT_PBSSpecularMap ))
+            mMaterial->logError("Failed to load PBS specular map %s for stage %i", _getTexturePath(mMaterial->mPBSSpecularMapFilename[i]).c_str(), i);
+      }
    }
 
 	mMaterial->mCubemapData = dynamic_cast<CubemapData*>(Sim::findObject( mMaterial->mCubemapName ));

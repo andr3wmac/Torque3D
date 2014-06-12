@@ -153,6 +153,11 @@ Material::Material()
 
       mSeqFramePerSec[i] = 0.0f;
       mSeqSegSize[i] = 0.0f;
+
+      // andrewmac: Physical Based Shading
+      mPBSRoughnessValue[i] = 0.0f;   
+      mPBSMetallicValue[i] = 0.0f;   
+      mPBSSpecularValue[i] = 0.0f;   
    }
 
    dMemset(mCellIndex, 0, sizeof(mCellIndex));
@@ -447,6 +452,26 @@ void Material::initPersistFields()
       #endif
 
    endGroup( "Behavioral" );
+
+   // andrewmac: Physical Based Shading
+   addGroup( "Physical Based Shading" );
+
+      addField( "pbsBaseMap", TypeImageFilename, Offset(mPBSBaseMapFilename, Material), MAX_STAGES,
+         "Base Texture Map for PBS" );
+      addField( "pbsRoughnessMap", TypeImageFilename, Offset(mPBSRoughnessMapFilename, Material), MAX_STAGES,
+         "Roughness Map for PBS" );
+      addField( "pbsRoughnessValue", TypeF32, Offset(mPBSRoughnessValue, Material), MAX_STAGES,
+         "Roughness Value for PBS" );
+      addField( "pbsMetallicMap", TypeImageFilename, Offset(mPBSMetallicMapFilename, Material), MAX_STAGES,
+         "Metallic Map for PBS" );
+      addField( "pbsMetallicValue", TypeF32, Offset(mPBSMetallicValue, Material), MAX_STAGES,
+         "Metallic Value for PBS" );
+      addField( "pbsSpecularMap", TypeImageFilename, Offset(mPBSSpecularMapFilename, Material), MAX_STAGES,
+         "Specular Map for PBS" );
+      addField( "pbsSpecularValue", TypeF32, Offset(mPBSSpecularValue, Material), MAX_STAGES,
+         "Specular Value for PBS" );
+
+   endGroup( "Physical Based Shading" );
 
    Parent::initPersistFields();
 }

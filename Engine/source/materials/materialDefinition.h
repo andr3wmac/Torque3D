@@ -389,6 +389,16 @@ protected:
 
 private:
    static GFXCubemapHandle smNormalizeCube;
+
+// andrewmac: Physical Based Shading
+public:
+   FileName mPBSBaseMapFilename[MAX_STAGES];
+   FileName mPBSRoughnessMapFilename[MAX_STAGES];
+   F32 mPBSRoughnessValue[MAX_STAGES];   
+   FileName mPBSMetallicMapFilename[MAX_STAGES];
+   F32 mPBSMetallicValue[MAX_STAGES];   
+   FileName mPBSSpecularMapFilename[MAX_STAGES];
+   F32 mPBSSpecularValue[MAX_STAGES];   
 };
 
 typedef Material::AnimType MaterialAnimType;

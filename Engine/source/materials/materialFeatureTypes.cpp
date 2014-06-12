@@ -84,3 +84,10 @@ ImplementFeatureType( MFT_ParticleNormal, MFG_PreTransform, 2.0f, false );
 ImplementFeatureType( MFT_ForwardShading, U32(-1), -1, true );
 
 ImplementFeatureType( MFT_ImposterVert, MFG_PreTransform, 1.0, false );
+
+// andrewmac: Physical Based Shading
+//  Note: these values were just chosen at random. 
+ImplementFeatureType( MFT_PBSBaseMap, MFG_Texture, 2.0f, true );
+ImplementFeatureType( MFT_PBSRoughnessMap, MFG_Texture, 3.0f, true );
+ImplementFeatureType( MFT_PBSMetallicMap, MFG_Texture, 4.0f, true );
+ImplementFeatureType( MFT_PBSSpecularMap, MFG_Texture, 5.0f, true );

@@ -81,3 +81,8 @@ const String ShaderGenVars::dLightMap("$dlightMap");
 const String ShaderGenVars::dLightMapSec("$dlightMapSec");
 const String ShaderGenVars::dLightMask("$dlightMask");
 const String ShaderGenVars::toneMap("$toneMap");
+
+// andrewmac: Physical Based Shading
+const String ShaderGenVars::pbsRoughnessValue("$pbsRoughnessValue");
+const String ShaderGenVars::pbsMetallicValue("$pbsMetallicValue");
+const String ShaderGenVars::pbsSpecularValue("$pbsSpecularValue");

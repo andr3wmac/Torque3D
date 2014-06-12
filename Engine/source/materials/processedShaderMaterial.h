@@ -86,6 +86,11 @@ public:
    GFXShaderConstHandle* mRTParamsSC[TEXTURE_STAGE_COUNT];
 
    void init( GFXShader* shader, CustomMaterial* mat = NULL );
+
+   // andrewmac: Physical Based Shading
+   GFXShaderConstHandle* mPBSRoughnessValueSC;
+   GFXShaderConstHandle* mPBSMetallicValueSC;
+   GFXShaderConstHandle* mPBSSpecularValueSC;
 };
 
 class ShaderRenderPassData : public RenderPassData

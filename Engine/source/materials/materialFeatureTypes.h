@@ -171,4 +171,10 @@ DeclareFeatureType( MFT_ForwardShading );
 DeclareFeatureType( MFT_ImposterVert );
 
 
+// andrewmac: Physical Based Shading
+DeclareFeatureType( MFT_PBSBaseMap );
+DeclareFeatureType( MFT_PBSRoughnessMap );
+DeclareFeatureType( MFT_PBSMetallicMap );
+DeclareFeatureType( MFT_PBSSpecularMap );
+
 #endif // _MATERIALFEATURETYPES_H_

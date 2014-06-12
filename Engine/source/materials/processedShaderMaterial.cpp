@@ -101,6 +101,11 @@ void ShaderConstHandles::init( GFXShader *shader, CustomMaterial* mat /*=NULL*/ 
       for (S32 i = 0; i < Material::MAX_TEX_PER_PASS; ++i)
          mTexHandlesSC[i] = shader->getShaderConstHandle(mat->mSamplerNames[i]);
    }
+
+   // andrewmac: Physical Based Shading
+   mPBSRoughnessValueSC = shader->getShaderConstHandle(ShaderGenVars::pbsRoughnessValue);
+   mPBSMetallicValueSC = shader->getShaderConstHandle(ShaderGenVars::pbsMetallicValue);
+   mPBSSpecularValueSC = shader->getShaderConstHandle(ShaderGenVars::pbsSpecularValue);
 }
 
 ///
