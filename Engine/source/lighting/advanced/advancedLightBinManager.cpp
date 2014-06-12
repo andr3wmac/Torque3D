@@ -754,7 +754,9 @@ void AdvancedLightBinManager::LightMaterialInfo::setLightParameters( const Light
       Point2F attenParams( ( 1.0f / radius ) * attenRatio.y,
                            ( 1.0f / ( radius * radius ) ) * attenRatio.z );
 
-      matParams->setSafe( lightAttenuation, attenParams );
+      // andrewmac: Switched out lightAttenuation for radius
+      //  to use in falloff equation. HACK. Should juse use lightRange. 
+      matParams->setSafe( lightAttenuation, radius );
       break;
    }
 
