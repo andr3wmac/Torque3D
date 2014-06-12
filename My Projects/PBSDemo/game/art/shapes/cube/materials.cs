@@ -38,7 +38,7 @@ singleton Material(cube_GridMaterial)
 	translucentBlendOp = "None";
    materialTag0 = "Miscellaneous";
    pbsRoughnessValue0 = "10";
-   pbsBaseMap[0] = "art/shapes/cube/grid.dds";
+   pbsBaseMap[0] = "core/art/grids/512_red.png";
    pbsRoughnessValue[0] = "5";
    pbsMetallicValue[0] = "2";
    pbsSpecularValue[0] = "5";
