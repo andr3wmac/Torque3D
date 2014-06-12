@@ -675,7 +675,7 @@ public:
       return "PBS Albedo Texture";
    }
 };
-/*
+
 class PBSRoughnessMapHLSL : public ShaderFeatureHLSL
 {
 public:
@@ -726,6 +726,7 @@ public:
    }
 };
 
+/*
 // do we need this one? BJR
 class PBSSpecularMapHLSL : public ShaderFeatureHLSL
 {

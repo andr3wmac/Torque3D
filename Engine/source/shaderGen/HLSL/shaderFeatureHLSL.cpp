@@ -2702,7 +2702,6 @@ void ImposterVertFeatureHLSL::determineFeature( Material *material,
       outFeatureData->features.addFeature( MFT_ImposterVert );
 }
 
-
 //****************************************************************************
 // PBS Base Texture
 //****************************************************************************
@@ -2860,6 +2859,116 @@ ShaderFeature::Resources PBSBaseMapFeatHLSL::getResources( const MaterialFeature
 }
 
 void PBSBaseMapFeatHLSL::setTexData(   Material::StageData &stageDat,
+                                       const MaterialFeatureData &fd,
+                                       RenderPassData &passData,
+                                       U32 &texIndex )
+{
+   GFXTextureObject *tex = stageDat.getTex( MFT_PBSBaseMap );
+   if ( tex )
+      passData.mTexSlot[ texIndex++ ].texObject = tex;
+}
+
+//****************************************************************************
+// PBS Roughness Texture
+//****************************************************************************
+
+void PBSRoughnessMapHLSL::processVert( Vector<ShaderComponent*> &componentList, 
+                                       const MaterialFeatureData &fd )
+{
+   MultiLine *meta = new MultiLine;
+   getOutTexCoord(   "texCoord", 
+                     "float2", 
+                     true, 
+                     fd.features[MFT_TexAnim], 
+                     meta, 
+                     componentList );
+   output = meta;
+}
+
+void PBSRoughnessMapHLSL::processPix(   Vector<ShaderComponent*> &componentList, 
+                                       const MaterialFeatureData &fd )
+{
+   // grab connector texcoord register
+   Var *inTex = getInTexCoord( "texCoord", "float2", true, componentList );
+
+   // create texture var
+   Var *diffuseMap = new Var;
+   diffuseMap->setType( "sampler2D" );
+   diffuseMap->setName( "roughness" );
+   diffuseMap->uniform = true;
+   diffuseMap->sampler = true;
+   diffuseMap->constNum = Var::getTexUnitNum();     // used as texture unit num here
+
+   MultiLine * meta = new MultiLine;
+   meta->addStatement( new GenOp( "   // Fairly sure this one corresponds to the present specular alpha"));
+   output = meta;   
+}
+
+ShaderFeature::Resources PBSRoughnessMapHLSL::getResources( const MaterialFeatureData &fd )
+{
+   Resources res; 
+   res.numTex = 1;
+   res.numTexReg = 1;
+
+   return res;
+}
+
+void PBSRoughnessMapHLSL::setTexData(   Material::StageData &stageDat,
+                                       const MaterialFeatureData &fd,
+                                       RenderPassData &passData,
+                                       U32 &texIndex )
+{
+   GFXTextureObject *tex = stageDat.getTex( MFT_PBSBaseMap );
+   if ( tex )
+      passData.mTexSlot[ texIndex++ ].texObject = tex;
+}
+
+//****************************************************************************
+// PBS Roughness Texture
+//****************************************************************************
+
+void PBSMetallicMapHLSL::processVert( Vector<ShaderComponent*> &componentList, 
+                                       const MaterialFeatureData &fd )
+{
+   MultiLine *meta = new MultiLine;
+   getOutTexCoord(   "texCoord", 
+                     "float2", 
+                     true, 
+                     fd.features[MFT_TexAnim], 
+                     meta, 
+                     componentList );
+   output = meta;
+}
+
+void PBSMetallicMapHLSL::processPix(   Vector<ShaderComponent*> &componentList, 
+                                       const MaterialFeatureData &fd )
+{
+   // grab connector texcoord register
+   Var *inTex = getInTexCoord( "texCoord", "float2", true, componentList );
+
+   // create texture var
+   Var *diffuseMap = new Var;
+   diffuseMap->setType( "sampler2D" );
+   diffuseMap->setName( "metallic" );
+   diffuseMap->uniform = true;
+   diffuseMap->sampler = true;
+   diffuseMap->constNum = Var::getTexUnitNum();     // used as texture unit num here
+
+   MultiLine * meta = new MultiLine;
+   meta->addStatement( new GenOp( "   // from a bit of show and tell, it would seem this one replaces the specular map, and influences albedo vs light-source specular highlighting."));
+   output = meta;   
+}
+
+ShaderFeature::Resources PBSMetallicMapHLSL::getResources( const MaterialFeatureData &fd )
+{
+   Resources res; 
+   res.numTex = 1;
+   res.numTexReg = 1;
+
+   return res;
+}
+
+void PBSMetallicMapHLSL::setTexData(   Material::StageData &stageDat,
                                        const MaterialFeatureData &fd,
                                        RenderPassData &passData,
                                        U32 &texIndex )
