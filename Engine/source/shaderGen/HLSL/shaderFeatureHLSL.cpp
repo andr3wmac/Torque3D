@@ -2844,7 +2844,7 @@ void PBSBaseMapFeatHLSL::processPix(   Vector<ShaderComponent*> &componentList,
    else
    {
       LangElement *statement = new GenOp( "tex2D(@, @)", diffuseMap, inTex );
-      output = new GenOp( "   @;\r\n", assignColor( statement, Material::Mul ) );
+      output = new GenOp( "   @;\r\n", assignColor( statement, Material::None ) );
    }
    
 }

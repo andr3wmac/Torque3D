@@ -431,9 +431,11 @@ void ProcessedShaderMaterial::_determineFeatures(  U32 stageNum,
          fd.features.addFeature( MFT_GlossMap );
    }
 
+   if (fd.features[MFT_PBSBaseMap])
+       fd.features.removeFeature(MFT_DiffuseMap );
    // Without a base texture use the diffuse color
    // feature to ensure some sort of output.
-   if (!fd.features[MFT_DiffuseMap])
+   if ((!fd.features[MFT_DiffuseMap])&&(!fd.features[MFT_PBSBaseMap]))
    {
       fd.features.addFeature( MFT_DiffuseColor );
 
