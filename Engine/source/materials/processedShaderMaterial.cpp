@@ -407,10 +407,17 @@ void ProcessedShaderMaterial::_determineFeatures(  U32 stageNum,
                   mMaterial->mPixelSpecular[stageNum] )
          fd.features.addFeature( MFT_PixSpecular );
       
-      if ( mMaterial->mPBSRoughnessValue[stageNum] >0.0f )
-          fd.features.addFeature( MFT_PBSRoughness );
-      if ( mMaterial->mPBSMetallicValue[stageNum] >0.0f )
-          fd.features.addFeature( MFT_PBSMetallic );
+      if (fd.features[MFT_PBSBaseMap])
+      {
+          fd.features.removeFeature(MFT_DiffuseMap );
+          fd.features.addFeature( MFT_PBS );
+      }
+      // you shouldn't use a diffuse instead of an albedo when doing PBS, but this will allow
+      // folks to transition by swtiching that on even if they're only pluging in roughness and metallic for now
+      if ((fd.features[MFT_PBSRoughnessMap])||(fd.features[MFT_PBSMetallicMap]))
+      {
+          fd.features.addFeature( MFT_PBS );
+      }
    }
 
    // Without realtime lighting and on lower end 

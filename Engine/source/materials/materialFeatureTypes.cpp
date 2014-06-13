@@ -87,10 +87,8 @@ ImplementFeatureType( MFT_ImposterVert, MFG_PreTransform, 1.0, false );
 
 // andrewmac: Physical Based Shading
 //  Note: these values were just chosen at random. 
-// material features
-ImplementFeatureType( MFT_PBSRoughness, MFG_Lighting, 3.0f, true );
-ImplementFeatureType( MFT_PBSMetallic, MFG_Lighting, 4.0f, true );
-ImplementFeatureType( MFT_PBSSpecular, MFG_Lighting, 5.0f, true );
+// material general control feature. contains texturesheet/value switches
+ImplementFeatureType( MFT_PBS, MFG_Lighting, 3.0f, true );
 // textures
 ImplementFeatureType( MFT_PBSBaseMap, MFG_Texture, 2.0f, true );
 ImplementFeatureType( MFT_PBSRoughnessMap, MFG_Texture, 3.0f, true );
