@@ -170,11 +170,13 @@ DeclareFeatureType( MFT_ForwardShading );
 /// so that the rest of the material features can work on it.
 DeclareFeatureType( MFT_ImposterVert );
 
-
+// Physical Based Shading First-stage features (ones that take either a texture or a number)
+DeclareFeatureType( MFT_PBSRoughness );
+DeclareFeatureType( MFT_PBSMetallic );
+DeclareFeatureType( MFT_PBSSpecular );
 // andrewmac: Physical Based Shading
 DeclareFeatureType( MFT_PBSBaseMap );
 DeclareFeatureType( MFT_PBSRoughnessMap );
 DeclareFeatureType( MFT_PBSMetallicMap );
 DeclareFeatureType( MFT_PBSSpecularMap );
-
 #endif // _MATERIALFEATURETYPES_H_

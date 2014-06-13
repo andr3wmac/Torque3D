@@ -676,6 +676,25 @@ public:
    }
 };
 
+// roughness feature
+class PBSRoughnessHLSL : public ShaderFeatureHLSL
+{
+public:
+
+   virtual void processVert( Vector<ShaderComponent*> &componentList,
+                             const MaterialFeatureData &fd );
+
+   virtual void processPix( Vector<ShaderComponent*> &componentList, 
+                            const MaterialFeatureData &fd );
+
+   virtual Resources getResources( const MaterialFeatureData &fd );
+   
+   virtual String getName()
+   {
+      return "PBS Roughness";
+   }
+};
+// roughness texture feature
 class PBSRoughnessMapHLSL : public ShaderFeatureHLSL
 {
 public:

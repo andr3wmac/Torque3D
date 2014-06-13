@@ -406,6 +406,11 @@ void ProcessedShaderMaterial::_determineFeatures(  U32 stageNum,
       else if (   fd.features[MFT_RTLighting] && 
                   mMaterial->mPixelSpecular[stageNum] )
          fd.features.addFeature( MFT_PixSpecular );
+      
+      if ( mMaterial->mPBSRoughnessValue[stageNum] >0.0f )
+          fd.features.addFeature( MFT_PBSRoughness );
+      if ( mMaterial->mPBSMetallicValue[stageNum] >0.0f )
+          fd.features.addFeature( MFT_PBSMetallic );
    }
 
    // Without realtime lighting and on lower end 
