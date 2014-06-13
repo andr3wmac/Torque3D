@@ -94,8 +94,7 @@ void _initShaderGenHLSL( ShaderGen *shaderGen )
 
    FEATUREMGR->registerFeature( MFT_ImposterVert, new ImposterVertFeatureHLSL );
 
-   FEATUREMGR->registerFeature( MFT_PBSRoughness, new PBSRoughnessHLSL );
-   //FEATUREMGR->registerFeature( MFT_PBSMetallic, new PBSMetallicHLSL );
+   FEATUREMGR->registerFeature( MFT_PBS, new PBSHLSL );
 
    FEATUREMGR->registerFeature( MFT_PBSBaseMap, new PBSBaseMapFeatHLSL );
    FEATUREMGR->registerFeature( MFT_PBSRoughnessMap, new PBSRoughnessMapHLSL );

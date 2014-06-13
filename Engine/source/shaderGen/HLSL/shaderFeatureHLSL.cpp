@@ -2869,9 +2869,9 @@ void PBSBaseMapFeatHLSL::setTexData(   Material::StageData &stageDat,
 }
 
 //****************************************************************************
-// PBS Roughness Feature
+// PBS General Feature
 //****************************************************************************
-void PBSRoughnessHLSL::processVert(   Vector<ShaderComponent*> &componentList, 
+void PBSHLSL::processVert(   Vector<ShaderComponent*> &componentList, 
                                        const MaterialFeatureData &fd )
 {
    AssertFatal( fd.features[MFT_RTLighting], 
@@ -2881,7 +2881,7 @@ void PBSRoughnessHLSL::processVert(   Vector<ShaderComponent*> &componentList,
    // taken care of passing everything to the pixel shader.
 }
 
-void PBSRoughnessHLSL::processPix( Vector<ShaderComponent*> &componentList, 
+void PBSHLSL::processPix( Vector<ShaderComponent*> &componentList, 
                                     const MaterialFeatureData &fd )
 {
    MultiLine *meta = new MultiLine;
@@ -2896,17 +2896,30 @@ void PBSRoughnessHLSL::processPix( Vector<ShaderComponent*> &componentList,
       pbsRoughnessValue->constSortPos = cspPotentialPrimitive;
    }
 
-   if( fd.features[ MFT_PBSRoughnessMap ] )
-      meta->addStatement( new GenOp( "   // Getting value from PBSRoughnessMap;\r\n") );
-   else
+   Var *pbsMetallicValue = (Var*)LangElement::find( "pbsMetallicValue" );
+   if(pbsMetallicValue == NULL)
    {
-      meta->addStatement( new GenOp( "   // Getting value from pbsRoughnessValue;\r\n") );
+      pbsMetallicValue = new Var;
+      pbsMetallicValue->setType( "float" );
+      pbsMetallicValue->setName( "pbsMetallicValue" );
+      pbsMetallicValue->uniform = true;
+      pbsMetallicValue->constSortPos = cspPotentialPrimitive;
    }
-
+   
+   // create sample float vars
+   Var *rough = new Var;
+   rough->setType("float");
+   rough->setName("roughness");
+   meta->addStatement(new GenOp( "   @ = @;\r\n", new DecOp(rough), pbsRoughnessValue));
+   Var *metal = new Var;
+   metal->setType("float");
+   metal->setName("metal");
+   meta->addStatement(new GenOp( "   @ = @;\r\n", new DecOp(metal), pbsMetallicValue));
+   
    output = meta;
 }
 
-ShaderFeature::Resources PBSRoughnessHLSL::getResources( const MaterialFeatureData &fd )
+ShaderFeature::Resources PBSHLSL::getResources( const MaterialFeatureData &fd )
 {
    Resources res;
    return res;
@@ -2938,7 +2951,7 @@ void PBSRoughnessMapHLSL::processPix(   Vector<ShaderComponent*> &componentList,
    // create texture var
    Var *roughnessMap = new Var;
    roughnessMap->setType( "sampler2D" );
-   roughnessMap->setName( "roughness" );
+   roughnessMap->setName( "roughnessMap" );
    roughnessMap->uniform = true;
    roughnessMap->sampler = true;
    roughnessMap->constNum = Var::getTexUnitNum();
@@ -2988,20 +3001,21 @@ void PBSMetallicMapHLSL::processVert( Vector<ShaderComponent*> &componentList,
 void PBSMetallicMapHLSL::processPix(   Vector<ShaderComponent*> &componentList, 
                                        const MaterialFeatureData &fd )
 {
-   // grab connector texcoord register
-   Var *inTex = getInTexCoord( "texCoord", "float2", true, componentList );
+   // Get the texture coord.
+   Var *texCoord = getInTexCoord( "texCoord", "float2", true, componentList );
 
    // create texture var
-   Var *diffuseMap = new Var;
-   diffuseMap->setType( "sampler2D" );
-   diffuseMap->setName( "metallic" );
-   diffuseMap->uniform = true;
-   diffuseMap->sampler = true;
-   diffuseMap->constNum = Var::getTexUnitNum();     // used as texture unit num here
+   Var *metallicMap = new Var;
+   metallicMap->setType( "sampler2D" );
+   metallicMap->setName( "metallicMap" );
+   metallicMap->uniform = true;
+   metallicMap->sampler = true;
+   metallicMap->constNum = Var::getTexUnitNum();
+   LangElement *texOp = new GenOp( "tex2D(@, @)", metallicMap, texCoord );
 
-   MultiLine * meta = new MultiLine;
-   meta->addStatement( new GenOp( "   // from a bit of show and tell, it would seem this one replaces the specular map, and influences albedo vs light-source specular highlighting."));
-   output = meta;   
+   Var *pbsMetallicValue = new Var( "pbsMetallicValue", "float" );
+
+   output = new GenOp( "   @ = @.b;\r\n", new DecOp( pbsMetallicValue ), texOp );   
 }
 
 ShaderFeature::Resources PBSMetallicMapHLSL::getResources( const MaterialFeatureData &fd )
