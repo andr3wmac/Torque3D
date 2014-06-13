@@ -217,3 +217,49 @@ float AL_CalcSpecular( float3 toLight, float3 normal, float3 toEye )
    // Return the specular factor.
    return pow( max( specVal, 0.00001f ), AL_ConstantSpecularPower );
 }
+
+// Physical Based Shading.
+#define Pi 3.14159265358979323846
+float calcVisibility(float NoL, float NoV, float alpha2)
+{
+    float invGeo1 = NoL + sqrt(alpha2 + (1 - alpha2) * NoL * NoL);
+    float invGeo2 = NoV + sqrt(alpha2 + (1 - alpha2) * NoV * NoV);
+    return 1.0f / (invGeo1 * invGeo2);
+}
+
+float calcSpecular(float alpha2, float NoH)
+{
+    float denominator = (NoH * NoH) * (alpha2 - 1) + 1;
+    denominator = Pi * denominator * denominator;
+    return alpha2 / denominator;
+}
+
+void computePBSLights( float3 V, 
+                       float3 L, 
+                       float3 N,
+                       float4 albedoColor,
+                       float4 specularColor,
+                       out float4 outColor )
+{
+
+    float3 Spec = (specularColor.rgb);                    
+
+    //bunch of vectors
+    float NoL = max(0,(dot(N,L)));
+    float NoV = max(0,dot(N,V));
+    float3 H = normalize(L + V);                        
+    float LoH = saturate(dot(L,H));
+    float VoH = saturate(dot(V,H));
+    float NoH = max(0,dot(N,H));
+
+    half alpha = 0.5;
+    alpha *= alpha;
+    float alpha2 = alpha * alpha;
+    half3 Fresnel = Spec + ( 1.0 - Spec) * pow(1.0f - saturate(LoH), 5);
+
+    float3 SpecCol = saturate(calcSpecular(alpha2, NoH) / calcVisibility(NoL, NoV, alpha2) * Fresnel);
+
+    half3 Albedo = (albedoColor.rgb);
+    outColor = 0;
+    outColor.rgb = (Albedo * (1 - SpecCol) + SpecCol) * specularColor.rgb * NoL * (0.5 * 2);
+}
