@@ -406,18 +406,6 @@ void ProcessedShaderMaterial::_determineFeatures(  U32 stageNum,
       else if (   fd.features[MFT_RTLighting] && 
                   mMaterial->mPixelSpecular[stageNum] )
          fd.features.addFeature( MFT_PixSpecular );
-      
-      if (fd.features[MFT_PBSBaseMap])
-      {
-          fd.features.removeFeature(MFT_DiffuseMap );
-          fd.features.addFeature( MFT_PBS );
-      }
-      // you shouldn't use a diffuse instead of an albedo when doing PBS, but this will allow
-      // folks to transition by swtiching that on even if they're only pluging in roughness and metallic for now
-      if ((fd.features[MFT_PBSRoughnessMap])||(fd.features[MFT_PBSMetallicMap]))
-      {
-          fd.features.addFeature( MFT_PBS );
-      }
    }
 
    // Without realtime lighting and on lower end 
@@ -438,11 +426,9 @@ void ProcessedShaderMaterial::_determineFeatures(  U32 stageNum,
          fd.features.addFeature( MFT_GlossMap );
    }
 
-   if (fd.features[MFT_PBSBaseMap])
-       fd.features.removeFeature(MFT_DiffuseMap );
    // Without a base texture use the diffuse color
    // feature to ensure some sort of output.
-   if ((!fd.features[MFT_DiffuseMap])&&(!fd.features[MFT_PBSBaseMap]))
+   if (!fd.features[MFT_DiffuseMap])
    {
       fd.features.addFeature( MFT_DiffuseColor );
 
@@ -489,6 +475,19 @@ void ProcessedShaderMaterial::_determineFeatures(  U32 stageNum,
    if (  mMaterial->mVertColor[ stageNum ] &&
          mVertexFormat->hasColor() )
       fd.features.addFeature( MFT_DiffuseVertColor );
+
+
+   // Physical Based Shading.
+   if (fd.features[MFT_PBSBaseMap])
+   {
+      fd.features.removeFeature(MFT_DiffuseMap);
+      fd.features.removeFeature(MFT_DiffuseColor);
+      fd.features.removeFeature(MFT_RTLighting);
+      fd.features.removeFeature(MFT_ToneMap);
+      fd.features.removeFeature(MFT_SpecularMap);
+      fd.features.removeFeature(MFT_PixSpecular);
+      fd.features.addFeature(MFT_PBS);
+   }
 
    // Allow features to add themselves.
    for ( U32 i = 0; i < FEATUREMGR->getFeatureCount(); i++ )

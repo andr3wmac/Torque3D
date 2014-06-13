@@ -653,7 +653,13 @@ public:
 // PBS General Feature
 class PBSHLSL : public ShaderFeatureHLSL
 {
+protected:
+
+   ShaderIncludeDependency mDep;
+
 public:
+
+   PBSHLSL();
 
    virtual void processVert( Vector<ShaderComponent*> &componentList,
                              const MaterialFeatureData &fd );

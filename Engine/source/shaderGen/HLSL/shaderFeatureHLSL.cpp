@@ -2055,17 +2055,42 @@ void RTLightingFeatHLSL::processPix(   Vector<ShaderComponent*> &componentList,
    ambient->uniform = true;
    ambient->constSortPos = cspPass;
 
-   // Calculate the diffuse shading and specular powers.
-   meta->addStatement( new GenOp( "   compute4Lights( @, @, @, @,\r\n"
-                                  "      @, @, @, @, @, @, @, @,\r\n"
-                                  "      @, @ );\r\n", 
-      wsView, wsPosition, wsNormal, lightMask,
-      inLightPos, inLightInvRadiusSq, inLightColor, inLightSpotDir, inLightSpotAngle, lightSpotFalloff, specularPower, specularColor,
-      rtShading, specular ) );
+   if ( !fd.features[MFT_PBS] )
+   {
+      // Calculate the diffuse shading and specular powers.
+      meta->addStatement( new GenOp( "   compute4Lights( @, @, @, @,\r\n"
+                                     "      @, @, @, @, @, @, @, @,\r\n"
+                                     "      @, @ );\r\n", 
+         wsView, wsPosition, wsNormal, lightMask,
+         inLightPos, inLightInvRadiusSq, inLightColor, inLightSpotDir, inLightSpotAngle, lightSpotFalloff, specularPower, specularColor,
+         rtShading, specular ) );
 
-   // Apply the lighting to the diffuse color.
-   LangElement *lighting = new GenOp( "float4( @.rgb + @.rgb, 1 )", rtShading, ambient );
-   meta->addStatement( new GenOp( "   @;\r\n", assignColor( lighting, Material::Mul ) ) );
+         // Apply the lighting to the diffuse color.
+         LangElement *lighting = new GenOp( "float4( @.rgb + @.rgb, 1 )", rtShading, ambient );
+         meta->addStatement( new GenOp( "   @;\r\n", assignColor( lighting, Material::Mul ) ) );
+   }
+   else
+   {
+      Var *albedoColor = (Var*)LangElement::find( "albedoColor" );
+      if ( !albedoColor )
+      {
+         albedoColor  = new Var( "albedoColor", "float4" );
+         albedoColor->uniform = true;
+         albedoColor->constSortPos = cspPotentialPrimitive;
+      }
+
+      // Calculate the diffuse shading and specular powers.
+      meta->addStatement( new GenOp( "   computePBSLights( @, @, @, @, @,\r\n"
+                                     "      @, @, @, @, @, @, @, @,\r\n"
+                                     "      @, @ );\r\n", 
+         wsView, wsPosition, wsNormal, albedoColor, lightMask,
+         inLightPos, inLightInvRadiusSq, inLightColor, inLightSpotDir, inLightSpotAngle, lightSpotFalloff, specularPower, specularColor,
+         rtShading ) );
+
+      // Assign output color.
+      meta->addStatement( new GenOp( "   @;\r\n", assignColor( rtShading, Material::None ) ) );
+   }
+
    output = meta;  
 }
 
@@ -2722,131 +2747,20 @@ void PBSBaseMapFeatHLSL::processVert( Vector<ShaderComponent*> &componentList,
 void PBSBaseMapFeatHLSL::processPix(   Vector<ShaderComponent*> &componentList, 
                                        const MaterialFeatureData &fd )
 {
-   // grab connector texcoord register
-   Var *inTex = getInTexCoord( "texCoord", "float2", true, componentList );
+   // Get the texture coord.
+   Var *texCoord = getInTexCoord( "texCoord", "float2", true, componentList );
 
    // create texture var
-   Var *diffuseMap = new Var;
-   diffuseMap->setType( "sampler2D" );
-   diffuseMap->setName( "albedo" );
-   diffuseMap->uniform = true;
-   diffuseMap->sampler = true;
-   diffuseMap->constNum = Var::getTexUnitNum();     // used as texture unit num here
+   Var *albedoMap = new Var;
+   albedoMap->setType( "sampler2D" );
+   albedoMap->setName( "albedo" );
+   albedoMap->uniform = true;
+   albedoMap->sampler = true;
+   albedoMap->constNum = Var::getTexUnitNum();     // used as texture unit num here
 
-   if (  fd.features[MFT_CubeMap] )
-   {
-      MultiLine * meta = new MultiLine;
-      
-      // create sample color
-      Var *diffColor = new Var;
-      diffColor->setType( "float4" );
-      diffColor->setName( "diffuseColor" );
-      LangElement *colorDecl = new DecOp( diffColor );
-   
-      meta->addStatement(  new GenOp( "   @ = tex2D(@, @);\r\n", 
-                           colorDecl, 
-                           diffuseMap, 
-                           inTex ) );
-      
-      meta->addStatement( new GenOp( "   @;\r\n", assignColor( diffColor, Material::Mul ) ) );
-      output = meta;
-   }
-   else if(fd.features[MFT_DiffuseMapAtlas])
-   {   
-      // Handle atlased textures
-      // http://www.infinity-universe.com/Infinity/index.php?option=com_content&task=view&id=65&Itemid=47
-      MultiLine * meta = new MultiLine;
-      output = meta;
-
-      Var *atlasedTex = new Var;
-      atlasedTex->setName("atlasedTexCoord");
-      atlasedTex->setType("float2");
-      LangElement *atDecl = new DecOp(atlasedTex);
-
-      // Parameters of the texture atlas
-      Var *atParams  = new Var;
-      atParams->setType("float4");
-      atParams->setName("diffuseAtlasParams");
-      atParams->uniform = true;
-      atParams->constSortPos = cspPotentialPrimitive;
-
-      // Parameters of the texture (tile) this object is using in the atlas
-      Var *tileParams  = new Var;
-      tileParams->setType("float4");
-      tileParams->setName("diffuseAtlasTileParams");
-      tileParams->uniform = true;
-      tileParams->constSortPos = cspPotentialPrimitive;
-
-      const bool is_sm3 = (GFX->getPixelShaderVersion() > 2.0f);
-      if(is_sm3)
-      {
-         // Figure out the mip level
-         meta->addStatement(new GenOp("   float2 _dx = ddx(@ * @.z);\r\n", inTex, atParams));
-         meta->addStatement(new GenOp("   float2 _dy = ddy(@ * @.z);\r\n", inTex, atParams));
-         meta->addStatement(new GenOp("   float mipLod = 0.5 * log2(max(dot(_dx, _dx), dot(_dy, _dy)));\r\n"));
-         meta->addStatement(new GenOp("   mipLod = clamp(mipLod, 0.0, @.w);\r\n", atParams));
-
-         // And the size of the mip level
-         meta->addStatement(new GenOp("   float mipPixSz = pow(2.0, @.w - mipLod);\r\n", atParams));
-         meta->addStatement(new GenOp("   float2 mipSz = mipPixSz / @.xy;\r\n", atParams));
-      }
-      else
-      {
-         meta->addStatement(new GenOp("   float2 mipSz = float2(1.0, 1.0);\r\n"));
-      }
-
-      // Tiling mode
-      // TODO: Select wrap or clamp somehow
-      if( true ) // Wrap
-         meta->addStatement(new GenOp("   @ = frac(@);\r\n", atDecl, inTex));
-      else       // Clamp
-         meta->addStatement(new GenOp("   @ = saturate(@);\r\n", atDecl, inTex));
-
-      // Finally scale/offset, and correct for filtering
-      meta->addStatement(new GenOp("   @ = @ * ((mipSz * @.xy - 1.0) / mipSz) + 0.5 / mipSz + @.xy * @.xy;\r\n", 
-         atlasedTex, atlasedTex, atParams, atParams, tileParams));
-
-      // Add a newline
-      meta->addStatement(new GenOp( "\r\n"));
-
-      // For the rest of the feature...
-      inTex = atlasedTex;
-
-      // create sample color var
-      Var *diffColor = new Var;
-      diffColor->setType("float4");
-      diffColor->setName("diffuseColor");
-
-      // To dump out UV coords...
-//#define DEBUG_ATLASED_UV_COORDS
-#ifdef DEBUG_ATLASED_UV_COORDS
-      if(!fd.features[MFT_PrePassConditioner])
-      {
-         meta->addStatement(new GenOp("   @ = float4(@.xy, mipLod / @.w, 1.0);\r\n", new DecOp(diffColor), inTex, atParams));
-         meta->addStatement(new GenOp("   @; return OUT;\r\n", assignColor(diffColor, Material::Mul)));
-         return;
-      }
-#endif
-
-      if(is_sm3)
-      {
-         meta->addStatement(new GenOp( "   @ = tex2Dlod(@, float4(@, 0.0, mipLod));\r\n", 
-            new DecOp(diffColor), diffuseMap, inTex));
-      }
-      else
-      {
-         meta->addStatement(new GenOp( "   @ = tex2D(@, @);\r\n", 
-            new DecOp(diffColor), diffuseMap, inTex));
-      }
-
-      meta->addStatement(new GenOp( "   @;\r\n", assignColor(diffColor, Material::Mul)));
-   }
-   else
-   {
-      LangElement *statement = new GenOp( "tex2D(@, @)", diffuseMap, inTex );
-      output = new GenOp( "   @;\r\n", assignColor( statement, Material::None ) );
-   }
-   
+   LangElement *texOp = new GenOp( "tex2D(@, @)", albedoMap, texCoord );
+   Var *albedoColor = new Var( "albedoColor", "float4" );
+   output = new GenOp( "   @ = @;\r\n", new DecOp( albedoColor ), texOp );
 }
 
 ShaderFeature::Resources PBSBaseMapFeatHLSL::getResources( const MaterialFeatureData &fd )
@@ -2871,20 +2785,90 @@ void PBSBaseMapFeatHLSL::setTexData(   Material::StageData &stageDat,
 //****************************************************************************
 // PBS General Feature
 //****************************************************************************
+PBSHLSL::PBSHLSL()
+: mDep( "shaders/common/lighting.hlsl" )
+{
+   addDependency( &mDep );
+}
+
 void PBSHLSL::processVert(   Vector<ShaderComponent*> &componentList, 
                                        const MaterialFeatureData &fd )
 {
-   AssertFatal( fd.features[MFT_RTLighting], 
-      "PixelSpecularHLSL requires RTLighting to be enabled!" );
+   MultiLine *meta = new MultiLine;   
 
-   // Nothing to do here... MFT_RTLighting should have
-   // taken care of passing everything to the pixel shader.
+   ShaderConnector *connectComp = dynamic_cast<ShaderConnector *>( componentList[C_CONNECTOR] );
+
+   // Special case for lighting imposters. We dont have a vert normal and may not
+   // have a normal map. Generate and pass the normal data the pixel shader needs.
+   if ( fd.features[MFT_ImposterVert] )
+   {
+      if ( !fd.features[MFT_NormalMap] )
+      {
+         Var *eyePos = (Var*)LangElement::find( "eyePosWorld" );
+         if ( !eyePos )
+         {
+            eyePos = new Var( "eyePosWorld", "float3" );
+            eyePos->uniform = true;
+            eyePos->constSortPos = cspPass;
+         }
+          
+         Var *inPosition = (Var*)LangElement::find( "position" );
+
+         Var *outNormal = connectComp->getElement( RT_TEXCOORD );
+         outNormal->setName( "wsNormal" );
+         outNormal->setStructName( "OUT" );
+         outNormal->setType( "float3" );
+         outNormal->mapsToSampler = false;
+
+         // Transform the normal to world space.
+         meta->addStatement( new GenOp( "   @ = normalize( @ - @.xyz );\r\n", outNormal, eyePos, inPosition ) );
+      }
+
+      addOutWsPosition( componentList, fd.features[MFT_UseInstancing], meta );
+
+      output = meta;
+
+      return;
+   }
+
+   // Find the incoming vertex normal.
+   Var *inNormal = (Var*)LangElement::find( "normal" );   
+
+   // Skip out on realtime lighting if we don't have a normal
+   // or we're doing some sort of baked lighting.
+   if (  !inNormal || 
+         fd.features[MFT_LightMap] || 
+         fd.features[MFT_ToneMap] || 
+         fd.features[MFT_VertLit] )
+      return;   
+
+   // If there isn't a normal map then we need to pass
+   // the world space normal to the pixel shader ourselves.
+   if ( !fd.features[MFT_NormalMap] )
+   {
+      Var *outNormal = connectComp->getElement( RT_TEXCOORD );
+      outNormal->setName( "wsNormal" );
+      outNormal->setStructName( "OUT" );
+      outNormal->setType( "float3" );
+      outNormal->mapsToSampler = false;
+
+      // Get the transform to world space.
+      Var *objTrans = getObjTrans( componentList, fd.features[MFT_UseInstancing], meta );
+
+      // Transform the normal to world space.
+      meta->addStatement( new GenOp( "   @ = mul( @, float4( normalize( @ ), 0.0 ) ).xyz;\r\n", outNormal, objTrans, inNormal ) );
+   }
+
+   addOutWsPosition( componentList, fd.features[MFT_UseInstancing], meta );
+
+   output = meta;
 }
 
 void PBSHLSL::processPix( Vector<ShaderComponent*> &componentList, 
                                     const MaterialFeatureData &fd )
 {
    MultiLine *meta = new MultiLine;
+   ShaderConnector *connectComp = dynamic_cast<ShaderConnector *>( componentList[C_CONNECTOR] );
 
    Var *pbsRoughnessValue = (Var*)LangElement::find( "pbsRoughnessValue" );
    if(pbsRoughnessValue == NULL)
@@ -2911,11 +2895,54 @@ void PBSHLSL::processPix( Vector<ShaderComponent*> &componentList,
    rough->setType("float");
    rough->setName("roughness");
    meta->addStatement(new GenOp( "   @ = @;\r\n", new DecOp(rough), pbsRoughnessValue));
+
    Var *metal = new Var;
    metal->setType("float");
    metal->setName("metal");
    meta->addStatement(new GenOp( "   @ = @;\r\n", new DecOp(metal), pbsMetallicValue));
    
+   // Look for a wsNormal or grab it from the connector.
+   Var *wsNormal = (Var*)LangElement::find( "wsNormal" );
+   if ( !wsNormal )
+   {
+      wsNormal = connectComp->getElement( RT_TEXCOORD );
+      wsNormal->setName( "wsNormal" );
+      wsNormal->setStructName( "IN" );
+      wsNormal->setType( "float3" );
+      meta->addStatement( new GenOp( "   @ = normalize( half3( @ ) );\r\n", wsNormal, wsNormal ) );
+   }
+
+   // Now the wsPosition and wsView.
+   Var *wsPosition = getInWsPosition( componentList );
+   Var *wsView = getWsView( wsPosition, meta );
+
+   // Create temporaries to hold results of lighting.
+   Var *rtShading = new Var( "rtShading", "float4" );
+   meta->addStatement( new GenOp( "   @;\r\n", new DecOp(rtShading) ) );   
+
+   Var *specularColor = (Var*)LangElement::find( "specularColor" );
+   if ( !specularColor )
+   {
+      specularColor  = new Var( "specularColor", "float4" );
+      specularColor->uniform = true;
+      specularColor->constSortPos = cspPotentialPrimitive;
+   }
+
+   Var *albedoColor = (Var*)LangElement::find( "albedoColor" );
+   if ( !albedoColor )
+   {
+      albedoColor  = new Var( "albedoColor", "float4" );
+      albedoColor->uniform = true;
+      albedoColor->constSortPos = cspPotentialPrimitive;
+   }
+
+   // Calculate the diffuse shading and specular powers.
+   meta->addStatement( new GenOp( "   computePBSLights( @, @, @, @, @, @ );\r\n", 
+      wsView, wsPosition, wsNormal, albedoColor, specularColor, rtShading ) );
+
+   // Assign output color.
+   meta->addStatement( new GenOp( "   @;\r\n", assignColor( rtShading, Material::None ) ) );
+
    output = meta;
 }
 
