@@ -2918,7 +2918,7 @@ void PBSRoughnessMapHLSL::setTexData(   Material::StageData &stageDat,
                                        RenderPassData &passData,
                                        U32 &texIndex )
 {
-   GFXTextureObject *tex = stageDat.getTex( MFT_PBSBaseMap );
+   GFXTextureObject *tex = stageDat.getTex( MFT_PBSRoughnessMap );
    if ( tex )
       passData.mTexSlot[ texIndex++ ].texObject = tex;
 }
@@ -2973,7 +2973,7 @@ void PBSMetallicMapHLSL::setTexData(   Material::StageData &stageDat,
                                        RenderPassData &passData,
                                        U32 &texIndex )
 {
-   GFXTextureObject *tex = stageDat.getTex( MFT_PBSBaseMap );
+   GFXTextureObject *tex = stageDat.getTex( MFT_PBSMetallicMap );
    if ( tex )
       passData.mTexSlot[ texIndex++ ].texObject = tex;
 }
