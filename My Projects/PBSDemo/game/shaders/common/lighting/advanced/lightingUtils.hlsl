@@ -22,11 +22,11 @@
 
 float attenuate( float4 lightColor, float3 attParams, float dist )
 {
-   // andrewmac: Inverse Shading
+   // andrewmac: Inverse Square
    // Based On:
    // https://de45xmedrsdbp.cloudfront.net/Resources/files/2013SiggraphPresentationsNotes-26915738.pdf
 
-   // Inverse Shading radius is packed into attParams
+   // Inverse Square radius is packed into attParams
    if ( attParams.z >= 0.0 )
    {
       return pow(saturate(1.0 - pow(dist / attParams.z, 4)), 2) / (pow(dist, 2) + 1);
