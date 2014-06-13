@@ -20,13 +20,31 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-
-float attenuate( float4 lightColor, float lightRadius, float dist )
+float attenuate( float4 lightColor, float3 attParams, float dist )
 {
-   // andrewmac: Physical Based Shading
-   // Replaced with falloff equation based on Unreal Engine 4
+   // andrewmac: Inverse Shading
+   // Based On:
    // https://de45xmedrsdbp.cloudfront.net/Resources/files/2013SiggraphPresentationsNotes-26915738.pdf
-   return pow(saturate(1.0 - pow(dist / lightRadius, 4)), 2) / (pow(dist, 2) + 1);
+
+   // Inverse Shading radius is packed into attParams
+   if ( attParams.z >= 0.0 )
+   {
+      return pow(saturate(1.0 - pow(dist / attParams.z, 4)), 2) / (pow(dist, 2) + 1);
+   } 
+ 
+   // Regular Torque Falloff with Attenuation Ratio
+   else 
+   {
+      float2 attRatio;
+      attRatio.x = attParams.x;
+      attRatio.y = attParams.y;
+
+      #ifdef ACCUMULATE_LUV
+         return lightColor.w * ( 1.0 - dot( attRatio, float2( dist, dist * dist ) ) );
+      #else
+         return 1.0 - dot( attRatio, float2( dist, dist * dist ) );
+      #endif
+   }
 }
 
 float3 getDistanceVectorToPlane( float3 origin, float3 direction, float4 plane )

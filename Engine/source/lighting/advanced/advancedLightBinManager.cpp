@@ -751,12 +751,14 @@ void AdvancedLightBinManager::LightMaterialInfo::setLightParameters( const Light
       if ( total > 0.0f )
          attenRatio /= total;
 
-      Point2F attenParams( ( 1.0f / radius ) * attenRatio.y,
-                           ( 1.0f / ( radius * radius ) ) * attenRatio.z );
+      // andrewmac: Inverse Square Option
+      bool inverseSquare = lightInfo->getExtended<ShadowMapParams>()->inverseSquare;
 
-      // andrewmac: Switched out lightAttenuation for radius
-      //  to use in falloff equation. HACK. Should juse use lightRange. 
-      matParams->setSafe( lightAttenuation, radius );
+      Point3F attenParams( ( 1.0f / radius ) * attenRatio.y,
+                           ( 1.0f / ( radius * radius ) ) * attenRatio.z,
+                           inverseSquare ? radius : -1.0f);
+
+      matParams->setSafe( lightAttenuation, attenParams );
       break;
    }
 

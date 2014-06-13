@@ -264,6 +264,10 @@ void AdvancedLightManager::_initLightFields()
    public:
 
       DEFINE_LIGHT_FIELD( attenuationRatio, TypePoint3F, NULL );
+
+      //andrewmac: Inverse Square
+      DEFINE_LIGHT_FIELD( inverseSquare, TypeBool, NULL );
+
       DEFINE_LIGHT_FIELD( shadowType, TYPEID< ShadowType >(), ConsoleBaseType::getType( TYPEID< ShadowType >() )->getEnumTable() );
       DEFINE_LIGHT_FIELD( texSize, TypeS32, NULL );
       DEFINE_LIGHT_FIELD( cookie, TypeStringFilename, NULL );      
@@ -285,6 +289,10 @@ void AdvancedLightManager::_initLightFields()
       ADD_LIGHT_FIELD( "attenuationRatio", TypePoint3F, attenuationRatio,
          "The proportions of constant, linear, and quadratic attenuation to use for "
          "the falloff for point and spot lights." );
+
+      // andrewmac: Inverse Square
+      ADD_LIGHT_FIELD( "inverseSquare", TypeBool, inverseSquare,
+         "Uses inverse square light falloff. " );
 
       ADD_LIGHT_FIELD( "shadowType", TYPEID< ShadowType >(), shadowType,
          "The type of shadow to use on this light." );

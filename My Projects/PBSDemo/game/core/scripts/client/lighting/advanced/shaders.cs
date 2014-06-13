@@ -224,3 +224,29 @@ new CustomMaterial( AL_ParticlePointLightMaterial )
    
    pixVersion = 3.0;
 };
+
+// andrewmac: Ambient Light
+new ShaderData( AL_AmbientLightShader )
+{
+   DXVertexShaderFile = "shaders/common/lighting/advanced/convexGeometryV.hlsl";
+   DXPixelShaderFile  = "shaders/common/lighting/advanced/ambientLightP.hlsl";
+
+   OGLVertexShaderFile = "shaders/common/lighting/advanced/gl/convexGeometryV.glsl";
+   OGLPixelShaderFile  = "shaders/common/lighting/advanced/gl/ambientLightP.glsl";
+
+   pixVersion = 3.0;
+};
+
+new CustomMaterial( AL_AmbientLightMaterial )
+{
+   shader = AL_AmbientLightShader;
+   stateBlock = AL_ConvexLightState;
+   
+   sampler["prePassBuffer"] = "#prepass";
+   sampler["shadowMap"] = "$dynamiclight";
+   sampler["cookieTex"] = "$dynamiclightmask";
+   
+   target = "lightinfo";
+   
+   pixVersion = 3.0;
+};
