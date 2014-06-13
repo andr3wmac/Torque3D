@@ -2869,6 +2869,50 @@ void PBSBaseMapFeatHLSL::setTexData(   Material::StageData &stageDat,
 }
 
 //****************************************************************************
+// PBS Roughness Feature
+//****************************************************************************
+void PBSRoughnessHLSL::processVert(   Vector<ShaderComponent*> &componentList, 
+                                       const MaterialFeatureData &fd )
+{
+   AssertFatal( fd.features[MFT_RTLighting], 
+      "PixelSpecularHLSL requires RTLighting to be enabled!" );
+
+   // Nothing to do here... MFT_RTLighting should have
+   // taken care of passing everything to the pixel shader.
+}
+
+void PBSRoughnessHLSL::processPix( Vector<ShaderComponent*> &componentList, 
+                                    const MaterialFeatureData &fd )
+{
+   MultiLine *meta = new MultiLine;
+
+   Var *pbsRoughnessValue = (Var*)LangElement::find( "pbsRoughnessValue" );
+   if(pbsRoughnessValue == NULL)
+   {
+      pbsRoughnessValue = new Var;
+      pbsRoughnessValue->setType( "float" );
+      pbsRoughnessValue->setName( "pbsRoughnessValue" );
+      pbsRoughnessValue->uniform = true;
+      pbsRoughnessValue->constSortPos = cspPotentialPrimitive;
+   }
+
+   if( fd.features[ MFT_PBSRoughnessMap ] )
+      meta->addStatement( new GenOp( "   // Getting value from PBSRoughnessMap;\r\n") );
+   else
+   {
+      meta->addStatement( new GenOp( "   // Getting value from pbsRoughnessValue;\r\n") );
+   }
+
+   output = meta;
+}
+
+ShaderFeature::Resources PBSRoughnessHLSL::getResources( const MaterialFeatureData &fd )
+{
+   Resources res;
+   return res;
+}
+
+//****************************************************************************
 // PBS Roughness Texture
 //****************************************************************************
 
@@ -2888,20 +2932,21 @@ void PBSRoughnessMapHLSL::processVert( Vector<ShaderComponent*> &componentList,
 void PBSRoughnessMapHLSL::processPix(   Vector<ShaderComponent*> &componentList, 
                                        const MaterialFeatureData &fd )
 {
-   // grab connector texcoord register
-   Var *inTex = getInTexCoord( "texCoord", "float2", true, componentList );
+   // Get the texture coord.
+   Var *texCoord = getInTexCoord( "texCoord", "float2", true, componentList );
 
    // create texture var
-   Var *diffuseMap = new Var;
-   diffuseMap->setType( "sampler2D" );
-   diffuseMap->setName( "roughness" );
-   diffuseMap->uniform = true;
-   diffuseMap->sampler = true;
-   diffuseMap->constNum = Var::getTexUnitNum();     // used as texture unit num here
+   Var *roughnessMap = new Var;
+   roughnessMap->setType( "sampler2D" );
+   roughnessMap->setName( "roughness" );
+   roughnessMap->uniform = true;
+   roughnessMap->sampler = true;
+   roughnessMap->constNum = Var::getTexUnitNum();
+   LangElement *texOp = new GenOp( "tex2D(@, @)", roughnessMap, texCoord );
 
-   MultiLine * meta = new MultiLine;
-   meta->addStatement( new GenOp( "   // Fairly sure this one corresponds to the present specular alpha"));
-   output = meta;   
+   Var *roughnessColor = new Var( "pbsRoughnessValue", "float" );
+
+   output = new GenOp( "   @ = @.r;\r\n", new DecOp( roughnessColor ), texOp );   
 }
 
 ShaderFeature::Resources PBSRoughnessMapHLSL::getResources( const MaterialFeatureData &fd )
@@ -2924,7 +2969,7 @@ void PBSRoughnessMapHLSL::setTexData(   Material::StageData &stageDat,
 }
 
 //****************************************************************************
-// PBS Roughness Texture
+// PBS Metalic Texture
 //****************************************************************************
 
 void PBSMetallicMapHLSL::processVert( Vector<ShaderComponent*> &componentList, 
