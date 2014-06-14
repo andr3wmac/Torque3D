@@ -235,12 +235,16 @@ float calcSpecular(float alpha2, float NoH)
 }
 
 void computePBSLights( float3 V, 
-                       float3 L, 
+                       float3 wsPosition, 
                        float3 N,
                        float4 albedoColor,
                        float4 specularColor,
+                       float4 inLightPos[3],
+                       float4 inLightColor[4],
                        out float4 outColor )
 {
+    float4 lightVectors[3];
+    float3 L = wsPosition[0] - inLightPos[0];
 
     float3 Spec = (specularColor.rgb);                    
 
@@ -259,7 +263,12 @@ void computePBSLights( float3 V,
 
     float3 SpecCol = saturate(calcSpecular(alpha2, NoH) / calcVisibility(NoL, NoV, alpha2) * Fresnel);
 
+    int i;
+    float4 lightColor = 0;
+    for ( i = 0; i < 4; i++ )
+       lightColor += inLightColor[i];
+
     half3 Albedo = (albedoColor.rgb);
     outColor = 0;
-    outColor.rgb = (Albedo * (1 - SpecCol) + SpecCol) * specularColor.rgb * NoL * (0.5 * 2);
+    outColor.rgb = (Albedo * (1 - SpecCol) + SpecCol) * inLightColor[0].rgb * NoL * (0.1 * 2);
 }

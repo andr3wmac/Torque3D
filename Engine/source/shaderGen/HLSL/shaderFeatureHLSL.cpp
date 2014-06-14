@@ -2928,6 +2928,17 @@ void PBSHLSL::processPix( Vector<ShaderComponent*> &componentList,
       specularColor->constSortPos = cspPotentialPrimitive;
    }
 
+   Var *inLightColor  = new Var( "inLightColor", "float4" );
+   inLightColor->uniform = true;
+   inLightColor->arraySize = 4;
+   inLightColor->constSortPos = cspPotentialPrimitive;
+
+   // Get all the light constants.
+   Var *inLightPos  = new Var( "inLightPos", "float4" );
+   inLightPos->uniform = true;
+   inLightPos->arraySize = 3;
+   inLightPos->constSortPos = cspPotentialPrimitive;
+
    Var *albedoColor = (Var*)LangElement::find( "albedoColor" );
    if ( !albedoColor )
    {
@@ -2937,8 +2948,8 @@ void PBSHLSL::processPix( Vector<ShaderComponent*> &componentList,
    }
 
    // Calculate the diffuse shading and specular powers.
-   meta->addStatement( new GenOp( "   computePBSLights( @, @, @, @, @, @ );\r\n", 
-      wsView, wsPosition, wsNormal, albedoColor, specularColor, rtShading ) );
+   meta->addStatement( new GenOp( "   computePBSLights( @, @, @, @, @, @, @, @ );\r\n", 
+      wsView, wsPosition, wsNormal, albedoColor, specularColor, inLightPos, inLightColor, rtShading ) );
 
    // Assign output color.
    meta->addStatement( new GenOp( "   @;\r\n", assignColor( rtShading, Material::None ) ) );
