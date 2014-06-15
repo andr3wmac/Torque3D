@@ -2715,11 +2715,43 @@ void RenderColorBufferHLSL::processPix( Vector<ShaderComponent*> &componentList,
    // create texture var
    Var *diffuseMap = new Var;
    diffuseMap->setType( "sampler2D" );
-   diffuseMap->setName( "diffuseMap" );
+   diffuseMap->setName( "colorBufferMap" );
    diffuseMap->uniform = true;
    diffuseMap->sampler = true;
    diffuseMap->constNum = Var::getTexUnitNum();     // used as texture unit num here
 
    LangElement *statement = new GenOp( "tex2D(@, @)", diffuseMap, inTex );
    output = new GenOp( "   @;\r\n", assignColor( statement, Material::None, NULL, ShaderFeature::RenderTarget1 ) );
+}
+
+ShaderFeature::Resources RenderColorBufferHLSL::getResources( const MaterialFeatureData &fd )
+{
+   Resources res; 
+   res.numTex = 1;
+   res.numTexReg = 1;
+
+   return res;
+}
+
+void RenderColorBufferHLSL::setTexData(   Material::StageData &stageDat,
+                                       const MaterialFeatureData &fd,
+                                       RenderPassData &passData,
+                                       U32 &texIndex )
+{
+   GFXTextureObject *tex = stageDat.getTex( MFT_DiffuseMap );
+   if ( tex )
+      passData.mTexSlot[ texIndex++ ].texObject = tex;
+}
+
+void RenderColorBufferHLSL::processVert( Vector<ShaderComponent*> &componentList, 
+                                       const MaterialFeatureData &fd )
+{
+   MultiLine *meta = new MultiLine;
+   getOutTexCoord(   "texCoord", 
+                     "float2", 
+                     true, 
+                     fd.features[MFT_TexAnim], 
+                     meta, 
+                     componentList );
+   output = meta;
 }
