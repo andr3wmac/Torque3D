@@ -1,0 +1,11 @@
+<TorsionProjectOptions>
+<Address>127.0.0.1</Address>
+<Password>password</Password>
+<Port>6060</Port>
+<LastConfig>Release</LastConfig>
+<Breakpoints/>
+<Bookmarks/>
+<OpenFiles>
+<File ScrollX="0" ScrollY="32" Active="true">core\scripts\client\renderManager.cs</File>
+</OpenFiles>
+</TorsionProjectOptions>
