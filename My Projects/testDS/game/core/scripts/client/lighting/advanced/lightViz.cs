@@ -253,6 +253,7 @@ new ShaderData( AL_ColorBufferShader )
    DXPixelShaderFile  = "shaders/common/lighting/advanced/dbgColorBufferP.hlsl";
 
    samplerNames[0] = "color";
+   samplerNames[1] = "lightInfoBuffer";
    pixVersion = 2.0;
 };
 
@@ -261,6 +262,7 @@ singleton PostEffect( AL_ColorBufferVisualize )
    shader = AL_ColorBufferShader;
    stateBlock = AL_DefaultVisualizeState;
    texture[0] = "#color";
+   texture[1] = "#lightinfo";
    target = "$backBuffer";
    renderPriority = 9999;
 };
