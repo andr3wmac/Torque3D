@@ -43,6 +43,9 @@ public:
    // registered buffer name
    static const String BufferName;
 
+   // andremwac: Deferred Rendering
+   static const String ColorBufferName;
+
    // Generic PrePass Render Instance Type
    static const RenderInstType RIT_PrePass;
 
@@ -93,6 +96,10 @@ protected:
    virtual void _createPrePassMaterial();
 
    bool _lightManagerActivate(bool active);
+
+   // andrewmac: Deferred Shading
+   NamedTexTarget mColorTarget;
+   GFXTexHandle mColorTex;
 };
 
 //------------------------------------------------------------------------------

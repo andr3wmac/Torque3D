@@ -652,3 +652,15 @@ public:
 
 
 #endif // _SHADERGEN_HLSL_SHADERFEATUREHLSL_H_
+
+// andrewmac: Deferred Shading
+class RenderColorBufferHLSL : public ShaderFeatureHLSL
+{
+public:
+   virtual String getName() { return "Deferred Shading Color Buffer"; }
+
+   virtual void processPix( Vector<ShaderComponent*> &componentList, 
+      const MaterialFeatureData &fd );
+   
+   virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget1; }
+};

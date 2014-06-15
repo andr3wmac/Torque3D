@@ -69,6 +69,7 @@ ImplementFeatureType( MFT_InterlacedPrePass, U32(-1), -1, true );
 
 ImplementFeatureType( MFT_ParaboloidVertTransform, MFG_Transform, -1, false );
 ImplementFeatureType( MFT_IsSinglePassParaboloid, U32(-1), -1, false );
+
 ImplementFeatureType( MFT_EyeSpaceDepthOut, MFG_PostLighting, 2.0f, false );
 ImplementFeatureType( MFT_DepthOut, MFG_PostLighting, 3.0f, false );
 ImplementFeatureType( MFT_PrePassConditioner, MFG_PostProcess, 1.0f, false );
@@ -84,3 +85,6 @@ ImplementFeatureType( MFT_ParticleNormal, MFG_PreTransform, 2.0f, false );
 ImplementFeatureType( MFT_ForwardShading, U32(-1), -1, true );
 
 ImplementFeatureType( MFT_ImposterVert, MFG_PreTransform, 1.0, false );
+
+// andrewmac: Deferred Shading
+ImplementFeatureType( MFT_RenderColorBuffer, MFG_PreTexture, 1.0f, false );

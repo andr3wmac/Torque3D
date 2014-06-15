@@ -2702,3 +2702,24 @@ void ImposterVertFeatureHLSL::determineFeature( Material *material,
       outFeatureData->features.addFeature( MFT_ImposterVert );
 }
 
+
+//****************************************************************************
+// Deferred Shading Features
+//****************************************************************************
+
+void RenderColorBufferHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
+{
+   // grab connector texcoord register
+   Var *inTex = getInTexCoord( "texCoord", "float2", true, componentList );
+
+   // create texture var
+   Var *diffuseMap = new Var;
+   diffuseMap->setType( "sampler2D" );
+   diffuseMap->setName( "diffuseMap" );
+   diffuseMap->uniform = true;
+   diffuseMap->sampler = true;
+   diffuseMap->constNum = Var::getTexUnitNum();     // used as texture unit num here
+
+   LangElement *statement = new GenOp( "tex2D(@, @)", diffuseMap, inTex );
+   output = new GenOp( "   @;\r\n", assignColor( statement, Material::None, NULL, ShaderFeature::RenderTarget1 ) );
+}

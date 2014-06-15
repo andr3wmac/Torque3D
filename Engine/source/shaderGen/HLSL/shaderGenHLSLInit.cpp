@@ -93,6 +93,9 @@ void _initShaderGenHLSL( ShaderGen *shaderGen )
    FEATUREMGR->registerFeature( MFT_ForwardShading, new NamedFeatureHLSL( "Forward Shaded Material" ) );
 
    FEATUREMGR->registerFeature( MFT_ImposterVert, new ImposterVertFeatureHLSL );
+
+   // andrewmac: Deferred Shading
+   FEATUREMGR->registerFeature( MFT_RenderColorBuffer, new RenderColorBufferHLSL );
 }
 
 MODULE_BEGIN( ShaderGenHLSL )

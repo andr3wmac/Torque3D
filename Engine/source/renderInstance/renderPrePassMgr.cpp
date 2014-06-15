@@ -44,10 +44,12 @@
 #include "terrain/terrCellMaterial.h"
 #include "math/mathUtils.h"
 #include "math/util/matrixSet.h"
+#include "gfx/gfxTextureManager.h"
 
 const MatInstanceHookType PrePassMatInstanceHook::Type( "PrePass" );
 const String RenderPrePassMgr::BufferName("prepass");
 const RenderInstType RenderPrePassMgr::RIT_PrePass("PrePass");
+const String RenderPrePassMgr::ColorBufferName("color");
 
 IMPLEMENT_CONOBJECT(RenderPrePassMgr);
 
@@ -90,6 +92,7 @@ RenderPrePassMgr::RenderPrePassMgr( bool gatherDepth,
       GFXShader::addGlobalMacro( "TORQUE_LINEAR_DEPTH" );
 
    mNamedTarget.registerWithName( BufferName );
+   mColorTarget.registerWithName( ColorBufferName );
 
    _registerFeatures();
 }
@@ -97,7 +100,7 @@ RenderPrePassMgr::RenderPrePassMgr( bool gatherDepth,
 RenderPrePassMgr::~RenderPrePassMgr()
 {
    GFXShader::removeGlobalMacro( "TORQUE_LINEAR_DEPTH" );
-
+   mColorTarget.release();
    _unregisterFeatures();
    SAFE_DELETE( mPrePassMatInstance );
 }
@@ -119,6 +122,7 @@ bool RenderPrePassMgr::setTargetSize(const Point2I &newTargetSize)
 {
    bool ret = Parent::setTargetSize( newTargetSize );
    mNamedTarget.setViewport( GFX->getViewport() );
+   mColorTarget.setViewport( GFX->getViewport() );
    return ret;
 }
 
@@ -158,6 +162,15 @@ bool RenderPrePassMgr::_updateTargets()
          }
       }
    }
+
+   // andrewmac: Deferred Shading
+   mColorTarget.release();
+   mColorTex.set( mTargetSize.x, mTargetSize.y, mTargetFormat,
+            &GFXDefaultRenderTargetProfile, avar( "%s() - (line %d)", __FUNCTION__, __LINE__ ),
+            1, GFXTextureManager::AA_MATCH_BACKBUFFER );
+   mColorTarget.setTexture(mColorTex);
+   for ( U32 i = 0; i < mTargetChainLength; i++ )
+      mTargetChain[i]->attachTexture(GFXTextureTarget::Color1, mColorTarget.getTexture());
 
    return ret;
 }
@@ -264,6 +277,7 @@ void RenderPrePassMgr::clear()
 
 void RenderPrePassMgr::render( SceneRenderState *state )
 {
+
    PROFILE_SCOPE(RenderPrePassMgr_render);
 
    // Take a look at the SceneRenderState and see if we should skip drawing the pre-pass
@@ -523,6 +537,7 @@ void ProcessedPrePassMaterial::_determineFeatures( U32 stageNum,
    // These are always on for prepass.
    newFeatures.addFeature( MFT_EyeSpaceDepthOut );
    newFeatures.addFeature( MFT_PrePassConditioner );
+   newFeatures.addFeature( MFT_RenderColorBuffer );
 
 #ifndef TORQUE_DEDICATED
 
