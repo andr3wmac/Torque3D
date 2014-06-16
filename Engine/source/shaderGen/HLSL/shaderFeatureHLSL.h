@@ -676,10 +676,10 @@ public:
 };
 
 // andrewmac: Deferred Shading
-class RenderSpecBufferHLSL : public ShaderFeatureHLSL
+class RenderSpecMapBufferHLSL : public ShaderFeatureHLSL
 {
 public:
-   virtual String getName() { return "Deferred Shading Spec Buffer"; }
+   virtual String getName() { return "Deferred Shading SpecMap To Light Buffer"; }
 
    virtual void processPix( Vector<ShaderComponent*> &componentList, 
       const MaterialFeatureData &fd );
@@ -695,4 +695,24 @@ public:
    
    virtual void processVert( Vector<ShaderComponent*> &componentList,
                              const MaterialFeatureData &fd );
+};
+class RenderSpecColorBufferHLSL : public ShaderFeatureHLSL
+{
+public:
+   virtual String getName() { return "Deferred Shading SpecColor To Light Buffer"; }
+
+   virtual void processPix( Vector<ShaderComponent*> &componentList, 
+      const MaterialFeatureData &fd );
+   
+   virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget1; }
+};
+class RenderEmptySpecBufferHLSL : public ShaderFeatureHLSL
+{
+public:
+   virtual String getName() { return "Deferred Shading Black To Light Buffer"; }
+
+   virtual void processPix( Vector<ShaderComponent*> &componentList, 
+      const MaterialFeatureData &fd );
+   
+   virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget1; }
 };

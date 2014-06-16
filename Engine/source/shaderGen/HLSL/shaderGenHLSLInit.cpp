@@ -96,7 +96,9 @@ void _initShaderGenHLSL( ShaderGen *shaderGen )
 
    // andrewmac: Deferred Shading
    FEATUREMGR->registerFeature( MFT_RenderColorBuffer, new RenderColorBufferHLSL );
-   FEATUREMGR->registerFeature( MFT_RenderSpecBuffer, new RenderSpecBufferHLSL );
+   FEATUREMGR->registerFeature( MFT_RenderSpecMapBuffer, new RenderSpecMapBufferHLSL );
+   FEATUREMGR->registerFeature( MFT_RenderSpecColorBuffer, new RenderSpecColorBufferHLSL );
+   FEATUREMGR->registerFeature( MFT_RenderEmptySpecBuffer, new RenderEmptySpecBufferHLSL );
 }
 
 MODULE_BEGIN( ShaderGenHLSL )
