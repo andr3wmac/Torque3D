@@ -130,6 +130,7 @@ new CustomMaterial( AL_PointLightMaterial )
    stateBlock = AL_ConvexLightState;
    
    sampler["prePassBuffer"] = "#prepass";
+   sampler["lightBuffer"] = "#lightinfo";
    sampler["shadowMap"] = "$dynamiclight";
    sampler["cookieTex"] = "$dynamiclightmask";
    
@@ -156,6 +157,7 @@ new CustomMaterial( AL_SpotLightMaterial )
    stateBlock = AL_ConvexLightState;
    
    sampler["prePassBuffer"] = "#prepass";
+   sampler["lightBuffer"] = "#lightinfo";
    sampler["shadowMap"] = "$dynamiclight";
    sampler["cookieTex"] = "$dynamiclightmask";
    

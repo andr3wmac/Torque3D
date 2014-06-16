@@ -538,7 +538,14 @@ void ProcessedPrePassMaterial::_determineFeatures( U32 stageNum,
    newFeatures.addFeature( MFT_EyeSpaceDepthOut );
    newFeatures.addFeature( MFT_PrePassConditioner );
    newFeatures.addFeature( MFT_RenderColorBuffer );
-   newFeatures.addFeature( MFT_RenderSpecBuffer );
+   
+
+   if( mStages[stageNum].getTex( MFT_SpecularMap ) )
+   {
+      newFeatures.addFeature( MFT_RenderSpecMapBuffer );
+   } else {
+      newFeatures.addFeature( MFT_RenderEmptySpecBuffer );
+   }
 
 #ifndef TORQUE_DEDICATED
 

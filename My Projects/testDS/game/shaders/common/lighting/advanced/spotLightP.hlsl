@@ -34,6 +34,7 @@ struct ConvexConnectP
    float4 wsEyeDir : TEXCOORD0;
    float4 ssPos : TEXCOORD1;
    float4 vsEyeDir : TEXCOORD2;
+   float4 color : COLOR0;
 };
 
 #ifdef USE_COOKIE_TEX
@@ -47,7 +48,8 @@ uniform sampler2D cookieMap : register(S2);
 float4 main(   ConvexConnectP IN,
 
                uniform sampler2D prePassBuffer : register(S0),
-               uniform sampler2D shadowMap : register(S1),
+               uniform sampler2D lightBuffer : register(S1),
+               uniform sampler2D shadowMap : register(S2),
 
                uniform float4 rtParams0,
 
@@ -163,5 +165,9 @@ float4 main(   ConvexConnectP IN,
       addToResult = ( 1.0 - shadowed ) * abs(lightMapParams);
    }
 
-   return lightinfoCondition( lightColorOut, Sat_NL_Att, specular, addToResult );
+   float3 specMapColor = tex2D( lightBuffer, uvScene );
+   float specularOut = pow( specular, ceil(8.0 / AL_ConstantSpecularPower)) * 10.0;
+   lightColorOut += specMapColor * specularOut;
+
+   return lightinfoCondition( lightColorOut, Sat_NL_Att, specular, addToResult ); 
 }
