@@ -172,5 +172,6 @@ DeclareFeatureType( MFT_ImposterVert );
 
 // Deferred Shading
 DeclareFeatureType( MFT_RenderColorBuffer );
+DeclareFeatureType( MFT_RenderSpecBuffer );
 
 #endif // _MATERIALFEATURETYPES_H_

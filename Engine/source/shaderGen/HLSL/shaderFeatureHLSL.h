@@ -662,6 +662,28 @@ public:
    virtual void processPix( Vector<ShaderComponent*> &componentList, 
       const MaterialFeatureData &fd );
    
+   virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget2; }
+   virtual Resources getResources( const MaterialFeatureData &fd );
+
+   // Sets textures and texture flags for current pass
+   virtual void setTexData( Material::StageData &stageDat,
+                            const MaterialFeatureData &fd,
+                            RenderPassData &passData,
+                            U32 &texIndex );
+   
+   virtual void processVert( Vector<ShaderComponent*> &componentList,
+                             const MaterialFeatureData &fd );
+};
+
+// andrewmac: Deferred Shading
+class RenderSpecBufferHLSL : public ShaderFeatureHLSL
+{
+public:
+   virtual String getName() { return "Deferred Shading Spec Buffer"; }
+
+   virtual void processPix( Vector<ShaderComponent*> &componentList, 
+      const MaterialFeatureData &fd );
+   
    virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget1; }
    virtual Resources getResources( const MaterialFeatureData &fd );
 

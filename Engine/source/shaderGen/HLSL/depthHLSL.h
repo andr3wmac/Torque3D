@@ -43,7 +43,6 @@ public:
    virtual const char* getOutputVarName() const { return "eyeSpaceDepth"; }
 };
 
-
 class DepthOutHLSL : public ShaderFeatureHLSL
 {
 public:

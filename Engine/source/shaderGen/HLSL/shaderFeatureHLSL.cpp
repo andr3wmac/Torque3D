@@ -2715,13 +2715,13 @@ void RenderColorBufferHLSL::processPix( Vector<ShaderComponent*> &componentList,
    // create texture var
    Var *diffuseMap = new Var;
    diffuseMap->setType( "sampler2D" );
-   diffuseMap->setName( "colorBufferMap" );
+   diffuseMap->setName( "diffuseMap" );
    diffuseMap->uniform = true;
    diffuseMap->sampler = true;
    diffuseMap->constNum = Var::getTexUnitNum();     // used as texture unit num here
 
    LangElement *statement = new GenOp( "tex2D(@, @)", diffuseMap, inTex );
-   output = new GenOp( "   @;\r\n", assignColor( statement, Material::None, NULL, ShaderFeature::RenderTarget1 ) );
+   output = new GenOp( "   @;\r\n", assignColor( statement, Material::None, NULL, ShaderFeature::RenderTarget2 ) );
 }
 
 ShaderFeature::Resources RenderColorBufferHLSL::getResources( const MaterialFeatureData &fd )
@@ -2744,6 +2744,55 @@ void RenderColorBufferHLSL::setTexData(   Material::StageData &stageDat,
 }
 
 void RenderColorBufferHLSL::processVert( Vector<ShaderComponent*> &componentList, 
+                                       const MaterialFeatureData &fd )
+{
+   MultiLine *meta = new MultiLine;
+   getOutTexCoord(   "texCoord", 
+                     "float2", 
+                     true, 
+                     fd.features[MFT_TexAnim], 
+                     meta, 
+                     componentList );
+   output = meta;
+}
+
+void RenderSpecBufferHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
+{
+   // grab connector texcoord register
+   Var *inTex = getInTexCoord( "texCoord", "float2", true, componentList );
+
+   // create texture var
+   Var *diffuseMap = new Var;
+   diffuseMap->setType( "sampler2D" );
+   diffuseMap->setName( "specularMap" );
+   diffuseMap->uniform = true;
+   diffuseMap->sampler = true;
+   diffuseMap->constNum = Var::getTexUnitNum();     // used as texture unit num here
+
+   LangElement *statement = new GenOp( "tex2D(@, @)", diffuseMap, inTex );
+   output = new GenOp( "   @;\r\n", assignColor( statement, Material::None, NULL, ShaderFeature::RenderTarget1 ) );
+}
+
+ShaderFeature::Resources RenderSpecBufferHLSL::getResources( const MaterialFeatureData &fd )
+{
+   Resources res; 
+   res.numTex = 1;
+   res.numTexReg = 1;
+
+   return res;
+}
+
+void RenderSpecBufferHLSL::setTexData(   Material::StageData &stageDat,
+                                       const MaterialFeatureData &fd,
+                                       RenderPassData &passData,
+                                       U32 &texIndex )
+{
+   GFXTextureObject *tex = stageDat.getTex( MFT_DiffuseMap );
+   if ( tex )
+      passData.mTexSlot[ texIndex++ ].texObject = tex;
+}
+
+void RenderSpecBufferHLSL::processVert( Vector<ShaderComponent*> &componentList, 
                                        const MaterialFeatureData &fd )
 {
    MultiLine *meta = new MultiLine;

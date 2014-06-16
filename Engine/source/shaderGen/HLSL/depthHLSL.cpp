@@ -105,7 +105,7 @@ void EyeSpaceDepthOutHLSL::processPix( Vector<ShaderComponent*> &componentList,
    // out the depth to rgba and return.
    if( !fd.features[MFT_PrePassConditioner] )
       meta->addStatement( new GenOp( "   @;\r\n", assignColor( new GenOp( "float4(@.rrr,1)", depthOut ), Material::None ) ) );
-   
+
    output = meta;
 }
 

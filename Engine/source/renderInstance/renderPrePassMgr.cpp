@@ -143,7 +143,6 @@ bool RenderPrePassMgr::_updateTargets()
    // lightmapped geometry in the scene.
    AdvancedLightBinManager *lightBin;
    if (  Sim::findObject( "AL_LightBinMgr", lightBin ) &&
-         lightBin->MRTLightmapsDuringPrePass() &&
          lightBin->isProperlyAdded() )
    {
       // Update the size of the light bin target here. This will call _updateTargets
@@ -161,6 +160,7 @@ bool RenderPrePassMgr::_updateTargets()
             mTargetChain[i]->attachTexture(GFXTextureTarget::Color1, lightInfoTex);
          }
       }
+
    }
 
    // andrewmac: Deferred Shading
@@ -170,7 +170,7 @@ bool RenderPrePassMgr::_updateTargets()
             1, GFXTextureManager::AA_MATCH_BACKBUFFER );
    mColorTarget.setTexture(mColorTex);
    for ( U32 i = 0; i < mTargetChainLength; i++ )
-      mTargetChain[i]->attachTexture(GFXTextureTarget::Color1, mColorTarget.getTexture());
+      mTargetChain[i]->attachTexture(GFXTextureTarget::Color2, mColorTarget.getTexture());
 
    return ret;
 }
@@ -538,6 +538,7 @@ void ProcessedPrePassMaterial::_determineFeatures( U32 stageNum,
    newFeatures.addFeature( MFT_EyeSpaceDepthOut );
    newFeatures.addFeature( MFT_PrePassConditioner );
    newFeatures.addFeature( MFT_RenderColorBuffer );
+   newFeatures.addFeature( MFT_RenderSpecBuffer );
 
 #ifndef TORQUE_DEDICATED
 
