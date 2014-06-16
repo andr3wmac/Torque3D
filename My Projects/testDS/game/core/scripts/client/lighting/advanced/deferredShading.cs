@@ -1,13 +1,15 @@
 // Primary Deferred Shader
-new GFXStateBlockData( AL_DeferredShadingState )
+new GFXStateBlockData( AL_DeferredShadingState : PFX_DefaultStateBlock )
 {
-   zDefined = true;
-   zEnable = false;
-   zWriteEnable = false;
-
+   blendDefined = true;
+   blendEnable = true; 
+   blendSrc = GFXBlendOne;
+   blendDest = GFXBlendOne;
+   
    samplersDefined = true;
-   samplerStates[0] = SamplerClampPoint; // depth    
-   samplerStates[1] = SamplerClampLinear; // viz color lookup
+   samplerStates[0] = SamplerClampLinear;
+   samplerStates[1] = SamplerWrapLinear;
+   samplerStates[2] = SamplerWrapLinear;
 };
 
 new ShaderData( AL_DeferredShader )
