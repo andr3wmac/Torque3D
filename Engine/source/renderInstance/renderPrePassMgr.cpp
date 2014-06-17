@@ -297,7 +297,7 @@ void RenderPrePassMgr::render( SceneRenderState *state )
 
    // Clear all the buffers to white so that the
    // default depth is to the far plane.
-   GFX->clear( GFXClearTarget | GFXClearZBuffer | GFXClearStencil, ColorI::WHITE, 1.0f, 0);
+   GFX->clear( GFXClearTarget | GFXClearZBuffer | GFXClearStencil, ColorI::BLACK, 1.0f, 0);
 
    // Restore transforms
    MatrixSet &matrixSet = getRenderPass()->getMatrixSet();
