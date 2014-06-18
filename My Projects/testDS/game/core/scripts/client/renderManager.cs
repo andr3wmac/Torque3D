@@ -83,7 +83,7 @@ function initRenderManager()
    DiffuseRenderPassManager.addManager( new RenderObjectMgr(EditorBin) { bintype = "Editor"; renderOrder = 1.6; processAddOrder = 1.6; } );
                
    // Resolve format change token last.
-   DiffuseRenderPassManager.addManager( new RenderPassStateBin() { renderOrder = 1.7; stateToken = AL_FormatToken; } );
+   DiffuseRenderPassManager.addManager( new RenderPassStateBin(FormatTokenBin) { renderOrder = 1.7; stateToken = AL_FormatToken; } );
 }
 
 /// This post effect is used to copy data from the non-MSAA back-buffer to the
