@@ -174,6 +174,8 @@ DeclareFeatureType( MFT_ImposterVert );
 DeclareFeatureType( MFT_RenderColorBuffer );
 DeclareFeatureType( MFT_RenderSpecMapBuffer );
 DeclareFeatureType( MFT_RenderSpecColorBuffer );
+DeclareFeatureType( MFT_RenderSpecPower );
+DeclareFeatureType( MFT_RenderSpecStrength );
 DeclareFeatureType( MFT_RenderEmptySpecBuffer );
 
 #endif // _MATERIALFEATURETYPES_H_

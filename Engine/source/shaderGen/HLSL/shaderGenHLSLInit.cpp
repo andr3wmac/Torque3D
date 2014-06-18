@@ -98,6 +98,8 @@ void _initShaderGenHLSL( ShaderGen *shaderGen )
    FEATUREMGR->registerFeature( MFT_RenderColorBuffer, new RenderColorBufferHLSL );
    FEATUREMGR->registerFeature( MFT_RenderSpecMapBuffer, new RenderSpecMapBufferHLSL );
    FEATUREMGR->registerFeature( MFT_RenderSpecColorBuffer, new RenderSpecColorBufferHLSL );
+   FEATUREMGR->registerFeature( MFT_RenderSpecPower, new RenderSpecPowerHLSL );
+   FEATUREMGR->registerFeature( MFT_RenderSpecStrength, new RenderSpecStrengthHLSL );
    FEATUREMGR->registerFeature( MFT_RenderEmptySpecBuffer, new RenderEmptySpecBufferHLSL );
 }
 

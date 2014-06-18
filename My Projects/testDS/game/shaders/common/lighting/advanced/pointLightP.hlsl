@@ -237,7 +237,7 @@ float4 main(   ConvexConnectP IN,
       addToResult = ( 1.0 - shadowed ) * abs(lightMapParams);
    }
 
-   float4 specMapColor = (1.0 - tex2D( lightBuffer, uvScene ));
+   float4 specMapColor = tex2D( lightBuffer, uvScene );
    float specularOut = pow( specular, ceil(specMapColor.a / AL_ConstantSpecularPower));
    lightColorOut += specMapColor.rgb * specularOut;
 

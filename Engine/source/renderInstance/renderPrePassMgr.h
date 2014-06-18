@@ -97,9 +97,16 @@ protected:
 
    bool _lightManagerActivate(bool active);
 
-   // andrewmac: Deferred Shading
-   NamedTexTarget mColorTarget;
-   GFXTexHandle mColorTex;
+   // Deferred Shading
+   GFXVertexBufferHandle<GFXVertexPC>  mClearGBufferVerts;
+   GFXShaderRef                        mClearGBufferShader;
+   GFXStateBlockRef                    mStateblock;
+   NamedTexTarget                      mColorTarget;
+   GFXTexHandle                        mColorTex;
+
+public:
+   void clearBuffers();
+   void _initShaders();
 };
 
 //------------------------------------------------------------------------------
@@ -117,6 +124,7 @@ public:
 
 protected:
    virtual void _determineFeatures( U32 stageNum, MaterialFeatureData &fd, const FeatureSet &features );
+   virtual void _setShaderConstants(SceneRenderState * state, const SceneData &sgData, U32 pass);
 
    const RenderPrePassMgr *mPrePassMgr;
    bool mIsLightmappedGeometry;

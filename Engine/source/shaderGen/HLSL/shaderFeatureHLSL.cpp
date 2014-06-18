@@ -2721,6 +2721,7 @@ void RenderColorBufferHLSL::processPix( Vector<ShaderComponent*> &componentList,
    diffuseMap->constNum = Var::getTexUnitNum();     // used as texture unit num here
 
    LangElement *statement = new GenOp( "tex2D(@, @)", diffuseMap, inTex );
+
    output = new GenOp( "   @;\r\n", assignColor( statement, Material::None, NULL, ShaderFeature::RenderTarget2 ) );
 }
 
@@ -2817,4 +2818,44 @@ void RenderSpecColorBufferHLSL::processPix( Vector<ShaderComponent*> &componentL
 void RenderEmptySpecBufferHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
 {
    output = new GenOp( "   @;\r\n", assignColor( new GenOp( "0.00001" ), Material::None, NULL,  ShaderFeature::RenderTarget1 ) );
+}
+
+// Spec Strength -> Alpha Channel of Color Buffer
+void RenderSpecStrengthHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
+{
+   // Get the out color.
+   Var *color = (Var*) LangElement::find( "col1" );
+   if ( !color )
+   {
+      color = new Var;
+      color->setType( "fragout" );
+      color->setName( "col1" );
+      color->setStructName( "OUT" );
+   }
+
+   Var *specStrength = new Var;
+   specStrength->setType( "float" );
+   specStrength->setName( "specularStrength" );
+
+   output = new GenOp( "   @.a = @;\r\n", assignColor( new GenOp( "float4(@.rgb, @)", color, specStrength ), Material::None, NULL,  ShaderFeature::RenderTarget2 ) );
+}
+
+// Spec Power -> Alpha Channel of Lighting Buffer
+void RenderSpecPowerHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
+{
+   // Get the out color.
+   Var *color = (Var*) LangElement::find( "col1" );
+   if ( !color )
+   {
+      color = new Var;
+      color->setType( "fragout" );
+      color->setName( "col1" );
+      color->setStructName( "OUT" );
+   }
+
+   Var *specPow = new Var;
+   specPow->setType( "float" );
+   specPow->setName( "specularPower" );
+
+   output = new GenOp( "   @.a = @;\r\n", assignColor( new GenOp( "float4(@.rgb, @)", color, specPow ), Material::None, NULL,  ShaderFeature::RenderTarget1 ) );
 }

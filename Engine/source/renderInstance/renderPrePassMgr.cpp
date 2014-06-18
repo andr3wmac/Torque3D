@@ -45,6 +45,9 @@
 #include "math/mathUtils.h"
 #include "math/util/matrixSet.h"
 #include "gfx/gfxTextureManager.h"
+#include "gfx/primBuilder.h"
+#include "gfx/gfxDrawUtil.h"
+#include "materials/shaderData.h"
 
 const MatInstanceHookType PrePassMatInstanceHook::Type( "PrePass" );
 const String RenderPrePassMgr::BufferName("prepass");
@@ -93,6 +96,8 @@ RenderPrePassMgr::RenderPrePassMgr( bool gatherDepth,
 
    mNamedTarget.registerWithName( BufferName );
    mColorTarget.registerWithName( ColorBufferName );
+
+   mClearGBufferShader = NULL;
 
    _registerFeatures();
 }
@@ -171,6 +176,8 @@ bool RenderPrePassMgr::_updateTargets()
    mColorTarget.setTexture(mColorTex);
    for ( U32 i = 0; i < mTargetChainLength; i++ )
       mTargetChain[i]->attachTexture(GFXTextureTarget::Color2, mColorTarget.getTexture());
+
+   _initShaders();
 
    return ret;
 }
@@ -295,9 +302,8 @@ void RenderPrePassMgr::render( SceneRenderState *state )
    // Tell the superclass we're about to render
    const bool isRenderingToTarget = _onPreRender(state);
 
-   // Clear all the buffers to white so that the
-   // default depth is to the far plane.
-   GFX->clear( GFXClearTarget | GFXClearZBuffer | GFXClearStencil, ColorI::BLACK, 1.0f, 0);
+   // Clear all z-buffer, and g-buffer.
+   clearBuffers();
 
    // Restore transforms
    MatrixSet &matrixSet = getRenderPass()->getMatrixSet();
@@ -315,7 +321,7 @@ void RenderPrePassMgr::render( SceneRenderState *state )
 
    // Signal start of pre-pass
    getRenderSignal().trigger( state, this, true );
-   
+
    // First do a loop and render all the terrain... these are 
    // usually the big blockers in a scene and will save us fillrate
    // on the smaller meshes and objects.
@@ -343,7 +349,6 @@ void RenderPrePassMgr::render( SceneRenderState *state )
       while ( mat->setupPass( state, sgData ) )
          GFX->drawPrimitive( ri->prim );
    }
-
 
    // Next render all the meshes.
    itr = mElementList.begin();
@@ -508,6 +513,18 @@ ProcessedPrePassMaterial::ProcessedPrePassMaterial( Material& mat, const RenderP
 
 }
 
+void ProcessedPrePassMaterial::_setShaderConstants(SceneRenderState * state, const SceneData &sgData, U32 pass)
+{
+   PROFILE_SCOPE( ProcessedPrePassMaterial_SetShaderConstants );
+
+   GFXShaderConstBuffer* shaderConsts = _getShaderConstBuffer(pass);
+   ShaderConstHandles* handles = _getShaderConstHandles(pass);
+   U32 stageNum = getStageFromPass(pass);
+
+   shaderConsts->setSafe(handles->mSpecularPowerSC, mMaterial->mSpecularPower[stageNum]);
+   shaderConsts->setSafe(handles->mSpecularStrengthSC, mMaterial->mSpecularStrength[stageNum]);
+}
+
 void ProcessedPrePassMaterial::_determineFeatures( U32 stageNum,
                                                    MaterialFeatureData &fd,
                                                    const FeatureSet &features )
@@ -543,6 +560,10 @@ void ProcessedPrePassMaterial::_determineFeatures( U32 stageNum,
    if( mStages[stageNum].getTex( MFT_SpecularMap ) )
    {
       newFeatures.addFeature( MFT_RenderSpecMapBuffer );
+      //newFeatures.addFeature( MFT_RenderSpecStrength );
+
+      //if( !mStages[stageNum].getTex( MFT_SpecularMap )->mHasTransparency )
+      //   newFeatures.addFeature( MFT_RenderSpecPower );
    } else {
       newFeatures.addFeature( MFT_RenderEmptySpecBuffer );
    }
@@ -873,4 +894,71 @@ Var* LinearEyeDepthConditioner::printMethodHeader( MethodType methodType, const 
    }
 
    return retVal;
+}
+
+void RenderPrePassMgr::_initShaders()
+{
+   if ( mClearGBufferShader ) return;
+
+   // Find ShaderData
+   ShaderData *shaderData;
+   mClearGBufferShader = Sim::findObject( "ClearGBufferShader", shaderData ) ? shaderData->getShader() : NULL;
+   if ( !mClearGBufferShader )
+      Con::errorf( "RenderPrePassMgr::_initShaders - could not find ClearBufferShader" );
+
+   // Create StateBlocks
+   GFXStateBlockDesc desc;
+   desc.setCullMode( GFXCullNone );
+   desc.setBlend( true );
+   desc.setZReadWrite( false, false );
+   desc.samplersDefined = true;
+   desc.samplers[0].addressModeU = GFXAddressWrap;
+   desc.samplers[0].addressModeV = GFXAddressWrap;
+   desc.samplers[0].addressModeW = GFXAddressWrap;
+   desc.samplers[0].magFilter = GFXTextureFilterLinear;
+   desc.samplers[0].minFilter = GFXTextureFilterLinear;
+   desc.samplers[0].mipFilter = GFXTextureFilterLinear;
+   desc.samplers[0].textureColorOp = GFXTOPModulate;
+
+   mStateblock = GFX->createStateBlock( desc );   
+}
+
+void RenderPrePassMgr::clearBuffers()
+{
+   // Clear z-buffer.
+   GFX->clear( GFXClearZBuffer | GFXClearStencil, ColorI::BLACK, 1.0f, 0);
+
+   if ( !mClearGBufferShader )
+      return;
+
+   // Clear the g-buffer.
+   RectI box(-1, -1, 3, 3);
+   GFX->setWorldMatrix( MatrixF::Identity );
+   GFX->setViewMatrix( MatrixF::Identity );
+   GFX->setProjectionMatrix( MatrixF::Identity );
+
+   GFX->setShader(mClearGBufferShader);
+   GFX->setStateBlock(mStateblock);
+
+   Point2F nw(-0.5,-0.5);
+   Point2F ne(0.5,-0.5);
+
+   GFXVertexBufferHandle<GFXVertexPC> verts(GFX, 4, GFXBufferTypeVolatile);
+   verts.lock();
+
+   F32 ulOffset = 0.5f - GFX->getFillConventionOffset();
+   
+   Point2F upperLeft(-1.0, -1.0);
+   Point2F lowerRight(1.0, 1.0);
+
+   verts[0].point.set( upperLeft.x+nw.x+ulOffset, upperLeft.y+nw.y+ulOffset, 0.0f );
+   verts[1].point.set( lowerRight.x+ne.x, upperLeft.y+ne.y+ulOffset, 0.0f );
+   verts[2].point.set( upperLeft.x-ne.x+ulOffset, lowerRight.y-ne.y, 0.0f );
+   verts[3].point.set( lowerRight.x-nw.x, lowerRight.y-nw.y, 0.0f );
+
+   verts.unlock();
+
+   GFX->setVertexBuffer( verts );
+   GFX->drawPrimitive( GFXTriangleStrip, 0, 2 );
+   GFX->setShader(NULL);
 }

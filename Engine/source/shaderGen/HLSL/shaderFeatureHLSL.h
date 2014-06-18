@@ -696,6 +696,7 @@ public:
    virtual void processVert( Vector<ShaderComponent*> &componentList,
                              const MaterialFeatureData &fd );
 };
+
 class RenderSpecColorBufferHLSL : public ShaderFeatureHLSL
 {
 public:
@@ -706,6 +707,29 @@ public:
    
    virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget1; }
 };
+
+class RenderSpecStrengthHLSL : public ShaderFeatureHLSL
+{
+public:
+   virtual String getName() { return "Deferred Shading SpecStrength To Color Buffer"; }
+
+   virtual void processPix( Vector<ShaderComponent*> &componentList, 
+      const MaterialFeatureData &fd );
+   
+   virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget2; }
+};
+
+class RenderSpecPowerHLSL : public ShaderFeatureHLSL
+{
+public:
+   virtual String getName() { return "Deferred Shading SpecPower To Light Buffer"; }
+
+   virtual void processPix( Vector<ShaderComponent*> &componentList, 
+      const MaterialFeatureData &fd );
+   
+   virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget1; }
+};
+
 class RenderEmptySpecBufferHLSL : public ShaderFeatureHLSL
 {
 public:
