@@ -32,6 +32,8 @@ new ShaderData( AL_DeferredShader )
 
 singleton PostEffect( AL_DeferredShading )
 {   
+renderTime = "PFXAfterBin";
+renderBin = "FormatTokenBin";
    shader = AL_DeferredShader;
    stateBlock = AL_DeferredShadingState;
    texture[0] = "#color";
