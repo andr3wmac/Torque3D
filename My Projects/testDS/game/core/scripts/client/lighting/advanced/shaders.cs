@@ -131,6 +131,7 @@ new CustomMaterial( AL_PointLightMaterial )
    
    sampler["prePassBuffer"] = "#prepass";
    sampler["lightBuffer"] = "#lightinfo";
+   sampler["colorBuffer"] = "#color";
    sampler["shadowMap"] = "$dynamiclight";
    sampler["cookieTex"] = "$dynamiclightmask";
    
@@ -158,6 +159,7 @@ new CustomMaterial( AL_SpotLightMaterial )
    
    sampler["prePassBuffer"] = "#prepass";
    sampler["lightBuffer"] = "#lightinfo";
+   sampler["colorBuffer"] = "#color";
    sampler["shadowMap"] = "$dynamiclight";
    sampler["cookieTex"] = "$dynamiclightmask";
    

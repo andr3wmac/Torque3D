@@ -222,7 +222,9 @@
     <ResourceCompile Include="Torque.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\..\Engine\source\lighting\advanced\hlsl\deferredShadingFeaturesHLSL.cpp" />
     <ClCompile Include="..\..\..\..\..\Engine\source\T3D\aiClient.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\source\lighting\advanced\hlsl\deferredShadingFeaturesHLSL.h" />
     <ClInclude Include="..\..\..\..\..\Engine\source\T3D\aiClient.h" />
     <ClCompile Include="..\..\..\..\..\Engine\source\T3D\aiConnection.cpp" />
     <ClInclude Include="..\..\..\..\..\Engine\source\T3D\aiConnection.h" />

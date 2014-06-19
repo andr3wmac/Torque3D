@@ -513,18 +513,6 @@ ProcessedPrePassMaterial::ProcessedPrePassMaterial( Material& mat, const RenderP
 
 }
 
-void ProcessedPrePassMaterial::_setShaderConstants(SceneRenderState * state, const SceneData &sgData, U32 pass)
-{
-   PROFILE_SCOPE( ProcessedPrePassMaterial_SetShaderConstants );
-
-   GFXShaderConstBuffer* shaderConsts = _getShaderConstBuffer(pass);
-   ShaderConstHandles* handles = _getShaderConstHandles(pass);
-   U32 stageNum = getStageFromPass(pass);
-
-   shaderConsts->setSafe(handles->mSpecularPowerSC, mMaterial->mSpecularPower[stageNum]);
-   shaderConsts->setSafe(handles->mSpecularStrengthSC, mMaterial->mSpecularStrength[stageNum]);
-}
-
 void ProcessedPrePassMaterial::_determineFeatures( U32 stageNum,
                                                    MaterialFeatureData &fd,
                                                    const FeatureSet &features )
@@ -554,18 +542,28 @@ void ProcessedPrePassMaterial::_determineFeatures( U32 stageNum,
    // These are always on for prepass.
    newFeatures.addFeature( MFT_EyeSpaceDepthOut );
    newFeatures.addFeature( MFT_PrePassConditioner );
-   newFeatures.addFeature( MFT_RenderColorBuffer );
-   
 
+   // Deferred Shading : Diffuse
+   newFeatures.addFeature( MFT_DeferredDiffuseMap );
+   
+   // Deferred Shading : Specular
    if( mStages[stageNum].getTex( MFT_SpecularMap ) )
    {
-      newFeatures.addFeature( MFT_RenderSpecMapBuffer );
-      //newFeatures.addFeature( MFT_RenderSpecStrength );
+      newFeatures.addFeature( MFT_DeferredSpecMap );
 
-      //if( !mStages[stageNum].getTex( MFT_SpecularMap )->mHasTransparency )
-      //   newFeatures.addFeature( MFT_RenderSpecPower );
+      if( !mStages[stageNum].getTex( MFT_SpecularMap )->mHasTransparency )
+         newFeatures.addFeature( MFT_DeferredSpecPower );
+
+      newFeatures.addFeature( MFT_DeferredSpecStrength );
    } else {
-      newFeatures.addFeature( MFT_RenderEmptySpecBuffer );
+      if ( mMaterial->mPixelSpecular[stageNum] )
+      {
+         newFeatures.addFeature( MFT_DeferredSpecColor );
+         newFeatures.addFeature( MFT_DeferredSpecStrength );
+         newFeatures.addFeature( MFT_DeferredSpecPower );
+      } else {
+         newFeatures.addFeature( MFT_DeferredEmptySpec ); 
+      }
    }
 
 #ifndef TORQUE_DEDICATED
@@ -921,6 +919,11 @@ void RenderPrePassMgr::_initShaders()
    desc.samplers[0].textureColorOp = GFXTOPModulate;
 
    mStateblock = GFX->createStateBlock( desc );   
+
+   // Set up shader constants.
+   mShaderConsts = mClearGBufferShader->allocConstBuffer();
+   mSpecularStrengthSC = mClearGBufferShader->getShaderConstHandle( "$specularStrength" );
+   mSpecularPowerSC = mClearGBufferShader->getShaderConstHandle( "$specularPower" );
 }
 
 void RenderPrePassMgr::clearBuffers()

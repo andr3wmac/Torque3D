@@ -8,12 +8,7 @@ singleton ShaderData( ClearGBufferShader )
 
 // Primary Deferred Shader
 new GFXStateBlockData( AL_DeferredShadingState : PFX_DefaultStateBlock )
-{
-   blendDefined = true;
-   blendEnable = true; 
-   blendSrc = GFXBlendOne;
-   blendDest = GFXBlendOne;
-   
+{  
    samplersDefined = true;
    samplerStates[0] = SamplerClampLinear;
    samplerStates[1] = SamplerWrapLinear;

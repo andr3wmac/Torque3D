@@ -103,6 +103,9 @@ protected:
    GFXStateBlockRef                    mStateblock;
    NamedTexTarget                      mColorTarget;
    GFXTexHandle                        mColorTex;
+   GFXShaderConstBufferRef             mShaderConsts;
+   GFXShaderConstHandle                *mSpecularStrengthSC;  
+   GFXShaderConstHandle                *mSpecularPowerSC;
 
 public:
    void clearBuffers();
@@ -124,7 +127,7 @@ public:
 
 protected:
    virtual void _determineFeatures( U32 stageNum, MaterialFeatureData &fd, const FeatureSet &features );
-   virtual void _setShaderConstants(SceneRenderState * state, const SceneData &sgData, U32 pass);
+   //virtual void _setShaderConstants(SceneRenderState * state, const SceneData &sgData, U32 pass);
 
    const RenderPrePassMgr *mPrePassMgr;
    bool mIsLightmappedGeometry;

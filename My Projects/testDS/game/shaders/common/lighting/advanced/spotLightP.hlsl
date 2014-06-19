@@ -49,7 +49,8 @@ float4 main(   ConvexConnectP IN,
 
                uniform sampler2D prePassBuffer : register(S0),
                uniform sampler2D lightBuffer : register(S1),
-               uniform sampler2D shadowMap : register(S2),
+               uniform sampler2D colorBuffer : register(S2),
+               uniform sampler2D shadowMap : register(S3),
 
                uniform float4 rtParams0,
 
@@ -166,7 +167,9 @@ float4 main(   ConvexConnectP IN,
    }
 
    float4 specMapColor = tex2D( lightBuffer, uvScene );
-   float specularOut = pow( specular, ceil(specMapColor.a / AL_ConstantSpecularPower));
+   float specularStrength = 1.0 - tex2D( colorBuffer, uvScene ).a;
+
+   float specularOut = pow( specular, ceil((1.0 - specMapColor.a) / AL_ConstantSpecularPower)) * specularStrength;
    lightColorOut += specMapColor.rgb * specularOut;
 
    return lightinfoCondition( lightColorOut, Sat_NL_Att, specular, addToResult );

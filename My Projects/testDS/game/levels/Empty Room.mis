@@ -25,10 +25,10 @@ new SimGroup(MissionGroup) {
          levelName = "Empty Room";
    };
    new SkyBox(theSky) {
-      Material = "BlackSkyMat";
+      Material = "DesertSkyMat";
       drawBottom = "0";
       fogBandHeight = "0";
-      position = "0 0 0";
+      position = "0 0 1.14828";
       rotation = "1 0 0 0";
       scale = "1 1 1";
       canSave = "1";
@@ -59,7 +59,7 @@ new SimGroup(MissionGroup) {
       representedInLightmap = "0";
       shadowDarkenColor = "0 0 0 -1";
       includeLightmappedGeometryInShadow = "0";
-      position = "0 0 0";
+      position = "0 0 1.14828";
       rotation = "1 0 0 0";
       scale = "1 1 1";
       canSave = "1";
@@ -111,7 +111,7 @@ new SimGroup(MissionGroup) {
       allowPlayerStep = "1";
       renderNormals = "0";
       forceDetail = "-1";
-      position = "2.65635 -0.945266 0.804726";
+      position = "3.41968 -0.35536 1.13932";
       rotation = "1 0 0 0";
       scale = "1 1 1";
       canSave = "1";
@@ -123,7 +123,7 @@ new SimGroup(MissionGroup) {
       color = "1 0 0.160784 1";
       brightness = "1";
       castShadows = "0";
-      priority = "1";
+      priority = "2";
       animate = "1";
       animationPeriod = "1";
       animationPhase = "1";
@@ -141,7 +141,7 @@ new SimGroup(MissionGroup) {
       representedInLightmap = "0";
       shadowDarkenColor = "0 0 0 -1";
       includeLightmappedGeometryInShadow = "0";
-      position = "6.11377 0.108595 3";
+      position = "6.11377 0.108595 3.04142";
       rotation = "1 0 0 0";
       canSave = "1";
       canSaveDynamicFields = "1";
@@ -149,8 +149,8 @@ new SimGroup(MissionGroup) {
    new PointLight() {
       radius = "5";
       isEnabled = "1";
-      color = "1 0 0.160784 1";
-      brightness = "1";
+      color = "0.0235294 0 1 1";
+      brightness = "5";
       castShadows = "0";
       priority = "1";
       animate = "1";
@@ -170,7 +170,7 @@ new SimGroup(MissionGroup) {
       representedInLightmap = "0";
       shadowDarkenColor = "0 0 0 -1";
       includeLightmappedGeometryInShadow = "0";
-      position = "1 -2.97179 -0.893968";
+      position = "4.04311 -2.97179 1.49242";
       rotation = "1 0 0 0";
       canSave = "1";
       canSaveDynamicFields = "1";

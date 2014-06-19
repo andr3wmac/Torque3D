@@ -86,10 +86,10 @@ ImplementFeatureType( MFT_ForwardShading, U32(-1), -1, true );
 
 ImplementFeatureType( MFT_ImposterVert, MFG_PreTransform, 1.0, false );
 
-// andrewmac: Deferred Shading
-ImplementFeatureType( MFT_RenderColorBuffer, MFG_Texture, 2.0f, false );
-ImplementFeatureType( MFT_RenderSpecMapBuffer, MFG_Texture, 2.0f, false );
-ImplementFeatureType( MFT_RenderSpecPower, MFG_Texture, 2.0f, false );
-ImplementFeatureType( MFT_RenderSpecStrength, MFG_Texture, 2.0f, false );
-ImplementFeatureType( MFT_RenderSpecColorBuffer, MFG_Texture, 2.0f, false );
-ImplementFeatureType( MFT_RenderEmptySpecBuffer, MFG_Texture, 2.0f, false );
+// Deferred Shading
+ImplementFeatureType( MFT_DeferredDiffuseMap, MFG_Texture, 2.0f, false );
+ImplementFeatureType( MFT_DeferredSpecMap, MFG_Texture, 2.0f, false );
+ImplementFeatureType( MFT_DeferredSpecColor, MFG_Texture, 2.0f, false );
+ImplementFeatureType( MFT_DeferredSpecPower, MFG_Texture, 2.0f, false );
+ImplementFeatureType( MFT_DeferredSpecStrength, MFG_Texture, 2.0f, false );
+ImplementFeatureType( MFT_DeferredEmptySpec, MFG_Texture, 2.0f, false );

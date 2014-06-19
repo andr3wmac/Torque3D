@@ -171,11 +171,11 @@ DeclareFeatureType( MFT_ForwardShading );
 DeclareFeatureType( MFT_ImposterVert );
 
 // Deferred Shading
-DeclareFeatureType( MFT_RenderColorBuffer );
-DeclareFeatureType( MFT_RenderSpecMapBuffer );
-DeclareFeatureType( MFT_RenderSpecColorBuffer );
-DeclareFeatureType( MFT_RenderSpecPower );
-DeclareFeatureType( MFT_RenderSpecStrength );
-DeclareFeatureType( MFT_RenderEmptySpecBuffer );
+DeclareFeatureType( MFT_DeferredDiffuseMap );
+DeclareFeatureType( MFT_DeferredSpecMap );
+DeclareFeatureType( MFT_DeferredSpecColor );
+DeclareFeatureType( MFT_DeferredSpecPower );
+DeclareFeatureType( MFT_DeferredSpecStrength );
+DeclareFeatureType( MFT_DeferredEmptySpec );
 
 #endif // _MATERIALFEATURETYPES_H_

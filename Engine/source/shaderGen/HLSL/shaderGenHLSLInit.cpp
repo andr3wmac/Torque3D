@@ -33,6 +33,8 @@
 #include "materials/materialFeatureTypes.h"
 #include "core/module.h"
 
+// Deferred Shading
+#include "lighting/advanced/hlsl/deferredShadingFeaturesHLSL.h"
 
 static ShaderGen::ShaderGenInitDelegate sInitDelegate;
 
@@ -94,13 +96,13 @@ void _initShaderGenHLSL( ShaderGen *shaderGen )
 
    FEATUREMGR->registerFeature( MFT_ImposterVert, new ImposterVertFeatureHLSL );
 
-   // andrewmac: Deferred Shading
-   FEATUREMGR->registerFeature( MFT_RenderColorBuffer, new RenderColorBufferHLSL );
-   FEATUREMGR->registerFeature( MFT_RenderSpecMapBuffer, new RenderSpecMapBufferHLSL );
-   FEATUREMGR->registerFeature( MFT_RenderSpecColorBuffer, new RenderSpecColorBufferHLSL );
-   FEATUREMGR->registerFeature( MFT_RenderSpecPower, new RenderSpecPowerHLSL );
-   FEATUREMGR->registerFeature( MFT_RenderSpecStrength, new RenderSpecStrengthHLSL );
-   FEATUREMGR->registerFeature( MFT_RenderEmptySpecBuffer, new RenderEmptySpecBufferHLSL );
+   // Deferred Shading
+   FEATUREMGR->registerFeature( MFT_DeferredDiffuseMap, new DeferredDiffuseMapHLSL );
+   FEATUREMGR->registerFeature( MFT_DeferredSpecMap, new DeferredSpecMapHLSL );
+   FEATUREMGR->registerFeature( MFT_DeferredSpecColor, new DeferredSpecColorHLSL );
+   FEATUREMGR->registerFeature( MFT_DeferredSpecPower, new DeferredSpecPowerHLSL );
+   FEATUREMGR->registerFeature( MFT_DeferredSpecStrength, new DeferredSpecStrengthHLSL );
+   FEATUREMGR->registerFeature( MFT_DeferredEmptySpec, new DeferredEmptySpecHLSL );
 }
 
 MODULE_BEGIN( ShaderGenHLSL )
