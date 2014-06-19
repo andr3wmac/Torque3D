@@ -552,7 +552,7 @@ void ProcessedPrePassMaterial::_determineFeatures( U32 stageNum,
    newFeatures.addFeature( MFT_DeferredDiffuseColor );
    
    // Deferred Shading : Specular
-   if( mStages[stageNum].getTex( MFT_SpecularMap ) )
+   if( mStages[stageNum].getTex( MFT_SpecularMap ) && !fd.features[MFT_IsEmissive] )
    {
       newFeatures.addFeature( MFT_DeferredSpecMap );
 
@@ -561,7 +561,7 @@ void ProcessedPrePassMaterial::_determineFeatures( U32 stageNum,
 
       newFeatures.addFeature( MFT_DeferredSpecStrength );
    } else {
-      if ( mMaterial->mPixelSpecular[stageNum] )
+      if ( mMaterial->mPixelSpecular[stageNum] && !fd.features[MFT_IsEmissive] )
       {
          newFeatures.addFeature( MFT_DeferredSpecColor );
          newFeatures.addFeature( MFT_DeferredSpecStrength );
@@ -609,10 +609,6 @@ void ProcessedPrePassMaterial::_determineFeatures( U32 stageNum,
                   type.getGroup() == MFG_Transform ||
                   type.getGroup() == MFG_PostTransform )
          newFeatures.addFeature( type );
-
-      // andrewmac: does this help? haha
-      else if ( type == MFT_SkyBox )
-         newFeatures.addFeature( MFT_SkyBox );
    }
 
    // If there is lightmapped geometry support, add the MRT light buffer features

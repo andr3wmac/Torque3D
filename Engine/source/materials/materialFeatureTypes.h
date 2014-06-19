@@ -178,6 +178,5 @@ DeclareFeatureType( MFT_DeferredSpecColor );
 DeclareFeatureType( MFT_DeferredSpecPower );
 DeclareFeatureType( MFT_DeferredSpecStrength );
 DeclareFeatureType( MFT_DeferredEmptySpec );
-DeclareFeatureType( MFT_SkyBox );
 
 #endif // _MATERIALFEATURETYPES_H_

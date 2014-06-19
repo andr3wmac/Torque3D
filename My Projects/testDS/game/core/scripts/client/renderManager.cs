@@ -49,7 +49,7 @@ function initRenderManager()
      
    // We really need to fix the sky to render after all the 
    // meshes... but that causes issues in reflections.
-   // DiffuseRenderPassManager.addManager( new RenderObjectMgr() { bintype = "Sky"; renderOrder = 0.1; processAddOrder = 0.1; } );
+   DiffuseRenderPassManager.addManager( new RenderObjectMgr(SkyBin) { bintype = "Sky"; renderOrder = 0.1; processAddOrder = 0.1; } );
    
    //DiffuseRenderPassManager.addManager( new RenderVistaMgr()               { bintype = "Vista"; renderOrder = 0.15; processAddOrder = 0.15; } );
    

@@ -449,7 +449,6 @@ public:
       return "Reflect Cube";
    }
 
-   virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget1 | ShaderFeature::RenderTarget2; }
 };
 
 

@@ -611,11 +611,6 @@ void SkyBox::_initMaterial()
    features.removeFeature( MFT_Visibility );
    features.removeFeature( MFT_HDROut );
 
-   // andrewmac: Don't know if vert transform is nessicary here,
-   //  trying to force it.
-   features.addFeature( MFT_VertTransform );
-   features.addFeature( MFT_SkyBox );
-
    // Now initialize the material.
    mMatInstance->init( features, getGFXVertexFormat<GFXVertexPNTT>() );
 }

@@ -35,8 +35,8 @@ new ShaderData( AL_DeferredShader )
 
 singleton PostEffect( AL_DeferredShading )
 {
-   renderTime = "PFXBeforeBin";
-   renderBin = "GlowBin";
+   renderTime = "PFXAfterBin";
+   renderBin = "SkyBin";
    shader = AL_DeferredShader;
    stateBlock = AL_DeferredShadingState;
    texture[0] = "#color";

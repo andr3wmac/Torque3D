@@ -94,6 +94,3 @@ ImplementFeatureType( MFT_DeferredSpecMap, MFG_Texture, 2.0f, false );
 ImplementFeatureType( MFT_DeferredSpecColor, MFG_Texture, 2.1f, false );
 ImplementFeatureType( MFT_DeferredSpecPower, MFG_Texture, 2.1f, false );
 ImplementFeatureType( MFT_DeferredSpecStrength, MFG_Texture, 2.1f, false );
-
-// Skybox flag.
-ImplementFeatureType( MFT_SkyBox, MFG_Transform, 0, true );
