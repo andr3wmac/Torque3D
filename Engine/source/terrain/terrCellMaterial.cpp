@@ -328,23 +328,26 @@ bool TerrainCellMaterial::_createPass( Vector<MaterialInfo*> *materials,
    {
       FeatureSet features;
       features.addFeature( MFT_VertTransform );
-      features.addFeature( MFT_TerrainBaseMap );
+
+      // The HDR feature is always added... it will compile out
+      // if HDR is not enabled in the engine.
+      features.addFeature( MFT_HDROut );      
 
       if ( prePassMat )
       {
          features.addFeature( MFT_EyeSpaceDepthOut );
          features.addFeature( MFT_PrePassConditioner );
-
+         features.addFeature( MFT_DeferredTerrainBaseMap );        
+         //TODO:just for testing
+         features.addFeature( MFT_DeferredEmptySpec );
+         
          if ( advancedLightmapSupport )
             features.addFeature( MFT_RenderTarget1_Zero );
       }
       else
       {
+         features.addFeature( MFT_TerrainBaseMap );
          features.addFeature( MFT_RTLighting );
-
-         // The HDR feature is always added... it will compile out
-         // if HDR is not enabled in the engine.
-         features.addFeature( MFT_HDROut );
       }
 
       // Enable lightmaps and fogging if we're in BL.
@@ -366,7 +369,7 @@ bool TerrainCellMaterial::_createPass( Vector<MaterialInfo*> *materials,
 
       // Now add all the material layer features.
 
-      for ( U32 i=0; i < matCount && !baseOnly; i++ )
+     for ( U32 i=0; i < matCount && !baseOnly; i++ )
       {
          TerrainMaterial *mat = (*materials)[i]->mat;
 
@@ -386,7 +389,10 @@ bool TerrainCellMaterial::_createPass( Vector<MaterialInfo*> *materials,
          if (  !(mat->getMacroSize() <= 0 || mat->getMacroDistance() <= 0 || mat->getMacroMap().isEmpty() ) )
 	         features.addFeature( MFT_TerrainMacroMap, featureIndex );
 
-         features.addFeature( MFT_TerrainDetailMap, featureIndex );
+         if(prePassMat)
+             features.addFeature( MFT_DeferredTerrainDetailMap, featureIndex );
+         else
+            features.addFeature( MFT_TerrainDetailMap, featureIndex );
 
          pass->materials.push_back( (*materials)[i] );
          normalMaps.increment();

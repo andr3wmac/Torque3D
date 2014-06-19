@@ -329,6 +329,7 @@ void RenderPrePassMgr::render( SceneRenderState *state )
    // The terrain doesn't need any scene graph data
    // in the the prepass... so just clear it.
    SceneData sgData;
+
    sgData.init( state, SceneData::PrePassBin );
 
    Vector< MainSortElem >::const_iterator itr = mTerrainElementList.begin();
@@ -933,6 +934,8 @@ void RenderPrePassMgr::clearBuffers()
 
    if ( !mClearGBufferShader )
       return;
+
+   GFXTransformSaver saver;
 
    // Clear the g-buffer.
    RectI box(-1, -1, 3, 3);
