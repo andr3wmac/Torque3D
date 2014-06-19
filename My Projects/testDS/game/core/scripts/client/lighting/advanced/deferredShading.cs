@@ -6,6 +6,14 @@ singleton ShaderData( ClearGBufferShader )
    pixVersion = 2.0;   
 };
 
+singleton ShaderData( DeferredColorShader )
+{
+   DXVertexShaderFile = "shaders/common/postFx/postFxV.hlsl";
+   DXPixelShaderFile  = "shaders/common/lighting/advanced/deferredColorShaderP.hlsl";
+
+   pixVersion = 2.0;   
+};
+
 // Primary Deferred Shader
 new GFXStateBlockData( AL_DeferredShadingState : PFX_DefaultStateBlock )
 {  

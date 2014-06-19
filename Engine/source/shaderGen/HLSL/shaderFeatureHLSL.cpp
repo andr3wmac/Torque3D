@@ -1617,6 +1617,10 @@ void VertPositionHLSL::processVert( Vector<ShaderComponent*> &componentList,
    meta->addStatement( new GenOp( "   @ = mul(@, float4(@.xyz,1));\r\n", 
       outPosition, modelview, inPosition ) );
 
+   // SkyBox Hack
+   if ( fd.features[MFT_SkyBox] )
+      meta->addStatement( new GenOp( "   @.w = @.z;\r\n", outPosition, outPosition ) );
+
    output = meta;
 }
 
@@ -1738,7 +1742,7 @@ void ReflectCubeFeatHLSL::processPix(  Vector<ShaderComponent*> &componentList,
           fd.materialFeatures[MFT_NormalMap] )
       {
          // grab connector texcoord register
-         Var *inTex = getInTexCoord( "texCoord", "float2", true, componentList );
+         /*Var *inTex = getInTexCoord( "texCoord", "float2", true, componentList );
       
          // create texture var
          Var *newMap = new Var;
@@ -1757,6 +1761,7 @@ void ReflectCubeFeatHLSL::processPix(  Vector<ShaderComponent*> &componentList,
          glossColor = color;
          
          meta->addStatement( new GenOp( "   @ = tex2D( @, @ );\r\n", colorDecl, newMap, inTex ) );
+         */
       }
    }
    else
@@ -1812,7 +1817,7 @@ void ReflectCubeFeatHLSL::processPix(  Vector<ShaderComponent*> &componentList,
          blendOp = Material::Mul;
    }
 
-   meta->addStatement( new GenOp( "   @;\r\n", assignColor( texCube, blendOp, lerpVal ) ) );         
+   meta->addStatement( new GenOp( "OUT.col = float4(0.0, 0.0, 0.0, 0.0); OUT.col1 = float4(0.0, 0.0, 0.0, 1.0); OUT.col2 = float4(1.0, 0.0, 0.0, 1.0);\r\n" ) );         
    output = meta;
 }
 

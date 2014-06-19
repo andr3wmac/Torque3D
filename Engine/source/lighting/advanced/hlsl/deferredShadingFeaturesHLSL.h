@@ -31,7 +31,7 @@
 class DeferredDiffuseMapHLSL : public ShaderFeatureHLSL
 {
 public:
-   virtual String getName() { return "Deferred Shading Color Buffer"; }
+   virtual String getName() { return "Deferred Shading: Diffuse Map"; }
 
    virtual void processPix( Vector<ShaderComponent*> &componentList, 
       const MaterialFeatureData &fd );
@@ -49,11 +49,22 @@ public:
                              const MaterialFeatureData &fd );
 };
 
+class DeferredDiffuseColorHLSL : public ShaderFeatureHLSL
+{
+public:
+   virtual String getName() { return "Deferred Shading: Diffuse Color"; }
+
+   virtual void processPix( Vector<ShaderComponent*> &componentList, 
+      const MaterialFeatureData &fd );
+   
+   virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget2; }
+};
+
 // Specular Outputs
 class DeferredSpecMapHLSL : public ShaderFeatureHLSL
 {
 public:
-   virtual String getName() { return "Deferred Shading SpecMap To Light Buffer"; }
+   virtual String getName() { return "Deferred Shading: Specular Map"; }
 
    virtual void processPix( Vector<ShaderComponent*> &componentList, 
       const MaterialFeatureData &fd );
@@ -74,7 +85,7 @@ public:
 class DeferredSpecColorHLSL : public ShaderFeatureHLSL
 {
 public:
-   virtual String getName() { return "Deferred Shading SpecColor To Light Buffer"; }
+   virtual String getName() { return "Deferred Shading: Specular Color"; }
 
    virtual void processPix( Vector<ShaderComponent*> &componentList, 
       const MaterialFeatureData &fd );
@@ -85,7 +96,7 @@ public:
 class DeferredSpecStrengthHLSL : public ShaderFeatureHLSL
 {
 public:
-   virtual String getName() { return "Deferred Shading SpecStrength To Color Buffer"; }
+   virtual String getName() { return "Deferred Shading: Specular Strength"; }
 
    virtual void processPix( Vector<ShaderComponent*> &componentList, 
       const MaterialFeatureData &fd );
@@ -96,7 +107,7 @@ public:
 class DeferredSpecPowerHLSL : public ShaderFeatureHLSL
 {
 public:
-   virtual String getName() { return "Deferred Shading SpecPower To Light Buffer"; }
+   virtual String getName() { return "Deferred Shading: Specular Power"; }
 
    virtual void processPix( Vector<ShaderComponent*> &componentList, 
       const MaterialFeatureData &fd );
@@ -107,7 +118,7 @@ public:
 class DeferredEmptySpecHLSL : public ShaderFeatureHLSL
 {
 public:
-   virtual String getName() { return "Deferred Shading Black To Light Buffer"; }
+   virtual String getName() { return "Deferred Shading: Empty Specular"; }
 
    virtual void processPix( Vector<ShaderComponent*> &componentList, 
       const MaterialFeatureData &fd );

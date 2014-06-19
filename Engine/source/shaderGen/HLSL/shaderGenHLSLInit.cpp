@@ -98,6 +98,7 @@ void _initShaderGenHLSL( ShaderGen *shaderGen )
 
    // Deferred Shading
    FEATUREMGR->registerFeature( MFT_DeferredDiffuseMap, new DeferredDiffuseMapHLSL );
+   FEATUREMGR->registerFeature( MFT_DeferredDiffuseColor, new DeferredDiffuseColorHLSL );
    FEATUREMGR->registerFeature( MFT_DeferredSpecMap, new DeferredSpecMapHLSL );
    FEATUREMGR->registerFeature( MFT_DeferredSpecColor, new DeferredSpecColorHLSL );
    FEATUREMGR->registerFeature( MFT_DeferredSpecPower, new DeferredSpecPowerHLSL );

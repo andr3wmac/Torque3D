@@ -445,6 +445,9 @@ void RenderPrePassMgr::render( SceneRenderState *state )
          ri->renderDelegate( ri, state, mPrePassMatInstance );
    }
 
+   // Skybox test.
+   //notifyType( RenderPassManager::RIT_Sky );
+
    // Signal end of pre-pass
    getRenderSignal().trigger( state, this, false );
 
@@ -546,6 +549,7 @@ void ProcessedPrePassMaterial::_determineFeatures( U32 stageNum,
 
    // Deferred Shading : Diffuse
    newFeatures.addFeature( MFT_DeferredDiffuseMap );
+   newFeatures.addFeature( MFT_DeferredDiffuseColor );
    
    // Deferred Shading : Specular
    if( mStages[stageNum].getTex( MFT_SpecularMap ) )
@@ -605,6 +609,10 @@ void ProcessedPrePassMaterial::_determineFeatures( U32 stageNum,
                   type.getGroup() == MFG_Transform ||
                   type.getGroup() == MFG_PostTransform )
          newFeatures.addFeature( type );
+
+      // andrewmac: does this help? haha
+      else if ( type == MFT_SkyBox )
+         newFeatures.addFeature( MFT_SkyBox );
    }
 
    // If there is lightmapped geometry support, add the MRT light buffer features
