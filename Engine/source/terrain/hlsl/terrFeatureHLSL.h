@@ -151,4 +151,31 @@ public:
    virtual String getName() { return "Terrain Additive"; }
 };
 
+//Deferred Shading
+class DeferredTerrainBaseMapFeatHLSL : public TerrainBaseMapFeatHLSL
+{
+public:
+   virtual String getName() { return "Deferred Shading Terrain Color Buffer"; }
+
+   virtual void processPix( Vector<ShaderComponent*> &componentList, 
+      const MaterialFeatureData &fd );
+   
+   virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget2; }
+   virtual Resources getResources( const MaterialFeatureData &fd );
+
+};
+
+class DeferredTerrainDetailMapFeatHLSL : public TerrainDetailMapFeatHLSL
+{
+public:
+   virtual String getName() { return "Deferred Shading Terrain Detail Color Buffer"; }
+
+   virtual void processPix( Vector<ShaderComponent*> &componentList, 
+      const MaterialFeatureData &fd );
+   
+   virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget2; }
+   virtual Resources getResources( const MaterialFeatureData &fd );
+   
+};
+
 #endif // _TERRFEATUREHLSL_H_
