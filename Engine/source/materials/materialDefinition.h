@@ -284,6 +284,7 @@ public:
    String mCubemapName;
    CubemapData* mCubemapData;
    bool mDynamicCubemap;
+   bool mIsSky;
 
    bool mTranslucent;   
    BlendOp mTranslucentBlendOp;

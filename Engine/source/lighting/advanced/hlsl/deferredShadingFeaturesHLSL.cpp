@@ -220,3 +220,16 @@ void DeferredSpecPowerHLSL::processPix( Vector<ShaderComponent*> &componentList,
 
    output = new GenOp( "   @.a = 1.0 - @;\r\n", color, specPower );
 }
+
+//****************************************************************************
+// Vertex position
+//****************************************************************************
+void DeferredSkyHLSL::processVert( Vector<ShaderComponent*> &componentList, 
+                                    const MaterialFeatureData &fd )
+{
+   Var *outPosition = (Var*)LangElement::find( "hpos" );
+   MultiLine *meta = new MultiLine;
+   meta->addStatement( new GenOp( "   @.w = @.z;\r\n", outPosition, outPosition ) );
+
+   output = meta;
+}

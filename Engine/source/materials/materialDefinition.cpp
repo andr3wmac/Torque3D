@@ -194,6 +194,8 @@ Material::Material()
    
    mDirectSoundOcclusion = 1.f;
    mReverbSoundOcclusion = 1.0;
+
+   mIsSky = false;
 }
 
 void Material::initPersistFields()
@@ -385,6 +387,9 @@ void Material::initPersistFields()
 
    addField("dynamicCubemap", TypeBool, Offset(mDynamicCubemap, Material),
       "Enables the material to use the dynamic cubemap from the ShapeBase object its applied to." );
+
+   addField("isSky", TypeBool, Offset(mIsSky, Material),
+       "Sky support. Alters draw dimensions." );
 
    addGroup( "Behavioral" );
 
