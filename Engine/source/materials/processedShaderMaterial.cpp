@@ -285,7 +285,7 @@ void ProcessedShaderMaterial::_determineFeatures(  U32 stageNum,
 {
    PROFILE_SCOPE( ProcessedShaderMaterial_DetermineFeatures );
 
-   const float shaderVersion = GFX->getPixelShaderVersion();
+   const F32 shaderVersion = GFX->getPixelShaderVersion();
    AssertFatal(shaderVersion > 0.0 , "Cannot create a shader material if we don't support shaders");
 
    bool lastStage = stageNum == (mMaxStages-1);
@@ -328,6 +328,7 @@ void ProcessedShaderMaterial::_determineFeatures(  U32 stageNum,
    if (  features.hasFeature( MFT_UseInstancing ) &&
          mMaxStages == 1 &&
          !mMaterial->mGlow[0] &&
+         !mMaterial->mDynamicCubemap &&
          shaderVersion >= 3.0f )
       fd.features.addFeature( MFT_UseInstancing );
 

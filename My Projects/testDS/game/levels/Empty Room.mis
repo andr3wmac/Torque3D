@@ -175,6 +175,23 @@ new SimGroup(MissionGroup) {
       canSave = "1";
       canSaveDynamicFields = "1";
    };
+   new TSStatic() {
+      shapeName = "art/shapes/rocks/boulder.dts";
+      playAmbient = "1";
+      meshCulling = "0";
+      originSort = "0";
+      cubeReflectorDesc = "DefaultCubeDesc";
+      collisionType = "Collision Mesh";
+      decalType = "Collision Mesh";
+      allowPlayerStep = "1";
+      renderNormals = "0";
+      forceDetail = "-1";
+      position = "3.84971 -5.31868 1.70599";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      canSave = "1";
+      canSaveDynamicFields = "1";
+   };
 };
 //--- OBJECT WRITE END ---
 
