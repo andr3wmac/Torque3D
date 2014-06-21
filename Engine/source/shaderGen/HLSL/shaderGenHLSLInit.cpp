@@ -104,6 +104,7 @@ void _initShaderGenHLSL( ShaderGen *shaderGen )
    FEATUREMGR->registerFeature( MFT_DeferredSpecPower, new DeferredSpecPowerHLSL );
    FEATUREMGR->registerFeature( MFT_DeferredSpecStrength, new DeferredSpecStrengthHLSL );
    FEATUREMGR->registerFeature( MFT_DeferredEmptySpec, new DeferredEmptySpecHLSL );
+   FEATUREMGR->registerFeature( MFT_SkyBox, new DeferredSkyHLSL );
 }
 
 MODULE_BEGIN( ShaderGenHLSL )
