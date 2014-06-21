@@ -6,27 +6,22 @@
 <Breakpoints/>
 <Bookmarks/>
 <OpenFiles>
-<File ScrollX="130" ScrollY="46">core\scripts\client\renderManager.cs</File>
-<File ScrollX="0" ScrollY="47">core\scripts\client\lighting\advanced\lightViz.cs</File>
-<File ScrollX="0" ScrollY="82">tools\worldEditor\main.cs</File>
-<File ScrollX="0" ScrollY="0">core\scripts\client\lighting\advanced\deferredShading.cs</File>
+<File ScrollX="0" ScrollY="40">core\scripts\client\renderManager.cs</File>
+<File ScrollX="0" ScrollY="243">core\scripts\client\lighting\advanced\lightViz.cs</File>
+<File ScrollX="0" ScrollY="80">tools\worldEditor\main.cs</File>
+<File ScrollX="0" ScrollY="15" Active="true">core\scripts\client\lighting\advanced\deferredShading.cs</File>
 <File ScrollX="0" ScrollY="50">core\scripts\client\lighting.cs</File>
 <File ScrollX="0" ScrollY="32">core\scripts\client\lighting\advanced\init.cs</File>
-<File ScrollX="0" ScrollY="1552">core\scripts\client\postFx\postFXManager.gui</File>
-<File ScrollX="0" ScrollY="233">core\scripts\client\postFx\postFxManager.gui.settings.cs</File>
-<File ScrollX="0" ScrollY="285">core\scripts\client\postFx\hdr.cs</File>
 <File ScrollX="0" ScrollY="32">core\scripts\client\lighting\basic\init.cs</File>
-<File ScrollX="0" ScrollY="104">core\scripts\client\lighting\advanced\shaders.cs</File>
+<File ScrollX="0" ScrollY="116">core\scripts\client\lighting\advanced\shaders.cs</File>
 <File ScrollX="0" ScrollY="48">core\scripts\client\shaders.cs</File>
 <File ScrollX="0" ScrollY="38">tools\guiEditor\scripts\guiEditor.ed.cs</File>
 <File ScrollX="0" ScrollY="138">art\gui\mainMenuGui.gui</File>
 <File ScrollX="0" ScrollY="122">tools\worldEditor\scripts\editor.ed.cs</File>
 <File ScrollX="0" ScrollY="140">core\scripts\client\canvas.cs</File>
-<File ScrollX="0" ScrollY="157">art\datablocks\lights.cs</File>
-<File ScrollX="0" ScrollY="64">core\scripts\client\lighting\advanced\shadowViz.cs</File>
-<File ScrollX="0" ScrollY="3">core\scripts\client\clouds.cs</File>
-<File ScrollX="0" ScrollY="1223">tools\worldEditor\gui\guiTerrainMaterialDlg.ed.gui</File>
-<File ScrollX="0" ScrollY="1527">tools\materialEditor\gui\guiMaterialPropertiesWindow.ed.gui</File>
-<File ScrollX="0" ScrollY="1360" Active="true">tools\materialEditor\scripts\materialEditor.ed.cs</File>
+<File ScrollX="0" ScrollY="54">core\scripts\client\postFx\glow.cs</File>
+<File ScrollX="0" ScrollY="276">core\scripts\client\postFx\hdr.cs</File>
+<File ScrollX="0" ScrollY="239">core\scripts\client\postFx\ssao.cs</File>
+<File ScrollX="0" ScrollY="379">core\scripts\client\postFx\dof.cs</File>
 </OpenFiles>
 </TorsionProjectOptions>
