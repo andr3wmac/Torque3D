@@ -36,6 +36,7 @@
 #include "scene/sceneRenderState.h"
 #include "gfx/gfxStringEnumTranslate.h"
 #include "gfx/gfxDebugEvent.h"
+#include "gfx/gfxCardProfile.h"
 #include "materials/customMaterialDefinition.h"
 #include "lighting/advanced/advancedLightManager.h"
 #include "lighting/advanced/advancedLightBinManager.h"
@@ -168,9 +169,15 @@ bool RenderPrePassMgr::_updateTargets()
 
    }
 
+   GFXFormat colorFormat = mTargetFormat;
+   bool independentMrtBitDept = GFX->getCardProfiler()->queryProfile("independentMrtBitDept", true);
+   //If independent bit depth on a MRT is supported than just use 8bit channels for the albedo color.
+   if(independentMrtBitDept)
+      colorFormat = GFXFormatR8G8B8A8;
+
    // andrewmac: Deferred Shading
    mColorTarget.release();
-   mColorTex.set( mTargetSize.x, mTargetSize.y, mTargetFormat,
+   mColorTex.set( mTargetSize.x, mTargetSize.y, colorFormat,
             &GFXDefaultRenderTargetProfile, avar( "%s() - (line %d)", __FUNCTION__, __LINE__ ),
             1, GFXTextureManager::AA_MATCH_BACKBUFFER );
    mColorTarget.setTexture(mColorTex);
