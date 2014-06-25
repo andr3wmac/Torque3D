@@ -91,7 +91,7 @@ void GFXD3D9CardProfiler::setupCardCapabilities()
 
    setCapability( "lerpDetailBlend", canDoLERPDetailBlend );
    setCapability( "fourStageDetailBlend", canDoFourStageDetailBlend );
-   setCapability( "independentMrtBitDept", canDoIndependentMrtBitDepth);
+   setCapability( "independentMrtBitDepth", canDoIndependentMrtBitDepth);
 }
 
 bool GFXD3D9CardProfiler::_queryCardCap(const String &query, U32 &foundResult)

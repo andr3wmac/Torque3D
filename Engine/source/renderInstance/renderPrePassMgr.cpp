@@ -170,9 +170,9 @@ bool RenderPrePassMgr::_updateTargets()
    }
 
    GFXFormat colorFormat = mTargetFormat;
-   bool independentMrtBitDept = GFX->getCardProfiler()->queryProfile("independentMrtBitDept", true);
+   bool independentMrtBitDepth = GFX->getCardProfiler()->queryProfile("independentMrtBitDepth", false);
    //If independent bit depth on a MRT is supported than just use 8bit channels for the albedo color.
-   if(independentMrtBitDept)
+   if(independentMrtBitDepth)
       colorFormat = GFXFormatR8G8B8A8;
 
    // andrewmac: Deferred Shading
