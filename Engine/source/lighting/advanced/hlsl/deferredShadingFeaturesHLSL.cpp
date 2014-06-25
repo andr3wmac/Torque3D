@@ -50,9 +50,29 @@ void DeferredDiffuseMapHLSL::processPix( Vector<ShaderComponent*> &componentList
    diffuseMap->sampler = true;
    diffuseMap->constNum = Var::getTexUnitNum();     // used as texture unit num here
 
-   LangElement *statement = new GenOp( "tex2D(@, @)", diffuseMap, inTex );
-
-   output = new GenOp( "   @;\r\n", assignColor( statement, Material::None, NULL, ShaderFeature::RenderTarget2 ) );
+   if (  fd.features[MFT_CubeMap] )
+   {
+      MultiLine * meta = new MultiLine;
+      
+      // create sample color
+      Var *diffColor = new Var;
+      diffColor->setType( "float4" );
+      diffColor->setName( "diffuseColor" );
+      LangElement *colorDecl = new DecOp( diffColor );
+   
+      meta->addStatement(  new GenOp( "   @ = tex2D(@, @);\r\n", 
+                           colorDecl, 
+                           diffuseMap, 
+                           inTex ) );
+      
+      meta->addStatement( new GenOp( "   @;\r\n", assignColor( diffColor, Material::Mul , NULL, ShaderFeature::RenderTarget2 ) ) );
+      output = meta;
+   }
+   else
+   {
+       LangElement *statement = new GenOp( "tex2D(@, @)", diffuseMap, inTex );
+       output = new GenOp( "   @;\r\n", assignColor( statement, Material::None, NULL, ShaderFeature::RenderTarget2 ) );
+   }
 }
 
 ShaderFeature::Resources DeferredDiffuseMapHLSL::getResources( const MaterialFeatureData &fd )

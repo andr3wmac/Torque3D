@@ -49,6 +49,7 @@
 #include "gfx/primBuilder.h"
 #include "gfx/gfxDrawUtil.h"
 #include "materials/shaderData.h"
+#include "gfx/sim/cubemapData.h"
 
 const MatInstanceHookType PrePassMatInstanceHook::Type( "PrePass" );
 const String RenderPrePassMgr::BufferName("prepass");
@@ -650,6 +651,13 @@ void ProcessedPrePassMaterial::_determineFeatures( U32 stageNum,
          newFeatures.addFeature( MFT_RenderTarget1_Zero );
       }
    }
+   
+   // cubemaps only available on stage 0 for now - bramage   
+   if ( stageNum < 1 && 
+         (  (  mMaterial->mCubemapData && mMaterial->mCubemapData->mCubemap ) ||
+               mMaterial->mDynamicCubemap ) )
+   newFeatures.addFeature( MFT_CubeMap );
+
 
 #endif
 

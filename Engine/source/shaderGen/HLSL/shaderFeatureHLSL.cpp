@@ -1732,10 +1732,12 @@ void ReflectCubeFeatHLSL::processPix(  Vector<ShaderComponent*> &componentList,
    // current pass - we need to add one to the current pass to use
    // its alpha channel as a gloss map.
    if( !fd.features[MFT_DiffuseMap] &&
-       !fd.features[MFT_NormalMap] )
+       !fd.features[MFT_NormalMap] &&
+       !fd.features[MFT_DeferredDiffuseMap])
    {
       if( fd.materialFeatures[MFT_DiffuseMap] ||
-          fd.materialFeatures[MFT_NormalMap] )
+          fd.materialFeatures[MFT_NormalMap] ||
+          fd.features[MFT_DeferredDiffuseMap] )
       {
          // grab connector texcoord register
          Var *inTex = getInTexCoord( "texCoord", "float2", true, componentList );
@@ -1761,7 +1763,11 @@ void ReflectCubeFeatHLSL::processPix(  Vector<ShaderComponent*> &componentList,
    }
    else
    {
-      glossColor = (Var*) LangElement::find( "diffuseColor" );
+      if (fd.features[MFT_DeferredDiffuseMap])
+        glossColor = (Var*) LangElement::find( "diffuseMaterialColor" );
+      else
+        glossColor = (Var*) LangElement::find( "diffuseColor" );
+
       if( !glossColor )
          glossColor = (Var*) LangElement::find( "bumpNormal" );
    }
@@ -1811,8 +1817,10 @@ void ReflectCubeFeatHLSL::processPix(  Vector<ShaderComponent*> &componentList,
       else
          blendOp = Material::Mul;
    }
-
-   meta->addStatement( new GenOp( "   @;\r\n", assignColor( texCube, blendOp, lerpVal ) ) );         
+   if (fd.features[MFT_DeferredDiffuseMap])
+       meta->addStatement( new GenOp( "   @;\r\n", assignColor( texCube, blendOp, lerpVal, ShaderFeature::RenderTarget2 ) ) );
+   else
+       meta->addStatement( new GenOp( "   @;\r\n", assignColor( texCube, blendOp, lerpVal ) ) );         
    output = meta;
 }
 
