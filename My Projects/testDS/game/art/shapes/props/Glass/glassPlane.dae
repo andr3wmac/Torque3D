@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+	<asset>
+		<contributor>
+			<authoring_tool>Softimage|XSI Softimage Advanced version 7.5.191.0</authoring_tool>
+		</contributor>
+		<created>2009-11-26T08:16:22Z</created>
+		<modified>2009-11-26T08:16:22Z</modified>
+		<revision>1.4.1</revision>
+		<unit meter="0.1" name="decimetre"></unit>
+		<up_axis>Y_UP</up_axis>
+	</asset>
+	<library_effects>
+		<effect id="Glass_Plane_fx">
+			<profile_COMMON>
+				<technique sid="default">
+					<phong>
+						<emission>
+							<color sid="emission">0.000000 0.000000 0.000000 1.000000</color>
+						</emission>
+						<ambient>
+							<color sid="ambient">0.300000 0.300000 0.300000 0.000000</color>
+						</ambient>
+						<diffuse></diffuse>
+						<specular>
+							<color sid="specular">1.000000 1.000000 1.000000 0.000000</color>
+						</specular>
+						<shininess>
+							<float sid="shininess">50.000000</float>
+						</shininess>
+						<reflective>
+							<color sid="reflective">0.000000 0.000000 0.000000 0.000000</color>
+						</reflective>
+						<reflectivity>
+							<float sid="reflectivity">1.000000</float>
+						</reflectivity>
+						<transparent opaque="RGB_ZERO">
+							<color sid="transparent">0.000000 0.000000 0.000000 0.000000</color>
+						</transparent>
+						<transparency>
+							<float sid="transparency">1.000000</float>
+						</transparency>
+						<index_of_refraction>
+							<float sid="index_of_refraction">1.000000</float>
+						</index_of_refraction>
+					</phong>
+				</technique>
+			</profile_COMMON>
+		</effect>
+	</library_effects>
+	<library_materials>
+		<material id="Glass_Plane">
+			<instance_effect url="#Glass_Plane_fx"></instance_effect>
+			<extra>
+				<technique profile="XSI">
+					<XSI_MaterialInfo></XSI_MaterialInfo>
+				</technique>
+			</extra>
+		</material>
+	</library_materials>
+	<library_geometries>
+		<geometry id="geometries_0">
+			<mesh>
+				<source id="geometries_0-Pos">
+					<float_array id="geometries_0-Pos-array" count="12">
+						-4.000000 0.000000 -4.000000 
+						-4.000000 0.000000 4.000000 
+						4.000000 0.000000 -4.000000 
+						4.000000 0.000000 4.000000
+					</float_array>
+					<technique_common>
+						<accessor source="#geometries_0-Pos-array" count="4" stride="3">
+							<param name="X" type="float"/>
+							<param name="Y" type="float"/>
+							<param name="Z" type="float"/>
+						</accessor>
+					</technique_common>
+				</source>
+				<source id="geometries_0-XSINormal">
+					<float_array id="geometries_0-XSINormal-array" count="12">
+						0.000000 1.000000 0.000000 
+						0.000000 1.000000 0.000000 
+						0.000000 1.000000 0.000000 
+						0.000000 1.000000 0.000000
+					</float_array>
+					<technique_common>
+						<accessor source="#geometries_0-XSINormal-array" count="4" stride="3">
+							<param name="X" type="float"/>
+							<param name="Y" type="float"/>
+							<param name="Z" type="float"/>
+						</accessor>
+					</technique_common>
+				</source>
+				<source id="geometries_0-Texture_Projection">
+					<float_array id="geometries_0-Texture_Projection-array" count="8">
+						0.000000 1.000000 
+						0.000000 0.000000 
+						1.000000 0.000000 
+						1.000000 1.000000
+					</float_array>
+					<technique_common>
+						<accessor source="#geometries_0-Texture_Projection-array" count="4" stride="2">
+							<param name="S" type="float"/>
+							<param name="T" type="float"/>
+						</accessor>
+					</technique_common>
+				</source>
+				<vertices id="geometries_0-Vtx">
+					<input semantic="POSITION" source="#geometries_0-Pos"/>
+				</vertices>
+				<polylist count="1" material="Glass_Plane">
+					<input semantic="VERTEX" source="#geometries_0-Vtx" offset="0"/>
+					<input semantic="NORMAL" source="#geometries_0-XSINormal" offset="1"/>
+					<input semantic="TEXCOORD" source="#geometries_0-Texture_Projection" offset="2"/>
+					<vcount>
+						4
+					</vcount>
+					<p>
+						0 0 0 
+						1 1 1 
+						3 2 2 
+						2 3 3
+					</p>
+				</polylist>
+			</mesh>
+			<extra>
+				<technique profile="XSI">
+					<XSI_VertexList>
+						<xsi_param sid="Attributes"> </xsi_param>
+						<xsi_param sid="nbAttributes">4 </xsi_param>
+						<xsi_param sid="position">0 1 2 3</xsi_param>
+					</XSI_VertexList>
+				</technique>
+			</extra>
+		</geometry>
+	</library_geometries>
+	<library_visual_scenes>
+		<visual_scene id="visual_scenes_0" name="untitled">
+			<node id="grid">
+				<translate sid="translation">0.000000 3.992443 0.000000</translate>
+				<rotate sid="rotation_z">0.000000 0.000000 1.000000 0.000000</rotate>
+				<rotate sid="rotation_y">0.000000 1.000000 0.000000 0.000000</rotate>
+				<rotate sid="rotation_x">1.000000 0.000000 0.000000 90.000000</rotate>
+				<scale sid="scale">1.000000 1.000000 1.000000</scale>
+				<instance_geometry url="#geometries_0">
+					<bind_material>
+						<technique_common>
+							<instance_material symbol="Glass_Plane" target="#Glass_Plane"></instance_material>
+						</technique_common>
+					</bind_material>
+				</instance_geometry>
+				<extra>
+					<technique profile="XSI">
+						<SI_Visibility>
+							<xsi_param sid="visibility">TRUE</xsi_param>
+						</SI_Visibility>
+						<XSI_Transform>
+							<xsi_param sid="rotorder">"XYZ" </xsi_param>
+							<xsi_param sid="siscaling">TRUE</xsi_param>
+							<XSI_Limit>
+								<xsi_param sid="parameter">"posx" </xsi_param>
+								<xsi_param sid="minactive">FALSE </xsi_param>
+								<xsi_param sid="minlimit">0.000000 </xsi_param>
+								<xsi_param sid="maxactive">FALSE </xsi_param>
+								<xsi_param sid="maxlimit">0.000000</xsi_param>
+							</XSI_Limit>
+							<XSI_Limit>
+								<xsi_param sid="parameter">"posy" </xsi_param>
+								<xsi_param sid="minactive">FALSE </xsi_param>
+								<xsi_param sid="minlimit">0.000000 </xsi_param>
+								<xsi_param sid="maxactive">FALSE </xsi_param>
+								<xsi_param sid="maxlimit">0.000000</xsi_param>
+							</XSI_Limit>
+							<XSI_Limit>
+								<xsi_param sid="parameter">"posz" </xsi_param>
+								<xsi_param sid="minactive">FALSE </xsi_param>
+								<xsi_param sid="minlimit">0.000000 </xsi_param>
+								<xsi_param sid="maxactive">FALSE </xsi_param>
+								<xsi_param sid="maxlimit">0.000000</xsi_param>
+							</XSI_Limit>
+							<XSI_Limit>
+								<xsi_param sid="parameter">"rotx" </xsi_param>
+								<xsi_param sid="minactive">FALSE </xsi_param>
+								<xsi_param sid="minlimit">0.000000 </xsi_param>
+								<xsi_param sid="maxactive">FALSE </xsi_param>
+								<xsi_param sid="maxlimit">0.000000</xsi_param>
+							</XSI_Limit>
+							<XSI_Limit>
+								<xsi_param sid="parameter">"roty" </xsi_param>
+								<xsi_param sid="minactive">FALSE </xsi_param>
+								<xsi_param sid="minlimit">0.000000 </xsi_param>
+								<xsi_param sid="maxactive">FALSE </xsi_param>
+								<xsi_param sid="maxlimit">0.000000</xsi_param>
+							</XSI_Limit>
+							<XSI_Limit>
+								<xsi_param sid="parameter">"rotz" </xsi_param>
+								<xsi_param sid="minactive">FALSE </xsi_param>
+								<xsi_param sid="minlimit">0.000000 </xsi_param>
+								<xsi_param sid="maxactive">FALSE </xsi_param>
+								<xsi_param sid="maxlimit">0.000000</xsi_param>
+							</XSI_Limit>
+						</XSI_Transform>
+						<SI_GlobalMaterial>
+							<xsi_param sid="reference">"Glass_Plane" </xsi_param>
+							<xsi_param sid="propagation">"NODE"</xsi_param>
+						</SI_GlobalMaterial>
+					</technique>
+				</extra>
+			</node>
+		</visual_scene>
+	</library_visual_scenes>
+	<scene>
+		<instance_visual_scene url="#visual_scenes_0"/>
+	</scene>
+	<extra>
+		<technique profile="XSI">
+			<SI_Scene>
+				<xsi_param sid="timing">"SECONDS" </xsi_param>
+				<xsi_param sid="start">1.000000 </xsi_param>
+				<xsi_param sid="end">100.000000 </xsi_param>
+				<xsi_param sid="frameRate">29.970030</xsi_param>
+			</SI_Scene>
+			<SI_Angle>
+				<xsi_param sid="type">0</xsi_param>
+			</SI_Angle>
+			<SI_Ambience>
+				<xsi_param sid="red">0.200000 </xsi_param>
+				<xsi_param sid="green">0.200000 </xsi_param>
+				<xsi_param sid="blue">0.200000</xsi_param>
+			</SI_Ambience>
+			<SI_CoordinateSystem>
+				<xsi_param sid="handRotation">1 </xsi_param>
+				<xsi_param sid="uAxis">0 </xsi_param>
+				<xsi_param sid="vAxis">1 </xsi_param>
+				<xsi_param sid="xAxis">0 </xsi_param>
+				<xsi_param sid="yAxis">2 </xsi_param>
+				<xsi_param sid="zAxis">5</xsi_param>
+			</SI_CoordinateSystem>
+			<XSI_PolygonList>
+				<xsi_param sid="Attributes"> </xsi_param>
+				<xsi_param sid="Material">"" </xsi_param>
+				<xsi_param sid="NbPolynodes">0 </xsi_param>
+				<xsi_param sid="NbPolygons">0 </xsi_param>
+				<xsi_param sid="polygoneNodeCounts">4 </xsi_param>
+				<xsi_param sid="vertexIndices">0 1 3 2 </xsi_param>
+				<xsi_param sid="XSINormal">0 1 2 3 </xsi_param>
+				<xsi_param sid="Texture_Projection">0 1 2 3</xsi_param>
+			</XSI_PolygonList>
+		</technique>
+	</extra>
+</COLLADA>

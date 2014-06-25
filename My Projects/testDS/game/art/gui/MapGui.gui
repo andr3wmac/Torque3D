@@ -1,0 +1,341 @@
+//--- OBJECT WRITE BEGIN ---
+%guiContent = new GuiChunkedBitmapCtrl(MapGui) {
+   bitmap = "art/gui/background.png";
+   useVariable = "0";
+   tile = "0";
+   position = "0 0";
+   extent = "1024 768";
+   minExtent = "8 2";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   profile = "GuiDefaultProfile";
+   visible = "1";
+   active = "1";
+   tooltipProfile = "GuiToolTipProfile";
+   hovertime = "1000";
+   isContainer = "1";
+   canSave = "1";
+   canSaveDynamicFields = "1";
+      selectedIndex = "0";
+      selectedLevel = "levels/ChinaTown_Day.mis";
+      selectedLevelName = "ChinaTown - Day";
+
+   new GuiBitmapCtrl() {
+      bitmap = "art/gui/Torque3D.png";
+      wrap = "0";
+      position = "30 18";
+      extent = "221 52";
+      minExtent = "8 2";
+      horizSizing = "right";
+      vertSizing = "bottom";
+      profile = "GuiDefaultProfile";
+      visible = "1";
+      active = "1";
+      tooltipProfile = "GuiToolTipProfile";
+      hovertime = "1000";
+      isContainer = "0";
+      canSave = "1";
+      canSaveDynamicFields = "0";
+   };
+   new GuiBitmapCtrl() {
+      bitmap = "art/gui/Chinatown.png";
+      wrap = "0";
+      position = "280 26";
+      extent = "144 48";
+      minExtent = "8 2";
+      horizSizing = "right";
+      vertSizing = "bottom";
+      profile = "GuiDefaultProfile";
+      visible = "1";
+      active = "1";
+      tooltipProfile = "GuiToolTipProfile";
+      hovertime = "1000";
+      isContainer = "0";
+      canSave = "1";
+      canSaveDynamicFields = "0";
+   };
+   new GuiScriptNotifyCtrl(MapGuiNotifyControl) {
+      onChildAdded = "0";
+      onChildRemoved = "0";
+      onChildResized = "0";
+      onParentResized = "1";
+      onResize = "0";
+      onLoseFirstResponder = "1";
+      onGainFirstResponder = "1";
+      position = "119 91";
+      extent = "634 484";
+      minExtent = "8 2";
+      horizSizing = "right";
+      vertSizing = "bottom";
+      profile = "GuiDefaultProfile";
+      visible = "1";
+      active = "1";
+      tooltipProfile = "GuiToolTipProfile";
+      hovertime = "1000";
+      isContainer = "1";
+      canSave = "1";
+      canSaveDynamicFields = "0";
+
+      new GuiBitmapCtrl() {
+         bitmap = "art/gui/Map/MapWindow.png";
+         wrap = "1";
+         position = "0 0";
+         extent = "631 475";
+         minExtent = "8 2";
+         horizSizing = "relative";
+         vertSizing = "relative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapCtrl() {
+         bitmap = "art/gui/Map/Text_Map.png";
+         wrap = "1";
+         position = "83 22";
+         extent = "53 25";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapCtrl(SelectedLevelBitmapCtrl) {
+         bitmap = "levels/ChinaTown_Day_preview";
+         wrap = "0";
+         position = "41 68";
+         extent = "548 310";
+         minExtent = "8 2";
+         horizSizing = "relative";
+         vertSizing = "relative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapButtonTextCtrl(SelectRight) {
+         bitmap = "art/gui/Map/Arrow";
+         bitmapMode = "Centered";
+         autoFitExtents = "1";
+         useModifiers = "0";
+         useStates = "1";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         useMouseEvents = "0";
+         position = "591 199";
+         extent = "29 48";
+         minExtent = "8 2";
+         horizSizing = "left";
+         vertSizing = "top";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         command = "MapGui.setImage(MapGui.selectedIndex + 1 );";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapCtrl() {
+         bitmap = "art/gui/Map/MapLabel.png";
+         wrap = "1";
+         position = "196 392";
+         extent = "34 11";
+         minExtent = "8 2";
+         horizSizing = "left";
+         vertSizing = "top";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiTextCtrl(MapNameControl) {
+         text = "ChinaTown - Day";
+         maxLength = "1024";
+         margin = "0 0 0 0";
+         padding = "0 0 0 0";
+         anchorTop = "1";
+         anchorBottom = "0";
+         anchorLeft = "1";
+         anchorRight = "0";
+         position = "394 384";
+         extent = "216 26";
+         minExtent = "8 2";
+         horizSizing = "left";
+         vertSizing = "top";
+         profile = "ChinatownHostTextProfile";
+         visible = "1";
+         active = "1";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "1";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapButtonTextCtrl(SelectLeft) {
+         bitmap = "art/gui/Map/ArrowL";
+         bitmapMode = "Centered";
+         autoFitExtents = "1";
+         useModifiers = "0";
+         useStates = "1";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         useMouseEvents = "0";
+         position = "10 199";
+         extent = "29 48";
+         minExtent = "8 2";
+         horizSizing = "right";
+         vertSizing = "top";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         command = "MapGui.setImage(MapGui.selectedIndex - 1 );";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapButtonTextCtrl() {
+         bitmap = "art/gui/Back";
+         bitmapMode = "Centered";
+         autoFitExtents = "1";
+         useModifiers = "0";
+         useStates = "1";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         useMouseEvents = "0";
+         position = "-23 422";
+         extent = "220 51";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "top";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         command = "Canvas.setContent( HostGui );";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapButtonTextCtrl() {
+         bitmap = "art/gui/Accept";
+         bitmapMode = "Centered";
+         autoFitExtents = "1";
+         useModifiers = "0";
+         useStates = "1";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         useMouseEvents = "0";
+         position = "161 415";
+         extent = "205 65";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "top";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         command = "MapGui.acceptClicked();";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+   };
+};
+//--- OBJECT WRITE END ---
+
+function MapGui::setImage( %this, %index )
+{
+   if (%index < 0)
+      %index = $LevelsArray::levelCount - 1;
+   else if (%index >= $LevelsArray::levelCount) 
+      %index = 0; 
+   %levelName = fileBase($LevelsArray[%index]);
+
+   %LevelInfoObject = getLevelInfo($LevelsArray[%index]);
+
+   if (%LevelInfoObject != 0)
+   {
+      if(%LevelInfoObject.LevelName !$= "")
+         %levelName = %LevelInfoObject.LevelName;
+      else if(%LevelInfoObject.name !$= "")
+         %levelName = %LevelInfoObject.name;
+         
+      %this.selectedLevelName = %levelName;
+         
+      MapNameControl.text = %levelName;
+      
+      %LevelInfoObject.delete();
+   }
+      %this.selectedLevel = $LevelsArray[%index];
+   
+      setPreviewImage($LevelsArray[%index], SelectedLevelBitmapCtrl);
+      
+      %this.selectedIndex = %index;
+}
+
+function setPreviewImage( %mission, %bitmapControl )
+{
+      // Find the preview image
+      %levelPreview = filePath(%mission) @ "/" @ fileBase(%mission) @ "_preview";
+      
+      
+      // Test against all of the different image formats
+      // This should probably be moved into an engine function
+      if (isFile(%levelPreview @ ".png") ||
+          isFile(%levelPreview @ ".jpg") ||
+          isFile(%levelPreview @ ".bmp") ||
+          isFile(%levelPreview @ ".gif") ||
+          isFile(%levelPreview @ ".jng") ||
+          isFile(%levelPreview @ ".mng") ||
+          isFile(%levelPreview @ ".tga"))
+      {
+         %bitmapControl.setBitmap(%levelPreview);
+      }
+      else
+         %bitmapControl.setBitmap("core/art/gui/images/no-preview");
+}
+
+function MapGui::acceptClicked(%this)
+{
+   if ( !%this.isField("selectedIndex" ) )
+      %this.selectedIndex = 0;
+   
+    $Server::MissionFile = $LevelsArray[%this.selectedIndex]; 
+    Canvas.setContent( HostGui );
+}
+
+function MapGui::onWake( %this )
+{
+   %this.setImage(0);
+   %this.selectedIndex = 0;
+   
+}
+
+function MapGuiNotifyControl::onParentResized( %this )
+{
+   repositionControl(%this);
+}

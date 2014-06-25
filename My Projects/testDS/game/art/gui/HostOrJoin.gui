@@ -1,0 +1,156 @@
+//--- OBJECT WRITE BEGIN ---
+%guiContent = new GuiChunkedBitmapCtrl(HostOrJoinGui) {
+   bitmap = "art/gui/background.png";
+   useVariable = "0";
+   tile = "0";
+   position = "0 0";
+   extent = "1920 1080";
+   minExtent = "8 2";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   profile = "GuiDefaultProfile";
+   visible = "1";
+   active = "1";
+   tooltipProfile = "GuiToolTipProfile";
+   hovertime = "1000";
+   isContainer = "1";
+   canSave = "1";
+   canSaveDynamicFields = "1";
+
+   new GuiBitmapCtrl() {
+      bitmap = "art/gui/Torque3D.png";
+      wrap = "0";
+      position = "30 18";
+      extent = "221 52";
+      minExtent = "8 2";
+      horizSizing = "right";
+      vertSizing = "bottom";
+      profile = "GuiDefaultProfile";
+      visible = "1";
+      active = "1";
+      tooltipProfile = "GuiToolTipProfile";
+      hovertime = "1000";
+      isContainer = "0";
+      canSave = "1";
+      canSaveDynamicFields = "0";
+   };
+   new GuiBitmapCtrl() {
+      bitmap = "art/gui/Chinatown.png";
+      wrap = "0";
+      position = "280 26";
+      extent = "144 48";
+      minExtent = "8 2";
+      horizSizing = "right";
+      vertSizing = "bottom";
+      profile = "GuiDefaultProfile";
+      visible = "1";
+      active = "1";
+      tooltipProfile = "GuiToolTipProfile";
+      hovertime = "1000";
+      isContainer = "0";
+      canSave = "1";
+      canSaveDynamicFields = "0";
+   };
+   new GuiScriptNotifyCtrl(HostOrJoinNotifyControl) {
+      onChildAdded = "0";
+      onChildRemoved = "0";
+      onChildResized = "0";
+      onParentResized = "1";
+      onResize = "0";
+      onLoseFirstResponder = "1";
+      onGainFirstResponder = "1";
+      position = "119 91";
+      extent = "539 264";
+      minExtent = "8 2";
+      horizSizing = "windowRelative";
+      vertSizing = "windowRelative";
+      profile = "GuiDefaultProfile";
+      visible = "1";
+      active = "1";
+      tooltipProfile = "GuiToolTipProfile";
+      hovertime = "1000";
+      isContainer = "1";
+      canSave = "1";
+      canSaveDynamicFields = "0";
+
+      new GuiBitmapButtonTextCtrl() {
+         bitmap = "art/gui/HostOrJoin/Host";
+         bitmapMode = "Stretched";
+         autoFitExtents = "1";
+         useModifiers = "0";
+         useStates = "1";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         useMouseEvents = "0";
+         position = "9 3";
+         extent = "410 92";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         command = "Canvas.setContent( HostGui );";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapButtonTextCtrl() {
+         bitmap = "art/gui/HostOrJoin/Join";
+         bitmapMode = "Stretched";
+         autoFitExtents = "1";
+         useModifiers = "0";
+         useStates = "1";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         useMouseEvents = "0";
+         position = "9 80";
+         extent = "410 92";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         command = "Canvas.setContent( JoinGameGui );";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapButtonTextCtrl() {
+         bitmap = "art/gui/HostOrJoin/Back";
+         bitmapMode = "Stretched";
+         autoFitExtents = "1";
+         useModifiers = "0";
+         useStates = "1";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         useMouseEvents = "0";
+         position = "9 155";
+         extent = "410 92";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         command = "Canvas.setContent( MainMenuGui );";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+   };
+};
+//--- OBJECT WRITE END ---
+
+
+function HostOrJoinNotifyControl::onParentResized(%this)
+{
+   repositionControl(%this);
+}

@@ -1,0 +1,39 @@
+//--- OBJECT WRITE BEGIN ---
+$ThisPrefab = new SimGroup() {
+   canSave = "1";
+   canSaveDynamicFields = "1";
+
+   new Trigger() {
+      polyhedron = "-0.5000000 0.5000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+      dataBlock = "TeleporterTrigger";
+      position = "0.00819969 -0.00820255 0.0455637";
+      rotation = "1 0 0 0";
+      scale = "1.11587 1.1159 2.30297";
+      canSave = "1";
+      canSaveDynamicFields = "1";
+         EntranceEffect = "entranceEffect";
+         exit = "RoofTeleporter";
+         exiteffect = "entranceEffect";
+         exitVelocityScale = "0";
+         oneSided = "0";
+         reorientPlayer = "0";
+         teleporterCooldown = "0";
+   };
+   new TSStatic() {
+      shapeName = "art/shapes/teleporter/teleporter.DAE";
+      playAmbient = "1";
+      meshCulling = "0";
+      originSort = "0";
+      collisionType = "Collision Mesh";
+      decalType = "Collision Mesh";
+      allowPlayerStep = "1";
+      renderNormals = "0";
+      forceDetail = "-1";
+      position = "-0.00819969 0.00820255 -0.0455636";
+      rotation = "0.481554 -0.864162 -0.146049 0.611656";
+      scale = "1 1 1";
+      canSave = "1";
+      canSaveDynamicFields = "1";
+   };
+};
+//--- OBJECT WRITE END ---

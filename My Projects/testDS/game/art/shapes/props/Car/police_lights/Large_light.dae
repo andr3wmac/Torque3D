@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+	<asset>
+		<contributor>
+			<authoring_tool>Softimage|XSI Advanced version 7.01.698.0</authoring_tool>
+		</contributor>
+		<created>2009-11-23T07:39:29Z</created>
+		<modified>2009-11-23T07:39:29Z</modified>
+		<revision>1.4.1</revision>
+		<unit meter="0.1" name="decimetre"></unit>
+		<up_axis>Y_UP</up_axis>
+	</asset>
+	<library_effects>
+		<effect id="Scene_Material_fx" name="Scene_Material_fx">
+			<profile_COMMON>
+				<technique sid="default">
+					<phong>
+						<emission>
+							<color sid="emission">0.000000 0.000000 0.000000 1.000000</color>
+						</emission>
+						<ambient>
+							<color sid="ambient">0.300000 0.300000 0.300000 0.000000</color>
+						</ambient>
+						<diffuse>
+							<color sid="diffuse">0.700000 0.700000 0.700000 0.000000</color>
+						</diffuse>
+						<specular>
+							<color sid="specular">1.000000 1.000000 1.000000 0.000000</color>
+						</specular>
+						<shininess>
+							<float sid="shininess">50.000000</float>
+						</shininess>
+						<reflective>
+							<color sid="reflective">0.000000 0.000000 0.000000 0.000000</color>
+						</reflective>
+						<reflectivity>
+							<float sid="reflectivity">1.000000</float>
+						</reflectivity>
+						<transparent opaque="RGB_ZERO">
+							<color sid="transparent">0.000000 0.000000 0.000000 0.000000</color>
+						</transparent>
+						<transparency>
+							<float sid="transparency">1.000000</float>
+						</transparency>
+						<index_of_refraction>
+							<float sid="index_of_refraction">1.000000</float>
+						</index_of_refraction>
+					</phong>
+				</technique>
+			</profile_COMMON>
+		</effect>
+		<effect id="CarLights_fx" name="CarLights_fx">
+			<profile_COMMON>
+				<technique sid="default">
+					<phong>
+						<emission>
+							<color sid="emission">0.000000 0.000000 0.000000 1.000000</color>
+						</emission>
+						<ambient></ambient>
+						<diffuse></diffuse>
+						<specular></specular>
+						<shininess>
+							<float sid="shininess">50.000000</float>
+						</shininess>
+						<reflective>
+							<color sid="reflective">0.000000 0.000000 0.000000 0.000000</color>
+						</reflective>
+						<reflectivity>
+							<float sid="reflectivity">1.000000</float>
+						</reflectivity>
+						<transparent opaque="RGB_ZERO">
+							<color sid="transparent">0.000000 0.000000 0.000000 0.000000</color>
+						</transparent>
+						<transparency>
+							<float sid="transparency">1.000000</float>
+						</transparency>
+						<index_of_refraction>
+							<float sid="index_of_refraction">1.000000</float>
+						</index_of_refraction>
+					</phong>
+				</technique>
+			</profile_COMMON>
+		</effect>
+	</library_effects>
+	<library_materials>
+		<material id="Scene_Material" name="Scene_Material">
+			<instance_effect url="#Scene_Material_fx"></instance_effect>
+			<extra>
+				<technique profile="XSI">
+					<XSI_MaterialInfo></XSI_MaterialInfo>
+				</technique>
+			</extra>
+		</material>
+		<material id="CarLights" name="CarLights">
+			<instance_effect url="#CarLights_fx"></instance_effect>
+			<extra>
+				<technique profile="XSI">
+					<XSI_MaterialInfo></XSI_MaterialInfo>
+				</technique>
+			</extra>
+		</material>
+	</library_materials>
+	<library_geometries>
+		<geometry id="geometries_0" name="geometries_0">
+			<mesh>
+				<source id="geometries_0-Pos">
+					<float_array id="geometries_0-Pos-array" count="48">
+						-3.823993 -4.000000 -3.539127 
+						3.823993 -4.000000 -3.539127 
+						-3.151659 -2.982796 -1.427781 
+						3.151659 -2.982796 -1.427781 
+						-3.823993 -4.000000 3.539127 
+						3.823993 -4.000000 3.539127 
+						-3.151659 -2.982796 1.427781 
+						3.151659 -2.982796 1.427781 
+						4.023856 -3.639053 4.023856 
+						-4.023856 -3.639053 4.023856 
+						4.023856 -3.639053 -4.023856 
+						-4.023856 -3.639053 -4.023856 
+						3.729692 -3.215318 -3.159664 
+						-3.729692 -3.215318 -3.159664 
+						-3.729692 -3.215318 3.159664 
+						3.729692 -3.215318 3.159664
+					</float_array>
+					<technique_common>
+						<accessor source="#geometries_0-Pos-array" count="16" stride="3">
+							<param name="X" type="float"/>
+							<param name="Y" type="float"/>
+							<param name="Z" type="float"/>
+						</accessor>
+					</technique_common>
+				</source>
+				<source id="geometries_0-XSINormal">
+					<float_array id="geometries_0-XSINormal-array" count="168">
+						0.000000 -0.949226 -0.314595 
+						-0.126697 0.990912 -0.045174 
+						0.126697 0.990912 -0.045174 
+						0.000000 -0.949226 -0.314595 
+						0.000000 -0.949226 -0.314595 
+						0.000000 -0.949226 -0.314595 
+						0.000000 -0.949226 0.314595 
+						0.000000 -0.949226 0.314595 
+						-0.874838 -0.484415 0.000000 
+						-0.874838 -0.484415 0.000000 
+						-0.126697 0.990912 0.045174 
+						-0.126697 0.990912 -0.045174 
+						0.874838 -0.484415 0.000000 
+						0.126697 0.990912 -0.045174 
+						0.126697 0.990912 0.045174 
+						0.874838 -0.484415 0.000000 
+						-0.126697 0.990912 -0.045174 
+						-0.126697 0.990912 0.045174 
+						0.126697 0.990912 0.045174 
+						0.126697 0.990912 -0.045174 
+						0.000000 -0.949226 0.314595 
+						0.000000 -0.949226 0.314595 
+						0.126697 0.990912 0.045174 
+						-0.126697 0.990912 0.045174 
+						0.874838 -0.484415 0.000000 
+						0.000000 -0.802060 0.597243 
+						-0.874838 -0.484415 0.000000 
+						0.000000 -0.802060 0.597243 
+						0.472378 0.844255 0.253166 
+						-0.472378 0.844255 0.253166 
+						0.000000 -0.802060 -0.597243 
+						0.874838 -0.484415 0.000000 
+						0.472378 0.844255 -0.253166 
+						0.472378 0.844255 0.253166 
+						0.000000 -0.802060 -0.597243 
+						-0.874838 -0.484415 0.000000 
+						-0.472378 0.844255 0.253166 
+						-0.472378 0.844255 -0.253166 
+						-0.472378 0.844255 -0.253166 
+						0.472378 0.844255 -0.253166 
+						0.328475 0.931266 -0.157635 
+						0.328475 0.931266 -0.157635 
+						-0.328475 0.931266 -0.157635 
+						-0.328475 0.931266 -0.157635 
+						0.328475 0.931266 -0.157635 
+						-0.328475 0.931266 -0.157635 
+						-0.328475 0.931266 0.157635 
+						-0.328475 0.931266 0.157635 
+						-0.328475 0.931266 -0.157635 
+						-0.328475 0.931266 0.157635 
+						0.328475 0.931266 0.157635 
+						0.328475 0.931266 0.157635 
+						0.328475 0.931266 0.157635 
+						0.328475 0.931266 -0.157635 
+						-0.328475 0.931266 0.157635 
+						0.328475 0.931266 0.157635
+					</float_array>
+					<technique_common>
+						<accessor source="#geometries_0-XSINormal-array" count="56" stride="3">
+							<param name="X" type="float"/>
+							<param name="Y" type="float"/>
+							<param name="Z" type="float"/>
+						</accessor>
+					</technique_common>
+				</source>
+				<source id="geometries_0-Texture_Projection">
+					<float_array id="geometries_0-Texture_Projection-array" count="112">
+						0.799006 0.884617 
+						0.730723 0.989755 
+						0.095562 0.989755 
+						0.027807 0.884617 
+						0.846420 0.986110 
+						0.846420 0.151084 
+						0.986636 0.151084 
+						0.986636 0.986110 
+						0.691876 0.427381 
+						0.827729 0.427381 
+						0.787142 0.588094 
+						0.732376 0.588094 
+						0.827156 0.599393 
+						0.786801 0.753879 
+						0.732157 0.753879 
+						0.691453 0.599393 
+						0.020362 0.749920 
+						0.020362 0.697430 
+						0.658971 0.697430 
+						0.658971 0.749920 
+						0.026665 0.766681 
+						0.797864 0.766681 
+						0.730689 0.871870 
+						0.094513 0.871870 
+						0.682160 0.642990 
+						0.818018 0.795532 
+						0.837033 0.471027 
+						0.006511 0.795532 
+						0.818018 0.795532 
+						0.006511 0.795532 
+						0.007654 0.913467 
+						0.836449 0.642990 
+						0.836449 0.642990 
+						0.682482 0.642990 
+						0.819160 0.913467 
+						0.682573 0.471027 
+						0.837044 0.471027 
+						0.682573 0.471027 
+						0.819160 0.913467 
+						0.007654 0.913467 
+						0.037316 0.958092 
+						0.819943 0.692913 
+						0.788969 0.958092 
+						0.699161 0.526992 
+						0.037316 0.958092 
+						0.789497 0.958092 
+						0.820357 0.526992 
+						0.036174 0.840156 
+						0.699161 0.526992 
+						0.820456 0.526992 
+						0.699015 0.692913 
+						0.789029 0.840156 
+						0.699015 0.692913 
+						0.819915 0.692913 
+						0.036174 0.840156 
+						0.788355 0.840156
+					</float_array>
+					<technique_common>
+						<accessor source="#geometries_0-Texture_Projection-array" count="56" stride="2">
+							<param name="S" type="float"/>
+							<param name="T" type="float"/>
+						</accessor>
+					</technique_common>
+				</source>
+				<vertices id="geometries_0-Vtx">
+					<input semantic="POSITION" source="#geometries_0-Pos"/>
+				</vertices>
+				<polylist count="14" material="CarLights">
+					<input semantic="VERTEX" source="#geometries_0-Vtx" offset="0"/>
+					<input semantic="NORMAL" source="#geometries_0-XSINormal" offset="1"/>
+					<input semantic="TEXCOORD" source="#geometries_0-Texture_Projection" offset="2"/>
+					<vcount>
+						4 4 4 4 
+						4 4 4 4 
+						4 4 4 4 
+						4 4
+					</vcount>
+					<p>
+						0 0 0 
+						11 34 34 
+						10 30 30 
+						1 3 3 
+						0 4 4 
+						1 5 5 
+						5 6 6 
+						4 7 7 
+						0 8 8 
+						4 9 9 
+						9 26 26 
+						11 35 35 
+						1 12 12 
+						10 31 31 
+						8 24 24 
+						5 15 15 
+						2 16 16 
+						6 17 17 
+						7 18 18 
+						3 19 19 
+						4 20 20 
+						5 21 21 
+						8 25 25 
+						9 27 27 
+						7 22 22 
+						6 23 23 
+						14 47 47 
+						15 51 51 
+						3 13 13 
+						7 14 14 
+						15 50 50 
+						12 41 41 
+						6 10 10 
+						2 11 11 
+						13 43 43 
+						14 46 46 
+						2 1 1 
+						3 2 2 
+						12 40 40 
+						13 42 42 
+						10 39 39 
+						11 38 38 
+						13 45 45 
+						12 44 44 
+						11 37 37 
+						9 36 36 
+						14 49 49 
+						13 48 48 
+						8 33 33 
+						10 32 32 
+						12 53 53 
+						15 52 52 
+						9 29 29 
+						8 28 28 
+						15 55 55 
+						14 54 54
+					</p>
+				</polylist>
+			</mesh>
+			<extra>
+				<technique profile="XSI">
+					<XSI_VertexList>
+						<xsi_param sid="Attributes"> </xsi_param>
+						<xsi_param sid="nbAttributes">16 </xsi_param>
+						<xsi_param sid="position">0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15</xsi_param>
+					</XSI_VertexList>
+				</technique>
+			</extra>
+		</geometry>
+	</library_geometries>
+	<library_visual_scenes>
+		<visual_scene id="visual_scenes_0" name="visual_scenes_0">
+			<node id="light_low" name="light_low">
+				<translate sid="translation">-5.983332 4.047404 0.000000</translate>
+				<rotate sid="rotation_z">0.000000 0.000000 1.000000 0.000000</rotate>
+				<rotate sid="rotation_y">0.000000 1.000000 0.000000 0.000000</rotate>
+				<rotate sid="rotation_x">1.000000 0.000000 0.000000 0.000000</rotate>
+				<scale sid="scale">1.000000 1.000000 0.181435</scale>
+				<instance_geometry url="#geometries_0">
+					<bind_material>
+						<technique_common>
+							<instance_material symbol="CarLights" target="#CarLights"></instance_material>
+						</technique_common>
+					</bind_material>
+				</instance_geometry>
+				<extra>
+					<technique profile="XSI">
+						<SI_Visibility>
+							<xsi_param sid="visibility">TRUE</xsi_param>
+						</SI_Visibility>
+						<XSI_Transform>
+							<xsi_param sid="rotorder">"XYZ" </xsi_param>
+							<xsi_param sid="siscaling">TRUE</xsi_param>
+							<XSI_Limit>
+								<xsi_param sid="parameter">"posx" </xsi_param>
+								<xsi_param sid="minactive">FALSE </xsi_param>
+								<xsi_param sid="minlimit">0.000000 </xsi_param>
+								<xsi_param sid="maxactive">FALSE </xsi_param>
+								<xsi_param sid="maxlimit">0.000000</xsi_param>
+							</XSI_Limit>
+							<XSI_Limit>
+								<xsi_param sid="parameter">"posy" </xsi_param>
+								<xsi_param sid="minactive">FALSE </xsi_param>
+								<xsi_param sid="minlimit">0.000000 </xsi_param>
+								<xsi_param sid="maxactive">FALSE </xsi_param>
+								<xsi_param sid="maxlimit">0.000000</xsi_param>
+							</XSI_Limit>
+							<XSI_Limit>
+								<xsi_param sid="parameter">"posz" </xsi_param>
+								<xsi_param sid="minactive">FALSE </xsi_param>
+								<xsi_param sid="minlimit">0.000000 </xsi_param>
+								<xsi_param sid="maxactive">FALSE </xsi_param>
+								<xsi_param sid="maxlimit">0.000000</xsi_param>
+							</XSI_Limit>
+							<XSI_Limit>
+								<xsi_param sid="parameter">"rotx" </xsi_param>
+								<xsi_param sid="minactive">FALSE </xsi_param>
+								<xsi_param sid="minlimit">0.000000 </xsi_param>
+								<xsi_param sid="maxactive">FALSE </xsi_param>
+								<xsi_param sid="maxlimit">0.000000</xsi_param>
+							</XSI_Limit>
+							<XSI_Limit>
+								<xsi_param sid="parameter">"roty" </xsi_param>
+								<xsi_param sid="minactive">FALSE </xsi_param>
+								<xsi_param sid="minlimit">0.000000 </xsi_param>
+								<xsi_param sid="maxactive">FALSE </xsi_param>
+								<xsi_param sid="maxlimit">0.000000</xsi_param>
+							</XSI_Limit>
+							<XSI_Limit>
+								<xsi_param sid="parameter">"rotz" </xsi_param>
+								<xsi_param sid="minactive">FALSE </xsi_param>
+								<xsi_param sid="minlimit">0.000000 </xsi_param>
+								<xsi_param sid="maxactive">FALSE </xsi_param>
+								<xsi_param sid="maxlimit">0.000000</xsi_param>
+							</XSI_Limit>
+						</XSI_Transform>
+						<SI_GlobalMaterial>
+							<xsi_param sid="reference">"CarLights" </xsi_param>
+							<xsi_param sid="propagation">"NODE"</xsi_param>
+						</SI_GlobalMaterial>
+					</technique>
+				</extra>
+			</node>
+		</visual_scene>
+	</library_visual_scenes>
+	<scene>
+		<instance_visual_scene url="#visual_scenes_0"/>
+	</scene>
+	<extra>
+		<technique profile="XSI">
+			<SI_Scene>
+				<xsi_param sid="timing">"SECONDS" </xsi_param>
+				<xsi_param sid="start">1.000000 </xsi_param>
+				<xsi_param sid="end">100.000000 </xsi_param>
+				<xsi_param sid="frameRate">25.000000</xsi_param>
+			</SI_Scene>
+			<SI_Angle>
+				<xsi_param sid="type">0</xsi_param>
+			</SI_Angle>
+			<SI_Ambience>
+				<xsi_param sid="red">0.200000 </xsi_param>
+				<xsi_param sid="green">0.200000 </xsi_param>
+				<xsi_param sid="blue">0.200000</xsi_param>
+			</SI_Ambience>
+			<SI_CoordinateSystem>
+				<xsi_param sid="handRotation">1 </xsi_param>
+				<xsi_param sid="uAxis">0 </xsi_param>
+				<xsi_param sid="vAxis">1 </xsi_param>
+				<xsi_param sid="xAxis">0 </xsi_param>
+				<xsi_param sid="yAxis">2 </xsi_param>
+				<xsi_param sid="zAxis">5</xsi_param>
+			</SI_CoordinateSystem>
+			<XSI_PolygonList>
+				<xsi_param sid="Attributes"> </xsi_param>
+				<xsi_param sid="Material">"" </xsi_param>
+				<xsi_param sid="NbPolynodes">0 </xsi_param>
+				<xsi_param sid="NbPolygons">0 </xsi_param>
+				<xsi_param sid="polygoneNodeCounts">4 4 4 4 4 4 4 4 4 4 4 4 4 4 </xsi_param>
+				<xsi_param sid="vertexIndices">0 11 10 1 0 1 5 4 0 4 9 11 1 10 8 5 2 6 7 3 4 5 8 9 7 6 14 15 3 7 15 12 6 2 13 14 2 3 12 13 10 11 13 12 11 9 14 13 8 10 12 15 9 8 15 14 </xsi_param>
+				<xsi_param sid="XSINormal">0 34 30 3 4 5 6 7 8 9 26 35 12 31 24 15 16 17 18 19 20 21 25 27 22 23 47 51 13 14 50 41 10 11 43 46 1 2 40 42 39 38 45 44 37 36 49 48 33 32 53 52 29 28 55 54 </xsi_param>
+				<xsi_param sid="Texture_Projection">0 34 30 3 4 5 6 7 8 9 26 35 12 31 24 15 16 17 18 19 20 21 25 27 22 23 47 51 13 14 50 41 10 11 43 46 1 2 40 42 39 38 45 44 37 36 49 48 33 32 53 52 29 28 55 54</xsi_param>
+			</XSI_PolygonList>
+		</technique>
+	</extra>
+</COLLADA>

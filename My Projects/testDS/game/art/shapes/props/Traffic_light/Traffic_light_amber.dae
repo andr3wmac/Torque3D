@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+    <asset>
+        <contributor>
+            <authoring_tool>modo 401 [Build 34686], Microsoft Windows Vista Service Pack 1 (6.0.6001 Service Pack 1)</authoring_tool>
+            <comments>
+                Use Absolute Path: No;
+                Merge Reference Items: No;
+                Bake Matrices: No;
+                Save Vertex Normals: Yes;
+                Save UV Texture Coordinates: Yes;
+                Save Vertex Colors: Yes;
+                Save Vertex Weights: Yes;
+                Save Animation: No;
+                Sample Animation: No;
+                Sample Animation Start: 0;
+                Sample Animation End: 5;
+                Save modo Profile: No;
+                Save Maya Profile: No;
+                Save 3ds Max Profile: No;
+                Formatted Arrays: Yes;
+            </comments>
+            <source_data>file:///D:/T3D/My%20Projects/ChinaTown/game/art/shapes/props/Traffic_light/Traffic_light_amber.dae</source_data>
+        </contributor>
+        <created>2010-03-29T14:29:02Z</created>
+        <modified>2010-03-29T14:29:02Z</modified>
+        <revision>1.4.1</revision>
+        <up_axis>Y_UP</up_axis>
+    </asset>
+    <library_cameras>
+        <camera id="Camera-Camera-CameraNode" name="Camera-CameraNode">
+            <optics>
+                <technique_common>
+                    <perspective>
+                        <xfov sid="HFOV">39.5978</xfov>
+                        <yfov sid="YFOV">26.9915</yfov>
+                        <znear sid="near_clip">0.01</znear>
+                        <zfar sid="far_clip">10000</zfar>
+                    </perspective>
+                </technique_common>
+            </optics>
+        </camera>
+    </library_cameras>
+    <library_effects>
+        <effect id="Effect-Traffic_lightLOD" name="Traffic_lightLOD">
+            <profile_COMMON>
+                <technique sid="common">
+                    <phong>
+                        <diffuse>
+                            <color sid="diffuse_effect_rgb">0.8 0.8 0.8 1</color>
+                        </diffuse>
+                        <specular>
+                            <color sid="specular_effect_rgb">1 1 1 1</color>
+                        </specular>
+                        <reflective>
+                            <color sid="reflective_effect_rgb">0 0 0 1</color>
+                        </reflective>
+                        <reflectivity>
+                            <float sid="reflectivity_effect_float" name="Reflectivity_Effect">1</float>
+                        </reflectivity>
+                        <transparent opaque="RGB_ZERO">
+                            <color sid="transparent_effect_rgb">0 0 0 1</color>
+                        </transparent>
+                        <transparency>
+                            <float sid="transparency_effect_float" name="Transparency_Effect">-1.#IND</float>
+                        </transparency>
+                    </phong>
+                </technique>
+            </profile_COMMON>
+        </effect>
+        <effect id="Effect-Traffic_light_amber" name="Traffic_light_amber">
+            <profile_COMMON>
+                <technique sid="common">
+                    <phong>
+                        <diffuse>
+                            <color sid="diffuse_effect_rgb">0.8 0.8 0.8 1</color>
+                        </diffuse>
+                        <specular>
+                            <color sid="specular_effect_rgb">1 1 1 1</color>
+                        </specular>
+                        <reflective>
+                            <color sid="reflective_effect_rgb">0 0 0 1</color>
+                        </reflective>
+                        <reflectivity>
+                            <float sid="reflectivity_effect_float" name="Reflectivity_Effect">1</float>
+                        </reflectivity>
+                        <transparent opaque="RGB_ZERO">
+                            <color sid="transparent_effect_rgb">0 0 0 1</color>
+                        </transparent>
+                        <transparency>
+                            <float sid="transparency_effect_float" name="Transparency_Effect">-1.#IND</float>
+                        </transparency>
+                    </phong>
+                </technique>
+            </profile_COMMON>
+        </effect>
+    </library_effects>
+    <library_geometries>
+        <geometry id="Geometry-trafficLight-1" name="trafficLight-1">
+            <mesh>
+                <source id="Geometry-trafficLight-1-positions" name="positions">
+                    <float_array id="Geometry-trafficLight-1-positions-array" count="9">
+                        -0.4 -0.4 -0.4
+                        0.4 -0.4 -0.4
+                        0.4 -0.4 0.4
+                    </float_array>
+                    <technique_common>
+                        <accessor count="3" source="#Geometry-trafficLight-1-positions-array" stride="3">
+                            <param name="X" type="float" />
+                            <param name="Y" type="float" />
+                            <param name="Z" type="float" />
+                        </accessor>
+                    </technique_common>
+                </source>
+                <source id="Geometry-trafficLight-1-normals" name="normals">
+                    <float_array id="Geometry-trafficLight-1-normals-array" count="3">
+                        0 -1 0
+                    </float_array>
+                    <technique_common>
+                        <accessor count="1" source="#Geometry-trafficLight-1-normals-array" stride="3">
+                            <param name="X" type="float" />
+                            <param name="Y" type="float" />
+                            <param name="Z" type="float" />
+                        </accessor>
+                    </technique_common>
+                </source>
+                <vertices id="Geometry-trafficLight-1-vertices">
+                    <input semantic="POSITION" source="#Geometry-trafficLight-1-positions" />
+                </vertices>
+                <polylist count="1" material="MatSym-Traffic_lightLOD">
+                    <input semantic="VERTEX" source="#Geometry-trafficLight-1-vertices" offset="0" />
+                    <input semantic="NORMAL" source="#Geometry-trafficLight-1-normals" offset="1" />
+                    <vcount>3</vcount>
+                    <p>0 0 1 0 2 0</p>
+                </polylist>
+            </mesh>
+        </geometry>
+        <geometry id="Geometry-trafficLight50" name="trafficLight50">
+            <mesh>
+                <source id="Geometry-trafficLight50-positions" name="positions">
+                    <float_array id="Geometry-trafficLight50-positions-array" count="72">
+                        0.333235 8.25795 -6.21535
+                        0.333235 8.3339 -6.1715
+                        0.333235 8.33396 -6.0845
+                        0.333235 8.25807 -6.04065
+                        0.333235 8.1821 -6.08449
+                        0.333235 8.18204 -6.17152
+                        -0.0873469 8.25795 -6.45924
+                        -0.0434993 8.3339 -6.45924
+                        0.0434976 8.33396 -6.45924
+                        0.0873491 8.25807 -6.45924
+                        0.0435148 8.1821 -6.45924
+                        -0.0435164 8.18204 -6.45924
+                        -0.331235 8.25795 -6.03865
+                        -0.331235 8.3339 -6.0825
+                        -0.331235 8.33396 -6.1695
+                        -0.331235 8.25807 -6.21335
+                        -0.331235 8.1821 -6.16951
+                        -0.331235 8.18204 -6.08248
+                        0.0863469 8.25795 -5.79576
+                        0.0424993 8.3339 -5.79576
+                        -0.0444976 8.33396 -5.79576
+                        -0.0883491 8.25807 -5.79576
+                        -0.0445148 8.1821 -5.79576
+                        0.0425164 8.18204 -5.79576
+                    </float_array>
+                    <technique_common>
+                        <accessor count="24" source="#Geometry-trafficLight50-positions-array" stride="3">
+                            <param name="X" type="float" />
+                            <param name="Y" type="float" />
+                            <param name="Z" type="float" />
+                        </accessor>
+                    </technique_common>
+                </source>
+                <source id="Geometry-trafficLight50-normals" name="normals">
+                    <float_array id="Geometry-trafficLight50-normals-array" count="12">
+                        0 0 1
+                        1 0 0
+                        0 0 -1
+                        -1 0 0
+                    </float_array>
+                    <technique_common>
+                        <accessor count="4" source="#Geometry-trafficLight50-normals-array" stride="3">
+                            <param name="X" type="float" />
+                            <param name="Y" type="float" />
+                            <param name="Z" type="float" />
+                        </accessor>
+                    </technique_common>
+                </source>
+                <source id="Geometry-trafficLight50-geometries_2-Traffic_light" name="geometries_2-Traffic_light">
+                    <float_array id="Geometry-trafficLight50-geometries_2-Traffic_light-array" count="36">
+                        0.499 0.500652
+                        0.374412 0.932229
+                        0.127221 0.932574
+                        0.00262444 0.501323
+                        0.127176 0.0695833
+                        0.374467 0.0692388
+                        0.499 0.499744
+                        0.373502 0.934472
+                        0.124506 0.934819
+                        -0.001 0.50042
+                        0.124461 0.0655279
+                        0.373557 0.0651809
+                        0.495376 0.498841
+                        0.370788 0.930418
+                        0.123597 0.930761
+                        -0.000999732 0.499511
+                        0.123552 0.067771
+                        0.370843 0.0674275
+                    </float_array>
+                    <technique_common>
+                        <accessor count="18" source="#Geometry-trafficLight50-geometries_2-Traffic_light-array" stride="2">
+                            <param name="S" type="float" />
+                            <param name="T" type="float" />
+                        </accessor>
+                    </technique_common>
+                </source>
+                <vertices id="Geometry-trafficLight50-vertices">
+                    <input semantic="POSITION" source="#Geometry-trafficLight50-positions" />
+                </vertices>
+                <polylist count="16" material="MatSym-Traffic_light_amber">
+                    <input semantic="VERTEX" source="#Geometry-trafficLight50-vertices" offset="0" />
+                    <input semantic="NORMAL" source="#Geometry-trafficLight50-normals" offset="1" />
+                    <input semantic="TEXCOORD" source="#Geometry-trafficLight50-geometries_2-Traffic_light" offset="2" set="0" />
+                    <vcount>3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3</vcount>
+                    <p>18 0 0 19 0 1 20 0 2 18 0 0 20 0 2 21 0 3 18 0 0 21 0 3 22 0 4 18 0 0 22 0 4 23 0 5 0 1 6 1 1 7 2 1 8 0 1 6 2 1 8 3 1 9 0 1 6 3 1 9 4 1 10 0 1 6 4 1 10 5 1 11 6 2 12 7 2 13 8 2 14 6 2 12 8 2 14 9 2 15 6 2 12 9 2 15 10 2 16 6 2 12 10 2 16 11 2 17 12 3 6 13 3 7 14 3 8 12 3 6 14 3 8 15 3 9 12 3 6 15 3 9 16 3 10 12 3 6 16 3 10 17 3 11</p>
+                </polylist>
+            </mesh>
+        </geometry>
+    </library_geometries>
+    <library_lights>
+        <light id="Light-Render" name="Render">
+            <technique_common>
+                <ambient>
+                    <color sid="ambient_light_rgb">0.05 0.05 0.05</color>
+                </ambient>
+            </technique_common>
+        </light>
+        <light id="Light-Directional_Light" name="Directional_Light">
+            <technique_common>
+                <directional>
+                    <color sid="directional_light_rgb">1 1 1</color>
+                </directional>
+            </technique_common>
+        </light>
+    </library_lights>
+    <library_materials>
+        <material id="Material-Traffic_lightLOD" name="Traffic_lightLOD">
+            <instance_effect url="#Effect-Traffic_lightLOD" />
+        </material>
+        <material id="Material-Traffic_light_amber" name="Traffic_light_amber">
+            <instance_effect url="#Effect-Traffic_light_amber" />
+        </material>
+    </library_materials>
+    <library_visual_scenes>
+        <visual_scene id="DefaultScene">
+            <asset>
+                <created>2010-03-29T14:29:02Z</created>
+                <modified>2010-03-29T14:29:02Z</modified>
+                <up_axis>Y_UP</up_axis>
+            </asset>
+            <node id="RenderNode" name="Render" type="NODE">
+                <instance_light url="#Light-Render" />
+            </node>
+            <node id="base01Node" name="base01" type="NODE">
+                <translate sid="Position">0 0 0</translate>
+                <rotate sid="RotationZ">0 0 1 0</rotate>
+                <rotate sid="RotationY">0 1 0 0</rotate>
+                <rotate sid="RotationX">1 0 0 0</rotate>
+                <scale sid="Scale">1 1 1</scale>
+                <node id="Camera-Camera-CameraNodeNode" name="Camera-CameraNode" type="NODE">
+                    <translate sid="Position_2">62.0359 62.7041 -75.4736</translate>
+                    <rotate sid="Rotation_2Z">0 0 1 0</rotate>
+                    <rotate sid="Rotation_2Y">0 1 0 140.4</rotate>
+                    <rotate sid="Rotation_2X">1 0 0 -29.12</rotate>
+                    <instance_camera url="#Camera-Camera-CameraNode" />
+                </node>
+                <node id="start01Node" name="start01" type="NODE">
+                    <translate sid="Position_3">0 0 0</translate>
+                    <rotate sid="Rotation_3Z">0 0 1 0</rotate>
+                    <rotate sid="Rotation_3Y">0 1 0 0</rotate>
+                    <rotate sid="Rotation_3X">1 0 0 0</rotate>
+                    <scale sid="Scale_2">1 1 1</scale>
+                    <node id="Geometry-trafficLight-1Node" name="trafficLight-1" type="NODE">
+                        <translate sid="Position_4">0 0 0</translate>
+                        <rotate sid="Rotation_4Z">0 0 1 0</rotate>
+                        <rotate sid="Rotation_4Y">0 1 0 0</rotate>
+                        <rotate sid="Rotation_4X">1 0 0 0</rotate>
+                        <scale sid="Scale_3">0.001 0.001 0.001</scale>
+                        <instance_geometry url="#Geometry-trafficLight-1">
+                            <bind_material>
+                                <technique_common>
+                                    <instance_material symbol="MatSym-Traffic_lightLOD" target="#Material-Traffic_lightLOD" />
+                                </technique_common>
+                            </bind_material>
+                        </instance_geometry>
+                    </node>
+                    <node id="Geometry-trafficLight50Node" name="trafficLight50" type="NODE">
+                        <translate sid="Position_6">0 0 0</translate>
+                        <rotate sid="Rotation_6Z">0 0 1 0</rotate>
+                        <rotate sid="Rotation_6Y">0 1 0 0</rotate>
+                        <rotate sid="Rotation_6X">1 0 0 0</rotate>
+                        <scale sid="Scale_5">1 1 1</scale>
+                        <instance_geometry url="#Geometry-trafficLight50">
+                            <bind_material>
+                                <technique_common>
+                                    <instance_material symbol="MatSym-Traffic_light_amber" target="#Material-Traffic_light_amber" />
+                                </technique_common>
+                            </bind_material>
+                        </instance_geometry>
+                    </node>
+                </node>
+                <node id="collision1Node" name="collision1" type="NODE">
+                    <translate sid="Position_7">0 0 0</translate>
+                    <rotate sid="Rotation_7Z">0 0 1 0</rotate>
+                    <rotate sid="Rotation_7Y">0 1 0 0</rotate>
+                    <rotate sid="Rotation_7X">1 0 0 0</rotate>
+                    <scale sid="Scale_6">1 1 1</scale>
+                </node>
+            </node>
+            <node id="Light-Directional_LightNode" name="Directional_Light" type="NODE">
+                <translate sid="Position_8">-2 2 2</translate>
+                <rotate sid="Rotation_8Y">0 1 0 -45</rotate>
+                <rotate sid="Rotation_8X">1 0 0 -30</rotate>
+                <rotate sid="Rotation_8Z">0 0 1 0</rotate>
+                <instance_light url="#Light-Directional_Light" />
+            </node>
+        </visual_scene>
+    </library_visual_scenes>
+    <scene>
+        <instance_visual_scene url="#DefaultScene" />
+    </scene>
+</COLLADA>

@@ -1,0 +1,305 @@
+//--- OBJECT WRITE BEGIN ---
+%guiContent = new GuiChunkedBitmapCtrl(GameModeGui) {
+   bitmap = "art/gui/background.png";
+   useVariable = "0";
+   tile = "0";
+   position = "0 0";
+   extent = "1024 768";
+   minExtent = "8 2";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   profile = "GuiDefaultProfile";
+   visible = "1";
+   active = "1";
+   tooltipProfile = "GuiToolTipProfile";
+   hovertime = "1000";
+   isContainer = "1";
+   canSave = "1";
+   canSaveDynamicFields = "1";
+      selectedGameType = "Deathmatch";
+
+   new GuiBitmapCtrl() {
+      bitmap = "art/gui/Torque3D.png";
+      wrap = "0";
+      position = "30 18";
+      extent = "221 52";
+      minExtent = "8 2";
+      horizSizing = "right";
+      vertSizing = "bottom";
+      profile = "GuiDefaultProfile";
+      visible = "1";
+      active = "1";
+      tooltipProfile = "GuiToolTipProfile";
+      hovertime = "1000";
+      isContainer = "0";
+      canSave = "1";
+      canSaveDynamicFields = "0";
+   };
+   new GuiBitmapCtrl() {
+      bitmap = "art/gui/Chinatown.png";
+      wrap = "0";
+      position = "280 26";
+      extent = "144 48";
+      minExtent = "8 2";
+      horizSizing = "right";
+      vertSizing = "bottom";
+      profile = "GuiDefaultProfile";
+      visible = "1";
+      active = "1";
+      tooltipProfile = "GuiToolTipProfile";
+      hovertime = "1000";
+      isContainer = "0";
+      canSave = "1";
+      canSaveDynamicFields = "0";
+   };
+   new GuiScriptNotifyCtrl(GameModeGuiNotifyControl) {
+      onChildAdded = "0";
+      onChildRemoved = "0";
+      onChildResized = "0";
+      onParentResized = "1";
+      onResize = "0";
+      onLoseFirstResponder = "1";
+      onGainFirstResponder = "1";
+      position = "119 91";
+      extent = "713 439";
+      minExtent = "8 2";
+      horizSizing = "windowRelative";
+      vertSizing = "windowRelative";
+      profile = "GuiDefaultProfile";
+      visible = "1";
+      active = "1";
+      tooltipProfile = "GuiToolTipProfile";
+      hovertime = "1000";
+      isContainer = "1";
+      canSave = "1";
+      canSaveDynamicFields = "0";
+
+      new GuiBitmapCtrl() {
+         bitmap = "art/gui/Host/HostWindow.png";
+         wrap = "0";
+         position = "-4 -3";
+         extent = "721 445";
+         minExtent = "8 2";
+         horizSizing = "relative";
+         vertSizing = "relative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      /*new GuiBitmapButtonTextCtrl(TeamDeathmatchButton) {
+         bitmap = "art/gui/GameMode/TeamDeathmatch";
+         bitmapMode = "Centered";
+         autoFitExtents = "0";
+         useModifiers = "0";
+         useStates = "1";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         useMouseEvents = "0";
+         position = "-140 134";
+         extent = "698 99";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         command = "GameModeGui.selectMode(\"Team Deathmatch\");";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };*/
+      new GuiBitmapButtonTextCtrl(DeathmatchButton) {
+         bitmap = "art/gui/GameMode/Deathmatch";
+         bitmapMode = "Centered";
+         autoFitExtents = "0";
+         useModifiers = "0";
+         useStates = "1";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         useMouseEvents = "0";
+         position = "-130 62";
+         extent = "678 92";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         command = "GameModeGui.selectMode(\"Deathmatch\");";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapCtrl(GameModeDeathmatchImage) {
+         bitmap = "art/gui/GameMode/Deathmatchimage.png";
+         wrap = "0";
+         position = "332 66";
+         extent = "369 205";
+         minExtent = "8 2";
+         horizSizing = "relative";
+         vertSizing = "relative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      /*new GuiBitmapCtrl(GameModeTDMImage) {
+         bitmap = "art/gui/GameMode/TDMimage.png";
+         wrap = "0";
+         position = "332 66";
+         extent = "369 205";
+         minExtent = "8 2";
+         horizSizing = "relative";
+         vertSizing = "relative";
+         profile = "GuiDefaultProfile";
+         visible = "0";
+         active = "1";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         hidden = "1";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };*/
+      new GuiBitmapCtrl(GameModeDeathmatchLabel) {
+         bitmap = "art/gui/Host/Text_Deathmatch.png";
+         wrap = "0";
+         position = "60 10";
+         extent = "164 27";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      /*new GuiBitmapCtrl(GameModeTeamDeathmatchLabel) {
+         bitmap = "art/gui/Host/Text_TeamDeathmatch.png";
+         wrap = "1";
+         position = "63 11";
+         extent = "240 26";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "0";
+         active = "1";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         hidden = "1";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };*/
+      new GuiBitmapButtonTextCtrl() {
+         bitmap = "art/gui/Back";
+         bitmapMode = "Centered";
+         autoFitExtents = "0";
+         useModifiers = "0";
+         useStates = "1";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         useMouseEvents = "0";
+         position = "18 371";
+         extent = "151 51";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "top";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         command = "Canvas.setContent( HostGui );";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapButtonTextCtrl() {
+         bitmap = "art/gui/Accept";
+         bitmapMode = "Centered";
+         autoFitExtents = "1";
+         useModifiers = "0";
+         useStates = "1";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         useMouseEvents = "0";
+         position = "194 364";
+         extent = "205 65";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "top";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         command = "GameModeGui.acceptedClicked();";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+   };
+};
+//--- OBJECT WRITE END ---
+
+
+function GameModeGui::onWake( %this )
+{
+   %this.selectedGameType = "Deathmatch";
+   //GameModeTeamDeathmatchImageImage.visible = false;
+   GameModeDeathmatchImage.visible = true;
+   
+   %this.selectMode(%this.selectedGameType);
+}
+
+function GameModeGui::selectMode( %this, %selectedMode )
+{
+   switch$ (%selectedMode)
+   {
+      case "Team Deathmatch":
+      //GameModeTDMImage.visible = true;
+      //GameModeDeathmatchImage.visible = false;
+      //GameModeTeamDeathmatchLabel.visible = true;
+      //GameModeDeathmatchLabel.visible = false;
+      
+      default:
+      GameModeDeathmatchImage.visible = true;
+      GameModeTDMImage.visible = false;
+      GameModeDeathmatchLabel.visible = true;
+      GameModeTeamDeathmatchLabel.visible = false;
+      %selectedMode = "Deathmatch";
+   }
+   
+   %this.selectedGameType = %selectedMode;
+}
+
+
+function GameModeGui::acceptedClicked( %this )
+{
+   setGameType( %this.selectedGameType );
+   Canvas.setContent( HostGui );
+}
+
+function GameModeGuiNotifyControl::onParentResized( %this )
+{
+   repositionControl(%this);
+}

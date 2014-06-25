@@ -1,0 +1,566 @@
+//--- OBJECT WRITE BEGIN ---
+%guiContent = new GuiChunkedBitmapCtrl(HostGui) {
+   bitmap = "art/gui/background.png";
+   useVariable = "0";
+   tile = "0";
+   position = "0 0";
+   extent = "1024 768";
+   minExtent = "8 2";
+   horizSizing = "relative";
+   vertSizing = "relative";
+   profile = "GuiDefaultProfile";
+   visible = "1";
+   active = "1";
+   tooltipProfile = "GuiToolTipProfile";
+   hovertime = "1000";
+   isContainer = "1";
+   canSave = "1";
+   canSaveDynamicFields = "1";
+      guidesVertical = "1874 1884 1789";
+
+   new GuiBitmapCtrl() {
+      bitmap = "art/gui/Torque3D.png";
+      wrap = "0";
+      position = "30 18";
+      extent = "221 52";
+      minExtent = "8 2";
+      horizSizing = "right";
+      vertSizing = "bottom";
+      profile = "GuiDefaultProfile";
+      visible = "1";
+      active = "1";
+      tooltipProfile = "GuiToolTipProfile";
+      hovertime = "1000";
+      isContainer = "0";
+      canSave = "1";
+      canSaveDynamicFields = "0";
+   };
+   new GuiBitmapCtrl() {
+      bitmap = "art/gui/Chinatown.png";
+      wrap = "0";
+      position = "280 26";
+      extent = "144 48";
+      minExtent = "8 2";
+      horizSizing = "right";
+      vertSizing = "bottom";
+      profile = "GuiDefaultProfile";
+      visible = "1";
+      active = "1";
+      tooltipProfile = "GuiToolTipProfile";
+      hovertime = "1000";
+      isContainer = "0";
+      canSave = "1";
+      canSaveDynamicFields = "0";
+   };
+   new GuiScriptNotifyCtrl(HostGuiNotifyControl) {
+      onChildAdded = "0";
+      onChildRemoved = "0";
+      onChildResized = "0";
+      onParentResized = "1";
+      onResize = "0";
+      onLoseFirstResponder = "1";
+      onGainFirstResponder = "1";
+      position = "119 91";
+      extent = "794 555";
+      minExtent = "200 405";
+      horizSizing = "windowRelative";
+      vertSizing = "windowRelative";
+      profile = "GuiDefaultProfile";
+      visible = "1";
+      active = "1";
+      tooltipProfile = "GuiToolTipProfile";
+      hovertime = "1000";
+      isContainer = "1";
+      internalName = "HostGuiNotifyControl";
+      canSave = "1";
+      canSaveDynamicFields = "0";
+
+      new GuiBitmapCtrl() {
+         bitmap = "art/gui/Host/HostWindow.png";
+         wrap = "1";
+         position = "-1 -3";
+         extent = "790 555";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapCtrl(DeathmatchImage) {
+         bitmap = "art/gui/Host/Text_Deathmatch.png";
+         wrap = "0";
+         position = "81 18";
+         extent = "164 27";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapCtrl(CaptureTheFlagImage) {
+         bitmap = "art/gui/Host/Text_CaptureTheFlag.png";
+         wrap = "0";
+         position = "78 19";
+         extent = "221 27";
+         minExtent = "8 2";
+         horizSizing = "relative";
+         vertSizing = "relative";
+         profile = "GuiDefaultProfile";
+         visible = "0";
+         active = "1";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         hidden = "1";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapCtrl(TeamDeathmatchImage) {
+         bitmap = "art/gui/Host/Text_TeamDeathmatch.png";
+         wrap = "0";
+         position = "80 20";
+         extent = "208 24";
+         minExtent = "8 2";
+         horizSizing = "relative";
+         vertSizing = "relative";
+         profile = "GuiDefaultProfile";
+         visible = "0";
+         active = "1";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         hidden = "1";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiTextEditCtrl(HostServerNameTextEdit) {
+         historySize = "0";
+         tabComplete = "0";
+         sinkAllKeyEvents = "1";
+         password = "0";
+         passwordMask = "*";
+         text = "Torque 3D Server";
+         maxLength = "1024";
+         margin = "0 0 0 0";
+         padding = "0 0 0 0";
+         anchorTop = "1";
+         anchorBottom = "0";
+         anchorLeft = "1";
+         anchorRight = "0";
+         position = "483 22";
+         extent = "266 22";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "ChinatownTextEditProfile";
+         visible = "1";
+         active = "1";
+         command = "$Pref::Server::Name = HostServerNameTextEdit.getText();";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "1";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapCtrl() {
+         bitmap = "art/gui/Host/ServerName.png";
+         wrap = "0";
+         position = "336 22";
+         extent = "142 17";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapCtrl() {
+         bitmap = "art/gui/Host/Text_Details.png";
+         wrap = "0";
+         position = "445 370";
+         extent = "116 132";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiTextCtrl(HostMapTextControl) {
+         text = "ChinaTown - Day";
+         maxLength = "1024";
+         margin = "0 0 0 0";
+         padding = "0 0 0 0";
+         anchorTop = "1";
+         anchorBottom = "0";
+         anchorLeft = "1";
+         anchorRight = "0";
+         position = "586 367";
+         extent = "193 18";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "ChinatownHostTextProfile";
+         visible = "1";
+         active = "1";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "1";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiTextCtrl(HostTimeLimitTextControl) {
+         text = "20";
+         maxLength = "1024";
+         margin = "0 0 0 0";
+         padding = "0 0 0 0";
+         anchorTop = "1";
+         anchorBottom = "0";
+         anchorLeft = "1";
+         anchorRight = "0";
+         position = "584 427";
+         extent = "146 18";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "ChinatownHostTextProfile";
+         visible = "1";
+         active = "1";
+         variable = "$Game::Duration";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "1";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiTextCtrl(HostScoreTextControl) {
+         text = "10";
+         maxLength = "1024";
+         margin = "0 0 0 0";
+         padding = "0 0 0 0";
+         anchorTop = "1";
+         anchorBottom = "0";
+         anchorLeft = "1";
+         anchorRight = "0";
+         position = "584 397";
+         extent = "146 18";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "ChinatownHostTextProfile";
+         visible = "1";
+         active = "1";
+         variable = "$Game::EndGameScore";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "1";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapButtonCtrl() {
+         bitmap = "art/gui/Back";
+         bitmapMode = "Centered";
+         autoFitExtents = "0";
+         useModifiers = "0";
+         useStates = "1";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         useMouseEvents = "0";
+         position = "29 486";
+         extent = "151 51";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         command = "Canvas.setContent( HostOrJoinGui );";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapButtonCtrl() {
+         bitmap = "art/gui/Host/StartGame";
+         bitmapMode = "Centered";
+         autoFitExtents = "1";
+         useModifiers = "0";
+         useStates = "1";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         useMouseEvents = "0";
+         position = "205 486";
+         extent = "220 51";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         command = "hostGuiStartLevel($Server::MissionFile);";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapButtonCtrl() {
+         bitmap = "art/gui/Host/GameMode";
+         bitmapMode = "Centered";
+         autoFitExtents = "0";
+         useModifiers = "0";
+         useStates = "1";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         useMouseEvents = "0";
+         position = "2 62";
+         extent = "414 92";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         command = "Canvas.setContent( GameModeGui );";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapButtonCtrl() {
+         bitmap = "art/gui/Host/Settings";
+         bitmapMode = "Centered";
+         autoFitExtents = "0";
+         useModifiers = "0";
+         useStates = "1";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         useMouseEvents = "0";
+         position = "-8 217";
+         extent = "434 91";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         command = "Canvas.setContent( SettingsGui );";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapButtonCtrl() {
+         bitmap = "art/gui/Host/Map";
+         bitmapMode = "Centered";
+         autoFitExtents = "0";
+         useModifiers = "0";
+         useStates = "1";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         useMouseEvents = "0";
+         position = "-8 134";
+         extent = "434 99";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         command = "Canvas.setContent( MapGui );";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiTextCtrl(HostMinPlayerTextControl) {
+         text = "1";
+         maxLength = "1024";
+         margin = "0 0 0 0";
+         padding = "0 0 0 0";
+         anchorTop = "1";
+         anchorBottom = "0";
+         anchorLeft = "1";
+         anchorRight = "0";
+         position = "584 457";
+         extent = "146 18";
+         minExtent = "8 2";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         profile = "ChinatownHostTextProfile";
+         visible = "1";
+         active = "1";
+         variable = "$Pref::Server::MinPlayers";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "1";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+         new GuiTextCtrl(HostMapCycleTextControl) {
+         text = "Yes";
+         maxLength = "1024";
+         margin = "0 0 0 0";
+         padding = "0 0 0 0";
+         anchorTop = "1";
+         anchorBottom = "0";
+         anchorLeft = "1";
+         anchorRight = "0";
+         position = "584 487";
+         extent = "146 18";
+         minExtent = "8 2";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         profile = "ChinatownHostTextProfile";
+         visible = "1";
+         active = "1";
+         variable = "";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "1";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapCtrl(SelectedMapImage) {
+         bitmap = "levels/ChinaTown_Day_preview";
+         wrap = "0";
+         position = "304 66";
+         extent = "449 266";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+   };
+};
+//--- OBJECT WRITE END ---
+
+function hostGuiStartLevel( %mission )
+{
+   if( %mission $= "" )
+      %mission = findFirstFile($Server::MissionFileSpec);
+
+   // Show the loading screen immediately.
+   if ( isObject( LoadingGui ) )
+   {
+      Canvas.setContent("LoadingGui");
+      LoadingProgress.setValue(1);
+      LoadingProgressTxt.setValue("LOADING MISSION FILE");
+      Canvas.repaint();
+   }
+   
+   $Pref::Server::Name = HostServerNameTextEdit.getText();
+
+   createAndConnectToLocalServer( "MultiPlayer", %mission );
+}
+
+function HostGui::onWake( %this )
+{
+   %this.setLevelInfo();
+   
+   setGameType($Server::GameType);
+   
+   HostServerNameTextEdit.text = $Pref::Server::Name;
+   
+   if (!$Pref::Server::MinPlayers)
+      $Pref::Server::MinPlayers = 0;
+      
+   if ($Game::AllowCycling)
+      HostMapCycleTextControl.text = "Yes";
+   else
+      HostMapCycleTextControl.text = "No";
+   
+}
+
+function setGameType( %missionType )
+{
+   switch$ (%missionType)
+   {
+      case "Team Deathmatch":
+      TeamDeathmatchImage.visible = true;
+      DeathmatchImage.visible = false;
+      CaptureTheFlagImage.visible = false;
+      
+      case "Capture the Flag":
+      CaptureTheFlagImage.visible = true;
+      DeathmatchImage.visible = false;
+      TeamDeathmatchImage.visible = false;
+      
+      default:
+      DeathmatchImage.visible = true;
+      CaptureTheFlagImage.visible = false;
+      TeamDeathmatchImage.visible = false;
+      %missionType = "Deathmatch";
+   }
+   
+   $Server::MissionType  = %missionType;
+}
+
+function HostGui::setLevelInfo( %this )
+{
+   if ($LevelsArray[0] $= "")
+   {
+      %i = 0;
+      for(%file = findFirstFile($Server::MissionFileSpec); %file !$= ""; %file = findNextFile($Server::MissionFileSpec))
+      {
+         $LevelsArray[%i] = %file;
+         %i++;
+      }
+      $LevelsArray::levelCount = %i;
+   }
+   
+
+   if ($Server::MissionFile $= "")
+      $Server::MissionFile = $LevelsArray[0];
+   
+   %levelInfo = getLevelInfo( $Server::MissionFile );
+   
+   if(%levelInfo.LevelName !$= "")
+      HostMapTextControl.text = %levelInfo.LevelName;
+   else if(%levelInfo.name !$= "")
+      HostMapTextControl.text = %levelInfo.name;
+   else
+      HostMapTextControl.text = "Unnamed Map";
+      
+   setPreviewImage($Server::MissionFile, SelectedMapImage);
+
+   %levelInfo.delete();
+}
+
+function HostGuiNotifyControl::onParentResized( %this )
+{
+   repositionControl(%this);
+}

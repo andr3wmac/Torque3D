@@ -1,0 +1,657 @@
+//--- OBJECT WRITE BEGIN ---
+%guiContent = new GuiChunkedBitmapCtrl(JoinGameGui) {
+   bitmap = "art/gui/background.png";
+   useVariable = "0";
+   tile = "0";
+   position = "0 0";
+   extent = "1920 1200";
+   minExtent = "8 2";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   profile = "GuiDefaultProfile";
+   visible = "1";
+   active = "1";
+   tooltipProfile = "GuiToolTipProfile";
+   hovertime = "1000";
+   isContainer = "1";
+   canSave = "1";
+   canSaveDynamicFields = "1";
+      guidesVertical = "0 1098 813 253 441";
+
+   new GuiBitmapCtrl() {
+      bitmap = "art/gui/Torque3D.png";
+      wrap = "0";
+      position = "30 18";
+      extent = "221 52";
+      minExtent = "8 2";
+      horizSizing = "right";
+      vertSizing = "bottom";
+      profile = "GuiDefaultProfile";
+      visible = "1";
+      active = "1";
+      tooltipProfile = "GuiToolTipProfile";
+      hovertime = "1000";
+      isContainer = "0";
+      canSave = "1";
+      canSaveDynamicFields = "0";
+   };
+   new GuiBitmapCtrl() {
+      bitmap = "art/gui/Chinatown.png";
+      wrap = "0";
+      position = "280 26";
+      extent = "144 48";
+      minExtent = "8 2";
+      horizSizing = "right";
+      vertSizing = "bottom";
+      profile = "GuiDefaultProfile";
+      visible = "1";
+      active = "1";
+      tooltipProfile = "GuiToolTipProfile";
+      hovertime = "1000";
+      isContainer = "0";
+      canSave = "1";
+      canSaveDynamicFields = "0";
+   };
+   new GuiScriptNotifyCtrl(JoinGuiNotifyControl) {
+      onChildAdded = "0";
+      onChildRemoved = "0";
+      onChildResized = "0";
+      onParentResized = "1";
+      onResize = "0";
+      onLoseFirstResponder = "1";
+      onGainFirstResponder = "1";
+      position = "189 214";
+      extent = "787 565";
+      minExtent = "703 565";
+      horizSizing = "windowRelative";
+      vertSizing = "windowRelative";
+      profile = "GuiDefaultProfile";
+      visible = "1";
+      active = "1";
+      tooltipProfile = "GuiToolTipProfile";
+      hovertime = "1000";
+      isContainer = "1";
+      canSave = "1";
+      canSaveDynamicFields = "0";
+
+      new GuiBitmapCtrl() {
+         bitmap = "art/gui/Join/JoinWindow.png";
+         wrap = "1";
+         position = "0 0";
+         extent = "786 556";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapCtrl() {
+         bitmap = "art/gui/Join/Name.png";
+         wrap = "1";
+         position = "86 21";
+         extent = "52 20";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiTextEditCtrl(JoinGamePlayerName) {
+         historySize = "0";
+         tabComplete = "0";
+         sinkAllKeyEvents = "1";
+         password = "0";
+         passwordMask = "*";
+         text = "Visitor";
+         maxLength = "1024";
+         margin = "0 0 0 0";
+         padding = "0 0 0 0";
+         anchorTop = "1";
+         anchorBottom = "0";
+         anchorLeft = "1";
+         anchorRight = "0";
+         position = "151 22";
+         extent = "238 22";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "ChinatownTextEditProfile";
+         visible = "1";
+         active = "1";
+         variable = "$pref::Player::Name";
+         command = "$pref::Player::Name = JoinGamePlayerName.getText();";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "1";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapButtonTextCtrl() {
+         bitmap = "art/gui/Join/Refresh";
+         bitmapMode = "Centered";
+         autoFitExtents = "1";
+         useModifiers = "0";
+         useStates = "1";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         useMouseEvents = "0";
+         position = "606 487";
+         extent = "155 70";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         command = "JoinGameGui.queryServers();";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiScrollCtrl() {
+         willFirstRespond = "1";
+         hScrollBar = "dynamic";
+         vScrollBar = "dynamic";
+         lockHorizScroll = "0";
+         lockVertScroll = "0";
+         constantThumbHeight = "0";
+         childMargin = "0 0";
+         mouseWheelScrollSpeed = "-1";
+         margin = "0 0 0 0";
+         padding = "0 0 0 0";
+         anchorTop = "1";
+         anchorBottom = "0";
+         anchorLeft = "1";
+         anchorRight = "0";
+         position = "27 109";
+         extent = "715 315";
+         minExtent = "8 8";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiTransparentScrollProfile";
+         visible = "1";
+         active = "1";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "1";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+
+         new GuiTextListCtrl(JS_serverList) {
+            columns = "10 90 280 400 570 670";
+            fitParentWidth = "1";
+            clipColumnText = "0";
+            position = "2 2";
+            extent = "711 8";
+            minExtent = "8 8";
+            horizSizing = "width";
+            vertSizing = "windowRelative";
+            profile = "ChinatownTextArrayProfile";
+            visible = "1";
+            active = "1";
+            altCommand = "JoinGameGui.join();";
+            tooltipProfile = "GuiToolTipProfile";
+            hovertime = "1000";
+            isContainer = "1";
+            canSave = "1";
+            canSaveDynamicFields = "0";
+         };
+      };
+      new GuiBitmapCtrl() {
+         bitmap = "art/gui/Join/TypeText.png";
+         wrap = "0";
+         position = "26 76";
+         extent = "68 23";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         command = "JS_serverList.sort(0);";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapCtrl() {
+         bitmap = "art/gui/Join/PingText.png";
+         wrap = "0";
+         position = "682 75";
+         extent = "67 23";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         command = "JS_serverList.sortNumerical(5);";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapCtrl() {
+         bitmap = "art/gui/Join/ServerText.png";
+         wrap = "0";
+         position = "118 76";
+         extent = "99 23";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         command = "JS_serverList.sort(1);";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapCtrl() {
+         bitmap = "art/gui/Join/GameModeText.png";
+         wrap = "0";
+         position = "265 75";
+         extent = "156 23";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         command = "JS_serverList.sort(2);";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapCtrl() {
+         bitmap = "art/gui/Join/MapText.png";
+         wrap = "0";
+         position = "446 75";
+         extent = "59 23";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         command = "JS_serverList.sort(3);";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiWindowCtrl(JS_queryStatus) {
+         text = "Status";
+         resizeWidth = "0";
+         resizeHeight = "0";
+         canMove = "0";
+         canClose = "0";
+         canMinimize = "0";
+         canMaximize = "0";
+         canCollapse = "0";
+         edgeSnap = "1";
+         margin = "0 0 0 0";
+         padding = "0 0 0 0";
+         anchorTop = "1";
+         anchorBottom = "0";
+         anchorLeft = "1";
+         anchorRight = "0";
+         position = "389 282";
+         extent = "413 67";
+         minExtent = "8 8";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiWindowProfile";
+         visible = "0";
+         active = "1";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "1";
+         hidden = "1";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+
+         new GuiButtonCtrl(JS_cancelQuery) {
+            text = "Cancel!";
+            groupNum = "-1";
+            buttonType = "PushButton";
+            useMouseEvents = "0";
+            position = "12 34";
+            extent = "85 27";
+            minExtent = "8 8";
+            horizSizing = "relative";
+            vertSizing = "relative";
+            profile = "GuiButtonProfile";
+            visible = "1";
+            active = "1";
+            command = "JoinServerDlg.cancel();";
+            tooltipProfile = "GuiToolTipProfile";
+            hovertime = "1000";
+            isContainer = "0";
+            canSave = "1";
+            canSaveDynamicFields = "0";
+         };
+         new GuiProgressCtrl(JS_statusBar) {
+            maxLength = "1024";
+            margin = "0 0 0 0";
+            padding = "0 0 0 0";
+            anchorTop = "1";
+            anchorBottom = "0";
+            anchorLeft = "1";
+            anchorRight = "0";
+            position = "112 34";
+            extent = "276 27";
+            minExtent = "8 8";
+            horizSizing = "relative";
+            vertSizing = "relative";
+            profile = "GuiProgressProfile";
+            visible = "1";
+            active = "1";
+            tooltipProfile = "GuiToolTipProfile";
+            hovertime = "1000";
+            isContainer = "0";
+            canSave = "1";
+            canSaveDynamicFields = "0";
+         };
+         new GuiTextCtrl(JS_statusText) {
+            text = "Query Servers";
+            maxLength = "255";
+            margin = "0 0 0 0";
+            padding = "0 0 0 0";
+            anchorTop = "1";
+            anchorBottom = "0";
+            anchorLeft = "1";
+            anchorRight = "0";
+            position = "113 34";
+            extent = "273 27";
+            minExtent = "8 8";
+            horizSizing = "relative";
+            vertSizing = "relative";
+            profile = "GuiProgressTextProfile";
+            visible = "1";
+            active = "1";
+            tooltipProfile = "GuiToolTipProfile";
+            hovertime = "1000";
+            isContainer = "0";
+            canSave = "1";
+            canSaveDynamicFields = "0";
+         };
+      };
+      new GuiBitmapCtrl() {
+         bitmap = "art/gui/Join/PlayersText.png";
+         wrap = "0";
+         position = "559 75";
+         extent = "112 23";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         command = "JS_serverList.sort(4);";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapButtonTextCtrl() {
+         bitmap = "art/gui/Back";
+         bitmapMode = "Centered";
+         autoFitExtents = "0";
+         useModifiers = "0";
+         useStates = "1";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         useMouseEvents = "0";
+         position = "20 494";
+         extent = "149 59";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         command = "Canvas.setContent( HostOrJoinGui );";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapButtonTextCtrl(JS_joinServer) {
+         bitmap = "art/gui/Join/JoinGame";
+         bitmapMode = "Centered";
+         autoFitExtents = "0";
+         useModifiers = "0";
+         useStates = "1";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         useMouseEvents = "0";
+         position = "185 502";
+         extent = "179 41";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "0";
+         active = "0";
+         command = "JoinGameGui.join();";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         hidden = "1";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+   };
+};
+//--- OBJECT WRITE END ---
+
+function JoinGameGui::onWake()
+{
+   // Double check the status. Tried setting this the control
+   // inactive to start with, but that didn't seem to work.
+   JS_joinServer.setActive(JS_serverList.rowCount() > 0);
+}   
+
+//----------------------------------------
+function JoinGameGui::query(%this)
+{
+   queryMasterServer(
+      0,          // Query flags
+      $Client::GameTypeQuery,       // gameTypes
+      $Client::MissionTypeQuery,    // missionType
+      0,          // minPlayers
+      100,        // maxPlayers
+      0,          // maxBots
+      2,          // regionMask
+      0,          // maxPing
+      100,        // minCPU
+      0           // filterFlags
+   );
+}
+
+//----------------------------------------
+function JoinGameGui::queryLan(%this)
+{
+   queryLANServers(
+      $pref::Net::Port,      // lanPort for local queries
+      0,          // Query flags
+      $Client::GameTypeQuery,       // gameTypes
+      $Client::MissionTypeQuery,    // missionType
+      0,          // minPlayers
+      100,        // maxPlayers
+      0,          // maxBots
+      2,          // regionMask
+      0,          // maxPing
+      100,        // minCPU
+      0           // filterFlags
+   );
+}
+
+function JoinGameGui::queryServers(%this)
+{
+   queryAllServers(
+      $pref::Net::Port,      // lanPort for local queries
+      0,          // Query flags
+      $Client::GameTypeQuery,       // gameTypes
+      $Client::MissionTypeQuery,    // missionType
+      0,          // minPlayers
+      100,        // maxPlayers
+      0,          // maxBots
+      2,          // regionMask
+      0,          // maxPing
+      100,        // minCPU
+      0           // filterFlags
+   );
+}
+
+//----------------------------------------
+function JoinGameGui::cancel(%this)
+{
+   cancelServerQuery();
+   JS_queryStatus.setVisible(false);
+}
+
+
+//----------------------------------------
+function JoinGameGui::join(%this)
+{
+   cancelServerQuery();
+   %index = JS_serverList.getSelectedId();
+
+   // The server info index is stored in the row along with the
+   // rest of displayed info.
+
+   if( setServerInfo( %index ) )
+   {
+      Canvas.setContent("LoadingGui");
+      LoadingProgress.setValue(1);
+      LoadingProgressTxt.setValue("WAITING FOR SERVER");
+      Canvas.repaint();
+
+      %conn = new GameConnection(ServerConnection);
+      %conn.setConnectArgs($pref::Player::Name);
+      %conn.setJoinPassword($Client::Password);
+      %conn.connect($ServerInfo::Address);
+   }
+}
+
+//----------------------------------------
+function JoinGameGui::refresh(%this)
+{
+   cancelServerQuery();
+   %index= JS_serverList.getSelectedId();
+
+   // The server info index is stored in the row along with the
+   // rest of displayed info.
+   if( setServerInfo( %index ) )
+      querySingleServer( $ServerInfo::Address, 0 );
+}
+
+//----------------------------------------
+function JoinGameGui::refreshSelectedServer( %this )
+{
+   querySingleServer( $JoinGameAddress, 0 );
+}
+
+//----------------------------------------
+function JoinGameGui::exit(%this)
+{
+   cancelServerQuery();
+   
+   //Canvas.popDialog(JoinServerDlg);
+}
+
+//----------------------------------------
+function JoinGameGui::update(%this)
+{
+   // Copy the servers into the server list.
+   JS_queryStatus.setVisible(false);
+   JS_serverList.clear();
+   %sc = getServerCount();
+   for( %i = 0; %i < %sc; %i ++ ) {
+      setServerInfo(%i);
+      
+      // Determine if this is a LAN or online game.
+      %type = "Online";
+      %serverPort = strrchr($ServerInfo::Address, ":");
+      %serverPort = getSubStr(%serverPort, 1);
+      if (%serverPort $= $pref::Net::Port )
+         %type = "LAN";
+      
+      
+      JS_serverList.addRow( %i,
+         %type TAB
+         $ServerInfo::Name TAB
+         $ServerInfo::MissionType TAB
+         $ServerInfo::MissionName TAB
+         $ServerInfo::PlayerCount @ "/" @ $ServerInfo::MaxPlayers TAB
+         $ServerInfo::Ping
+         );
+   }
+   JS_serverList.sort(0);
+   JS_serverList.setSelectedRow(0);
+   JS_serverList.scrollVisible(0);
+
+   JS_joinServer.setVisible(JS_serverList.rowCount() > 0);
+   JS_joinServer.setActive(JS_serverList.rowCount() > 0);
+} 
+
+//----------------------------------------
+function onServerQueryStatus(%status, %msg, %value)
+{
+	echo("ServerQuery: " SPC %status SPC %msg SPC %value);
+   // Update query status
+   // States: start, update, ping, query, done
+   // value = % (0-1) done for ping and query states
+   if (!JS_queryStatus.isVisible())
+      JS_queryStatus.setVisible(true);
+
+   switch$ (%status) {
+      case "start":
+         JS_joinServer.setActive(false);
+         JS_statusText.setText(%msg);
+         JS_statusBar.setValue(0);
+         JS_serverList.clear();
+
+      case "ping":
+         JS_statusText.setText("Ping Servers");
+         JS_statusBar.setValue(%value);
+
+      case "query":
+         JS_statusText.setText("Query Servers");
+         JS_statusBar.setValue(%value);
+
+      case "done":
+         JS_queryStatus.setVisible(false);
+         JoinGameGui.update();
+   }
+}
+
+function JoinGuiNotifyControl::onParentResized( %this )
+{
+   repositionControl(%this);
+}

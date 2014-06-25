@@ -1,0 +1,116 @@
+//--- OBJECT WRITE BEGIN ---
+%guiContent = new GuiControl(ControlsHelpDlg) {
+   isContainer = "1";
+   Profile = "GuiModelessDialogProfile";
+   HorizSizing = "right";
+   VertSizing = "bottom";
+   position = "0 0";
+   Extent = "1024 768";
+   MinExtent = "8 8";
+   canSave = "1";
+   Visible = "1";
+   tooltipprofile = "GuiToolTipProfile";
+   hovertime = "1000";
+   canSaveDynamicFields = "1";
+      noCursor = "1";
+
+   new GuiBitmapBorderCtrl() {
+      isContainer = "0";
+      Profile = "ChatHudBorderProfile";
+      HorizSizing = "left";
+      VertSizing = "bottom";
+      position = "820 0";
+      Extent = "204 538";
+      MinExtent = "8 8";
+      canSave = "1";
+      Visible = "1";
+      tooltipprofile = "GuiToolTipProfile";
+      hovertime = "1000";
+      canSaveDynamicFields = "0";
+
+      new GuiBitmapCtrl() {
+         bitmap = "art/gui/hudfill.png";
+         wrap = "0";
+         isContainer = "0";
+         Profile = "GuiDefaultProfile";
+         HorizSizing = "width";
+         VertSizing = "height";
+         position = "8 8";
+         Extent = "188 522";
+         MinExtent = "8 8";
+         canSave = "1";
+         Visible = "1";
+         tooltipprofile = "GuiToolTipProfile";
+         hovertime = "1000";
+         canSaveDynamicFields = "0";
+      };
+      new GuiMLTextCtrl(ControlsText) {
+         lineSpacing = "2";
+         allowColorChars = "0";
+         maxChars = "-1";
+         text = "This is a test";
+         useURLMouseCursor = "0";
+         isContainer = "0";
+         Profile = "HudTextNormalProfile";
+         HorizSizing = "width";
+         VertSizing = "relative";
+         position = "12 10";
+         Extent = "180 496";
+         MinExtent = "8 8";
+         canSave = "1";
+         Visible = "1";
+         tooltipprofile = "GuiToolTipProfile";
+         hovertime = "1000";
+         canSaveDynamicFields = "0";
+      };
+   };
+};
+//--- OBJECT WRITE END ---
+
+
+function ControlsHelpDlg::onWake(%this)
+{
+   %text = "<font:Arial Bold:20>Default Control Setup\n\n"@
+
+      "<just:center><font:Arial Bold:16>MOVEMENT\n"@
+      "<just:left><font:Arial Bold:14>WASD<font:Arial Italic:14><just:right>Forward/Back/Left/Right\n"@
+      "<just:left><font:Arial Bold:14>Space<font:Arial Italic:14><just:right>Jump\n"@
+      "<just:left><font:Arial Bold:14>X<font:Arial Italic:14><just:right>Crouch\n\n"@
+
+      "<just:center><font:Arial Bold:16>WEAPONS\n"@
+      "<just:left><font:Arial Bold:14>1<font:Arial Italic:14><just:right>RocketLauncher\n"@
+      "<just:left><font:Arial Bold:14>0<font:Arial Italic:14><just:right>Unmount weapon\n"@
+      "<just:left><font:Arial Bold:14>Q/Ctrl-Q<font:Arial Italic:14><just:right>Next/Prev weapon\n"@
+      "<just:left><font:Arial Bold:14>Alt-W<font:Arial Italic:14><just:right>Throw weapon\n"@
+      "<just:left><font:Arial Bold:14>Alt-A<font:Arial Italic:14><just:right>Throw ammo\n"@
+      "<just:left><font:Arial Bold:14>Mouse L-Button<font:Arial Italic:14><just:right>Fire\n"@
+      "<just:left><font:Arial Bold:14>Mouse R-Button<font:Arial Italic:14><just:right>Alt-fire\n"@
+      "<just:left><font:Arial Bold:14>Mouse Wheel<font:Arial Italic:14><just:right>Cycle weapons\n\n"@
+
+      "<just:center><font:Arial Bold:16>VIEW CONTROL\n"@
+      "<just:left><font:Arial Bold:14>Z<font:Arial Italic:14><just:right>Toggle Zoom mode\n"@
+      "<just:left><font:Arial Bold:14>F<font:Arial Italic:14><just:right>Cycle zoom FOV\n"@
+      "<just:left><font:Arial Bold:14>Tab<font:Arial Italic:14><just:right>First/Third person camera\n"@
+      "<just:left><font:Arial Bold:14>V<font:Arial Italic:14><just:right>Vanity view\n"@
+      "<just:left><font:Arial Bold:14>Alt-C<font:Arial Italic:14><just:right>Toggle between camera/player\n\n"@
+
+      "<just:center><font:Arial Bold:16>MISC FUNCTIONS\n"@
+      "<just:left><font:Arial Bold:14>U<font:Arial Italic:14><just:right>Send public chat message\n"@
+      "<just:left><font:Arial Bold:14>Ctrl-K<font:Arial Italic:14><just:right>Die\n"@
+      "<just:left><font:Arial Bold:14>Ctrl-O<font:Arial Italic:14><just:right>Open Options dialog\n"@
+      "<just:left><font:Arial Bold:14>Ctrl-H<font:Arial Italic:14><just:right>Toggle Hide HUDs\n"@
+      "<just:left><font:Arial Bold:14>Alt-P<font:Arial Italic:14><just:right>Hudless Screenshot\n"@
+      "<just:left><font:Arial Bold:14>F10<font:Arial Italic:14><just:right>Open GUI Editor\n"@
+      "<just:left><font:Arial Bold:14>F11<font:Arial Italic:14><just:right>Open Level Editor\n\n"@
+
+      "<just:left><font:Arial Bold:16>H<font:Arial Italic:16><just:right>Hide this help HUD";
+   ControlsText.setText(%text);
+}
+
+function ControlsHelpDlg::toggle(%this)
+{
+   if (%this.isAwake())
+      Canvas.popDialog(%this);
+   else
+      Canvas.pushDialog(%this);
+}

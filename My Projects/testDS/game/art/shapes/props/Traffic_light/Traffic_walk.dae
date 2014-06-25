@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+    <asset>
+        <contributor>
+            <authoring_tool>modo 401 [Build 34686], Microsoft Windows Vista Service Pack 1 (6.0.6001 Service Pack 1)</authoring_tool>
+            <comments>
+                Use Absolute Path: No;
+                Merge Reference Items: No;
+                Bake Matrices: No;
+                Save Vertex Normals: Yes;
+                Save UV Texture Coordinates: Yes;
+                Save Vertex Colors: Yes;
+                Save Vertex Weights: Yes;
+                Save Animation: No;
+                Sample Animation: No;
+                Sample Animation Start: 0;
+                Sample Animation End: 5;
+                Save modo Profile: No;
+                Save Maya Profile: No;
+                Save 3ds Max Profile: No;
+                Formatted Arrays: Yes;
+            </comments>
+            <source_data>file:///D:/T3D/My%20Projects/ChinaTown/game/art/shapes/props/Traffic_light/Traffic_walk.dae</source_data>
+        </contributor>
+        <created>2010-03-29T14:05:41Z</created>
+        <modified>2010-03-29T14:05:41Z</modified>
+        <revision>1.4.1</revision>
+        <up_axis>Y_UP</up_axis>
+    </asset>
+    <library_cameras>
+        <camera id="Camera-Camera-CameraNode" name="Camera-CameraNode">
+            <optics>
+                <technique_common>
+                    <perspective>
+                        <xfov sid="HFOV">39.5978</xfov>
+                        <yfov sid="YFOV">26.9915</yfov>
+                        <znear sid="near_clip">0.01</znear>
+                        <zfar sid="far_clip">10000</zfar>
+                    </perspective>
+                </technique_common>
+            </optics>
+        </camera>
+    </library_cameras>
+    <library_effects>
+        <effect id="Effect-Traffic_lightLOD" name="Traffic_lightLOD">
+            <profile_COMMON>
+                <technique sid="common">
+                    <phong>
+                        <diffuse>
+                            <color sid="diffuse_effect_rgb">0.8 0.8 0.8 1</color>
+                        </diffuse>
+                        <specular>
+                            <color sid="specular_effect_rgb">1 1 1 1</color>
+                        </specular>
+                        <reflective>
+                            <color sid="reflective_effect_rgb">0 0 0 1</color>
+                        </reflective>
+                        <reflectivity>
+                            <float sid="reflectivity_effect_float" name="Reflectivity_Effect">1</float>
+                        </reflectivity>
+                        <transparent opaque="RGB_ZERO">
+                            <color sid="transparent_effect_rgb">0 0 0 1</color>
+                        </transparent>
+                        <transparency>
+                            <float sid="transparency_effect_float" name="Transparency_Effect">-1.#IND</float>
+                        </transparency>
+                    </phong>
+                </technique>
+            </profile_COMMON>
+        </effect>
+        <effect id="Effect-Trafficwalk" name="Trafficwalk">
+            <profile_COMMON>
+                <newparam sid="Image0001-surface">
+                    <surface type="2D">
+                        <init_from>Image0001</init_from>
+                        <format>A8R8G8B8</format>
+                    </surface>
+                </newparam>
+                <newparam sid="Image0001-sampler">
+                    <sampler2D>
+                        <source>Image0001-surface</source>
+                        <minfilter>LINEAR_MIPMAP_LINEAR</minfilter>
+                        <magfilter>LINEAR</magfilter>
+                    </sampler2D>
+                </newparam>
+                <technique sid="common">
+                    <phong>
+                        <diffuse>
+                            <texture texture="Image0001-sampler" texcoord="walk" />
+                        </diffuse>
+                        <specular>
+                            <color sid="specular_effect_rgb">1 1 1 1</color>
+                        </specular>
+                        <reflective>
+                            <color sid="reflective_effect_rgb">0 0 0 1</color>
+                        </reflective>
+                        <reflectivity>
+                            <float sid="reflectivity_effect_float" name="Reflectivity_Effect">1</float>
+                        </reflectivity>
+                        <transparent opaque="RGB_ZERO">
+                            <color sid="transparent_effect_rgb">0 0 0 1</color>
+                        </transparent>
+                        <transparency>
+                            <float sid="transparency_effect_float" name="Transparency_Effect">-1.#IND</float>
+                        </transparency>
+                    </phong>
+                </technique>
+            </profile_COMMON>
+        </effect>
+    </library_effects>
+    <library_geometries>
+        <geometry id="Geometry-trafficwalk-1" name="trafficwalk-1">
+            <mesh>
+                <source id="Geometry-trafficwalk-1-positions" name="positions">
+                    <float_array id="Geometry-trafficwalk-1-positions-array" count="9">
+                        -0.4 -0.4 -0.4
+                        0.4 -0.4 -0.4
+                        0.4 -0.4 0.4
+                    </float_array>
+                    <technique_common>
+                        <accessor count="3" source="#Geometry-trafficwalk-1-positions-array" stride="3">
+                            <param name="X" type="float" />
+                            <param name="Y" type="float" />
+                            <param name="Z" type="float" />
+                        </accessor>
+                    </technique_common>
+                </source>
+                <source id="Geometry-trafficwalk-1-normals" name="normals">
+                    <float_array id="Geometry-trafficwalk-1-normals-array" count="3">
+                        0 -1 0
+                    </float_array>
+                    <technique_common>
+                        <accessor count="1" source="#Geometry-trafficwalk-1-normals-array" stride="3">
+                            <param name="X" type="float" />
+                            <param name="Y" type="float" />
+                            <param name="Z" type="float" />
+                        </accessor>
+                    </technique_common>
+                </source>
+                <vertices id="Geometry-trafficwalk-1-vertices">
+                    <input semantic="POSITION" source="#Geometry-trafficwalk-1-positions" />
+                </vertices>
+                <polylist count="1" material="MatSym-Traffic_lightLOD">
+                    <input semantic="VERTEX" source="#Geometry-trafficwalk-1-vertices" offset="0" />
+                    <input semantic="NORMAL" source="#Geometry-trafficwalk-1-normals" offset="1" />
+                    <vcount>3</vcount>
+                    <p>0 0 1 0 2 0</p>
+                </polylist>
+            </mesh>
+        </geometry>
+        <geometry id="Geometry-trafficwalk50" name="trafficwalk50">
+            <mesh>
+                <source id="Geometry-trafficwalk50-positions" name="positions">
+                    <float_array id="Geometry-trafficwalk50-positions-array" count="24">
+                        0.75595 3.0147 0.662747
+                        0.75595 2.6643 0.662747
+                        0.445253 2.6643 0.35205
+                        0.445253 3.0147 0.35205
+                        -0.75595 3.0147 0.662747
+                        -0.445253 3.0147 0.35205
+                        -0.445253 2.6643 0.35205
+                        -0.75595 2.6643 0.662747
+                    </float_array>
+                    <technique_common>
+                        <accessor count="8" source="#Geometry-trafficwalk50-positions-array" stride="3">
+                            <param name="X" type="float" />
+                            <param name="Y" type="float" />
+                            <param name="Z" type="float" />
+                        </accessor>
+                    </technique_common>
+                </source>
+                <source id="Geometry-trafficwalk50-normals" name="normals">
+                    <float_array id="Geometry-trafficwalk50-normals-array" count="6">
+                        0.707107 0 -0.707107
+                        -0.707107 0 -0.707107
+                    </float_array>
+                    <technique_common>
+                        <accessor count="2" source="#Geometry-trafficwalk50-normals-array" stride="3">
+                            <param name="X" type="float" />
+                            <param name="Y" type="float" />
+                            <param name="Z" type="float" />
+                        </accessor>
+                    </technique_common>
+                </source>
+                <source id="Geometry-trafficwalk50-walk" name="walk">
+                    <float_array id="Geometry-trafficwalk50-walk-array" count="16">
+                        0.00409836 0.395902
+                        0.00409836 0.00409836
+                        0.495902 0.00409836
+                        0.495902 0.395902
+                        0.500902 1.0009
+                        0.00909835 1.0009
+                        0.00909835 0.604098
+                        0.500902 0.604098
+                    </float_array>
+                    <technique_common>
+                        <accessor count="8" source="#Geometry-trafficwalk50-walk-array" stride="2">
+                            <param name="S" type="float" />
+                            <param name="T" type="float" />
+                        </accessor>
+                    </technique_common>
+                </source>
+                <vertices id="Geometry-trafficwalk50-vertices">
+                    <input semantic="POSITION" source="#Geometry-trafficwalk50-positions" />
+                </vertices>
+                <polylist count="4" material="MatSym-Trafficwalk">
+                    <input semantic="VERTEX" source="#Geometry-trafficwalk50-vertices" offset="0" />
+                    <input semantic="NORMAL" source="#Geometry-trafficwalk50-normals" offset="1" />
+                    <input semantic="TEXCOORD" source="#Geometry-trafficwalk50-walk" offset="2" set="0" />
+                    <vcount>3 3 3 3</vcount>
+                    <p>0 0 0 1 0 1 2 0 2 0 0 0 2 0 2 3 0 3 4 1 4 5 1 5 6 1 6 4 1 4 6 1 6 7 1 7</p>
+                </polylist>
+            </mesh>
+        </geometry>
+    </library_geometries>
+    <library_images>
+        <image id="Image0001" name="Image0001">
+            <init_from>../Traffic_light/walk.jpg</init_from>
+        </image>
+    </library_images>
+    <library_lights>
+        <light id="Light-Render" name="Render">
+            <technique_common>
+                <ambient>
+                    <color sid="ambient_light_rgb">0.05 0.05 0.05</color>
+                </ambient>
+            </technique_common>
+        </light>
+        <light id="Light-Directional_Light" name="Directional_Light">
+            <technique_common>
+                <directional>
+                    <color sid="directional_light_rgb">1 1 1</color>
+                </directional>
+            </technique_common>
+        </light>
+    </library_lights>
+    <library_materials>
+        <material id="Material-Traffic_lightLOD" name="Traffic_lightLOD">
+            <instance_effect url="#Effect-Traffic_lightLOD" />
+        </material>
+        <material id="Material-Trafficwalk" name="Trafficwalk">
+            <instance_effect url="#Effect-Trafficwalk" />
+        </material>
+    </library_materials>
+    <library_visual_scenes>
+        <visual_scene id="DefaultScene">
+            <asset>
+                <created>2010-03-29T14:05:41Z</created>
+                <modified>2010-03-29T14:05:41Z</modified>
+                <up_axis>Y_UP</up_axis>
+            </asset>
+            <node id="RenderNode" name="Render" type="NODE">
+                <instance_light url="#Light-Render" />
+            </node>
+            <node id="base01Node" name="base01" type="NODE">
+                <translate sid="Position">0 0 0</translate>
+                <rotate sid="RotationZ">0 0 1 0</rotate>
+                <rotate sid="RotationY">0 1 0 0</rotate>
+                <rotate sid="RotationX">1 0 0 0</rotate>
+                <scale sid="Scale">1 1 1</scale>
+                <node id="Camera-Camera-CameraNodeNode" name="Camera-CameraNode" type="NODE">
+                    <translate sid="Position_2">62.0359 62.7041 -75.4736</translate>
+                    <rotate sid="Rotation_2Z">0 0 1 0</rotate>
+                    <rotate sid="Rotation_2Y">0 1 0 140.4</rotate>
+                    <rotate sid="Rotation_2X">1 0 0 -29.12</rotate>
+                    <instance_camera url="#Camera-Camera-CameraNode" />
+                </node>
+                <node id="start01Node" name="start01" type="NODE">
+                    <translate sid="Position_3">0 0 0</translate>
+                    <rotate sid="Rotation_3Z">0 0 1 0</rotate>
+                    <rotate sid="Rotation_3Y">0 1 0 0</rotate>
+                    <rotate sid="Rotation_3X">1 0 0 0</rotate>
+                    <scale sid="Scale_2">1 1 1</scale>
+                    <node id="Geometry-trafficwalk-1Node" name="trafficwalk-1" type="NODE">
+                        <translate sid="Position_4">0 0 0</translate>
+                        <rotate sid="Rotation_4Z">0 0 1 0</rotate>
+                        <rotate sid="Rotation_4Y">0 1 0 0</rotate>
+                        <rotate sid="Rotation_4X">1 0 0 0</rotate>
+                        <scale sid="Scale_3">0.001 0.001 0.001</scale>
+                        <instance_geometry url="#Geometry-trafficwalk-1">
+                            <bind_material>
+                                <technique_common>
+                                    <instance_material symbol="MatSym-Traffic_lightLOD" target="#Material-Traffic_lightLOD" />
+                                </technique_common>
+                            </bind_material>
+                        </instance_geometry>
+                    </node>
+                    <node id="Geometry-trafficwalk50Node" name="trafficwalk50" type="NODE">
+                        <translate sid="Position_5">0 0 0</translate>
+                        <rotate sid="Rotation_5Z">0 0 1 0</rotate>
+                        <rotate sid="Rotation_5Y">0 1 0 0</rotate>
+                        <rotate sid="Rotation_5X">1 0 0 0</rotate>
+                        <scale sid="Scale_4">1 1 1</scale>
+                        <instance_geometry url="#Geometry-trafficwalk50">
+                            <bind_material>
+                                <technique_common>
+                                    <instance_material symbol="MatSym-Trafficwalk" target="#Material-Trafficwalk">
+                                        <bind_vertex_input semantic="walk" input_semantic="TEXCOORD" input_set="0" />
+                                    </instance_material>
+                                </technique_common>
+                            </bind_material>
+                        </instance_geometry>
+                    </node>
+                </node>
+                <node id="collision1Node" name="collision1" type="NODE">
+                    <translate sid="Position_7">0 0 0</translate>
+                    <rotate sid="Rotation_7Z">0 0 1 0</rotate>
+                    <rotate sid="Rotation_7Y">0 1 0 0</rotate>
+                    <rotate sid="Rotation_7X">1 0 0 0</rotate>
+                    <scale sid="Scale_6">1 1 1</scale>
+                </node>
+            </node>
+            <node id="Texture_GroupNode" name="Texture_Group" type="NODE">
+                <node id="Texture__Image__walkNode" name="Texture__Image__walk" type="NODE">
+                    <translate sid="Position_6">0 2.8395 0.507399</translate>
+                    <rotate sid="Rotation_6Y">0 1 0 0</rotate>
+                    <rotate sid="Rotation_6X">1 0 0 0</rotate>
+                    <rotate sid="Rotation_6Z">0 0 1 0</rotate>
+                    <scale sid="Scale_5">1.5119 0.3504 0.310697</scale>
+                </node>
+            </node>
+            <node id="Light-Directional_LightNode" name="Directional_Light" type="NODE">
+                <translate sid="Position_8">-2 2 2</translate>
+                <rotate sid="Rotation_8Y">0 1 0 -45</rotate>
+                <rotate sid="Rotation_8X">1 0 0 -30</rotate>
+                <rotate sid="Rotation_8Z">0 0 1 0</rotate>
+                <instance_light url="#Light-Directional_Light" />
+            </node>
+        </visual_scene>
+    </library_visual_scenes>
+    <scene>
+        <instance_visual_scene url="#DefaultScene" />
+    </scene>
+</COLLADA>

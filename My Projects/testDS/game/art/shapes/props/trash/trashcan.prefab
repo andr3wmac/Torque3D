@@ -1,0 +1,91 @@
+//--- OBJECT WRITE BEGIN ---
+$ThisPrefab = new SimGroup() {
+   canSaveDynamicFields = "1";
+
+   new TSStatic() {
+      shapeName = "art/shapes/props/trash_can_02/trash_can_02.dae";
+      playAmbient = "1";
+      receiveSunLight = "1";
+      receiveLMLighting = "1";
+      useCustomAmbientLighting = "0";
+      customAmbientLighting = "0 0 0 1";
+      collisionType = "Collision Mesh";
+      decalType = "Collision Mesh";
+      allowPlayerStep = "1";
+      renderNormals = "0";
+      forceDetail = "-1";
+      position = "0.264099 1.80059 -0.285157";
+      rotation = "1 0 0 0";
+      scale = "0.46 0.46 0.46";
+      canSaveDynamicFields = "1";
+   };
+   new TSStatic() {
+      shapeName = "art/shapes/props/trash_can_02/trash_can_02_lid.dae";
+      playAmbient = "1";
+      receiveSunLight = "1";
+      receiveLMLighting = "1";
+      useCustomAmbientLighting = "0";
+      customAmbientLighting = "0 0 0 1";
+      collisionType = "Collision Mesh";
+      decalType = "Collision Mesh";
+      allowPlayerStep = "1";
+      renderNormals = "0";
+      forceDetail = "-1";
+      position = "1.0804 1.31615 -1.78318";
+      rotation = "1 0 0 57.4062";
+      scale = "0.46 0.46 0.46";
+      canSaveDynamicFields = "1";
+   };
+   new TSStatic() {
+      shapeName = "art/shapes/props/trash/trash01.dae";
+      playAmbient = "1";
+      receiveSunLight = "1";
+      receiveLMLighting = "1";
+      useCustomAmbientLighting = "0";
+      customAmbientLighting = "0 0 0 1";
+      collisionType = "Collision Mesh";
+      decalType = "Collision Mesh";
+      allowPlayerStep = "1";
+      renderNormals = "0";
+      forceDetail = "-1";
+      position = "-0.629002 -1.00286 -0.0680983";
+      rotation = "-1 0 0 56.9927";
+      scale = "1 1 1";
+      canSaveDynamicFields = "1";
+   };
+   new TSStatic() {
+      shapeName = "art/shapes/props/trash/trash03.dae";
+      playAmbient = "1";
+      receiveSunLight = "1";
+      receiveLMLighting = "1";
+      useCustomAmbientLighting = "0";
+      customAmbientLighting = "0 0 0 1";
+      collisionType = "Collision Mesh";
+      decalType = "Collision Mesh";
+      allowPlayerStep = "1";
+      renderNormals = "0";
+      forceDetail = "-1";
+      position = "-0.435902 -1.2752 0.609188";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      canSaveDynamicFields = "1";
+   };
+   new TSStatic() {
+      shapeName = "art/shapes/props/trash/trash02.dae";
+      playAmbient = "1";
+      receiveSunLight = "1";
+      receiveLMLighting = "1";
+      useCustomAmbientLighting = "0";
+      customAmbientLighting = "0 0 0 1";
+      collisionType = "Collision Mesh";
+      decalType = "Collision Mesh";
+      allowPlayerStep = "1";
+      renderNormals = "0";
+      forceDetail = "-1";
+      position = "-0.279602 -0.83868 1.52724";
+      rotation = "0 -1 0 49.9663";
+      scale = "1 1 1";
+      canSaveDynamicFields = "1";
+   };
+};
+//--- OBJECT WRITE END ---

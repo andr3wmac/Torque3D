@@ -1,0 +1,372 @@
+//--- OBJECT WRITE BEGIN ---
+%guiContent = new GuiChunkedBitmapCtrl(SettingsGui) {
+   bitmap = "art/gui/background.png";
+   useVariable = "0";
+   tile = "0";
+   position = "0 0";
+   extent = "1920 1200";
+   minExtent = "8 2";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   profile = "GuiDefaultProfile";
+   visible = "1";
+   active = "1";
+   tooltipProfile = "GuiToolTipProfile";
+   hovertime = "1000";
+   isContainer = "1";
+   canSave = "1";
+   canSaveDynamicFields = "1";
+      guidesHorizontal = "616";
+
+   new GuiBitmapCtrl() {
+      bitmap = "art/gui/Chinatown.png";
+      wrap = "0";
+      position = "280 26";
+      extent = "144 48";
+      minExtent = "8 2";
+      horizSizing = "right";
+      vertSizing = "bottom";
+      profile = "GuiDefaultProfile";
+      visible = "1";
+      active = "1";
+      tooltipProfile = "GuiToolTipProfile";
+      hovertime = "1000";
+      isContainer = "0";
+      canSave = "1";
+      canSaveDynamicFields = "0";
+   };
+   new GuiBitmapCtrl() {
+      bitmap = "art/gui/Torque3D.png";
+      wrap = "0";
+      position = "30 18";
+      extent = "221 52";
+      minExtent = "8 2";
+      horizSizing = "right";
+      vertSizing = "bottom";
+      profile = "GuiDefaultProfile";
+      visible = "1";
+      active = "1";
+      tooltipProfile = "GuiToolTipProfile";
+      hovertime = "1000";
+      isContainer = "0";
+      canSave = "1";
+      canSaveDynamicFields = "0";
+   };
+   new GuiScriptNotifyCtrl(SettingsGuiNotifyControl) {
+      onChildAdded = "0";
+      onChildRemoved = "0";
+      onChildResized = "0";
+      onParentResized = "1";
+      onResize = "0";
+      onLoseFirstResponder = "1";
+      onGainFirstResponder = "1";
+      position = "119 91";
+      extent = "687 464";
+      minExtent = "550 375";
+      horizSizing = "windowRelative";
+      vertSizing = "windowRelative";
+      profile = "GuiDefaultProfile";
+      visible = "1";
+      active = "1";
+      tooltipProfile = "GuiToolTipProfile";
+      hovertime = "1000";
+      isContainer = "1";
+      canSave = "1";
+      canSaveDynamicFields = "0";
+
+      new GuiBitmapCtrl() {
+         bitmap = "art/gui/Settings/MapWindow.png";
+         wrap = "0";
+         position = "5 0";
+         extent = "682 453";
+         minExtent = "8 2";
+         horizSizing = "relative";
+         vertSizing = "relative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapCtrl() {
+         bitmap = "art/gui/Settings/Text_Settings.png";
+         wrap = "1";
+         position = "89 19";
+         extent = "116 23";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapCtrl() {
+         bitmap = "art/gui/Settings/Text_Details.png";
+         wrap = "0";
+         position = "77 114";
+         extent = "124 184";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiTextEditCtrl(SettingsServerNameTextEdit) {
+         historySize = "0";
+         tabComplete = "0";
+         sinkAllKeyEvents = "0";
+         password = "0";
+         passwordMask = "*";
+         text = "Torque 3D Server";
+         maxLength = "1024";
+         margin = "0 0 0 0";
+         padding = "0 0 0 0";
+         anchorTop = "1";
+         anchorBottom = "0";
+         anchorLeft = "1";
+         anchorRight = "0";
+         position = "287 108";
+         extent = "303 22";
+         minExtent = "8 2";
+         horizSizing = "right";
+         vertSizing = "windowRelative";
+         profile = "ChinatownTextEditProfile";
+         visible = "1";
+         active = "1";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "1";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapButtonTextCtrl() {
+         bitmap = "art/gui/Back";
+         bitmapMode = "Centered";
+         autoFitExtents = "0";
+         useModifiers = "0";
+         useStates = "1";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         useMouseEvents = "0";
+         position = "5 402";
+         extent = "153 51";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "top";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         command = "Canvas.setContent( HostGui );";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiBitmapButtonTextCtrl() {
+         bitmap = "art/gui/Accept";
+         bitmapMode = "Centered";
+         autoFitExtents = "0";
+         useModifiers = "0";
+         useStates = "1";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         useMouseEvents = "0";
+         position = "170 397";
+         extent = "176 65";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "top";
+         profile = "GuiDefaultProfile";
+         visible = "1";
+         active = "1";
+         command = "SettingsGui.acceptClicked();";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "0";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiPopUpMenuCtrlEx(TimeLimitRollout) {
+         maxPopupHeight = "200";
+         sbUsesNAColor = "0";
+         reverseTextList = "0";
+         bitmapBounds = "16 16";
+         hotTrackCallback = "0";
+         text = "20";
+         maxLength = "1024";
+         margin = "0 0 0 0";
+         padding = "0 0 0 0";
+         anchorTop = "1";
+         anchorBottom = "0";
+         anchorLeft = "1";
+         anchorRight = "0";
+         position = "287 196";
+         extent = "145 20";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "ChinatownPopUpMenuProfile";
+         visible = "1";
+         active = "1";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "1";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+      new GuiPopUpMenuCtrlEx(GoalScoreRollout) {
+         maxPopupHeight = "200";
+         sbUsesNAColor = "0";
+         reverseTextList = "0";
+         bitmapBounds = "16 16";
+         hotTrackCallback = "0";
+         text = "30";
+         maxLength = "1024";
+         margin = "0 0 0 0";
+         padding = "0 0 0 0";
+         anchorTop = "1";
+         anchorBottom = "0";
+         anchorLeft = "1";
+         anchorRight = "0";
+         position = "287 154";
+         extent = "145 20";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "ChinatownPopUpMenuProfile";
+         visible = "1";
+         active = "1";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "1";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+         new GuiPopUpMenuCtrlEx(MinPlayerRollout) {
+         maxPopupHeight = "200";
+         sbUsesNAColor = "0";
+         reverseTextList = "0";
+         bitmapBounds = "16 16";
+         hotTrackCallback = "0";
+         text = "1";
+         maxLength = "1024";
+         margin = "0 0 0 0";
+         padding = "0 0 0 0";
+         anchorTop = "1";
+         anchorBottom = "0";
+         anchorLeft = "1";
+         anchorRight = "0";
+         position = "287 240";
+         extent = "145 20";
+         minExtent = "8 2";
+         horizSizing = "windowRelative";
+         vertSizing = "windowRelative";
+         profile = "ChinatownPopUpMenuProfile";
+         visible = "1";
+         active = "1";
+         tooltipProfile = "GuiToolTipProfile";
+         hovertime = "1000";
+         isContainer = "1";
+         canSave = "1";
+         canSaveDynamicFields = "0";
+      };
+            new GuiCheckBoxCtrl(GameCyclingToggle) {
+            text = " ";
+            groupNum = "-1";
+            buttonType = "ToggleButton";
+            useMouseEvents = "0";
+            position = "287 282";
+            extent = "17 18";
+            minExtent = "8 8";
+            horizSizing = "relative";
+            vertSizing = "relative";
+            profile = "ChinatownCheckboxProfile";
+            visible = "1";
+            active = "1";
+            command = "";
+            tooltipProfile = "GuiToolTipProfile";
+            hovertime = "1000";
+            isContainer = "0";
+            internalName = "";
+            canSave = "1";
+            canSaveDynamicFields = "0";
+         };
+   };
+};
+//--- OBJECT WRITE END ---
+
+
+function SettingsGui::onWake( %this )
+{
+   SettingsServerNameTextEdit.text = HostServerNameTextEdit.text;
+   
+   
+   GoalScoreRollout.clear();
+   TimeLimitRollout.clear();
+   
+   GoalScoreRollout.add("Infinite", 0);
+   TimeLimitRollout.add("Infinite", 0);
+      
+   %id = 1;
+   for(%count = 5; %count <= 30; %count += 5) 
+   {
+      GoalScoreRollout.add(%count, %id);
+      TimeLimitRollout.add(%count, %id);
+      %id++;
+   }
+   
+   for(%i = 1; %i <= $Pref::Server::MaxPlayers; %i++)
+   {
+      MinPlayerRollout.add(%i, %i-1);
+   }
+
+   %timeLim = TimeLimitRollout.findText($Game::Duration);
+   %score = GoalScoreRollout.findText($Game::EndGameScore);
+   
+   if (%timeLim != -1)
+      TimeLimitRollout.setSelected(%timeLim);
+   else
+      TimeLimitRollout.setSelected(4);
+      
+   if (%score != -1)
+      GoalScoreRollout.setSelected(%score);
+   else
+      GoalScoreRollout.setSelected(4);
+      
+   if ($Game::AllowCycling == true)
+      GameCyclingToggle.setStateOn(true);
+   else
+      GameCyclingToggle.setStateOn(false);
+}
+
+function SettingsGui::acceptClicked( %this )
+{
+   $Pref::Server::Name = SettingsServerNameTextEdit.getText();
+   
+   $Game::EndGameScore = GoalScoreRollout.getText();
+   $Game::Duration = TimeLimitRollout.getText();
+   $Pref::Server::MinPlayers = MinPlayerRollout.getText();
+   $Game::AllowCycling = GameCyclingToggle.isStateOn();
+   
+   Canvas.setContent( HostGui );
+}
+
+function SettingsGuiNotifyControl::onParentResized( %this )
+{
+   repositionControl( %this );
+}
