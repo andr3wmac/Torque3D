@@ -1,0 +1,600 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+	<asset>
+		<contributor>
+			<authoring_tool>Autodesk Softimage version 8.0.249.0 - Crosswalk 4.1</authoring_tool>
+		</contributor>
+		<created>2010-03-02T09:42:50Z</created>
+		<modified>2010-03-02T09:42:50Z</modified>
+		<revision>1.4.1</revision>
+		<unit meter="0.1" name="decimetre"></unit>
+		<up_axis>Y_UP</up_axis>
+	</asset>
+	<library_cameras>
+		<camera id="cameras_0" name="cameras_0">
+			<optics>
+				<technique_common>
+					<perspective>
+						<xfov>53.638000</xfov>
+						<aspect_ratio>1.333333</aspect_ratio>
+						<znear>0.100000</znear>
+						<zfar>32768.000000</zfar>
+					</perspective>
+				</technique_common>
+			</optics>
+			<extra>
+				<technique profile="XSI">
+					<XSI_Camera>
+						<xsi_param sid="std">9 </xsi_param>
+						<xsi_param sid="aspect">0.000000 </xsi_param>
+						<xsi_param sid="fov">0.000000 </xsi_param>
+						<xsi_param sid="fovtype">1 </xsi_param>
+						<xsi_param sid="proj">1 </xsi_param>
+						<xsi_param sid="orthoheight">0.100000 </xsi_param>
+						<xsi_param sid="interestdist">107.634506 </xsi_param>
+						<xsi_param sid="near">0.000000 </xsi_param>
+						<xsi_param sid="far">0.000000 </xsi_param>
+						<xsi_param sid="projplane">FALSE </xsi_param>
+						<xsi_param sid="projplanewidth">0.188976 </xsi_param>
+						<xsi_param sid="projplaneheight">0.141732 </xsi_param>
+						<xsi_param sid="projplaneoffx">0.000000 </xsi_param>
+						<xsi_param sid="projplaneoffy">0.000000</xsi_param>
+					</XSI_Camera>
+					<XSI_CameraFocalLength>
+						<xsi_param sid="projplanedist">4.747280</xsi_param>
+					</XSI_CameraFocalLength>
+				</technique>
+			</extra>
+		</camera>
+	</library_cameras>
+	<library_effects>
+		<effect id="BigRoadCracks_fx" name="BigRoadCracks_fx">
+			<profile_COMMON>
+				<technique sid="default">
+					<phong>
+						<emission>
+							<color sid="emission">0.000000 0.000000 0.000000 0.000000</color>
+						</emission>
+						<ambient>
+							<color sid="ambient">0.300000 0.300000 0.300000 0.000000</color>
+						</ambient>
+						<diffuse>
+							<color sid="diffuse">0.700000 0.700000 0.700000 0.000000</color>
+						</diffuse>
+						<specular>
+							<color sid="specular">1.000000 1.000000 1.000000 0.000000</color>
+						</specular>
+						<shininess>
+							<float sid="shininess">50.000000</float>
+						</shininess>
+						<reflective>
+							<color sid="reflective">0.000000 0.000000 0.000000 0.000000</color>
+						</reflective>
+						<reflectivity>
+							<float sid="reflectivity">1.000000</float>
+						</reflectivity>
+						<transparent opaque="RGB_ZERO">
+							<color sid="transparent">0.000000 0.000000 0.000000 0.000000</color>
+						</transparent>
+						<transparency>
+							<float sid="transparency">1.000000</float>
+						</transparency>
+						<index_of_refraction>
+							<float sid="index_of_refraction">1.000000</float>
+						</index_of_refraction>
+					</phong>
+				</technique>
+			</profile_COMMON>
+		</effect>
+	</library_effects>
+	<library_materials>
+		<material id="BigRoadCracks" name="BigRoadCracks">
+			<instance_effect url="#BigRoadCracks_fx"></instance_effect>
+			<extra>
+				<technique profile="XSI">
+					<XSI_MaterialInfo></XSI_MaterialInfo>
+				</technique>
+			</extra>
+		</material>
+	</library_materials>
+	<library_geometries>
+		<geometry id="geometries_0" name="geometries_0">
+			<mesh>
+				<source id="geometries_0-Pos">
+					<float_array id="geometries_0-Pos-array" count="12">
+						-4.000000 0.000000 -4.000000 
+						-4.000000 0.000000 4.000000 
+						4.000000 0.000000 -4.000000 
+						4.000000 0.000000 4.000000
+					</float_array>
+					<technique_common>
+						<accessor source="#geometries_0-Pos-array" count="4" stride="3">
+							<param name="X" type="float"/>
+							<param name="Y" type="float"/>
+							<param name="Z" type="float"/>
+						</accessor>
+					</technique_common>
+				</source>
+				<source id="geometries_0-Texture_Projection">
+					<float_array id="geometries_0-Texture_Projection-array" count="8">
+						0.000000 1.000000 
+						0.000000 0.000000 
+						1.000000 0.000000 
+						1.000000 1.000000
+					</float_array>
+					<technique_common>
+						<accessor source="#geometries_0-Texture_Projection-array" count="4" stride="2">
+							<param name="S" type="float"/>
+							<param name="T" type="float"/>
+						</accessor>
+					</technique_common>
+				</source>
+				<vertices id="geometries_0-Vtx">
+					<input semantic="POSITION" source="#geometries_0-Pos"/>
+				</vertices>
+				<polylist count="1" material="BigRoadCracks">
+					<input semantic="VERTEX" source="#geometries_0-Vtx" offset="0"/>
+					<input semantic="TEXCOORD" source="#geometries_0-Texture_Projection" offset="1"/>
+					<vcount>
+						4
+					</vcount>
+					<p>
+						0 0 
+						1 1 
+						3 2 
+						2 3
+					</p>
+				</polylist>
+			</mesh>
+			<extra>
+				<technique profile="XSI">
+					<XSI_VertexList>
+						<xsi_param sid="Attributes"> </xsi_param>
+						<xsi_param sid="nbAttributes">4 </xsi_param>
+						<xsi_param sid="position">0 1 2 3</xsi_param>
+					</XSI_VertexList>
+				</technique>
+			</extra>
+		</geometry>
+	</library_geometries>
+	<library_visual_scenes>
+		<visual_scene id="visual_scenes_0" name="visual_scenes_0">
+			<node id="base01" name="base01">
+				<translate sid="translation">0.000000 0.000000 0.000000</translate>
+				<rotate sid="rotation_z">0.000000 0.000000 1.000000 0.000000</rotate>
+				<rotate sid="rotation_y">0.000000 1.000000 0.000000 0.000000</rotate>
+				<rotate sid="rotation_x">1.000000 0.000000 0.000000 0.000000</rotate>
+				<scale sid="scale">1.000000 1.000000 1.000000</scale>
+				<node id="Camera_Root" name="Camera_Root">
+					<translate sid="translation">0.000000 2.000000 20.000000</translate>
+					<rotate sid="rotation_z">0.000000 0.000000 1.000000 0.000000</rotate>
+					<rotate sid="rotation_y">0.000000 1.000000 0.000000 0.000000</rotate>
+					<rotate sid="rotation_x">1.000000 0.000000 0.000000 0.000000</rotate>
+					<scale sid="scale">1.000000 1.000000 1.000000</scale>
+					<node id="Camera" name="Camera">
+						<translate sid="translation">35.584175 103.502762 -32.815350</translate>
+						<rotate sid="rotation_z">0.000000 0.000000 1.000000 0.000001</rotate>
+						<rotate sid="rotation_y">0.000000 1.000000 0.000000 110.160004</rotate>
+						<rotate sid="rotation_x">1.000000 0.000000 0.000000 -69.790596</rotate>
+						<scale sid="scale">1.000000 1.000000 1.000000</scale>
+						<instance_camera url="#cameras_0"/>
+						<extra>
+							<technique profile="XSI">
+								<SI_Visibility>
+									<xsi_param sid="visibility">FALSE</xsi_param>
+								</SI_Visibility>
+								<XSI_Transform>
+									<xsi_param sid="rotorder">"XYZ" </xsi_param>
+									<xsi_param sid="siscaling">TRUE</xsi_param>
+									<XSI_Limit>
+										<xsi_param sid="parameter">"posx" </xsi_param>
+										<xsi_param sid="minactive">FALSE </xsi_param>
+										<xsi_param sid="minlimit">0.000000 </xsi_param>
+										<xsi_param sid="maxactive">FALSE </xsi_param>
+										<xsi_param sid="maxlimit">0.000000</xsi_param>
+									</XSI_Limit>
+									<XSI_Limit>
+										<xsi_param sid="parameter">"posy" </xsi_param>
+										<xsi_param sid="minactive">FALSE </xsi_param>
+										<xsi_param sid="minlimit">0.000000 </xsi_param>
+										<xsi_param sid="maxactive">FALSE </xsi_param>
+										<xsi_param sid="maxlimit">0.000000</xsi_param>
+									</XSI_Limit>
+									<XSI_Limit>
+										<xsi_param sid="parameter">"posz" </xsi_param>
+										<xsi_param sid="minactive">FALSE </xsi_param>
+										<xsi_param sid="minlimit">0.000000 </xsi_param>
+										<xsi_param sid="maxactive">FALSE </xsi_param>
+										<xsi_param sid="maxlimit">0.000000</xsi_param>
+									</XSI_Limit>
+									<XSI_Limit>
+										<xsi_param sid="parameter">"rotx" </xsi_param>
+										<xsi_param sid="minactive">FALSE </xsi_param>
+										<xsi_param sid="minlimit">0.000000 </xsi_param>
+										<xsi_param sid="maxactive">FALSE </xsi_param>
+										<xsi_param sid="maxlimit">0.000000</xsi_param>
+									</XSI_Limit>
+									<XSI_Limit>
+										<xsi_param sid="parameter">"roty" </xsi_param>
+										<xsi_param sid="minactive">FALSE </xsi_param>
+										<xsi_param sid="minlimit">0.000000 </xsi_param>
+										<xsi_param sid="maxactive">FALSE </xsi_param>
+										<xsi_param sid="maxlimit">0.000000</xsi_param>
+									</XSI_Limit>
+									<XSI_Limit>
+										<xsi_param sid="parameter">"rotz" </xsi_param>
+										<xsi_param sid="minactive">FALSE </xsi_param>
+										<xsi_param sid="minlimit">0.000000 </xsi_param>
+										<xsi_param sid="maxactive">FALSE </xsi_param>
+										<xsi_param sid="maxlimit">0.000000</xsi_param>
+									</XSI_Limit>
+								</XSI_Transform>
+							</technique>
+						</extra>
+					</node>
+					<node id="Camera_Interest" name="Camera_Interest">
+						<translate sid="translation">0.679624 2.494627 -20.000631</translate>
+						<rotate sid="rotation_z">0.000000 0.000000 1.000000 0.000000</rotate>
+						<rotate sid="rotation_y">0.000000 1.000000 0.000000 0.000000</rotate>
+						<rotate sid="rotation_x">1.000000 0.000000 0.000000 0.000000</rotate>
+						<scale sid="scale">1.000000 1.000000 1.000000</scale>
+						<extra>
+							<technique profile="XSI">
+								<SI_Visibility>
+									<xsi_param sid="visibility">FALSE</xsi_param>
+								</SI_Visibility>
+								<XSI_Transform>
+									<xsi_param sid="rotorder">"XYZ" </xsi_param>
+									<xsi_param sid="siscaling">TRUE</xsi_param>
+									<XSI_Limit>
+										<xsi_param sid="parameter">"posx" </xsi_param>
+										<xsi_param sid="minactive">FALSE </xsi_param>
+										<xsi_param sid="minlimit">0.000000 </xsi_param>
+										<xsi_param sid="maxactive">FALSE </xsi_param>
+										<xsi_param sid="maxlimit">0.000000</xsi_param>
+									</XSI_Limit>
+									<XSI_Limit>
+										<xsi_param sid="parameter">"posy" </xsi_param>
+										<xsi_param sid="minactive">FALSE </xsi_param>
+										<xsi_param sid="minlimit">0.000000 </xsi_param>
+										<xsi_param sid="maxactive">FALSE </xsi_param>
+										<xsi_param sid="maxlimit">0.000000</xsi_param>
+									</XSI_Limit>
+									<XSI_Limit>
+										<xsi_param sid="parameter">"posz" </xsi_param>
+										<xsi_param sid="minactive">FALSE </xsi_param>
+										<xsi_param sid="minlimit">0.000000 </xsi_param>
+										<xsi_param sid="maxactive">FALSE </xsi_param>
+										<xsi_param sid="maxlimit">0.000000</xsi_param>
+									</XSI_Limit>
+									<XSI_Limit>
+										<xsi_param sid="parameter">"rotx" </xsi_param>
+										<xsi_param sid="minactive">FALSE </xsi_param>
+										<xsi_param sid="minlimit">0.000000 </xsi_param>
+										<xsi_param sid="maxactive">FALSE </xsi_param>
+										<xsi_param sid="maxlimit">0.000000</xsi_param>
+									</XSI_Limit>
+									<XSI_Limit>
+										<xsi_param sid="parameter">"roty" </xsi_param>
+										<xsi_param sid="minactive">FALSE </xsi_param>
+										<xsi_param sid="minlimit">0.000000 </xsi_param>
+										<xsi_param sid="maxactive">FALSE </xsi_param>
+										<xsi_param sid="maxlimit">0.000000</xsi_param>
+									</XSI_Limit>
+									<XSI_Limit>
+										<xsi_param sid="parameter">"rotz" </xsi_param>
+										<xsi_param sid="minactive">FALSE </xsi_param>
+										<xsi_param sid="minlimit">0.000000 </xsi_param>
+										<xsi_param sid="maxactive">FALSE </xsi_param>
+										<xsi_param sid="maxlimit">0.000000</xsi_param>
+									</XSI_Limit>
+								</XSI_Transform>
+								<SI_Null name="Camera_Interest">
+								</SI_Null>
+							</technique>
+						</extra>
+					</node>
+					<extra>
+						<technique profile="XSI">
+							<SI_Visibility>
+								<xsi_param sid="visibility">FALSE</xsi_param>
+							</SI_Visibility>
+							<XSI_Transform>
+								<xsi_param sid="rotorder">"XYZ" </xsi_param>
+								<xsi_param sid="siscaling">TRUE</xsi_param>
+								<XSI_Limit>
+									<xsi_param sid="parameter">"posx" </xsi_param>
+									<xsi_param sid="minactive">FALSE </xsi_param>
+									<xsi_param sid="minlimit">0.000000 </xsi_param>
+									<xsi_param sid="maxactive">FALSE </xsi_param>
+									<xsi_param sid="maxlimit">0.000000</xsi_param>
+								</XSI_Limit>
+								<XSI_Limit>
+									<xsi_param sid="parameter">"posy" </xsi_param>
+									<xsi_param sid="minactive">FALSE </xsi_param>
+									<xsi_param sid="minlimit">0.000000 </xsi_param>
+									<xsi_param sid="maxactive">FALSE </xsi_param>
+									<xsi_param sid="maxlimit">0.000000</xsi_param>
+								</XSI_Limit>
+								<XSI_Limit>
+									<xsi_param sid="parameter">"posz" </xsi_param>
+									<xsi_param sid="minactive">FALSE </xsi_param>
+									<xsi_param sid="minlimit">0.000000 </xsi_param>
+									<xsi_param sid="maxactive">FALSE </xsi_param>
+									<xsi_param sid="maxlimit">0.000000</xsi_param>
+								</XSI_Limit>
+								<XSI_Limit>
+									<xsi_param sid="parameter">"rotx" </xsi_param>
+									<xsi_param sid="minactive">FALSE </xsi_param>
+									<xsi_param sid="minlimit">0.000000 </xsi_param>
+									<xsi_param sid="maxactive">FALSE </xsi_param>
+									<xsi_param sid="maxlimit">0.000000</xsi_param>
+								</XSI_Limit>
+								<XSI_Limit>
+									<xsi_param sid="parameter">"roty" </xsi_param>
+									<xsi_param sid="minactive">FALSE </xsi_param>
+									<xsi_param sid="minlimit">0.000000 </xsi_param>
+									<xsi_param sid="maxactive">FALSE </xsi_param>
+									<xsi_param sid="maxlimit">0.000000</xsi_param>
+								</XSI_Limit>
+								<XSI_Limit>
+									<xsi_param sid="parameter">"rotz" </xsi_param>
+									<xsi_param sid="minactive">FALSE </xsi_param>
+									<xsi_param sid="minlimit">0.000000 </xsi_param>
+									<xsi_param sid="maxactive">FALSE </xsi_param>
+									<xsi_param sid="maxlimit">0.000000</xsi_param>
+								</XSI_Limit>
+							</XSI_Transform>
+							<SI_Null name="Camera_Root">
+							</SI_Null>
+						</technique>
+					</extra>
+				</node>
+				<node id="collision" name="collision">
+					<translate sid="translation">0.000000 0.000000 0.000000</translate>
+					<rotate sid="rotation_z">0.000000 0.000000 1.000000 0.000000</rotate>
+					<rotate sid="rotation_y">0.000000 1.000000 0.000000 0.000000</rotate>
+					<rotate sid="rotation_x">1.000000 0.000000 0.000000 0.000000</rotate>
+					<scale sid="scale">1.000000 1.000000 1.000000</scale>
+					<extra>
+						<technique profile="XSI">
+							<SI_Visibility>
+								<xsi_param sid="visibility">TRUE</xsi_param>
+							</SI_Visibility>
+							<XSI_Transform>
+								<xsi_param sid="rotorder">"XYZ" </xsi_param>
+								<xsi_param sid="siscaling">TRUE</xsi_param>
+								<XSI_Limit>
+									<xsi_param sid="parameter">"posx" </xsi_param>
+									<xsi_param sid="minactive">FALSE </xsi_param>
+									<xsi_param sid="minlimit">0.000000 </xsi_param>
+									<xsi_param sid="maxactive">FALSE </xsi_param>
+									<xsi_param sid="maxlimit">0.000000</xsi_param>
+								</XSI_Limit>
+								<XSI_Limit>
+									<xsi_param sid="parameter">"posy" </xsi_param>
+									<xsi_param sid="minactive">FALSE </xsi_param>
+									<xsi_param sid="minlimit">0.000000 </xsi_param>
+									<xsi_param sid="maxactive">FALSE </xsi_param>
+									<xsi_param sid="maxlimit">0.000000</xsi_param>
+								</XSI_Limit>
+								<XSI_Limit>
+									<xsi_param sid="parameter">"posz" </xsi_param>
+									<xsi_param sid="minactive">FALSE </xsi_param>
+									<xsi_param sid="minlimit">0.000000 </xsi_param>
+									<xsi_param sid="maxactive">FALSE </xsi_param>
+									<xsi_param sid="maxlimit">0.000000</xsi_param>
+								</XSI_Limit>
+								<XSI_Limit>
+									<xsi_param sid="parameter">"rotx" </xsi_param>
+									<xsi_param sid="minactive">FALSE </xsi_param>
+									<xsi_param sid="minlimit">0.000000 </xsi_param>
+									<xsi_param sid="maxactive">FALSE </xsi_param>
+									<xsi_param sid="maxlimit">0.000000</xsi_param>
+								</XSI_Limit>
+								<XSI_Limit>
+									<xsi_param sid="parameter">"roty" </xsi_param>
+									<xsi_param sid="minactive">FALSE </xsi_param>
+									<xsi_param sid="minlimit">0.000000 </xsi_param>
+									<xsi_param sid="maxactive">FALSE </xsi_param>
+									<xsi_param sid="maxlimit">0.000000</xsi_param>
+								</XSI_Limit>
+								<XSI_Limit>
+									<xsi_param sid="parameter">"rotz" </xsi_param>
+									<xsi_param sid="minactive">FALSE </xsi_param>
+									<xsi_param sid="minlimit">0.000000 </xsi_param>
+									<xsi_param sid="maxactive">FALSE </xsi_param>
+									<xsi_param sid="maxlimit">0.000000</xsi_param>
+								</XSI_Limit>
+							</XSI_Transform>
+							<SI_Null name="collision">
+							</SI_Null>
+						</technique>
+					</extra>
+				</node>
+				<node id="start01" name="start01">
+					<translate sid="translation">0.000000 0.000000 0.000000</translate>
+					<rotate sid="rotation_z">0.000000 0.000000 1.000000 0.000000</rotate>
+					<rotate sid="rotation_y">0.000000 1.000000 0.000000 0.000000</rotate>
+					<rotate sid="rotation_x">1.000000 0.000000 0.000000 0.000000</rotate>
+					<scale sid="scale">1.000000 1.000000 1.000000</scale>
+					<node id="grid" name="grid">
+						<translate sid="translation">0.000000 0.000000 0.000000</translate>
+						<rotate sid="rotation_z">0.000000 0.000000 1.000000 0.000000</rotate>
+						<rotate sid="rotation_y">0.000000 1.000000 0.000000 0.000000</rotate>
+						<rotate sid="rotation_x">1.000000 0.000000 0.000000 0.000000</rotate>
+						<scale sid="scale">4.885501 4.885501 4.885501</scale>
+						<instance_geometry url="#geometries_0">
+							<bind_material>
+								<technique_common>
+									<instance_material symbol="BigRoadCracks" target="#BigRoadCracks"></instance_material>
+								</technique_common>
+							</bind_material>
+						</instance_geometry>
+						<extra>
+							<technique profile="XSI">
+								<SI_Visibility>
+									<xsi_param sid="visibility">TRUE</xsi_param>
+								</SI_Visibility>
+								<XSI_Transform>
+									<xsi_param sid="rotorder">"XYZ" </xsi_param>
+									<xsi_param sid="siscaling">TRUE</xsi_param>
+									<XSI_Limit>
+										<xsi_param sid="parameter">"posx" </xsi_param>
+										<xsi_param sid="minactive">FALSE </xsi_param>
+										<xsi_param sid="minlimit">0.000000 </xsi_param>
+										<xsi_param sid="maxactive">FALSE </xsi_param>
+										<xsi_param sid="maxlimit">0.000000</xsi_param>
+									</XSI_Limit>
+									<XSI_Limit>
+										<xsi_param sid="parameter">"posy" </xsi_param>
+										<xsi_param sid="minactive">FALSE </xsi_param>
+										<xsi_param sid="minlimit">0.000000 </xsi_param>
+										<xsi_param sid="maxactive">FALSE </xsi_param>
+										<xsi_param sid="maxlimit">0.000000</xsi_param>
+									</XSI_Limit>
+									<XSI_Limit>
+										<xsi_param sid="parameter">"posz" </xsi_param>
+										<xsi_param sid="minactive">FALSE </xsi_param>
+										<xsi_param sid="minlimit">0.000000 </xsi_param>
+										<xsi_param sid="maxactive">FALSE </xsi_param>
+										<xsi_param sid="maxlimit">0.000000</xsi_param>
+									</XSI_Limit>
+									<XSI_Limit>
+										<xsi_param sid="parameter">"rotx" </xsi_param>
+										<xsi_param sid="minactive">FALSE </xsi_param>
+										<xsi_param sid="minlimit">0.000000 </xsi_param>
+										<xsi_param sid="maxactive">FALSE </xsi_param>
+										<xsi_param sid="maxlimit">0.000000</xsi_param>
+									</XSI_Limit>
+									<XSI_Limit>
+										<xsi_param sid="parameter">"roty" </xsi_param>
+										<xsi_param sid="minactive">FALSE </xsi_param>
+										<xsi_param sid="minlimit">0.000000 </xsi_param>
+										<xsi_param sid="maxactive">FALSE </xsi_param>
+										<xsi_param sid="maxlimit">0.000000</xsi_param>
+									</XSI_Limit>
+									<XSI_Limit>
+										<xsi_param sid="parameter">"rotz" </xsi_param>
+										<xsi_param sid="minactive">FALSE </xsi_param>
+										<xsi_param sid="minlimit">0.000000 </xsi_param>
+										<xsi_param sid="maxactive">FALSE </xsi_param>
+										<xsi_param sid="maxlimit">0.000000</xsi_param>
+									</XSI_Limit>
+								</XSI_Transform>
+								<SI_GlobalMaterial>
+									<xsi_param sid="reference">"BigRoadCracks" </xsi_param>
+									<xsi_param sid="propagation">"NODE"</xsi_param>
+								</SI_GlobalMaterial>
+							</technique>
+						</extra>
+					</node>
+					<extra>
+						<technique profile="XSI">
+							<SI_Visibility>
+								<xsi_param sid="visibility">TRUE</xsi_param>
+							</SI_Visibility>
+							<XSI_Transform>
+								<xsi_param sid="rotorder">"XYZ" </xsi_param>
+								<xsi_param sid="siscaling">TRUE</xsi_param>
+								<XSI_Limit>
+									<xsi_param sid="parameter">"posx" </xsi_param>
+									<xsi_param sid="minactive">FALSE </xsi_param>
+									<xsi_param sid="minlimit">0.000000 </xsi_param>
+									<xsi_param sid="maxactive">FALSE </xsi_param>
+									<xsi_param sid="maxlimit">0.000000</xsi_param>
+								</XSI_Limit>
+								<XSI_Limit>
+									<xsi_param sid="parameter">"posy" </xsi_param>
+									<xsi_param sid="minactive">FALSE </xsi_param>
+									<xsi_param sid="minlimit">0.000000 </xsi_param>
+									<xsi_param sid="maxactive">FALSE </xsi_param>
+									<xsi_param sid="maxlimit">0.000000</xsi_param>
+								</XSI_Limit>
+								<XSI_Limit>
+									<xsi_param sid="parameter">"posz" </xsi_param>
+									<xsi_param sid="minactive">FALSE </xsi_param>
+									<xsi_param sid="minlimit">0.000000 </xsi_param>
+									<xsi_param sid="maxactive">FALSE </xsi_param>
+									<xsi_param sid="maxlimit">0.000000</xsi_param>
+								</XSI_Limit>
+								<XSI_Limit>
+									<xsi_param sid="parameter">"rotx" </xsi_param>
+									<xsi_param sid="minactive">FALSE </xsi_param>
+									<xsi_param sid="minlimit">0.000000 </xsi_param>
+									<xsi_param sid="maxactive">FALSE </xsi_param>
+									<xsi_param sid="maxlimit">0.000000</xsi_param>
+								</XSI_Limit>
+								<XSI_Limit>
+									<xsi_param sid="parameter">"roty" </xsi_param>
+									<xsi_param sid="minactive">FALSE </xsi_param>
+									<xsi_param sid="minlimit">0.000000 </xsi_param>
+									<xsi_param sid="maxactive">FALSE </xsi_param>
+									<xsi_param sid="maxlimit">0.000000</xsi_param>
+								</XSI_Limit>
+								<XSI_Limit>
+									<xsi_param sid="parameter">"rotz" </xsi_param>
+									<xsi_param sid="minactive">FALSE </xsi_param>
+									<xsi_param sid="minlimit">0.000000 </xsi_param>
+									<xsi_param sid="maxactive">FALSE </xsi_param>
+									<xsi_param sid="maxlimit">0.000000</xsi_param>
+								</XSI_Limit>
+							</XSI_Transform>
+							<SI_Null name="start01">
+							</SI_Null>
+						</technique>
+					</extra>
+				</node>
+				<extra>
+					<technique profile="XSI">
+						<SI_Visibility>
+							<xsi_param sid="visibility">TRUE</xsi_param>
+						</SI_Visibility>
+						<XSI_Transform>
+							<xsi_param sid="rotorder">"XYZ" </xsi_param>
+							<xsi_param sid="siscaling">TRUE</xsi_param>
+						</XSI_Transform>
+					</technique>
+				</extra>
+			</node>
+		</visual_scene>
+	</library_visual_scenes>
+	<scene>
+		<instance_visual_scene url="#visual_scenes_0"/>
+	</scene>
+	<extra>
+		<technique profile="XSI">
+			<SI_Scene>
+				<xsi_param sid="timing">"SECONDS" </xsi_param>
+				<xsi_param sid="start">1.000000 </xsi_param>
+				<xsi_param sid="end">100.000000 </xsi_param>
+				<xsi_param sid="frameRate">29.970030</xsi_param>
+			</SI_Scene>
+			<SI_Angle>
+				<xsi_param sid="type">0</xsi_param>
+			</SI_Angle>
+			<SI_Ambience>
+				<xsi_param sid="red">0.200000 </xsi_param>
+				<xsi_param sid="green">0.200000 </xsi_param>
+				<xsi_param sid="blue">0.200000</xsi_param>
+			</SI_Ambience>
+			<SI_CoordinateSystem>
+				<xsi_param sid="handRotation">1 </xsi_param>
+				<xsi_param sid="uAxis">0 </xsi_param>
+				<xsi_param sid="vAxis">1 </xsi_param>
+				<xsi_param sid="xAxis">0 </xsi_param>
+				<xsi_param sid="yAxis">2 </xsi_param>
+				<xsi_param sid="zAxis">5</xsi_param>
+			</SI_CoordinateSystem>
+			<XSI_PolygonList>
+				<xsi_param sid="Attributes"> </xsi_param>
+				<xsi_param sid="Material">"" </xsi_param>
+				<xsi_param sid="NbPolynodes">0 </xsi_param>
+				<xsi_param sid="NbPolygons">0 </xsi_param>
+				<xsi_param sid="polygoneNodeCounts">4 </xsi_param>
+				<xsi_param sid="vertexIndices">0 1 3 2 </xsi_param>
+				<xsi_param sid="Texture_Projection">0 1 2 3</xsi_param>
+			</XSI_PolygonList>
+		</technique>
+	</extra>
+</COLLADA>
