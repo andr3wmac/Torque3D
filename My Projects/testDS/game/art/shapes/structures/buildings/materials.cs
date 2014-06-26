@@ -4074,3 +4074,9 @@ singleton Material(CT_Signs)
    materialTag0 = "Chinatown";
    materialTag1 = "Prop";
 };
+
+singleton Material(CT_building_012_Material_)
+{
+   mapTo = "Material-";
+   translucentBlendOp = "None";
+};
