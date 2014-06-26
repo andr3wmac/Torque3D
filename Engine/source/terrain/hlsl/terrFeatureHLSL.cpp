@@ -1171,7 +1171,6 @@ void DeferredTerrainDetailMapFeatHLSL::processPix( Vector<ShaderComponent*> &com
    // If we're using SM 3.0 then take advantage of 
    // dynamic branching to skip layers per-pixel.
 
-   Var *baseColor = (Var*)LangElement::find( "baseColor" );
 
    if ( GFX->getPixelShaderVersion() >= 3.0f )
       meta->addStatement( new GenOp( "   if ( @ > 0.0f )\r\n", detailBlend ) );
@@ -1199,14 +1198,15 @@ void DeferredTerrainDetailMapFeatHLSL::processPix( Vector<ShaderComponent*> &com
    meta->addStatement( new GenOp( "      @ *= @.y * @.w;\r\n",
                                     detailColor, detailInfo, inDet ) );
 
-   
+   Var *baseColor = (Var*)LangElement::find( "baseColor" );
+   //col2 = RenderTarget2
+   Var *outColor = (Var*)LangElement::find( "col2" );
 
    meta->addStatement( new GenOp( "      @ = lerp( @, @ + @, @ );\r\n",
-                                   baseColor, baseColor, baseColor, detailColor, detailBlend ) );
+                                    outColor, outColor, baseColor, detailColor, detailBlend ) );
 
    meta->addStatement( new GenOp( "   }\r\n" ) );
 
-   meta->addStatement( new GenOp( "   @;\r\n", assignColor( baseColor, Material::None,NULL,ShaderFeature::RenderTarget2 ) ) );
    output = meta;
 
 }
