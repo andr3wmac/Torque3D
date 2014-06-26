@@ -49,7 +49,7 @@ MODULE_BEGIN( TerrainFeatHLSL )
       FEATUREMGR->registerFeature( MFT_TerrainSideProject, new NamedFeatureHLSL( "Terrain Side Projection" ) );
       FEATUREMGR->registerFeature( MFT_TerrainAdditive, new TerrainAdditiveFeatHLSL );
       FEATUREMGR->registerFeature( MFT_DeferredTerrainBaseMap, new DeferredTerrainBaseMapFeatHLSL );
-      FEATUREMGR->registerFeature( MFT_DeferredTerrainDetailMap, new DeferredTerrainDetailMapFeatHLSL );
+      FEATUREMGR->registerFeature( MFT_DeferredTerrainDetailMap, new TerrainDetailMapFeatHLSL );
    }
 
 MODULE_END;
@@ -463,29 +463,6 @@ void TerrainDetailMapFeatHLSL::processPix(   Vector<ShaderComponent*> &component
          inDet, normalMap, inDet, negViewTS, detailInfo, detailBlend ) );
    }
 
-   // If this is a prepass then we skip color.
-   if ( fd.features.hasFeature( MFT_PrePassConditioner ) )
-   {
-      // Check to see if we have a gbuffer normal.
-      Var *gbNormal = (Var*)LangElement::find( "gbNormal" );
-
-      // If we have a gbuffer normal and we don't have a
-      // normal map feature then we need to lerp in a 
-      // default normal else the normals below this layer
-      // will show thru.
-      if (  gbNormal && 
-            !fd.features.hasFeature( MFT_TerrainNormalMap, detailIndex ) )
-      {
-         Var *viewToTangent = getInViewToTangent( componentList );
-
-         meta->addStatement( new GenOp( "   @ = lerp( @, @[2], min( @, @.w ) );\r\n", 
-            gbNormal, gbNormal, viewToTangent, detailBlend, inDet ) );
-      }
-
-      output = meta;
-      return;
-   }
-
    Var *detailColor = (Var*)LangElement::find( "detailColor" ); 
    if ( !detailColor )
    {
@@ -534,7 +511,14 @@ void TerrainDetailMapFeatHLSL::processPix(   Vector<ShaderComponent*> &component
                                     detailColor, detailInfo, inDet ) );
 
    Var *baseColor = (Var*)LangElement::find( "baseColor" );
-   Var *outColor = (Var*)LangElement::find( "col" );
+   String outColorName;
+   //deferred goes to Render Target 2 (col2)
+   if(fd.features.hasFeature(MFT_DeferredTerrainDetailMap))
+      outColorName = "col2";
+   else
+      outColorName = "col";
+
+   Var *outColor = (Var*)LangElement::find( outColorName.c_str() );
 
    meta->addStatement( new GenOp( "      @ = lerp( @, @ + @, @ );\r\n",
                                     outColor, outColor, baseColor, detailColor, detailBlend ) );
@@ -561,10 +545,8 @@ ShaderFeature::Resources TerrainDetailMapFeatHLSL::getResources( const MaterialF
          res.numTexReg += 4;
    }
 
-   // If this isn't the prepass then we sample 
-   // from the detail texture for diffuse coloring.
-   if ( !fd.features.hasFeature( MFT_PrePassConditioner ) )
-      res.numTex += 1;
+   // sample from the detail texture for diffuse coloring.
+   res.numTex += 1;
 
    // If we have parallax for this layer then we'll also
    // be sampling the normal map for the parallax heightmap.
@@ -1047,195 +1029,6 @@ ShaderFeature::Resources DeferredTerrainBaseMapFeatHLSL::getResources( const Mat
    Resources res; 
    res.numTex = 1;
    res.numTexReg = 1;
-
-   return res;
-}
-
-
-void DeferredTerrainDetailMapFeatHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
-{
-   const U32 detailIndex = getProcessIndex();
-   Var *inTex = getVertTexCoord( "texCoord" );
-   
-   MultiLine *meta = new MultiLine;
-
-   // We need the negative tangent space view vector
-   // as in parallax mapping we step towards the camera.
-   Var *negViewTS = (Var*)LangElement::find( "negViewTS" );
-   if (  !negViewTS &&
-         fd.features.hasFeature( MFT_TerrainParallaxMap ) )
-   {
-      Var *inNegViewTS = (Var*)LangElement::find( "outNegViewTS" );
-      if ( !inNegViewTS )
-      {
-         ShaderConnector *connectComp = dynamic_cast<ShaderConnector *>( componentList[C_CONNECTOR] );
-         inNegViewTS = connectComp->getElement( RT_TEXCOORD );
-         inNegViewTS->setName( "outNegViewTS" );
-         inNegViewTS->setStructName( "IN" );
-         inNegViewTS->setType( "float3" );
-      }
-
-      negViewTS = new Var( "negViewTS", "float3" );
-      meta->addStatement( new GenOp( "   @ = normalize( @ );\r\n", new DecOp( negViewTS ), inNegViewTS ) );
-   }
-
-   // Get the layer samples.
-   Var *layerSample = (Var*)LangElement::find( "layerSample" );
-   if ( !layerSample )
-   {
-      layerSample = new Var;
-      layerSample->setType( "float4" );
-      layerSample->setName( "layerSample" );
-
-      // Get the layer texture var
-      Var *layerTex = new Var;
-      layerTex->setType( "sampler2D" );
-      layerTex->setName( "layerTex" );
-      layerTex->uniform = true;
-      layerTex->sampler = true;
-      layerTex->constNum = Var::getTexUnitNum();
-
-      // Read the layer texture to get the samples.
-      meta->addStatement( new GenOp( "   @ = round( tex2D( @, @.xy ) * 255.0f );\r\n", 
-                                       new DecOp( layerSample ), layerTex, inTex ) );
-   }
-
-   Var *layerSize = (Var*)LangElement::find( "layerSize" );
-   if ( !layerSize )
-   {
-      layerSize = new Var;
-      layerSize->setType( "float" );
-      layerSize->setName( "layerSize" );
-      layerSize->uniform = true;
-      layerSize->constSortPos = cspPass;
-   }
-
-   // Grab the incoming detail coord.
-   Var *inDet = _getInDetailCoord( componentList );
-
-   // Get the detail id.
-   Var *detailInfo = _getDetailIdStrengthParallax();
-
-   // Create the detail blend var.
-   Var *detailBlend = new Var;
-   detailBlend->setType( "float" );
-   detailBlend->setName( String::ToString( "detailBlend%d", detailIndex ) );
-
-   // Calculate the blend for this detail texture.
-   meta->addStatement( new GenOp( "   @ = calcBlend( @.x, @.xy, @, @ );\r\n", 
-                                    new DecOp( detailBlend ), detailInfo, inTex, layerSize, layerSample ) );
-
-   // Get a var and accumulate the blend amount.
-   Var *blendTotal = (Var*)LangElement::find( "blendTotal" );
-   if ( !blendTotal )
-   {
-      blendTotal = new Var;
-      blendTotal->setName( "blendTotal" );
-      blendTotal->setType( "float" );
-      meta->addStatement( new GenOp( "   @ = 0;\r\n", new DecOp( blendTotal ) ) );
-   }
-
-   // Add to the blend total.
-   meta->addStatement( new GenOp( "   @ = max( @, @ );\r\n", blendTotal, blendTotal, detailBlend ) );
-
-   // If we had a parallax feature... then factor in the parallax
-   // amount so that it fades out with the layer blending.
-   if ( fd.features.hasFeature( MFT_TerrainParallaxMap, detailIndex ) )
-   {
-      // Get the rest of our inputs.
-      Var *normalMap = _getNormalMapTex();
-
-      // Call the library function to do the rest.
-      meta->addStatement( new GenOp( "   @.xy += parallaxOffset( @, @.xy, @, @.z * @ );\r\n", 
-         inDet, normalMap, inDet, negViewTS, detailInfo, detailBlend ) );
-   }
-
-
-   Var *detailColor = (Var*)LangElement::find( "detailColor" ); 
-   if ( !detailColor )
-   {
-      detailColor = new Var;
-      detailColor->setType( "float4" );
-      detailColor->setName( "detailColor" );
-      meta->addStatement( new GenOp( "   @;\r\n", new DecOp( detailColor ) ) );
-   }
-
-   // Get the detail texture.
-   Var *detailMap = new Var;
-   detailMap->setType( "sampler2D" );
-   detailMap->setName( String::ToString( "detailMap%d", detailIndex ) );
-   detailMap->uniform = true;
-   detailMap->sampler = true;
-   detailMap->constNum = Var::getTexUnitNum();     // used as texture unit num here
-
-   // If we're using SM 3.0 then take advantage of 
-   // dynamic branching to skip layers per-pixel.
-
-   Var *baseColor = (Var*)LangElement::find( "baseColor" );
-
-   if ( GFX->getPixelShaderVersion() >= 3.0f )
-      meta->addStatement( new GenOp( "   if ( @ > 0.0f )\r\n", detailBlend ) );
-
-   meta->addStatement( new GenOp( "   {\r\n" ) );
-
-   // Note that we're doing the standard greyscale detail 
-   // map technique here which can darken and lighten the 
-   // diffuse texture.
-   //
-   // We take two color samples and lerp between them for
-   // side projection layers... else a single sample.
-   //
-   if ( fd.features.hasFeature( MFT_TerrainSideProject, detailIndex ) )
-   {
-      meta->addStatement( new GenOp( "      @ = ( lerp( tex2D( @, @.yz ), tex2D( @, @.xz ), @.z ) * 2.0 ) - 1.0;\r\n", 
-                                                detailColor, detailMap, inDet, detailMap, inDet, inTex ) );
-   }
-   else
-   {
-      meta->addStatement( new GenOp( "      @ = ( tex2D( @, @.xy ) * 2.0 ) - 1.0;\r\n", 
-                                       detailColor, detailMap, inDet ) );
-   }
-
-   meta->addStatement( new GenOp( "      @ *= @.y * @.w;\r\n",
-                                    detailColor, detailInfo, inDet ) );
-
-   
-
-   meta->addStatement( new GenOp( "      @ = lerp( @, @ + @, @ );\r\n",
-                                   baseColor, baseColor, baseColor, detailColor, detailBlend ) );
-
-   meta->addStatement( new GenOp( "   }\r\n" ) );
-
-   meta->addStatement( new GenOp( "   @;\r\n", assignColor( baseColor, Material::None,NULL,ShaderFeature::RenderTarget2 ) ) );
-   output = meta;
-
-}
-
-ShaderFeature::Resources DeferredTerrainDetailMapFeatHLSL::getResources( const MaterialFeatureData &fd )
-{
-   Resources res;
-
-   if ( getProcessIndex() == 0 )
-   {
-      // If this is the first detail pass then we 
-      // samples from the layer tex.
-      res.numTex += 1;
-
-      // If this material also does parallax then it
-      // will generate the negative view vector and the
-      // worldToTanget transform.
-      if ( fd.features.hasFeature( MFT_TerrainParallaxMap ) )
-         res.numTexReg += 4;
-   }
-
-   // If we have parallax for this layer then we'll also
-   // be sampling the normal map for the parallax heightmap.
-   if ( fd.features.hasFeature( MFT_TerrainParallaxMap, getProcessIndex() ) )
-      res.numTex += 1;
-
-   // Finally we always send the detail texture 
-   // coord to the pixel shader.
-   res.numTexReg += 1;
 
    return res;
 }
