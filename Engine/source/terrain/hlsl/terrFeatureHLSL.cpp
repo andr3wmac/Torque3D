@@ -1019,7 +1019,7 @@ void DeferredTerrainBaseMapFeatHLSL::processPix( Vector<ShaderComponent*> &compo
    baseColor->setType( "float4" );
    baseColor->setName( "baseColor" );
    meta->addStatement( new GenOp( "   @ = tex2D( @, @.xy );\r\n", new DecOp( baseColor ), diffuseMap, texCoord ) );
-   meta->addStatement( new GenOp( "   @;\r\n", assignColor( baseColor, Material::Mul,NULL,ShaderFeature::RenderTarget2 ) ) );
+   meta->addStatement( new GenOp( "   @;\r\n", assignColor( baseColor, Material::Mul,NULL,ShaderFeature::RenderTarget1 ) ) );
 
    output = meta;
 }

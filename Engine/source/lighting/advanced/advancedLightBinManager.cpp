@@ -255,8 +255,8 @@ void AdvancedLightBinManager::render( SceneRenderState *state )
 
    // andrewmac: with deferred rendering the lightinfo will always have data in it.
    // Clear as long as there isn't MRT population of light buffer with lightmap data
-   //if ( !MRTLightmapsDuringPrePass() )
-   //   GFX->clear(GFXClearTarget, ColorI(0, 0, 0, 0), 1.0f, 0);
+   if ( !MRTLightmapsDuringPrePass() )
+      GFX->clear(GFXClearTarget, ColorI(0, 0, 0, 0), 1.0f, 0);
 
    // Restore transforms
    MatrixSet &matrixSet = getRenderPass()->getMatrixSet();

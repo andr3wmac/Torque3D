@@ -27,13 +27,13 @@
 float4 main( PFXVertToPix IN, 
              uniform sampler2D colorBufferTex : register(S0),
              uniform sampler2D lightPrePassTex : register(S1) ) : COLOR0
-{     
-   float3 lightcolor;   
-   float nl_Att, specular;   
-   lightinfoUncondition( tex2D( lightPrePassTex, IN.uv0 ), lightcolor, nl_Att, specular );   
+{        
+   float4 lightBuffer = tex2D( lightPrePassTex, IN.uv0 );
+   float4 colorBuffer = tex2D( colorBufferTex, IN.uv0 );
+   float specular = lightBuffer.a;
 
-   float4 colorOUT = tex2D( colorBufferTex, IN.uv0 );
-   colorOUT *= float4(lightcolor, 1.0);
+   colorBuffer *= float4(lightBuffer.rgb, 1.0);
+   colorBuffer += float4(specular, specular, specular, 1.0);
 
-   return colorOUT;   
+   return colorBuffer;   
 }

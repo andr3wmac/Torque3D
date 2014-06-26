@@ -41,6 +41,9 @@ uniform float4 rtParams2;
 float4 main( FarFrustumQuadConnectP IN,
 
              uniform sampler2D prePassBuffer : register(S0),
+
+             uniform sampler2D lightBuffer : register(S5),
+             uniform sampler2D colorBuffer : register(S6),
              
              uniform float3 lightDirection,
              uniform float4 lightColor,
@@ -229,5 +232,9 @@ float4 main( FarFrustumQuadConnectP IN,
       lightColorOut = debugColor;
    #endif
 
-   return lightinfoCondition( lightColorOut, Sat_NL_Att, specular, addToResult );  
+   float specularPower = tex2D( colorBuffer, IN.uv0 ).a;
+   float specularOut = pow( specular, ceil(specularPower / AL_ConstantSpecularPower)) * 0.2;
+   
+   lightColorOut *= Sat_NL_Att + addToResult;
+   return float4(lightColorOut, specularOut ); 
 }

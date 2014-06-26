@@ -100,6 +100,7 @@ void AdvancedLightManager::activate( SceneManager *sceneManager )
    Vector<GFXFormat> formats;
    formats.push_back( GFXFormatR16G16B16A16F );
    formats.push_back( GFXFormatR16G16B16A16 );
+
    GFXFormat blendTargetFormat = GFX->selectSupportedFormat( &GFXDefaultRenderTargetProfile,
                                                          formats,
                                                          true,

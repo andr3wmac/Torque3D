@@ -120,6 +120,7 @@ function initializeWorldEditor()
    EVisibility.addOption( "AL: Normals Viz", "$AL_NormalsVisualizeVar", "toggleNormalsViz" );
    EVisibility.addOption( "AL: Depth Viz", "$AL_DepthVisualizeVar", "toggleDepthViz" );
    EVisibility.addOption( "AL: Color Buffer", "$AL_ColorBufferShaderVar", "toggleColorBufferViz" );
+   EVisibility.addOption( "AL: Spec Map", "$AL_SpecMapShaderVar", "toggleSpecMapViz");
    EVisibility.addOption( "AL: Glow Buffer", "$AL_GlowVisualizeVar", "toggleGlowViz" );
    EVisibility.addOption( "AL: Backbuffer", "$AL_BackbufferVisualizeVar", "toggleBackbufferViz" );
    EVisibility.addOption( "Frustum Lock", "$Scene::lockCull", "" );

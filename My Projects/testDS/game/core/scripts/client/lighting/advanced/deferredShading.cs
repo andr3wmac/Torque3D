@@ -77,3 +77,35 @@ function toggleColorBufferViz( %enable )
    else if ( !%enable )
       AL_ColorBufferVisualize.disable();    
 }
+
+new ShaderData( AL_SpecMapShader )
+{
+   DXVertexShaderFile = "shaders/common/postFx/postFxV.hlsl";
+   DXPixelShaderFile  = "shaders/common/lighting/advanced/dbgSpecMapVisualizeP.hlsl";
+
+   samplerNames[0] = "color";
+   pixVersion = 2.0;
+};
+
+singleton PostEffect( AL_SpecMapVisualize )
+{   
+   shader = AL_SpecMapShader;
+   stateBlock = AL_DefaultVisualizeState;
+   texture[0] = "#color";
+   target = "$backBuffer";
+   renderPriority = 9999;
+};
+
+/// Toggles the visualization of the AL lighting specular power buffer.
+function toggleSpecMapViz( %enable )
+{   
+   if ( %enable $= "" )
+   {
+      $AL_SpecMapShaderVar = AL_SpecMapVisualize.isEnabled() ? false : true;
+      AL_SpecMapVisualize.toggle();
+   }
+   else if ( %enable )
+      AL_SpecMapVisualize.enable();
+   else if ( !%enable )
+      AL_SpecMapVisualize.disable();    
+}

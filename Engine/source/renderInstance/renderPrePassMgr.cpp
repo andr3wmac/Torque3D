@@ -148,7 +148,7 @@ bool RenderPrePassMgr::_updateTargets()
 
    // Attach the light info buffer as a second render target, if there is
    // lightmapped geometry in the scene.
-   AdvancedLightBinManager *lightBin;
+   /*AdvancedLightBinManager *lightBin;
    if (  Sim::findObject( "AL_LightBinMgr", lightBin ) &&
          lightBin->isProperlyAdded() )
    {
@@ -168,7 +168,7 @@ bool RenderPrePassMgr::_updateTargets()
          }
       }
 
-   }
+   }*/
 
    GFXFormat colorFormat = mTargetFormat;
    bool independentMrtBitDepth = GFX->getCardProfiler()->queryProfile("independentMrtBitDepth", false);
@@ -183,7 +183,7 @@ bool RenderPrePassMgr::_updateTargets()
             1, GFXTextureManager::AA_MATCH_BACKBUFFER );
    mColorTarget.setTexture(mColorTex);
    for ( U32 i = 0; i < mTargetChainLength; i++ )
-      mTargetChain[i]->attachTexture(GFXTextureTarget::Color2, mColorTarget.getTexture());
+      mTargetChain[i]->attachTexture(GFXTextureTarget::Color1, mColorTarget.getTexture());
 
    _initShaders();
 
@@ -562,19 +562,20 @@ void ProcessedPrePassMaterial::_determineFeatures( U32 stageNum,
    newFeatures.addFeature( MFT_DeferredDiffuseColor );
    
    // Deferred Shading : Specular
+   newFeatures.addFeature( MFT_DeferredEmptySpec ); 
    if( mStages[stageNum].getTex( MFT_SpecularMap ) && !fd.features[MFT_IsEmissive] )
    {
       newFeatures.addFeature( MFT_DeferredSpecMap );
 
-      if( !mStages[stageNum].getTex( MFT_SpecularMap )->mHasTransparency )
-         newFeatures.addFeature( MFT_DeferredSpecPower );
+      //if( !mStages[stageNum].getTex( MFT_SpecularMap )->mHasTransparency )
+      //   newFeatures.addFeature( MFT_DeferredSpecPower );
 
-      newFeatures.addFeature( MFT_DeferredSpecStrength );
+      //newFeatures.addFeature( MFT_DeferredSpecStrength );
    } else {
       if ( mMaterial->mPixelSpecular[stageNum] && !fd.features[MFT_IsEmissive] )
       {
-         newFeatures.addFeature( MFT_DeferredSpecColor );
-         newFeatures.addFeature( MFT_DeferredSpecStrength );
+         //newFeatures.addFeature( MFT_DeferredSpecColor );
+         //newFeatures.addFeature( MFT_DeferredSpecStrength );
          newFeatures.addFeature( MFT_DeferredSpecPower );
       } else {
          newFeatures.addFeature( MFT_DeferredEmptySpec ); 

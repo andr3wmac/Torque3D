@@ -65,13 +65,13 @@ void DeferredDiffuseMapHLSL::processPix( Vector<ShaderComponent*> &componentList
                            diffuseMap, 
                            inTex ) );
       
-      meta->addStatement( new GenOp( "   @;\r\n", assignColor( diffColor, Material::Mul , NULL, ShaderFeature::RenderTarget2 ) ) );
+      meta->addStatement( new GenOp( "   @;\r\n", assignColor( diffColor, Material::Mul , NULL, ShaderFeature::RenderTarget1 ) ) );
       output = meta;
    }
    else
    {
        LangElement *statement = new GenOp( "tex2D(@, @)", diffuseMap, inTex );
-       output = new GenOp( "   @;\r\n", assignColor( statement, Material::None, NULL, ShaderFeature::RenderTarget2 ) );
+       output = new GenOp( "   @;\r\n", assignColor( statement, Material::None, NULL, ShaderFeature::RenderTarget1 ) );
    }
 }
 
@@ -117,7 +117,7 @@ void DeferredDiffuseColorHLSL::processPix( Vector<ShaderComponent*> &componentLi
    diffuseMaterialColor->constSortPos = cspPotentialPrimitive;
 
    MultiLine * meta = new MultiLine;
-   meta->addStatement( new GenOp( "   @;\r\n", assignColor( diffuseMaterialColor, Material::Mul, NULL, ShaderFeature::RenderTarget2 ) ) );
+   meta->addStatement( new GenOp( "   @;\r\n", assignColor( diffuseMaterialColor, Material::Mul, NULL, ShaderFeature::RenderTarget1 ) ) );
    output = meta;
 }
 
@@ -126,6 +126,17 @@ void DeferredSpecMapHLSL::processPix( Vector<ShaderComponent*> &componentList, c
 {
    // Get the texture coord.
    Var *texCoord = getInTexCoord( "texCoord", "float2", true, componentList );
+
+   // search for color var
+   Var *color = (Var*) LangElement::find( getOutputTargetVarName(ShaderFeature::RenderTarget1) );
+   if ( !color )
+   {
+      // create color var
+      color = new Var;
+      color->setType( "fragout" );
+      color->setName( getOutputTargetVarName(ShaderFeature::RenderTarget1) );
+      color->setStructName( "OUT" );
+   }
 
    // create texture var
    Var *specularMap = new Var;
@@ -136,8 +147,7 @@ void DeferredSpecMapHLSL::processPix( Vector<ShaderComponent*> &componentList, c
    specularMap->constNum = Var::getTexUnitNum();
    LangElement *texOp = new GenOp( "tex2D(@, @)", specularMap, texCoord );
 
-   // output spec color
-   output = new GenOp( "   @;\r\n", assignColor( texOp, Material::None, NULL, ShaderFeature::RenderTarget1 ) );
+   output = new GenOp( "   @.a = dot(tex2D(@, @).rgb, float3(0.3, 0.59, 0.11));\r\n", color, specularMap, texCoord );
 }
 
 ShaderFeature::Resources DeferredSpecMapHLSL::getResources( const MaterialFeatureData &fd )
@@ -192,20 +202,34 @@ void DeferredSpecColorHLSL::processPix( Vector<ShaderComponent*> &componentList,
 // Black -> Lighting Buffer (representing no spec color)
 void DeferredEmptySpecHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
 {
-   output = new GenOp( "   @;\r\n", assignColor( new GenOp( "0.00001" ), Material::None, NULL,  ShaderFeature::RenderTarget1 ) );
+   // Get the texture coord.
+   Var *texCoord = getInTexCoord( "texCoord", "float2", true, componentList );
+
+   // search for color var
+   Var *color = (Var*) LangElement::find( getOutputTargetVarName(ShaderFeature::RenderTarget1) );
+   if ( !color )
+   {
+      // create color var
+      color = new Var;
+      color->setType( "fragout" );
+      color->setName( getOutputTargetVarName(ShaderFeature::RenderTarget1) );
+      color->setStructName( "OUT" );
+   }
+
+   output = new GenOp( "   @.a = 1.0;\r\n", color );
 }
 
 // Spec Strength -> Alpha Channel of Color Buffer
 void DeferredSpecStrengthHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
 {
    // search for color var
-   Var *color = (Var*) LangElement::find( getOutputTargetVarName(ShaderFeature::RenderTarget2) );
+   Var *color = (Var*) LangElement::find( getOutputTargetVarName(ShaderFeature::RenderTarget1) );
    if ( !color )
    {
       // create color var
       color = new Var;
       color->setType( "fragout" );
-      color->setName( getOutputTargetVarName(ShaderFeature::RenderTarget2) );
+      color->setName( getOutputTargetVarName(ShaderFeature::RenderTarget1) );
       color->setStructName( "OUT" );
    }
 
@@ -238,7 +262,7 @@ void DeferredSpecPowerHLSL::processPix( Vector<ShaderComponent*> &componentList,
    specPower->uniform = true;
    specPower->constSortPos = cspPotentialPrimitive;
 
-   output = new GenOp( "   @.a = 1.0 - @;\r\n", color, specPower );
+   output = new GenOp( "   @.a = @;\r\n", color, specPower );
 }
 
 //****************************************************************************
