@@ -1023,3 +1023,12 @@ void DeferredTerrainBaseMapFeatHLSL::processPix( Vector<ShaderComponent*> &compo
 
    output = meta;
 }
+
+ShaderFeature::Resources DeferredTerrainBaseMapFeatHLSL::getResources( const MaterialFeatureData &fd )
+{
+   Resources res; 
+   res.numTex = 1;
+   res.numTexReg = 1;
+
+   return res;
+}
