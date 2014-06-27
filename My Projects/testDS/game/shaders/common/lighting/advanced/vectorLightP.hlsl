@@ -232,8 +232,8 @@ float4 main( FarFrustumQuadConnectP IN,
       lightColorOut = debugColor;
    #endif
 
-   float specularPower = tex2D( colorBuffer, IN.uv0 ).a;
-   float specularOut = pow( specular, ceil(specularPower / AL_ConstantSpecularPower)) * 0.2;
+   float specularMap = tex2D( colorBuffer, IN.uv0 ).a;
+   float specularOut = specularMap * pow( specular, ceil(specularPower / AL_ConstantSpecularPower));
    
    lightColorOut *= Sat_NL_Att + addToResult;
    return float4(lightColorOut, specularOut ); 

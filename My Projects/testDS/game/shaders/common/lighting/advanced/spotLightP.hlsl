@@ -167,8 +167,8 @@ float4 main(   ConvexConnectP IN,
       addToResult = ( 1.0 - shadowed ) * abs(lightMapParams);
    }
 
-   float specularPower = tex2D( colorBuffer, uvScene ).a;
-   float specularOut = pow( specular, ceil(specularPower / AL_ConstantSpecularPower)) * 0.2;
+   float specularMap = tex2D( colorBuffer, uvScene ).a;
+   float specularOut = specularMap * pow( specular, ceil(specularPower / AL_ConstantSpecularPower));
    
    lightColorOut *= Sat_NL_Att + addToResult;
    return float4(lightColorOut, specularOut );
