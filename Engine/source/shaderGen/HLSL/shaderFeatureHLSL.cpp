@@ -1764,7 +1764,7 @@ void ReflectCubeFeatHLSL::processPix(  Vector<ShaderComponent*> &componentList,
    else
    {
       if (fd.features[MFT_DeferredDiffuseMap])
-        glossColor = (Var*) LangElement::find( "diffuseMaterialColor" );
+        glossColor = (Var*)LangElement::find( "col1" );
       else
         glossColor = (Var*) LangElement::find( "diffuseColor" );
 
