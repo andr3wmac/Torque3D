@@ -25,7 +25,7 @@ new SimGroup(MissionGroup) {
       canSaveDynamicFields = "1";
          cameraSpeed = "5 200";
          desc0 = "ChinaTown - Day";
-         LevelName = "ChinaTown - Day";
+         levelName = "ChinaTown - Day";
          postfxpreset = "~/../levels/ChinaTown_Day.postfxpreset.cs";
          worldSize = "10000";
    };
@@ -47,28 +47,6 @@ new SimGroup(MissionGroup) {
          drawBottom = "1";
          fogBandHeight = "1";
          position = "-29.3261 92.2466 7.61447";
-         rotation = "1 0 0 0";
-         scale = "1 1 1";
-         canSave = "1";
-         canSaveDynamicFields = "1";
-      };
-      new CloudLayer(brooding_clouds) {
-         texture = "core/art/skies/clouds/clouds_normal_displacement";
-         texScale[0] = "1";
-         texScale[1] = "1";
-         texScale[2] = "1";
-         texDirection[0] = "1 0";
-         texDirection[1] = "0 1";
-         texDirection[2] = "0.5 0";
-         texSpeed[0] = "0.005";
-         texSpeed[1] = "0.005";
-         texSpeed[2] = "0.005";
-         baseColor = "0.9 0.9 0.9 1";
-         exposure = "1";
-         coverage = "0.2";
-         windSpeed = "0.7";
-         height = "4";
-         position = "17.2211 70.0927 65.4841";
          rotation = "1 0 0 0";
          scale = "1 1 1";
          canSave = "1";
@@ -117,10 +95,12 @@ new SimGroup(MissionGroup) {
          spawnClass = "Player";
          spawnDatablock = "DefaultPlayerData";
          autoSpawn = "0";
+         spawnTransform = "0";
          radius = "1";
          sphereWeight = "1";
          indoorWeight = "100";
          outdoorWeight = "100";
+         isAIControlled = "0";
          dataBlock = "SpawnSphereMarker";
          position = "19.3331 2.31452 2.16777";
          rotation = "1 0 0 0";
@@ -134,6 +114,7 @@ new SimGroup(MissionGroup) {
       canSaveDynamicFields = "1";
 
       new CameraBookmark() {
+         isAIControlled = "0";
          dataBlock = "CameraBookmarkMarker";
          position = "9.04303 13.4868 1.01322";
          rotation = "0.161367 0.0559362 -0.985308 38.7647";
@@ -148,7 +129,6 @@ new SimGroup(MissionGroup) {
       canSaveDynamicFields = "1";
 
       new SFXEmitter(sfx_tunnel4) {
-         track = "WaterDrips";
          playOnAdd = "1";
          useTrackDescriptionOnly = "0";
          isLooping = "1";
@@ -171,7 +151,6 @@ new SimGroup(MissionGroup) {
          canSaveDynamicFields = "1";
       };
       new SFXEmitter(sfx_tunnel3) {
-         track = "WaterDrips";
          playOnAdd = "1";
          useTrackDescriptionOnly = "0";
          isLooping = "1";
@@ -194,7 +173,6 @@ new SimGroup(MissionGroup) {
          canSaveDynamicFields = "1";
       };
       new SFXEmitter(sfx_tunnel2) {
-         track = "WaterDrips";
          playOnAdd = "1";
          useTrackDescriptionOnly = "0";
          isLooping = "1";
@@ -217,7 +195,6 @@ new SimGroup(MissionGroup) {
          canSaveDynamicFields = "1";
       };
       new SFXEmitter(sfx_tunnel) {
-         track = "WaterDrips";
          playOnAdd = "1";
          useTrackDescriptionOnly = "0";
          isLooping = "1";
@@ -805,7 +782,6 @@ new SimGroup(MissionGroup) {
                };
             };
             new SFXEmitter(Police01_Radio) {
-               track = "PoliceRadioChatter";
                playOnAdd = "1";
                useTrackDescriptionOnly = "0";
                isLooping = "1";
@@ -1164,7 +1140,6 @@ new SimGroup(MissionGroup) {
                };
             };
             new SFXEmitter(Police02_Radio) {
-               track = "PoliceRadioChatter";
                playOnAdd = "1";
                useTrackDescriptionOnly = "0";
                isLooping = "1";
@@ -1523,7 +1498,6 @@ new SimGroup(MissionGroup) {
                };
             };
             new SFXEmitter(Police03_Radio) {
-               track = "PoliceRadioChatter";
                playOnAdd = "1";
                useTrackDescriptionOnly = "0";
                isLooping = "1";
@@ -1622,7 +1596,7 @@ new SimGroup(MissionGroup) {
                   shadowDarkenColor = "0 0 0 -1";
                   includeLightmappedGeometryInShadow = "0";
                   position = "50.2858 61.9575 1.47311";
-                  rotation = "-0.0590305 0.047143 0.997142 77.3831";
+                  rotation = "-0.0590305 0.047143 0.997142 77.383";
                   canSave = "1";
                   canSaveDynamicFields = "1";
                };
@@ -1654,7 +1628,7 @@ new SimGroup(MissionGroup) {
                   shadowDarkenColor = "0 0 0 -1";
                   includeLightmappedGeometryInShadow = "0";
                   position = "49.5541 61.7916 1.47311";
-                  rotation = "-0.0590305 0.047143 0.997142 77.3831";
+                  rotation = "-0.0590305 0.047143 0.997142 77.383";
                   canSave = "1";
                   canSaveDynamicFields = "1";
                };
@@ -1882,7 +1856,6 @@ new SimGroup(MissionGroup) {
                };
             };
             new SFXEmitter(Police04_Radio) {
-               track = "PoliceRadioChatter";
                playOnAdd = "1";
                useTrackDescriptionOnly = "0";
                isLooping = "1";
@@ -3020,7 +2993,7 @@ new SimGroup(MissionGroup) {
             renderNormals = "0";
             forceDetail = "-1";
             position = "-8.97578 30.5588 -0.108234";
-            rotation = "0.0123551 -0.012667 0.999844 88.5763";
+            rotation = "0.0123551 -0.012667 0.999843 88.5764";
             scale = "0.790166 0.790166 0.790166";
             canSave = "1";
             canSaveDynamicFields = "1";
@@ -3083,7 +3056,7 @@ new SimGroup(MissionGroup) {
             renderNormals = "0";
             forceDetail = "-1";
             position = "-15.9658 30.5588 0.036994";
-            rotation = "0.0123551 -0.012667 0.999843 88.5764";
+            rotation = "0.0123551 -0.012667 0.999844 88.5763";
             scale = "0.790166 0.790166 0.790166";
             canSave = "1";
             canSaveDynamicFields = "1";
@@ -3104,7 +3077,7 @@ new SimGroup(MissionGroup) {
             renderNormals = "0";
             forceDetail = "-1";
             position = "-22.7908 36.9129 0.188207";
-            rotation = "0.0120262 -0.0126593 0.999848 90.0928";
+            rotation = "0.0120262 -0.0126593 0.999848 90.0929";
             scale = "0.790166 0.790166 0.790166";
             canSave = "1";
             canSaveDynamicFields = "1";
@@ -3272,7 +3245,7 @@ new SimGroup(MissionGroup) {
             renderNormals = "0";
             forceDetail = "-1";
             position = "-1.27713 30.5588 -0.214625";
-            rotation = "0.0123551 -0.012667 0.999843 88.5764";
+            rotation = "0.0123551 -0.012667 0.999844 88.5763";
             scale = "0.790166 0.790166 0.790166";
             canSave = "1";
             canSaveDynamicFields = "1";
@@ -3293,7 +3266,7 @@ new SimGroup(MissionGroup) {
             renderNormals = "0";
             forceDetail = "-1";
             position = "-1.13053 36.9321 -0.214625";
-            rotation = "0.0123551 -0.012667 0.999844 88.5763";
+            rotation = "0.0123551 -0.012667 0.999843 88.5764";
             scale = "0.790166 0.790166 0.790166";
             canSave = "1";
             canSaveDynamicFields = "1";
@@ -3503,7 +3476,7 @@ new SimGroup(MissionGroup) {
             renderNormals = "0";
             forceDetail = "-1";
             position = "42.6411 35.7626 -0.217678";
-            rotation = "0 1 0 0.256408";
+            rotation = "0 1 0 0.256409";
             scale = "0.914326 0.914326 0.914326";
             canSave = "1";
             canSaveDynamicFields = "1";
@@ -4260,7 +4233,7 @@ new SimGroup(MissionGroup) {
          renderNormals = "0";
          forceDetail = "-1";
          position = "39.8805 -14.1059 -0.254757";
-         rotation = "-0.0469295 0.00808209 0.998866 78.9831";
+         rotation = "-0.0469295 0.00808208 0.998865 78.9832";
          scale = "1.69166 1.69166 1.69166";
          canSave = "1";
          canSaveDynamicFields = "1";
@@ -5227,7 +5200,7 @@ new SimGroup(MissionGroup) {
          renderNormals = "0";
          forceDetail = "-1";
          position = "-0.502343 35.7626 -0.217678";
-         rotation = "0 1 0 0.256408";
+         rotation = "0 1 0 0.256409";
          scale = "0.914326 0.914326 0.914326";
          canSave = "1";
          canSaveDynamicFields = "1";
@@ -8721,10 +8694,10 @@ new SimGroup(MissionGroup) {
             canSave = "1";
             canSaveDynamicFields = "1";
 
-            surface = "0 0 0 1 0 -2.96059e-014 0.5";
-            surface = "0 1 0 0 0 -2.9606e-014 -0.5";
-            surface = "0.707107 0 0 0.707107 0 0.5 0";
-            surface = "0 0.707107 -0.707107 0 2.36848e-013 -0.5 2.51059e-013";
+            surface = "0 0 0 1 0 0 0.5";
+            surface = "0 1 0 0 0 0 -0.5";
+            surface = "0.707107 0 0 0.707106 0 0.5 0";
+            surface = "0 0.707107 -0.707107 0 0 -0.5 -2.84217e-014";
             surface = "0.5 0.5 -0.5 0.5 -0.5 0 -9.93411e-008";
             surface = "0.5 -0.5 0.5 0.5 0.5 0 -9.93411e-008";
          };
@@ -9905,7 +9878,6 @@ new SimGroup(MissionGroup) {
                useCustomAmbientLighting = "0";
          };
          new SFXEmitter(ElectricBuzz_B12) {
-            track = "ElectricBuzz";
             playOnAdd = "1";
             useTrackDescriptionOnly = "0";
             isLooping = "1";
@@ -12767,7 +12739,7 @@ new SimGroup(MissionGroup) {
             renderNormals = "0";
             forceDetail = "-1";
             position = "-0.216254 57.7472 -2.24243";
-            rotation = "-0.00422996 -0.0043935 0.999981 92.1259";
+            rotation = "-0.00422996 -0.0043935 0.999981 92.1258";
             scale = "1 1 1";
             canSave = "1";
             canSaveDynamicFields = "1";
@@ -16270,7 +16242,7 @@ new SimGroup(MissionGroup) {
          renderNormals = "0";
          forceDetail = "-1";
          position = "47.9076 44.6611 -0.18816";
-         rotation = "-0.0225984 -0.000432983 -0.999745 77.9571";
+         rotation = "-0.0225984 -0.000432983 -0.999745 77.9572";
          scale = "1.08031 1.08031 1.08031";
          canSave = "1";
          canSaveDynamicFields = "1";
@@ -16291,7 +16263,7 @@ new SimGroup(MissionGroup) {
          renderNormals = "0";
          forceDetail = "-1";
          position = "48.7682 44.9805 -0.18816";
-         rotation = "-0.00171219 0.0103995 0.999945 91.2112";
+         rotation = "-0.00171219 0.0103995 0.999944 91.2113";
          scale = "1.08031 1.08031 1.08031";
          canSave = "1";
          canSaveDynamicFields = "1";
@@ -17056,7 +17028,6 @@ new SimGroup(MissionGroup) {
          canSaveDynamicFields = "1";
       };
       new SFXEmitter(HelicopterSound) {
-         track = "HelicopterBlades";
          playOnAdd = "1";
          useTrackDescriptionOnly = "0";
          isLooping = "1";
@@ -17132,6 +17103,7 @@ new SimGroup(MissionGroup) {
       respawn = "1";
       static = "1";
       rotate = "0";
+      isAIControlled = "0";
       dataBlock = "AITurret";
       position = "-41.2376 31.9473 0.39119";
       rotation = "0 0 1 86.2123";
@@ -17149,6 +17121,7 @@ new SimGroup(MissionGroup) {
       respawn = "1";
       static = "1";
       rotate = "0";
+      isAIControlled = "0";
       dataBlock = "AITurret";
       position = "35.248 -17.9127 -0.227208";
       rotation = "0 0 -1 90.2191";
