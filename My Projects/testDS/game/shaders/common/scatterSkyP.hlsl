@@ -38,18 +38,8 @@ uniform float useCubemap;
 uniform float3 lightDir;
 uniform float3 sunDir;
 
-struct Fragout
-{
-   float4 col : COLOR0;
-   float4 col1 : COLOR1;
-   float4 col2 : COLOR2;
-};
-
-Fragout main( Conn In )
+float4 main( Conn In ) : COLOR0
 { 
-   Fragout OUT;
-   OUT.col = float4(1.0, 1.0, 1.0, 1.0);
-   OUT.col1 = float4(0.0, 0.0, 0.0, 1.0);
 
    float fCos = dot( lightDir, In.v3Direction ) / length(In.v3Direction);
    float fCos2 = fCos*fCos;
@@ -61,16 +51,17 @@ Fragout main( Conn In )
    
    float4 color = In.rayleighColor + fMiePhase * In.mieColor;
    color.a = color.b;
+  
+   float4 Out; 
    
    float4 nightSkyColor = texCUBE( nightSky, -In.v3Direction );
    nightSkyColor = lerp( nightColor, nightSkyColor, useCubemap );
    
    float fac = dot( normalize( In.pos ), sunDir );
    fac = max( nightInterpAndExposure.y, pow( saturate( fac ), 2 ) );
-   OUT.col2 = lerp( color, nightSkyColor, nightInterpAndExposure.y );
+   Out = lerp( color, nightSkyColor, nightInterpAndExposure.y );
    
-   OUT.col2 = float4(1.0, 0.0, 0.0, 1.0);
-   OUT.col2.a = 1;
+   Out.a = 1;
 
-   return OUT;
+   return hdrEncode( Out );
 }
