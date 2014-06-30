@@ -67,7 +67,7 @@ Fragout main( Conn In )
    
    float fac = dot( normalize( In.pos ), sunDir );
    fac = max( nightInterpAndExposure.y, pow( saturate( fac ), 2 ) );
-   OUT.col2 = lerp( color, nightSkyColor, nightInterpAndExposure.y );
+   OUT.col = lerp( color, nightSkyColor, nightInterpAndExposure.y );
    
    OUT.col2 = float4(1.0, 0.0, 0.0, 1.0);
    OUT.col2.a = 1;
