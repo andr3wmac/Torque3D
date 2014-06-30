@@ -52,6 +52,7 @@ float4 main(   ConvexConnectP IN,
 
                uniform sampler2D lightBuffer : register(S5),
                uniform sampler2D colorBuffer : register(S6),
+               uniform sampler2D matInfoBuffer : register(S7),
 
                uniform float4 rtParams0,
 
@@ -74,6 +75,13 @@ float4 main(   ConvexConnectP IN,
    float3 ssPos = IN.ssPos.xyz / IN.ssPos.w;
    float2 uvScene = getUVFromSSPos( ssPos, rtParams0 );
    
+   // Check for emissive.
+   float emissive = tex2D( matInfoBuffer, uvScene ).r;
+   if ( emissive > 0.0 )
+   {
+       return float4(0.0, 0.0, 0.0, 0.0);
+   }
+
    // Sample/unpack the normal/z data
    float4 prepassSample = prepassUncondition( prePassBuffer, uvScene );
    float3 normal = prepassSample.rgb;
@@ -170,6 +178,7 @@ float4 main(   ConvexConnectP IN,
    float specularMap = tex2D( colorBuffer, uvScene ).a;
    float specularOut = specularMap * pow( specular, ceil(specularPower / AL_ConstantSpecularPower));
    
-   lightColorOut *= Sat_NL_Att + addToResult;
+   lightColorOut *= Sat_NL_Att;
+   lightColorOut += addToResult;
    return float4(lightColorOut, specularOut );
 }

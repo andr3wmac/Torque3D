@@ -74,6 +74,7 @@ new CustomMaterial( AL_VectorLightMaterial )
    sampler["ssaoMask"] = "#ssaoMask";
    sampler["lightBuffer"] = "#lightinfo";
    sampler["colorBuffer"] = "#color";
+   sampler["matInfoBuffer"] = "#matinfo";
    
    target = "lightinfo";
    
@@ -136,6 +137,7 @@ new CustomMaterial( AL_PointLightMaterial )
    sampler["cookieTex"] = "$dynamiclightmask";
    sampler["lightBuffer"] = "#lightinfo";
    sampler["colorBuffer"] = "#color";
+   sampler["matInfoBuffer"] = "#matinfo";
    
    target = "lightinfo";
    
@@ -164,6 +166,7 @@ new CustomMaterial( AL_SpotLightMaterial )
    sampler["cookieTex"] = "$dynamiclightmask";
    sampler["lightBuffer"] = "#lightinfo";
    sampler["colorBuffer"] = "#color";
+   sampler["matInfoBuffer"] = "#matinfo";
    
    target = "lightinfo";
    

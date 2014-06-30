@@ -55,6 +55,7 @@ const MatInstanceHookType PrePassMatInstanceHook::Type( "PrePass" );
 const String RenderPrePassMgr::BufferName("prepass");
 const RenderInstType RenderPrePassMgr::RIT_PrePass("PrePass");
 const String RenderPrePassMgr::ColorBufferName("color");
+const String RenderPrePassMgr::MatInfoBufferName("matinfo");
 
 IMPLEMENT_CONOBJECT(RenderPrePassMgr);
 
@@ -98,6 +99,7 @@ RenderPrePassMgr::RenderPrePassMgr( bool gatherDepth,
 
    mNamedTarget.registerWithName( BufferName );
    mColorTarget.registerWithName( ColorBufferName );
+   mMatInfoTarget.registerWithName( MatInfoBufferName );
 
    mClearGBufferShader = NULL;
 
@@ -108,6 +110,7 @@ RenderPrePassMgr::~RenderPrePassMgr()
 {
    GFXShader::removeGlobalMacro( "TORQUE_LINEAR_DEPTH" );
    mColorTarget.release();
+   mMatInfoTarget.release();
    _unregisterFeatures();
    SAFE_DELETE( mPrePassMatInstance );
 }
@@ -130,6 +133,7 @@ bool RenderPrePassMgr::setTargetSize(const Point2I &newTargetSize)
    bool ret = Parent::setTargetSize( newTargetSize );
    mNamedTarget.setViewport( GFX->getViewport() );
    mColorTarget.setViewport( GFX->getViewport() );
+   mMatInfoTarget.setViewport( GFX->getViewport() );
    return ret;
 }
 
@@ -176,7 +180,7 @@ bool RenderPrePassMgr::_updateTargets()
    if(independentMrtBitDepth)
       colorFormat = GFXFormatR8G8B8A8;
 
-   // andrewmac: Deferred Shading
+   // andrewmac: Deferred Shading Color Buffer
    mColorTarget.release();
    mColorTex.set( mTargetSize.x, mTargetSize.y, colorFormat,
             &GFXDefaultRenderTargetProfile, avar( "%s() - (line %d)", __FUNCTION__, __LINE__ ),
@@ -184,6 +188,15 @@ bool RenderPrePassMgr::_updateTargets()
    mColorTarget.setTexture(mColorTex);
    for ( U32 i = 0; i < mTargetChainLength; i++ )
       mTargetChain[i]->attachTexture(GFXTextureTarget::Color1, mColorTarget.getTexture());
+
+   // andrewmac: Deferred Shading Material Info Buffer
+   mMatInfoTarget.release();
+   mMatInfoTex.set( mTargetSize.x, mTargetSize.y, colorFormat,
+            &GFXDefaultRenderTargetProfile, avar( "%s() - (line %d)", __FUNCTION__, __LINE__ ),
+            1, GFXTextureManager::AA_MATCH_BACKBUFFER );
+   mMatInfoTarget.setTexture(mMatInfoTex);
+   for ( U32 i = 0; i < mTargetChainLength; i++ )
+      mTargetChain[i]->attachTexture(GFXTextureTarget::Color2, mMatInfoTarget.getTexture());
 
    _initShaders();
 
@@ -557,28 +570,37 @@ void ProcessedPrePassMaterial::_determineFeatures( U32 stageNum,
 
    // Deferred Shading : Diffuse
    if (mStages[stageNum].getTex( MFT_DiffuseMap ))
+   {
       newFeatures.addFeature( MFT_DeferredDiffuseMap );
+      if ( mMaterial->mDiffuse[stageNum].alpha >= 0.0 && mMaterial->mDiffuse[stageNum] != ColorF::WHITE )
+         newFeatures.addFeature( MFT_DeferredDiffuseColor );
+   } else {
+      newFeatures.addFeature( MFT_DeferredEmptyColor );
+   }
 
-   newFeatures.addFeature( MFT_DeferredDiffuseColor );
-   
    // Deferred Shading : Specular
    newFeatures.addFeature( MFT_DeferredEmptySpec ); 
    if( mStages[stageNum].getTex( MFT_SpecularMap ) && !fd.features[MFT_IsEmissive] )
    {
       newFeatures.addFeature( MFT_DeferredSpecMap );
 
-      //if( !mStages[stageNum].getTex( MFT_SpecularMap )->mHasTransparency )
-      //   newFeatures.addFeature( MFT_DeferredSpecPower );
+      if( !mStages[stageNum].getTex( MFT_SpecularMap )->mHasTransparency )
+         newFeatures.addFeature( MFT_DeferredSpecPower );
 
-      //newFeatures.addFeature( MFT_DeferredSpecStrength );
+      newFeatures.addFeature( MFT_DeferredSpecStrength );
    } else {
       if ( mMaterial->mPixelSpecular[stageNum] && !fd.features[MFT_IsEmissive] )
       {
          //newFeatures.addFeature( MFT_DeferredSpecColor );
-         //newFeatures.addFeature( MFT_DeferredSpecStrength );
+         newFeatures.addFeature( MFT_DeferredSpecStrength );
          newFeatures.addFeature( MFT_DeferredSpecPower );
       } else {
          newFeatures.addFeature( MFT_DeferredEmptySpec ); 
+         if ( fd.features[MFT_IsEmissive] )
+         {
+            newFeatures.addFeature( MFT_IsEmissive );
+            newFeatures.addFeature( MFT_DeferredEmissive );
+         }
       }
    }
 

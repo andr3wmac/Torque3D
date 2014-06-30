@@ -37,10 +37,10 @@ Fragout main( )
    // Clear Prepass Buffer ( Normals/Depth );
    OUT.col =  float4(1.0, 1.0, 1.0, 1.0);
 
-   // Clear Light Buffer.
+   // Clear Color Buffer.
    OUT.col1 = float4(0.0, 0.0, 0.0, 1.0);
 
-   // Clear Color Buffer.
+   // Clear Material Info Buffer.
    OUT.col2 = float4(0.0, 0.0, 0.0, 1.0);
 
    return OUT;

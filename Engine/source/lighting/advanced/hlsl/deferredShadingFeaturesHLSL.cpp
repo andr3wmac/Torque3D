@@ -121,6 +121,12 @@ void DeferredDiffuseColorHLSL::processPix( Vector<ShaderComponent*> &componentLi
    output = meta;
 }
 
+// Empty Color -> Color Buffer
+void DeferredEmptyColorHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
+{
+   output = new GenOp( "   @;\r\n", assignColor( new GenOp( "1.0" ), Material::None, NULL, ShaderFeature::RenderTarget1 ) );
+}
+
 // Specular Map -> Lighting Buffer
 void DeferredSpecMapHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
 {
@@ -216,20 +222,20 @@ void DeferredEmptySpecHLSL::processPix( Vector<ShaderComponent*> &componentList,
       color->setStructName( "OUT" );
    }
 
-   output = new GenOp( "   @.a = 1.0;\r\n", color );
+   output = new GenOp( "   @.a = 0.0;\r\n", color );
 }
 
-// Spec Strength -> Alpha Channel of Color Buffer
+// Spec Strength -> Alpha Channel of Material Info Buffer.
 void DeferredSpecStrengthHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
 {
    // search for color var
-   Var *color = (Var*) LangElement::find( getOutputTargetVarName(ShaderFeature::RenderTarget1) );
+   Var *color = (Var*) LangElement::find( getOutputTargetVarName(ShaderFeature::RenderTarget2) );
    if ( !color )
    {
       // create color var
       color = new Var;
       color->setType( "fragout" );
-      color->setName( getOutputTargetVarName(ShaderFeature::RenderTarget1) );
+      color->setName( getOutputTargetVarName(ShaderFeature::RenderTarget2) );
       color->setStructName( "OUT" );
    }
 
@@ -239,20 +245,20 @@ void DeferredSpecStrengthHLSL::processPix( Vector<ShaderComponent*> &componentLi
    specStrength->uniform = true;
    specStrength->constSortPos = cspPotentialPrimitive;
 
-   output = new GenOp( "   @.a = 1.0 - @;\r\n", color, specStrength );
+   output = new GenOp( "   @.a = @;\r\n", color, specStrength );
 }
 
-// Spec Power -> Alpha Channel of Lighting Buffer
+// Spec Power -> Blue Channel of Material Info Buffer.
 void DeferredSpecPowerHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
 {
    // search for color var
-   Var *color = (Var*) LangElement::find( getOutputTargetVarName(ShaderFeature::RenderTarget1) );
+   Var *color = (Var*) LangElement::find( getOutputTargetVarName(ShaderFeature::RenderTarget2) );
    if ( !color )
    {
       // create color var
       color = new Var;
       color->setType( "fragout" );
-      color->setName( getOutputTargetVarName(ShaderFeature::RenderTarget1) );
+      color->setName( getOutputTargetVarName(ShaderFeature::RenderTarget2) );
       color->setStructName( "OUT" );
    }
 
@@ -262,7 +268,13 @@ void DeferredSpecPowerHLSL::processPix( Vector<ShaderComponent*> &componentList,
    specPower->uniform = true;
    specPower->constSortPos = cspPotentialPrimitive;
 
-   output = new GenOp( "   @.a = @;\r\n", color, specPower );
+   output = new GenOp( "   @ = float4(0.0, 0.0, @, 0.0);\r\n", color, specPower );
+}
+
+// Emissive -> Material Info Buffer.
+void DeferredEmissiveHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
+{
+   output = new GenOp( "   @;\r\n", assignColor( new GenOp( "float4(1.0, 0.0, 0.0, 0.0)" ), Material::None, NULL, ShaderFeature::RenderTarget2 ) );
 }
 
 //****************************************************************************

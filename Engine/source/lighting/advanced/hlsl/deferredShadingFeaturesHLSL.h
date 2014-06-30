@@ -60,6 +60,28 @@ public:
    virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget1; }
 };
 
+class DeferredEmptyColorHLSL : public ShaderFeatureHLSL
+{
+public:
+   virtual String getName() { return "Deferred Shading: Empty Color"; }
+
+   virtual void processPix( Vector<ShaderComponent*> &componentList, 
+      const MaterialFeatureData &fd );
+   
+   virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget1; }
+};
+
+class DeferredEmissiveHLSL : public ShaderFeatureHLSL
+{
+public:
+   virtual String getName() { return "Deferred Shading: Emissive"; }
+
+   virtual void processPix( Vector<ShaderComponent*> &componentList, 
+      const MaterialFeatureData &fd );
+   
+   virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget2; }
+};
+
 // Specular Outputs
 class DeferredSpecMapHLSL : public ShaderFeatureHLSL
 {
@@ -101,7 +123,7 @@ public:
    virtual void processPix( Vector<ShaderComponent*> &componentList, 
       const MaterialFeatureData &fd );
    
-   virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget1; }
+   virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget2; }
 };
 
 class DeferredSpecPowerHLSL : public ShaderFeatureHLSL
@@ -112,7 +134,7 @@ public:
    virtual void processPix( Vector<ShaderComponent*> &componentList, 
       const MaterialFeatureData &fd );
    
-   virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget1; }
+   virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget2; }
 };
 
 class DeferredEmptySpecHLSL : public ShaderFeatureHLSL
