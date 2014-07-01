@@ -127,7 +127,7 @@ void DeferredEmptyColorHLSL::processPix( Vector<ShaderComponent*> &componentList
    output = new GenOp( "   @;\r\n", assignColor( new GenOp( "1.0" ), Material::None, NULL, ShaderFeature::RenderTarget1 ) );
 }
 
-// Specular Map -> Lighting Buffer
+// Specular Map -> Alpha of Color Buffer ( greyscaled )
 void DeferredSpecMapHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
 {
    // Get the texture coord.
@@ -191,7 +191,7 @@ void DeferredSpecMapHLSL::processVert( Vector<ShaderComponent*> &componentList,
    output = meta;
 }
 
-// Specular Color -> Lighting Buffer
+// Specular Color -> Alpha of Color Buffer ( greyscaled )
 void DeferredSpecColorHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
 {
    Var *specularColor = (Var*)LangElement::find( "specularColor" );
@@ -205,7 +205,7 @@ void DeferredSpecColorHLSL::processPix( Vector<ShaderComponent*> &componentList,
    output = new GenOp( "   @;\r\n", assignColor( specularColor, Material::None, NULL,  ShaderFeature::RenderTarget1 ) );
 }
 
-// Black -> Lighting Buffer (representing no spec color)
+// Black -> Alpha of Color Buffer (representing no specular)
 void DeferredEmptySpecHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
 {
    // Get the texture coord.
@@ -223,6 +223,35 @@ void DeferredEmptySpecHLSL::processPix( Vector<ShaderComponent*> &componentList,
    }
 
    output = new GenOp( "   @.a = 0.0;\r\n", color );
+}
+
+// Gloss Map (Alpha Channel of Specular Map) -> Green ( Spec Power ) of Material Info Buffer.
+void DeferredGlossMapHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
+{
+   // Get the texture coord.
+   Var *texCoord = getInTexCoord( "texCoord", "float2", true, componentList );
+
+   // search for color var
+   Var *color = (Var*) LangElement::find( getOutputTargetVarName(ShaderFeature::RenderTarget2) );
+   if ( !color )
+   {
+      // create color var
+      color = new Var;
+      color->setType( "fragout" );
+      color->setName( getOutputTargetVarName(ShaderFeature::RenderTarget2) );
+      color->setStructName( "OUT" );
+   }
+
+   // create texture var
+   Var *specularMap = new Var;
+   specularMap->setType( "sampler2D" );
+   specularMap->setName( "specularMap" );
+   specularMap->uniform = true;
+   specularMap->sampler = true;
+   specularMap->constNum = Var::getTexUnitNum();
+   LangElement *texOp = new GenOp( "tex2D(@, @)", specularMap, texCoord );
+
+   output = new GenOp( "   @.b = @.a;\r\n", color, texOp );
 }
 
 // Spec Strength -> Alpha Channel of Material Info Buffer.
@@ -245,10 +274,10 @@ void DeferredSpecStrengthHLSL::processPix( Vector<ShaderComponent*> &componentLi
    specStrength->uniform = true;
    specStrength->constSortPos = cspPotentialPrimitive;
 
-   output = new GenOp( "   @.a = @;\r\n", color, specStrength );
+   output = new GenOp( "   @.a = @ / 5.0;\r\n", color, specStrength );
 }
 
-// Spec Power -> Blue Channel of Material Info Buffer.
+// Spec Power -> Blue Channel ( of Material Info Buffer.
 void DeferredSpecPowerHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
 {
    // search for color var
@@ -268,7 +297,7 @@ void DeferredSpecPowerHLSL::processPix( Vector<ShaderComponent*> &componentList,
    specPower->uniform = true;
    specPower->constSortPos = cspPotentialPrimitive;
 
-   output = new GenOp( "   @ = float4(0.0, 0.0, @, 0.0);\r\n", color, specPower );
+   output = new GenOp( "   @ = float4(0.0, 0.0, @ / 128.0, 0.0);\r\n", color, specPower );
 }
 
 // Emissive -> Material Info Buffer.

@@ -71,8 +71,8 @@ float4 main( FarFrustumQuadConnectP IN,
              uniform float shadowSoftness ) : COLOR0
 {
    // Check for emissive.
-   float emissive = tex2D( matInfoBuffer, IN.uv0 ).r;
-   if ( emissive > 0.0 )
+   float4 matInfo = tex2D( matInfoBuffer, IN.uv0 );
+   if ( matInfo.r > 0.0 )
    {
        return float4(1.0, 1.0, 1.0, 0.0);
    }
@@ -240,10 +240,5 @@ float4 main( FarFrustumQuadConnectP IN,
       lightColorOut = debugColor;
    #endif
 
-   float specularMap = tex2D( colorBuffer, IN.uv0 ).a;
-   float specularOut = specularMap * pow( specular, ceil(specularPower / AL_ConstantSpecularPower));
-   
-   lightColorOut *= Sat_NL_Att;
-   lightColorOut += addToResult;
-   return float4(lightColorOut, specularOut ); 
+   return AL_DeferredOutput(lightColorOut, matInfo, addToResult, specular, tex2D( colorBuffer, IN.uv0 ).a, Sat_NL_Att);
 }

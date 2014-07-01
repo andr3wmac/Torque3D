@@ -35,6 +35,7 @@ float4 main( PFXVertToPix IN,
    colorBuffer *= float4(lightBuffer.rgb, 1.0);
    //colorBuffer += float4(lightBuffer.rgb * specular, 1.0);
    colorBuffer += float4(specular, specular, specular, 1.0);
+   //colorBuffer += float4(colorBuffer.rgb * specular, 1.0);
 
    return colorBuffer;   
 }

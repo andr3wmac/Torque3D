@@ -104,6 +104,17 @@ public:
                              const MaterialFeatureData &fd );
 };
 
+class DeferredGlossMapHLSL : public ShaderFeatureHLSL
+{
+public:
+   virtual String getName() { return "Deferred Shading: Gloss Map"; }
+
+   virtual void processPix( Vector<ShaderComponent*> &componentList, 
+      const MaterialFeatureData &fd );
+   
+   virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget2; }
+};
+
 class DeferredSpecColorHLSL : public ShaderFeatureHLSL
 {
 public:

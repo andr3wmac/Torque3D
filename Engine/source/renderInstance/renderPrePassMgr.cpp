@@ -578,29 +578,31 @@ void ProcessedPrePassMaterial::_determineFeatures( U32 stageNum,
       newFeatures.addFeature( MFT_DeferredEmptyColor );
    }
 
-   // Deferred Shading : Specular
-   newFeatures.addFeature( MFT_DeferredEmptySpec ); 
-   if( mStages[stageNum].getTex( MFT_SpecularMap ) && !fd.features[MFT_IsEmissive] )
+   // Deferred Shading : Emissive
+   if ( fd.features[MFT_IsEmissive] )
    {
-      newFeatures.addFeature( MFT_DeferredSpecMap );
+      newFeatures.addFeature( MFT_DeferredEmptySpec ); 
+      newFeatures.addFeature( MFT_IsEmissive );
+      newFeatures.addFeature( MFT_DeferredEmissive );
+   } 
 
-      if( !mStages[stageNum].getTex( MFT_SpecularMap )->mHasTransparency )
-         newFeatures.addFeature( MFT_DeferredSpecPower );
-
-      newFeatures.addFeature( MFT_DeferredSpecStrength );
-   } else {
-      if ( mMaterial->mPixelSpecular[stageNum] && !fd.features[MFT_IsEmissive] )
+   // Deferred Shading : Specular
+   else 
+   {
+      newFeatures.addFeature( MFT_DeferredEmptySpec ); 
+      if( mStages[stageNum].getTex( MFT_SpecularMap ) )
       {
-         //newFeatures.addFeature( MFT_DeferredSpecColor );
+         newFeatures.addFeature( MFT_DeferredSpecMap );
+
+         if( !mStages[stageNum].getTex( MFT_SpecularMap )->mHasTransparency )
+            newFeatures.addFeature( MFT_DeferredSpecPower );
+         else
+            newFeatures.addFeature( MFT_DeferredGlossMap);
+
+         newFeatures.addFeature( MFT_DeferredSpecStrength );
+      } else {
          newFeatures.addFeature( MFT_DeferredSpecStrength );
          newFeatures.addFeature( MFT_DeferredSpecPower );
-      } else {
-         newFeatures.addFeature( MFT_DeferredEmptySpec ); 
-         if ( fd.features[MFT_IsEmissive] )
-         {
-            newFeatures.addFeature( MFT_IsEmissive );
-            newFeatures.addFeature( MFT_DeferredEmissive );
-         }
       }
    }
 

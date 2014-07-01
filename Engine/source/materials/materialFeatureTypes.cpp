@@ -91,9 +91,11 @@ ImplementFeatureType( MFT_DeferredDiffuseMap, MFG_Texture, 2.0f, false );
 ImplementFeatureType( MFT_DeferredDiffuseColor, MFG_Texture, 5.0f, false );
 ImplementFeatureType( MFT_DeferredEmptyColor, MFG_Texture, 5.0f, false );
 ImplementFeatureType( MFT_DeferredEmptySpec, MFG_Texture, 8.0f, false );
+
 ImplementFeatureType( MFT_DeferredEmissive, MFG_Texture, 8.0f, false );
 ImplementFeatureType( MFT_DeferredSpecMap, MFG_Texture, 8.1f, false );
 ImplementFeatureType( MFT_DeferredSpecColor, MFG_Texture, 8.2f, false );
 ImplementFeatureType( MFT_DeferredSpecPower, MFG_Texture, 8.3f, false );
+ImplementFeatureType( MFT_DeferredGlossMap, MFG_Texture, 8.3f, false );
 ImplementFeatureType( MFT_DeferredSpecStrength, MFG_Texture, 8.4f, false );
 ImplementFeatureType( MFT_SkyBox, MFG_Transform, 1.0f, true );

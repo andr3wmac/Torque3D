@@ -142,8 +142,8 @@ float4 main(   ConvexConnectP IN,
    float2 uvScene = getUVFromSSPos( ssPos, rtParams0 );
 
    // Check for emissive.
-   float emissive = tex2D( matInfoBuffer, uvScene ).r;
-   if ( emissive > 0.0 )
+   float4 matInfo = tex2D( matInfoBuffer, uvScene );
+   if ( matInfo.r > 0.0 )
    {
        return float4(0.0, 0.0, 0.0, 0.0);
    }
@@ -248,10 +248,5 @@ float4 main(   ConvexConnectP IN,
       addToResult = ( 1.0 - shadowed ) * abs(lightMapParams);
    }
 
-   float specularMap = tex2D( colorBuffer, uvScene ).a;
-   float specularOut = specularMap * pow( specular, ceil(specularPower / AL_ConstantSpecularPower));
-   
-   lightColorOut *= Sat_NL_Att;
-   lightColorOut += addToResult;
-   return float4(lightColorOut, specularOut );
+   return AL_DeferredOutput(lightColorOut, matInfo, addToResult, specular, tex2D( colorBuffer, uvScene ).a, Sat_NL_Att);
 }
