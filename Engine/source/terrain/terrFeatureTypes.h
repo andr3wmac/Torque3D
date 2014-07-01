@@ -38,6 +38,8 @@ DeclareFeatureType( MFT_TerrainAdditive );
 //Deferred Shading
 DeclareFeatureType( MFT_DeferredTerrainBaseMap );
 DeclareFeatureType( MFT_DeferredTerrainDetailMap );
+DeclareFeatureType( MFT_DeferredTerrainMacroMap );
+
 
 #endif // _TERRFEATURETYPES_H_
 
