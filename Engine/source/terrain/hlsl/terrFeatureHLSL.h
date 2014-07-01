@@ -64,6 +64,8 @@ public:
    virtual Resources getResources( const MaterialFeatureData &fd );
 
    virtual String getName() { return "Terrain Base Texture"; }
+
+   virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const;
 };
 
 
@@ -87,6 +89,8 @@ public:
    virtual Resources getResources( const MaterialFeatureData &fd );
 
    virtual String getName() { return "Terrain Detail Texture"; }
+
+   virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const;
 };
 
 
@@ -110,6 +114,8 @@ public:
    virtual Resources getResources( const MaterialFeatureData &fd );
 
    virtual String getName() { return "Terrain Macro Texture"; }
+
+   virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const;
 };
 
 
@@ -150,20 +156,5 @@ public:
 
    virtual String getName() { return "Terrain Additive"; }
 };
-
-//Deferred Shading
-class DeferredTerrainBaseMapFeatHLSL : public TerrainBaseMapFeatHLSL
-{
-public:
-   virtual String getName() { return "Deferred Shading Terrain Color Buffer"; }
-
-   virtual void processPix( Vector<ShaderComponent*> &componentList, 
-      const MaterialFeatureData &fd );
-   
-   virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget1; }
-   virtual Resources getResources( const MaterialFeatureData &fd );
-
-};
-
 
 #endif // _TERRFEATUREHLSL_H_
