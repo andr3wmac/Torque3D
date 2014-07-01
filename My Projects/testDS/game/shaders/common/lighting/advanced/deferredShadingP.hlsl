@@ -22,6 +22,7 @@
 
 #include "shadergen:/autogenConditioners.h"
 #include "../../postfx/postFx.hlsl"
+#include "shaders/common/torque.hlsl"
 
 
 float4 main( PFXVertToPix IN, 
@@ -37,5 +38,5 @@ float4 main( PFXVertToPix IN,
    colorBuffer += float4(specular, specular, specular, 1.0);
    //colorBuffer += float4(colorBuffer.rgb * specular, 1.0);
 
-   return colorBuffer;   
+   return hdrEncode( colorBuffer );   
 }
