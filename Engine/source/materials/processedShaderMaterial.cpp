@@ -101,6 +101,9 @@ void ShaderConstHandles::init( GFXShader *shader, CustomMaterial* mat /*=NULL*/ 
       for (S32 i = 0; i < Material::MAX_TEX_PER_PASS; ++i)
          mTexHandlesSC[i] = shader->getShaderConstHandle(mat->mSamplerNames[i]);
    }
+
+   // Deferred Shading
+   mMatInfoFlagsSC = shader->getShaderConstHandle(ShaderGenVars::matInfoFlags);
 }
 
 ///
@@ -1085,6 +1088,14 @@ void ProcessedShaderMaterial::_setShaderConstants(SceneRenderState * state, cons
          0.0f, 0.0f ); // TODO: Wrap mode flags?
       shaderConsts->setSafe(handles->mBumpAtlasTileSC, atlasTileParams);
    }
+
+   // Deferred Shading: Determine Material Info Flags
+   S32 matInfoFlags = 
+            (mMaterial->mEmissive[stageNum] ? 1 : 0) |   // Emissive
+            (mMaterial->mGlow[stageNum] ? 2 : 0)         // Glow
+            ;
+   mMaterial->mMatInfoFlags[stageNum] = matInfoFlags / 255.0f;
+   shaderConsts->setSafe(handles->mMatInfoFlagsSC, mMaterial->mMatInfoFlags[stageNum]);
 }
 
 bool ProcessedShaderMaterial::_hasCubemap(U32 pass)

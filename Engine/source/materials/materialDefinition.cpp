@@ -153,6 +153,9 @@ Material::Material()
 
       mSeqFramePerSec[i] = 0.0f;
       mSeqSegSize[i] = 0.0f;
+
+      // Deferred Shading
+      mMatInfoFlags[i] = 0.0f;
    }
 
    dMemset(mCellIndex, 0, sizeof(mCellIndex));
@@ -195,6 +198,7 @@ Material::Material()
    mDirectSoundOcclusion = 1.f;
    mReverbSoundOcclusion = 1.0;
 
+   // Deferred Shading
    mIsSky = false;
 }
 

@@ -271,6 +271,29 @@ void DeferredGlowHLSL::processPix( Vector<ShaderComponent*> &componentList, cons
    output = new GenOp( "   @.g = 1.0;\r\n", color );
 }
 
+// Material Info Flags -> Green ( Glow ) of Material Info Buffer.
+void DeferredMatInfoFlagsHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
+{
+   // search for color var
+   Var *color = (Var*) LangElement::find( getOutputTargetVarName(ShaderFeature::RenderTarget2) );
+   if ( !color )
+   {
+      // create color var
+      color = new Var;
+      color->setType( "fragout" );
+      color->setName( getOutputTargetVarName(ShaderFeature::RenderTarget2) );
+      color->setStructName( "OUT" );
+   }
+
+   Var *matInfoFlags = new Var;
+   matInfoFlags->setType( "float" );
+   matInfoFlags->setName( "matInfoFlags" );
+   matInfoFlags->uniform = true;
+   matInfoFlags->constSortPos = cspPotentialPrimitive;
+
+   output = new GenOp( "   @.g = @;\r\n", color, matInfoFlags );
+}
+
 // Spec Strength -> Alpha Channel of Material Info Buffer.
 void DeferredSpecStrengthHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
 {

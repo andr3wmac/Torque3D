@@ -180,6 +180,7 @@ DeclareFeatureType( MFT_DeferredSpecPower );
 DeclareFeatureType( MFT_DeferredSpecStrength );
 DeclareFeatureType( MFT_DeferredGlossMap );
 DeclareFeatureType( MFT_DeferredGlow );
+DeclareFeatureType( MFT_DeferredMatInfoFlags );
 DeclareFeatureType( MFT_DeferredEmptySpec );
 DeclareFeatureType( MFT_DeferredEmissive );
 DeclareFeatureType( MFT_SkyBox );

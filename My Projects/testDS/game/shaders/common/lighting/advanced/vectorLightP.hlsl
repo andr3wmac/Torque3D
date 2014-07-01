@@ -28,7 +28,7 @@
 #include "lightingUtils.hlsl"
 #include "../shadowMap/shadowMapIO_HLSL.h"
 #include "softShadow.hlsl"
-
+#include "../../postFx/postFx.hlsl"
 
 uniform sampler2D ShadowMap : register(S1);
 
@@ -70,9 +70,10 @@ float4 main( FarFrustumQuadConnectP IN,
              uniform float4 overDarkPSSM,
              uniform float shadowSoftness ) : COLOR0
 {
-   // Check for emissive.
-   float4 matInfo = tex2D( matInfoBuffer, IN.uv0 );
-   if ( matInfo.r > 0.0 )
+   // Emissive.
+   float4 matInfo = tex2D( matInfoBuffer, IN.uv0 );   
+   bool emissive = getFlag( matInfo.g, 0 );
+   if ( emissive )
    {
        return float4(1.0, 1.0, 1.0, 0.0);
    }

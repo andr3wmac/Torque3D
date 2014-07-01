@@ -5,7 +5,7 @@
 // of this software and associated documentation files (the "Software"), to
 // deal in the Software without restriction, including without limitation the
 // rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-// sell copies of the Software, and to permit persons to whom the Software is
+// sell copies of the Software, and to permit persons to whom the Software isw
 // furnished to do so, subject to the following conditions:
 //
 // The above copyright notice and this permission notice shall be included in
@@ -37,3 +37,11 @@ struct PFXVertToPix
    float2 uv3        : TEXCOORD3;
    float3 wsEyeRay   : TEXCOORD4;
 };
+
+// Deferred Shading: Material Info Flag Check
+bool getFlag(float flags, int num)
+{
+   int process = round(flags * 255);
+   int squareNum = pow(2, num);
+   return (fmod(process, pow(2, squareNum)) >= squareNum); 
+}

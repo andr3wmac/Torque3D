@@ -27,7 +27,7 @@
 #include "../../lighting.hlsl"
 #include "../shadowMap/shadowMapIO_HLSL.h"
 #include "softShadow.hlsl"
-
+#include "../../postFx/postFx.hlsl"
 
 struct ConvexConnectP
 {
@@ -141,9 +141,10 @@ float4 main(   ConvexConnectP IN,
    float3 ssPos = IN.ssPos.xyz / IN.ssPos.w;
    float2 uvScene = getUVFromSSPos( ssPos, rtParams0 );
 
-   // Check for emissive.
-   float4 matInfo = tex2D( matInfoBuffer, uvScene );
-   if ( matInfo.r > 0.0 )
+   // Emissive.
+   float4 matInfo = tex2D( matInfoBuffer, uvScene );   
+   bool emissive = getFlag( matInfo.g, 0 );
+   if ( emissive )
    {
        return float4(0.0, 0.0, 0.0, 0.0);
    }

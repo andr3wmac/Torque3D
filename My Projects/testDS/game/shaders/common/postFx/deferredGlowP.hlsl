@@ -27,11 +27,12 @@ uniform sampler2D matInfo : register(S1);
 
 float4 main( PFXVertToPix IN ) : COLOR
 {   
-   float4 colorSample = tex2D( colorBuffer, IN.uv0 );
-   float glowEnabled = tex2D( matInfo, IN.uv0 ).g;
+   // Glow flag is in slot 1.
+   bool glow = getFlag(tex2D( matInfo, IN.uv0 ).g, 1); 
 
-   if ( glowEnabled > 0.0 )
+   if ( glow )
    {
+      float4 colorSample = tex2D( colorBuffer, IN.uv0 );
       return float4(colorSample.rgb, 1.0);
    }
    

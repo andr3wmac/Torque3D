@@ -578,9 +578,12 @@ void ProcessedPrePassMaterial::_determineFeatures( U32 stageNum,
       newFeatures.addFeature( MFT_DeferredEmptyColor );
    }
 
+   bool emissive = false;
+
    // Deferred Shading : Emissive
    if ( fd.features[MFT_IsEmissive] )
    {
+      emissive = true;
       newFeatures.addFeature( MFT_DeferredEmptySpec ); 
       newFeatures.addFeature( MFT_IsEmissive );
       newFeatures.addFeature( MFT_DeferredEmissive );
@@ -606,11 +609,8 @@ void ProcessedPrePassMaterial::_determineFeatures( U32 stageNum,
       }
    }
 
-   // Deferred Shading : Glow
-   if ( mMaterial->mGlow[stageNum] )
-   {
-      newFeatures.addFeature( MFT_DeferredGlow );
-   }
+   // Deferred Shading : material Info Flags
+   newFeatures.addFeature( MFT_DeferredMatInfoFlags );
 
 #ifndef TORQUE_DEDICATED
 
