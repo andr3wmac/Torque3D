@@ -33,6 +33,7 @@
 #include "gfx/gfxTransformSaver.h"
 #include "gfx/gfxDebugEvent.h"
 #include "math/util/matrixSet.h"
+#include "materials/materialManager.h"
 
 IMPLEMENT_CONOBJECT( RenderGlowMgr );
 
@@ -100,14 +101,20 @@ RenderGlowMgr::~RenderGlowMgr()
 PostEffect* RenderGlowMgr::getGlowEffect()
 {
    if ( !mGlowEffect )
-      mGlowEffect = dynamic_cast<PostEffect*>( Sim::findObject( "GlowPostFx" ) );
+   {
+      // Check for deferred glow
+      if ( MATMGR->getPrePassEnabled() )
+         mGlowEffect = dynamic_cast<PostEffect*>( Sim::findObject( "DeferredGlowPostFx" ) );
+      else 
+         mGlowEffect = dynamic_cast<PostEffect*>( Sim::findObject( "GlowPostFx" ) );
+   }
    
    return mGlowEffect;
 }
 
 bool RenderGlowMgr::isGlowEnabled()
 {
-   return getGlowEffect() && getGlowEffect()->isEnabled();
+   return getGlowEffect();
 }
 
 void RenderGlowMgr::addElement( RenderInst *inst )
@@ -146,6 +153,13 @@ void RenderGlowMgr::render( SceneRenderState *state )
       getGlowEffect()->setSkip( true );
       return;
    }
+
+   // Only enable glow shader if we've ever had glowing objects.
+   getGlowEffect()->enable();
+
+   // Deferred Shading : Glow
+   if ( MATMGR->getPrePassEnabled() && mBasicOnly )
+      return;
 
    GFXDEBUGEVENT_SCOPE( RenderGlowMgr_Render, ColorI::GREEN );
 

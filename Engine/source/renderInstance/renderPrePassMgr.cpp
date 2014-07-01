@@ -606,6 +606,12 @@ void ProcessedPrePassMaterial::_determineFeatures( U32 stageNum,
       }
    }
 
+   // Deferred Shading : Glow
+   if ( mMaterial->mGlow[stageNum] )
+   {
+      newFeatures.addFeature( MFT_DeferredGlow );
+   }
+
 #ifndef TORQUE_DEDICATED
 
    for ( U32 i=0; i < fd.features.getCount(); i++ )
