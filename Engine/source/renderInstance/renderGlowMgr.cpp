@@ -156,6 +156,7 @@ void RenderGlowMgr::render( SceneRenderState *state )
 
    // Only enable glow shader if we've ever had glowing objects.
    getGlowEffect()->enable();
+   getGlowEffect()->setSkip( false );
 
    // Deferred Shading : Glow
    if ( MATMGR->getPrePassEnabled() && mBasicOnly )
@@ -233,7 +234,4 @@ void RenderGlowMgr::render( SceneRenderState *state )
    // Finish up.
    if ( isRenderingToTarget )
       _onPostRender();
-
-   // Make sure the effect is gonna render.
-   getGlowEffect()->setSkip( false );
 }
