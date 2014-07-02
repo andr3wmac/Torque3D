@@ -417,7 +417,7 @@ void CubeReflector::updateFace( const ReflectParams &params, U32 faceidx )
 
    reflectRenderState.getMaterialDelegate().bind( REFLECTMGR, &ReflectionManager::getReflectionMaterial );
    reflectRenderState.setDiffuseCameraTransform( params.query->cameraMatrix );
-   reflectRenderState.disableAdvancedLightingBins(true);
+   //reflectRenderState.disableAdvancedLightingBins(true);
 
    // render scene
    LIGHTMGR->registerGlobalLights( &reflectRenderState.getCullingFrustum(), false );
@@ -627,7 +627,7 @@ void PlaneReflector::updateReflection( const ReflectParams &params )
       renderStateLeft.setSceneRenderField(0);
       renderStateLeft.getMaterialDelegate().bind( REFLECTMGR, &ReflectionManager::getReflectionMaterial );
       renderStateLeft.setDiffuseCameraTransform( params.query->cameraMatrix );
-      renderStateLeft.disableAdvancedLightingBins(true);
+      //renderStateLeft.disableAdvancedLightingBins(true);
 
       gClientSceneGraph->renderSceneNoLights( &renderStateLeft, objTypeFlag );
 
@@ -654,7 +654,7 @@ void PlaneReflector::updateReflection( const ReflectParams &params )
       renderStateRight.setSceneRenderField(1);
       renderStateRight.getMaterialDelegate().bind( REFLECTMGR, &ReflectionManager::getReflectionMaterial );
       renderStateRight.setDiffuseCameraTransform( params.query->cameraMatrix );
-      renderStateRight.disableAdvancedLightingBins(true);
+      //renderStateRight.disableAdvancedLightingBins(true);
 
       gClientSceneGraph->renderSceneNoLights( &renderStateRight, objTypeFlag );
 
@@ -674,7 +674,7 @@ void PlaneReflector::updateReflection( const ReflectParams &params )
 
       reflectRenderState.getMaterialDelegate().bind( REFLECTMGR, &ReflectionManager::getReflectionMaterial );
       reflectRenderState.setDiffuseCameraTransform( params.query->cameraMatrix );
-      reflectRenderState.disableAdvancedLightingBins(true);
+      //reflectRenderState.disableAdvancedLightingBins(true);
 
       gClientSceneGraph->renderSceneNoLights( &reflectRenderState, objTypeFlag );
    }
