@@ -43,6 +43,7 @@ singleton PostEffect( AL_DeferredShading )
    texture[1] = "#lightinfo";
    target = "$backBuffer";
    renderPriority = 10000;
+   allowReflectPass = true;
 };
 
 // Debug Shaders.
