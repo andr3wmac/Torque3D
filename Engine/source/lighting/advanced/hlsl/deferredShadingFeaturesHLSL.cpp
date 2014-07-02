@@ -243,12 +243,15 @@ void DeferredGlossMapHLSL::processPix( Vector<ShaderComponent*> &componentList, 
    }
 
    // create texture var
-   Var *specularMap = new Var;
-   specularMap->setType( "sampler2D" );
-   specularMap->setName( "specularMap" );
-   specularMap->uniform = true;
-   specularMap->sampler = true;
-   specularMap->constNum = Var::getTexUnitNum();
+   Var *specularMap = (Var*)LangElement::find( "specularMap" );
+   if (!specularMap)
+   {
+       specularMap->setType( "sampler2D" );
+       specularMap->setName( "specularMap" );
+       specularMap->uniform = true;
+       specularMap->sampler = true;
+       specularMap->constNum = Var::getTexUnitNum();
+   }
    LangElement *texOp = new GenOp( "tex2D(@, @)", specularMap, texCoord );
 
    output = new GenOp( "   @.b = @.a;\r\n", color, texOp );
