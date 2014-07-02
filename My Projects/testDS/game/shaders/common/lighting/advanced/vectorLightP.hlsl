@@ -28,7 +28,6 @@
 #include "lightingUtils.hlsl"
 #include "../shadowMap/shadowMapIO_HLSL.h"
 #include "softShadow.hlsl"
-#include "../../postFx/postFx.hlsl"
 
 uniform sampler2D ShadowMap : register(S1);
 
@@ -52,6 +51,7 @@ float4 main( FarFrustumQuadConnectP IN,
              uniform float4 lightAmbient,
              
              uniform float3 eyePosWorld,
+             uniform float4x4 eyeMat, 
              
              uniform float4x4 worldToLightProj,
 
@@ -72,7 +72,7 @@ float4 main( FarFrustumQuadConnectP IN,
 {
    // Emissive.
    float4 matInfo = tex2D( matInfoBuffer, IN.uv0 );   
-   bool emissive = getFlag( matInfo.g, 0 );
+   bool emissive = getFlag( matInfo.r, 0 );
    if ( emissive )
    {
        return float4(1.0, 1.0, 1.0, 0.0);
@@ -214,7 +214,16 @@ float4 main( FarFrustumQuadConnectP IN,
                                     
    float Sat_NL_Att = saturate( dotNL * shadowed ) * lightBrightness;
    float3 lightColorOut = lightMapParams.rgb * lightColor.rgb;
-   float4 addToResult = lightAmbient;
+
+   // Felix' Normal Mapped Ambient.
+   float ambientBrightness = (float)lightAmbient;  
+   float3 worldNormal = normalize(mul(eyeMat, normal)).xyz;
+   float ambientContrast = 0.5;  
+   float4 upAmbient = lerp( 1 - lightAmbient * 0.65, lightAmbient, 1-ambientBrightness*ambientContrast );
+   float4 lightAmbientTwoTone = lerp( lightAmbient * 0.8 , upAmbient , worldNormal.b ); 
+   float4 addToResult = lightAmbientTwoTone + dotNL * lightColor * ambientBrightness * 0.25; 
+
+   //float4 addToResult = lightAmbient;
 
    // TODO: This needs to be removed when lightmapping is disabled
    // as its extra work per-pixel on dynamic lit scenes.
@@ -241,5 +250,6 @@ float4 main( FarFrustumQuadConnectP IN,
       lightColorOut = debugColor;
    #endif
 
-   return AL_DeferredOutput(lightColorOut, matInfo, addToResult, specular, tex2D( colorBuffer, IN.uv0 ).a, Sat_NL_Att);
+   float4 colorSample = tex2D( colorBuffer, IN.uv0 );
+   return AL_DeferredOutput(lightColorOut, colorSample.rgb, matInfo, addToResult, specular, colorSample.a, Sat_NL_Att);
 }

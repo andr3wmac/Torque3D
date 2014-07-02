@@ -164,6 +164,9 @@ Material::Material()
    dMemset(mNormalMapAtlas, 0, sizeof(mNormalMapAtlas));
    dMemset(mUseAnisotropic, 0, sizeof(mUseAnisotropic));
 
+   // Deferred Shading : Metalness
+   dMemset(mUseMetalness, 0, sizeof(mUseMetalness));
+
    mImposterLimits = Point4F::Zero;
 
    mDoubleSided = false;
@@ -267,6 +270,10 @@ void Material::initPersistFields()
       
       addField( "useAnisotropic", TypeBool, Offset(mUseAnisotropic, Material), MAX_STAGES,
          "Use anisotropic filtering for the textures of this stage." );
+
+      // Deferred Shading: Metalness
+      addField( "useMetalness", TypeBool, Offset(mUseMetalness, Material), MAX_STAGES,
+         "Treat specular map as metalness map." );
 
       addField("envMap", TypeImageFilename, Offset(mEnvMapFilename, Material), MAX_STAGES,
          "The name of an environment map cube map to apply to this material." );

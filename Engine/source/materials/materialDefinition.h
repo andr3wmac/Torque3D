@@ -279,6 +279,9 @@ public:
    /// If the stage should use anisotropic filtering.
    bool mUseAnisotropic[MAX_STAGES];
 
+   // Deferred Shading: Metalness
+   bool mUseMetalness[MAX_STAGES];
+
    bool mDoubleSided;
 
    String mCubemapName;

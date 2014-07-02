@@ -27,7 +27,7 @@
 #include "../../lighting.hlsl"
 #include "../shadowMap/shadowMapIO_HLSL.h"
 #include "softShadow.hlsl"
-#include "../../postFx/postFx.hlsl"
+#include "../../torque.hlsl"
 
 struct ConvexConnectP
 {
@@ -143,7 +143,7 @@ float4 main(   ConvexConnectP IN,
 
    // Emissive.
    float4 matInfo = tex2D( matInfoBuffer, uvScene );   
-   bool emissive = getFlag( matInfo.g, 0 );
+   bool emissive = getFlag( matInfo.r, 0 );
    if ( emissive )
    {
        return float4(0.0, 0.0, 0.0, 0.0);
@@ -249,5 +249,22 @@ float4 main(   ConvexConnectP IN,
       addToResult = ( 1.0 - shadowed ) * abs(lightMapParams);
    }
 
-   return AL_DeferredOutput(lightColorOut, matInfo, addToResult, specular, tex2D( colorBuffer, uvScene ).a, Sat_NL_Att);
+   bool translucent = getFlag( matInfo.r, 2 );
+   if ( translucent )
+   {
+      float fLTDistortion = 0.5;
+      int iLTPower = 3;
+      float fLTAmbient = 0.1;
+      float fLTThickness = 0.5;
+      float fLTScale = 1.0;
+
+      float3 vLTLight = lightVec + normal * fLTDistortion;
+      float fLTDot = pow(saturate(dot(-IN.vsEyeDir.xyz, -vLTLight)), iLTPower) * fLTScale;
+      float3 fLT = atten * (fLTDot + fLTAmbient) * fLTThickness;
+
+      addToResult = float4(lightColor * fLT, 0.0);
+   }
+
+   float4 colorSample = tex2D( colorBuffer, uvScene );
+   return AL_DeferredOutput(lightColorOut, colorSample.rgb, matInfo, addToResult, specular, colorSample.a, Sat_NL_Att);
 }

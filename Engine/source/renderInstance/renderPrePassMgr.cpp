@@ -578,38 +578,27 @@ void ProcessedPrePassMaterial::_determineFeatures( U32 stageNum,
       newFeatures.addFeature( MFT_DeferredEmptyColor );
    }
 
-   bool emissive = false;
-
-   // Deferred Shading : Emissive
-   if ( fd.features[MFT_IsEmissive] )
-   {
-      emissive = true;
-      newFeatures.addFeature( MFT_DeferredEmptySpec ); 
-      newFeatures.addFeature( MFT_IsEmissive );
-      newFeatures.addFeature( MFT_DeferredEmissive );
-   } 
-
    // Deferred Shading : Specular
-   else 
+   if( mStages[stageNum].getTex( MFT_SpecularMap ) )
    {
+      newFeatures.addFeature( MFT_DeferredSpecMap );
+
+      if( !mStages[stageNum].getTex( MFT_SpecularMap )->mHasTransparency )
+         newFeatures.addFeature( MFT_DeferredSpecPower );
+      else
+         newFeatures.addFeature( MFT_DeferredGlossMap);
+
+      newFeatures.addFeature( MFT_DeferredSpecStrength );
+   } else {
       newFeatures.addFeature( MFT_DeferredEmptySpec ); 
-      if( mStages[stageNum].getTex( MFT_SpecularMap ) )
+      if ( mMaterial->mSpecular[stageNum] )
       {
-         newFeatures.addFeature( MFT_DeferredSpecMap );
-
-         if( !mStages[stageNum].getTex( MFT_SpecularMap )->mHasTransparency )
-            newFeatures.addFeature( MFT_DeferredSpecPower );
-         else
-            newFeatures.addFeature( MFT_DeferredGlossMap);
-
-         newFeatures.addFeature( MFT_DeferredSpecStrength );
-      } else {
          newFeatures.addFeature( MFT_DeferredSpecStrength );
          newFeatures.addFeature( MFT_DeferredSpecPower );
       }
    }
 
-   // Deferred Shading : material Info Flags
+   // Deferred Shading : Material Info Flags
    newFeatures.addFeature( MFT_DeferredMatInfoFlags );
 
 #ifndef TORQUE_DEDICATED

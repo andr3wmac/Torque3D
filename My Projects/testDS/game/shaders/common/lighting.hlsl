@@ -20,6 +20,7 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
+#include "./torque.hlsl"
 
 #ifndef TORQUE_SHADERGEN
 
@@ -206,7 +207,7 @@ void compute4Lights( float3 wsView,
 ///
 float AL_CalcSpecular( float3 toLight, float3 normal, float3 toEye )
 {
-   #ifdef PHONG_SPECULAR 
+   #ifdef PHONG_SPECULAR
       // (R.V)^c
       float specVal = dot( normalize( -reflect( toLight, normal ) ), toEye );
    #else
@@ -230,13 +231,21 @@ float AL_CalcSpecular( float3 toLight, float3 normal, float3 toEye )
 ///
 float4 AL_DeferredOutput(
 		float3 	lightColor,
+                float3  diffuseColor,
                 float4 	matInfo,
                 float4 	ambient,
                 float   specular, 
 		float 	specularMap, 
 		float 	shadowAttenuation)
 {
-   float specularOut = specularMap * pow(specular, ceil((matInfo.b * 128.0) / AL_ConstantSpecularPower)) * (matInfo.a * 5.0);
+   float3 specularColor = float3(specularMap, specularMap, specularMap);
+   bool metalness = getFlag(matInfo.r, 3);
+   if ( metalness )
+   {
+       specularColor = 0.04 * (1 - specularMap) + diffuseColor * specularMap;
+   }
+
+   float specularOut = specularColor * pow(specular, ceil((matInfo.b * 128.0) / AL_ConstantSpecularPower)) * (matInfo.a * 5.0);
    
    lightColor *= shadowAttenuation;
    lightColor += ambient;

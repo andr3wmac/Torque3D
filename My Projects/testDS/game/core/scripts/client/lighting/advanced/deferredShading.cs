@@ -30,6 +30,7 @@ new ShaderData( AL_DeferredShader )
 
    samplerNames[0] = "color";
    samplerNames[1] = "lightInfoBuffer";
+   samplerNames[2] = "matInfoTex";
    pixVersion = 2.0;
 };
 
@@ -41,6 +42,7 @@ singleton PostEffect( AL_DeferredShading )
    stateBlock = AL_DeferredShadingState;
    texture[0] = "#color";
    texture[1] = "#lightinfo";
+   texture[2] = "#matinfo";
    target = "$backBuffer";
    renderPriority = 10000;
    allowReflectPass = true;

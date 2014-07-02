@@ -902,6 +902,9 @@ function MaterialEditorGui::guiSync( %this, %material )
    MaterialEditorPropertiesWindow-->parallaxTextEdit.setText((%material).parallaxScale[%layer]);
    MaterialEditorPropertiesWindow-->parallaxSlider.setValue((%material).parallaxScale[%layer]);
 
+   // Deferred Shading: Metalness
+   MaterialEditorPropertiesWindow-->useMetalCheckbox.setValue((%material).useMetalness[%layer]);
+
    MaterialEditorPropertiesWindow-->useAnisoCheckbox.setValue((%material).useAnisotropic[%layer]);
    MaterialEditorPropertiesWindow-->vertLitCheckbox.setValue((%material).vertLit[%layer]);
    MaterialEditorPropertiesWindow-->vertColorSwatch.color = (%material).vertColor[%layer];

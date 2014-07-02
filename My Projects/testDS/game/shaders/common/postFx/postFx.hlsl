@@ -37,11 +37,3 @@ struct PFXVertToPix
    float2 uv3        : TEXCOORD3;
    float3 wsEyeRay   : TEXCOORD4;
 };
-
-// Deferred Shading: Material Info Flag Check
-bool getFlag(float flags, int num)
-{
-   int process = round(flags * 255);
-   int squareNum = pow(2, num);
-   return (fmod(process, pow(2, squareNum)) >= squareNum); 
-}

@@ -21,6 +21,7 @@
 //-----------------------------------------------------------------------------
 
 #include "./postFx.hlsl"
+#include "../torque.hlsl"
 
 uniform sampler2D colorBuffer : register(S0);
 uniform sampler2D matInfo : register(S1);
@@ -28,7 +29,7 @@ uniform sampler2D matInfo : register(S1);
 float4 main( PFXVertToPix IN ) : COLOR
 {   
    // Glow flag is in slot 1.
-   bool glow = getFlag(tex2D( matInfo, IN.uv0 ).g, 1); 
+   bool glow = getFlag(tex2D( matInfo, IN.uv0 ).r, 1); 
 
    if ( glow )
    {

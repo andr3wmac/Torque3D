@@ -27,7 +27,7 @@
 #include "../../lighting.hlsl"
 #include "../shadowMap/shadowMapIO_HLSL.h"
 #include "softShadow.hlsl"
-#include "../../postFx/postFx.hlsl"
+#include "../../torque.hlsl"
 
 struct ConvexConnectP
 {
@@ -77,7 +77,7 @@ float4 main(   ConvexConnectP IN,
    
    // Emissive.
    float4 matInfo = tex2D( matInfoBuffer, uvScene );   
-   bool emissive = getFlag( matInfo.g, 0 );
+   bool emissive = getFlag( matInfo.r, 0 );
    if ( emissive )
    {
        return float4(0.0, 0.0, 0.0, 0.0);
@@ -176,5 +176,6 @@ float4 main(   ConvexConnectP IN,
       addToResult = ( 1.0 - shadowed ) * abs(lightMapParams);
    }
 
-   return AL_DeferredOutput(lightColorOut, matInfo, addToResult, specular, tex2D( colorBuffer, uvScene ).a, Sat_NL_Att);
+   float4 colorSample = tex2D( colorBuffer, uvScene );
+   return AL_DeferredOutput(lightColorOut, colorSample.rgb, matInfo, addToResult, specular, colorSample.a, Sat_NL_Att);
 }
