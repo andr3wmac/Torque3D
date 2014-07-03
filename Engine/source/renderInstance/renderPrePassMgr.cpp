@@ -688,8 +688,8 @@ void ProcessedPrePassMaterial::_determineFeatures( U32 stageNum,
        newFeatures.addFeature( MFT_DetailMap );
    if (fd.features.hasFeature( MFT_DetailNormalMap ))
        newFeatures.addFeature( MFT_DetailNormalMap );
-
-
+   if (fd.features.hasFeature( MFT_DiffuseMapAtlas ))
+       newFeatures.addFeature( MFT_DiffuseMapAtlas );
 #endif
 
    // Deferred Shading : Disable Unused Features

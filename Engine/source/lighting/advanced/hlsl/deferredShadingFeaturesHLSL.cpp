@@ -68,6 +68,96 @@ void DeferredDiffuseMapHLSL::processPix( Vector<ShaderComponent*> &componentList
       meta->addStatement( new GenOp( "   @;\r\n", assignColor( diffColor, Material::Mul , NULL, ShaderFeature::RenderTarget1 ) ) );
       output = meta;
    }
+   else if(fd.features[MFT_DiffuseMapAtlas])
+   {   
+      // Handle atlased textures
+      // http://www.infinity-universe.com/Infinity/index.php?option=com_content&task=view&id=65&Itemid=47
+      MultiLine * meta = new MultiLine;
+      output = meta;
+
+      Var *atlasedTex = new Var;
+      atlasedTex->setName("atlasedTexCoord");
+      atlasedTex->setType("float2");
+      LangElement *atDecl = new DecOp(atlasedTex);
+
+      // Parameters of the texture atlas
+      Var *atParams  = new Var;
+      atParams->setType("float4");
+      atParams->setName("diffuseAtlasParams");
+      atParams->uniform = true;
+      atParams->constSortPos = cspPotentialPrimitive;
+
+      // Parameters of the texture (tile) this object is using in the atlas
+      Var *tileParams  = new Var;
+      tileParams->setType("float4");
+      tileParams->setName("diffuseAtlasTileParams");
+      tileParams->uniform = true;
+      tileParams->constSortPos = cspPotentialPrimitive;
+
+      const bool is_sm3 = (GFX->getPixelShaderVersion() > 2.0f);
+      if(is_sm3)
+      {
+         // Figure out the mip level
+         meta->addStatement(new GenOp("   float2 _dx = ddx(@ * @.z);\r\n", inTex, atParams));
+         meta->addStatement(new GenOp("   float2 _dy = ddy(@ * @.z);\r\n", inTex, atParams));
+         meta->addStatement(new GenOp("   float mipLod = 0.5 * log2(max(dot(_dx, _dx), dot(_dy, _dy)));\r\n"));
+         meta->addStatement(new GenOp("   mipLod = clamp(mipLod, 0.0, @.w);\r\n", atParams));
+
+         // And the size of the mip level
+         meta->addStatement(new GenOp("   float mipPixSz = pow(2.0, @.w - mipLod);\r\n", atParams));
+         meta->addStatement(new GenOp("   float2 mipSz = mipPixSz / @.xy;\r\n", atParams));
+      }
+      else
+      {
+         meta->addStatement(new GenOp("   float2 mipSz = float2(1.0, 1.0);\r\n"));
+      }
+
+      // Tiling mode
+      // TODO: Select wrap or clamp somehow
+      if( true ) // Wrap
+         meta->addStatement(new GenOp("   @ = frac(@);\r\n", atDecl, inTex));
+      else       // Clamp
+         meta->addStatement(new GenOp("   @ = saturate(@);\r\n", atDecl, inTex));
+
+      // Finally scale/offset, and correct for filtering
+      meta->addStatement(new GenOp("   @ = @ * ((mipSz * @.xy - 1.0) / mipSz) + 0.5 / mipSz + @.xy * @.xy;\r\n", 
+         atlasedTex, atlasedTex, atParams, atParams, tileParams));
+
+      // Add a newline
+      meta->addStatement(new GenOp( "\r\n"));
+
+      // For the rest of the feature...
+      inTex = atlasedTex;
+
+      // create sample color var
+      Var *diffColor = new Var;
+      diffColor->setType("float4");
+      diffColor->setName("diffuseColor");
+
+      // To dump out UV coords...
+//#define DEBUG_ATLASED_UV_COORDS
+#ifdef DEBUG_ATLASED_UV_COORDS
+      if(!fd.features[MFT_PrePassConditioner])
+      {
+         meta->addStatement(new GenOp("   @ = float4(@.xy, mipLod / @.w, 1.0);\r\n", new DecOp(diffColor), inTex, atParams));
+         meta->addStatement(new GenOp("   @; return OUT;\r\n", assignColor(diffColor, Material::Mul)));
+         return;
+      }
+#endif
+
+      if(is_sm3)
+      {
+         meta->addStatement(new GenOp( "   @ = tex2Dlod(@, float4(@, 0.0, mipLod));\r\n", 
+            new DecOp(diffColor), diffuseMap, inTex));
+      }
+      else
+      {
+         meta->addStatement(new GenOp( "   @ = tex2D(@, @);\r\n", 
+            new DecOp(diffColor), diffuseMap, inTex));
+      }
+
+      meta->addStatement(new GenOp( "   @;\r\n", assignColor(diffColor, Material::Mul, NULL, ShaderFeature::RenderTarget1)));
+   }
    else
    {
        LangElement *statement = new GenOp( "tex2D(@, @)", diffuseMap, inTex );
