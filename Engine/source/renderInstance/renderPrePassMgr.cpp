@@ -683,6 +683,11 @@ void ProcessedPrePassMaterial::_determineFeatures( U32 stageNum,
          (  (  mMaterial->mCubemapData && mMaterial->mCubemapData->mCubemap ) ||
                mMaterial->mDynamicCubemap ) )
    newFeatures.addFeature( MFT_CubeMap );
+   
+   if (fd.features.hasFeature( MFT_DetailMap ))
+       newFeatures.addFeature( MFT_DetailMap );
+   if (fd.features.hasFeature( MFT_DetailNormalMap ))
+       newFeatures.addFeature( MFT_DetailNormalMap );
 
 
 #endif
