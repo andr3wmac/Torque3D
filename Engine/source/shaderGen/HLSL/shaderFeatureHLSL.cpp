@@ -1557,7 +1557,10 @@ void DetailFeatHLSL::processPix( Vector<ShaderComponent*> &componentList,
    // and a simple multiplication with the detail map.
 
    LangElement *statement = new GenOp( "( tex2D(@, @) * 2.0 ) - 1.0", detailMap, inTex );
-   output = new GenOp( "   @;\r\n", assignColor( statement, Material::Add ) );
+   if (  fd.features[MFT_DeferredDiffuseMap])
+       output = new GenOp( "   @;\r\n", assignColor( statement, Material::Add, NULL, ShaderFeature::RenderTarget1 ) );
+   else
+       output = new GenOp( "   @;\r\n", assignColor( statement, Material::Add ) );
 }
 
 ShaderFeature::Resources DetailFeatHLSL::getResources( const MaterialFeatureData &fd )

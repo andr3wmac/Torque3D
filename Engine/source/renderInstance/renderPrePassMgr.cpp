@@ -683,8 +683,13 @@ void ProcessedPrePassMaterial::_determineFeatures( U32 stageNum,
          (  (  mMaterial->mCubemapData && mMaterial->mCubemapData->mCubemap ) ||
                mMaterial->mDynamicCubemap ) )
    newFeatures.addFeature( MFT_CubeMap );
-
-
+   
+   if (fd.features.hasFeature( MFT_DetailMap ))
+       newFeatures.addFeature( MFT_DetailMap );
+   if (fd.features.hasFeature( MFT_DetailNormalMap ))
+       newFeatures.addFeature( MFT_DetailNormalMap );
+   if (fd.features.hasFeature( MFT_DiffuseMapAtlas ))
+       newFeatures.addFeature( MFT_DiffuseMapAtlas );
 #endif
 
    // Deferred Shading : Disable Unused Features
@@ -697,8 +702,54 @@ void ProcessedPrePassMaterial::_determineFeatures( U32 stageNum,
 
 U32 ProcessedPrePassMaterial::getNumStages()
 {
-   // Return 1 stage so this material gets processed for sure
-   return 1;
+   // Loops through all stages to determine how many 
+   // stages we actually use.  
+   // 
+   // The first stage is always active else we shouldn't be
+   // creating the material to begin with.
+   U32 numStages = 1;
+
+   U32 i;
+   for( i=1; i<Material::MAX_STAGES; i++ )
+   {
+      // Assume stage is inactive
+      bool stageActive = false;
+
+      // Cubemaps only on first stage
+      if( i == 0 )
+      {
+         // If we have a cubemap the stage is active
+         if( mMaterial->mCubemapData || mMaterial->mDynamicCubemap )
+         {
+            numStages++;
+            continue;
+         }
+      }
+
+      // If we have a texture for the a feature the 
+      // stage is active.
+      if ( mStages[i].hasValidTex() )
+         stageActive = true;
+
+      // If this stage has specular lighting, it's active
+      if ( mMaterial->mPixelSpecular[i] )
+         stageActive = true;
+
+      // If this stage has diffuse color, it's active
+      if (  mMaterial->mDiffuse[i].alpha > 0 &&
+            mMaterial->mDiffuse[i] != ColorF::WHITE )
+         stageActive = true;
+
+      // If we have a Material that is vertex lit
+      // then it may not have a texture
+      if( mMaterial->mVertLit[i] )
+         stageActive = true;
+
+      // Increment the number of active stages
+      numStages += stageActive;
+   }
+
+   return numStages;
 }
 
 void ProcessedPrePassMaterial::addStateBlockDesc(const GFXStateBlockDesc& desc)
