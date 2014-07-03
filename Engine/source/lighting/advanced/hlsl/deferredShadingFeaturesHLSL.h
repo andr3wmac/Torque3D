@@ -188,4 +188,23 @@ public:
    virtual void processVert( Vector<ShaderComponent*> &componentList,
                              const MaterialFeatureData &fd );
 };
+
+// Translucency Outputs
+class DeferredTranslucencyMapHLSL : public ShaderFeatureHLSL
+{
+public:
+   virtual String getName() { return "Deferred Shading: Translucency Map"; }
+
+   virtual void processPix( Vector<ShaderComponent*> &componentList, 
+      const MaterialFeatureData &fd );
+   
+   virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget1; }
+   virtual Resources getResources( const MaterialFeatureData &fd );
+
+   // Sets textures and texture flags for current pass
+   virtual void setTexData( Material::StageData &stageDat,
+                            const MaterialFeatureData &fd,
+                            RenderPassData &passData,
+                            U32 &texIndex );
+};
 #endif

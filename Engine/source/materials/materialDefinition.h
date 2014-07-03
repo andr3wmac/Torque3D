@@ -213,7 +213,8 @@ public:
    /// The strength scalar for the detail normal map.
    F32 mDetailNormalMapStrength[MAX_STAGES];   
 
-   FileName mEnvMapFilename[MAX_STAGES];
+   // Deferred Shading : Translucency Map
+   FileName mTranslucencyMapFilename[MAX_STAGES];
    
    /// This color is the diffuse color of the material
    /// or if it has a texture it is multiplied against 

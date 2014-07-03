@@ -252,11 +252,11 @@ float4 main(   ConvexConnectP IN,
    bool translucent = getFlag( matInfo.r, 2 );
    if ( translucent )
    {
-      float fLTDistortion = 0.5;
+      float fLTDistortion = 0.2;
       int iLTPower = 3;
       float fLTAmbient = 0.1;
-      float fLTThickness = 0.5;
-      float fLTScale = 1.0;
+      float fLTThickness = matInfo.g;
+      float fLTScale = 0.5;
 
       float3 vLTLight = lightVec + normal * fLTDistortion;
       float fLTDot = pow(saturate(dot(-IN.vsEyeDir.xyz, -vLTLight)), iLTPower) * fLTScale;
