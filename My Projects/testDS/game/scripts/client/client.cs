@@ -177,3 +177,31 @@ function turretMountCallback(%turret, %player, %mounted)
       turretMap.pop();
    }
 }
+
+// Light Test
+function startLightShow()
+{
+   TestLight1.schedule(10, "moveForward", 10);
+   TestLight2.schedule(20, "moveBackward", 20);
+   TestLight3.schedule(30, "moveBackward", 30);
+}
+
+function PointLight::moveForward(%this, %time)
+{
+   %pos = %this.getPosition();
+   %this.setTransform(getWord(%pos, 0) @ " " @ (getWord(%pos, 1) + 0.1) @ " " @ getWord(%pos, 2) @ " 0 0 0 0");
+   if ( getWord(%pos, 1) < 15 ) 
+      %this.schedule(%time, "moveForward", %time);
+   else
+      %this.schedule(%time, "moveBackward", %time);
+}
+
+function PointLight::moveBackward(%this, %time)
+{
+   %pos = %this.getPosition();
+   %this.setTransform(getWord(%pos, 0) @ " " @ (getWord(%pos, 1) - 0.1) @ " " @ getWord(%pos, 2) @ " 0 0 0 0");
+   if ( getWord(%pos, 1) > -2 ) 
+      %this.schedule(%time, "moveBackward", %time);
+   else
+      %this.schedule(%time, "moveForward", %time);
+}

@@ -113,7 +113,7 @@ DeclareFeatureType( MFT_ToneMap );
 DeclareFeatureType( MFT_VertLit );
 DeclareFeatureType( MFT_VertLitTone );
 
-DeclareFeatureType( MFT_EnvMap );
+DeclareFeatureType( MFT_TranslucencyMap );
 DeclareFeatureType( MFT_CubeMap );
 DeclareFeatureType( MFT_PixSpecular );
 DeclareFeatureType( MFT_SpecularMap );
@@ -181,6 +181,7 @@ DeclareFeatureType( MFT_DeferredSpecStrength );
 DeclareFeatureType( MFT_DeferredGlossMap );
 DeclareFeatureType( MFT_DeferredGlow );
 DeclareFeatureType( MFT_DeferredMatInfoFlags );
+DeclareFeatureType( MFT_DeferredTranslucencyMap );
 DeclareFeatureType( MFT_DeferredEmptySpec );
 DeclareFeatureType( MFT_DeferredEmissive );
 DeclareFeatureType( MFT_SkyBox );
