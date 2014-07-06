@@ -250,6 +250,22 @@ float4 main( FarFrustumQuadConnectP IN,
       lightColorOut = debugColor;
    #endif
 
+   bool translucent = getFlag( matInfo.r, 2 );
+   if ( translucent && matInfo.g > 0.1 )
+   {
+      float fLTDistortion = 0.1;
+      int iLTPower = 10;
+      float fLTAmbient = 0.0;
+      float fLTThickness = matInfo.g;
+      float fLTScale = 0.5;
+
+      float3 vLTLight = lightDirection + normal * fLTDistortion;
+      float fLTDot = pow(saturate(dot(normalize(IN.vsEyeRay), -vLTLight)), iLTPower) * fLTScale;
+      float3 fLT = 1.0 * (fLTDot + fLTAmbient) * fLTThickness;
+
+      addToResult = float4(lightColor * fLT, 0.0);
+   }
+
    float4 colorSample = tex2D( colorBuffer, IN.uv0 );
    return AL_DeferredOutput(lightColorOut, colorSample.rgb, matInfo, addToResult, specular, colorSample.a, Sat_NL_Att);
 }
