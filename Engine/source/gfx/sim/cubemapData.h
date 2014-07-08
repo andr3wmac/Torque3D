@@ -60,8 +60,7 @@ public:
    // Force creation of cubemap
    void createMap();   
 
-   // Update a dynamic cubemap @ pos
-   void updateDynamic(SceneManager* sm, const Point3F& pos);
+   // Update a static cubemap @ pos
 	void updateFaces();
    
    // Dynamic cube map support
