@@ -39,14 +39,6 @@ IMPLEMENT_CONOBJECT( CubemapData );
 CubemapData::CubemapData()
 {
    mCubemap = NULL;
-   mDynamic = false;
-   mDynamicSize = 512;
-   mDynamicNearDist = 0.1f;
-   mDynamicFarDist = 100.0f;
-   mDynamicObjectTypeMask = 0;
-#ifdef INIT_HACK
-   mInit = false;
-#endif
 }
 
 CubemapData::~CubemapData()
@@ -84,22 +76,6 @@ void CubemapData::initPersistFields()
       "  - cubeFace[3] is +Z\n"
       "  - cubeFace[4] is -Y\n"
       "  - cubeFace[5] is +Y\n" );
-
-   addField("dynamic", TypeBool, Offset(mDynamic, CubemapData),
-      "Set to true if this is a dynamic cubemap.  The default is false." );
-
-   addField("dynamicSize", TypeS32, Offset(mDynamicSize, CubemapData),
-      "The size of each dynamic cubemap face in pixels." );
-
-   addField("dynamicNearDist", TypeF32, Offset(mDynamicNearDist, CubemapData),
-      "The near clip distance used when rendering to the dynamic cubemap." );
-
-   addField("dynamicFarDist", TypeF32, Offset(mDynamicFarDist, CubemapData),
-      "The far clip distance used when rendering to the dynamic cubemap." );
-
-   addField("dynamicObjectTypeMask", TypeS32, Offset(mDynamicObjectTypeMask, CubemapData),
-      "The typemask used to filter the objects rendered to the dynamic cubemap." );
-
    Parent::initPersistFields();
 }
 
@@ -118,16 +94,6 @@ void CubemapData::createMap()
 {
    if( !mCubemap )
    {
-      if( mDynamic )
-      {
-         mCubemap = GFX->createCubemap();
-         mCubemap->initDynamic( mDynamicSize );
-         mDepthBuff = GFXTexHandle( mDynamicSize, mDynamicSize, GFXFormatD24S8, 
-            &GFXDefaultZTargetProfile, avar("%s() - mDepthBuff (line %d)", __FUNCTION__, __LINE__));
-         mRenderTarget = GFX->allocRenderToTextureTarget();
-      }
-      else
-      {
          bool initSuccess = true;
 
          for( U32 i=0; i<6; i++ )
@@ -147,7 +113,6 @@ void CubemapData::createMap()
             mCubemap = GFX->createCubemap();
             mCubemap->initStatic( mCubeFace );
          }
-      }
    }
 }
 

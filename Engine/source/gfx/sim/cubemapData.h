@@ -62,13 +62,6 @@ public:
 
    // Update a static cubemap @ pos
 	void updateFaces();
-   
-   // Dynamic cube map support
-   bool mDynamic;
-   U32 mDynamicSize;   
-   F32 mDynamicNearDist;
-   F32 mDynamicFarDist;
-   U32 mDynamicObjectTypeMask;
 
 protected:
 
