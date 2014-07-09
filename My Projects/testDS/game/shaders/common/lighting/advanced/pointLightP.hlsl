@@ -262,7 +262,7 @@ float4 main(   ConvexConnectP IN,
       float fLTDot = pow(saturate(dot(-IN.vsEyeDir.xyz, -vLTLight)), iLTPower) * fLTScale;
       float3 fLT = atten * (fLTDot + fLTAmbient) * fLTThickness;
 
-      addToResult = float4(lightColor * fLT, 0.0);
+      addToResult = lightColor * float4( fLT, 0.0);
    }
 
    float4 colorSample = tex2D( colorBuffer, uvScene );

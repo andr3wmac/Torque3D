@@ -216,8 +216,8 @@ float4 main( FarFrustumQuadConnectP IN,
    float3 lightColorOut = lightMapParams.rgb * lightColor.rgb;
 
    // Felix' Normal Mapped Ambient.
-   float ambientBrightness = (float)lightAmbient;  
-   float3 worldNormal = normalize(mul(eyeMat, normal)).xyz;
+   float ambientBrightness = (float)lightAmbient;
+   float3 worldNormal = normalize(mul(eyeMat, float4(normal,1.0))).xyz;
    float ambientContrast = 0.5;  
    float4 upAmbient = lerp( 1 - lightAmbient * 0.65, lightAmbient, 1-ambientBrightness*ambientContrast );
    float4 lightAmbientTwoTone = lerp( lightAmbient * 0.8 , upAmbient , worldNormal.b ); 
@@ -263,7 +263,7 @@ float4 main( FarFrustumQuadConnectP IN,
       float fLTDot = pow(saturate(dot(normalize(IN.vsEyeRay), -vLTLight)), iLTPower) * fLTScale;
       float3 fLT = 1.0 * (fLTDot + fLTAmbient) * fLTThickness;
 
-      addToResult = float4(lightColor * fLT, 0.0);
+      addToResult = lightColor * float4( fLT, 0.0);
    }
 
    float4 colorSample = tex2D( colorBuffer, IN.uv0 );
