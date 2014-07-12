@@ -940,9 +940,11 @@ void ScatterSky::_render( ObjectRenderInst *ri, SceneRenderState *state, BaseMat
    xfm.setPosition(camPos2);//-Point3F( 0, 0, 200000.0f));
    GFX->multWorld(xfm);
    MatrixF xform(proj);//GFX->getProjectionMatrix());
-   xform *= GFX->getViewMatrix();
-   xform *=  GFX->getWorldMatrix();
-
+   if ( !state->isReflectPass() )
+   {
+       xform *= GFX->getViewMatrix();
+       xform *=  GFX->getWorldMatrix();
+   }
    mShaderConsts->setSafe( mModelViewProjSC, xform );
    mShaderConsts->setSafe( mMiscSC, miscParams );
    mShaderConsts->setSafe( mSphereRadiiSC, sphereRadii );
