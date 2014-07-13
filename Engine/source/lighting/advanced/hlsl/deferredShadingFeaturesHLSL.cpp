@@ -36,6 +36,36 @@
 // Deferred Shading Features
 //****************************************************************************
 
+Var *DeferredShaderFeatureHLSL::_getColorVar()
+{
+   // search for color buffer var
+   Var *varPtr = (Var*) LangElement::find( getOutputTargetVarName(ShaderFeature::RenderTarget1) );
+   if ( !varPtr )
+   {
+      // create color var
+      varPtr = new Var;
+      varPtr->setType( "fragout" );
+      varPtr->setName( getOutputTargetVarName(ShaderFeature::RenderTarget1) );
+      varPtr->setStructName( "OUT" );
+   }
+   return varPtr;
+}
+
+Var *DeferredShaderFeatureHLSL::_getMaterialInfoVar()
+{
+   // search for material buffer var
+   Var *varPtr = (Var*) LangElement::find( getOutputTargetVarName(ShaderFeature::RenderTarget2) );
+   if ( !varPtr )
+   {
+      // create color var
+      varPtr = new Var;
+      varPtr->setType( "fragout" );
+      varPtr->setName( getOutputTargetVarName(ShaderFeature::RenderTarget2) );
+      varPtr->setStructName( "OUT" );
+   }
+   return varPtr;
+}
+
 // Diffuse Map -> Color Buffer
 void DeferredDiffuseMapHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
 {
@@ -223,16 +253,8 @@ void DeferredSpecMapHLSL::processPix( Vector<ShaderComponent*> &componentList, c
    // Get the texture coord.
    Var *texCoord = getInTexCoord( "texCoord", "float2", true, componentList );
 
-   // search for color var
-   Var *color = (Var*) LangElement::find( getOutputTargetVarName(ShaderFeature::RenderTarget1) );
-   if ( !color )
-   {
-      // create color var
-      color = new Var;
-      color->setType( "fragout" );
-      color->setName( getOutputTargetVarName(ShaderFeature::RenderTarget1) );
-      color->setStructName( "OUT" );
-   }
+   // get color var
+   Var *color = _getColorVar();
 
    // create texture var
    Var *specularMap = new Var;
@@ -298,19 +320,8 @@ void DeferredSpecColorHLSL::processPix( Vector<ShaderComponent*> &componentList,
 // Black -> Alpha of Color Buffer (representing no specular)
 void DeferredEmptySpecHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
 {
-   // Get the texture coord.
-   Var *texCoord = getInTexCoord( "texCoord", "float2", true, componentList );
-
-   // search for color var
-   Var *color = (Var*) LangElement::find( getOutputTargetVarName(ShaderFeature::RenderTarget1) );
-   if ( !color )
-   {
-      // create color var
-      color = new Var;
-      color->setType( "fragout" );
-      color->setName( getOutputTargetVarName(ShaderFeature::RenderTarget1) );
-      color->setStructName( "OUT" );
-   }
+   // get color var
+   Var *color = _getColorVar();
 
    output = new GenOp( "   @.a = 0.0;\r\n", color );
 }
@@ -321,16 +332,8 @@ void DeferredGlossMapHLSL::processPix( Vector<ShaderComponent*> &componentList, 
    // Get the texture coord.
    Var *texCoord = getInTexCoord( "texCoord", "float2", true, componentList );
 
-   // search for color var
-   Var *color = (Var*) LangElement::find( getOutputTargetVarName(ShaderFeature::RenderTarget2) );
-   if ( !color )
-   {
-      // create color var
-      color = new Var;
-      color->setType( "fragout" );
-      color->setName( getOutputTargetVarName(ShaderFeature::RenderTarget2) );
-      color->setStructName( "OUT" );
-   }
+   // get material buffer var
+   Var *color = _getMaterialInfoVar();
 
    // create texture var
    Var *specularMap = (Var*)LangElement::find( "specularMap" );
@@ -350,16 +353,8 @@ void DeferredGlossMapHLSL::processPix( Vector<ShaderComponent*> &componentList, 
 // Glow -> Green ( Glow ) of Material Info Buffer.
 void DeferredGlowHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
 {
-   // search for color var
-   Var *color = (Var*) LangElement::find( getOutputTargetVarName(ShaderFeature::RenderTarget2) );
-   if ( !color )
-   {
-      // create color var
-      color = new Var;
-      color->setType( "fragout" );
-      color->setName( getOutputTargetVarName(ShaderFeature::RenderTarget2) );
-      color->setStructName( "OUT" );
-   }
+   // get material buffer var
+   Var *color = _getMaterialInfoVar();
 
    output = new GenOp( "   @.g = 1.0;\r\n", color );
 }
@@ -367,16 +362,8 @@ void DeferredGlowHLSL::processPix( Vector<ShaderComponent*> &componentList, cons
 // Material Info Flags -> Red ( Flags ) of Material Info Buffer.
 void DeferredMatInfoFlagsHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
 {
-   // search for color var
-   Var *color = (Var*) LangElement::find( getOutputTargetVarName(ShaderFeature::RenderTarget2) );
-   if ( !color )
-   {
-      // create color var
-      color = new Var;
-      color->setType( "fragout" );
-      color->setName( getOutputTargetVarName(ShaderFeature::RenderTarget2) );
-      color->setStructName( "OUT" );
-   }
+   // get material buffer var
+   Var *color = _getMaterialInfoVar();
 
    Var *matInfoFlags = new Var;
    matInfoFlags->setType( "float" );
@@ -390,16 +377,8 @@ void DeferredMatInfoFlagsHLSL::processPix( Vector<ShaderComponent*> &componentLi
 // Spec Strength -> Alpha Channel of Material Info Buffer.
 void DeferredSpecStrengthHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
 {
-   // search for color var
-   Var *color = (Var*) LangElement::find( getOutputTargetVarName(ShaderFeature::RenderTarget2) );
-   if ( !color )
-   {
-      // create color var
-      color = new Var;
-      color->setType( "fragout" );
-      color->setName( getOutputTargetVarName(ShaderFeature::RenderTarget2) );
-      color->setStructName( "OUT" );
-   }
+   // get material buffer var
+   Var *color = _getMaterialInfoVar();
 
    Var *specStrength = new Var;
    specStrength->setType( "float" );
@@ -413,16 +392,8 @@ void DeferredSpecStrengthHLSL::processPix( Vector<ShaderComponent*> &componentLi
 // Spec Power -> Blue Channel ( of Material Info Buffer.
 void DeferredSpecPowerHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
 {
-   // search for color var
-   Var *color = (Var*) LangElement::find( getOutputTargetVarName(ShaderFeature::RenderTarget2) );
-   if ( !color )
-   {
-      // create color var
-      color = new Var;
-      color->setType( "fragout" );
-      color->setName( getOutputTargetVarName(ShaderFeature::RenderTarget2) );
-      color->setStructName( "OUT" );
-   }
+   // get material buffer var
+   Var *color = _getMaterialInfoVar();
 
    Var *specPower = new Var;
    specPower->setType( "float" );
@@ -445,16 +416,8 @@ void DeferredTranslucencyMapHLSL::processPix( Vector<ShaderComponent*> &componen
    // Get the texture coord.
    Var *texCoord = getInTexCoord( "texCoord", "float2", true, componentList );
 
-   // search for color var
-   Var *color = (Var*) LangElement::find( getOutputTargetVarName(ShaderFeature::RenderTarget2) );
-   if ( !color )
-   {
-      // create color var
-      color = new Var;
-      color->setType( "fragout" );
-      color->setName( getOutputTargetVarName(ShaderFeature::RenderTarget2) );
-      color->setStructName( "OUT" );
-   }
+   // get material buffer var
+   Var *color = _getMaterialInfoVar();
 
    // create texture var
    Var *translucencyMap = new Var;
