@@ -942,6 +942,10 @@ void ScatterSky::_render( ObjectRenderInst *ri, SceneRenderState *state, BaseMat
    MatrixF xform(proj);//GFX->getProjectionMatrix());
    xform *= GFX->getViewMatrix();
    xform *=  GFX->getWorldMatrix();
+   if ( state->isReflectPass() )
+   {
+       xform.scale(Point3F(1,-1,1));
+   }
 
    mShaderConsts->setSafe( mModelViewProjSC, xform );
    mShaderConsts->setSafe( mMiscSC, miscParams );
