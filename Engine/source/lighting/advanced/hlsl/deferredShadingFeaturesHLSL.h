@@ -27,8 +27,16 @@
 #include "shaderGen/HLSL/bumpHLSL.h"
 #include "shaderGen/HLSL/pixSpecularHLSL.h"
 
+
+class DeferredShaderFeatureHLSL : public ShaderFeatureHLSL
+{
+protected:
+   Var* _getColorVar();
+   Var* _getMaterialInfoVar();
+};
+
 // Diffuse Outputs
-class DeferredDiffuseMapHLSL : public ShaderFeatureHLSL
+class DeferredDiffuseMapHLSL : public DeferredShaderFeatureHLSL
 {
 public:
    virtual String getName() { return "Deferred Shading: Diffuse Map"; }
@@ -49,7 +57,7 @@ public:
                              const MaterialFeatureData &fd );
 };
 
-class DeferredDiffuseColorHLSL : public ShaderFeatureHLSL
+class DeferredDiffuseColorHLSL : public DeferredShaderFeatureHLSL
 {
 public:
    virtual String getName() { return "Deferred Shading: Diffuse Color"; }
@@ -60,7 +68,7 @@ public:
    virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget1; }
 };
 
-class DeferredEmptyColorHLSL : public ShaderFeatureHLSL
+class DeferredEmptyColorHLSL : public DeferredShaderFeatureHLSL
 {
 public:
    virtual String getName() { return "Deferred Shading: Empty Color"; }
@@ -71,7 +79,7 @@ public:
    virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget1; }
 };
 
-class DeferredEmissiveHLSL : public ShaderFeatureHLSL
+class DeferredEmissiveHLSL : public DeferredShaderFeatureHLSL
 {
 public:
    virtual String getName() { return "Deferred Shading: Emissive"; }
@@ -83,7 +91,7 @@ public:
 };
 
 // Specular Outputs
-class DeferredSpecMapHLSL : public ShaderFeatureHLSL
+class DeferredSpecMapHLSL : public DeferredShaderFeatureHLSL
 {
 public:
    virtual String getName() { return "Deferred Shading: Specular Map"; }
@@ -104,7 +112,7 @@ public:
                              const MaterialFeatureData &fd );
 };
 
-class DeferredGlossMapHLSL : public ShaderFeatureHLSL
+class DeferredGlossMapHLSL : public DeferredShaderFeatureHLSL
 {
 public:
    virtual String getName() { return "Deferred Shading: Gloss Map"; }
@@ -115,7 +123,7 @@ public:
    virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget2; }
 };
 
-class DeferredGlowHLSL : public ShaderFeatureHLSL
+class DeferredGlowHLSL : public DeferredShaderFeatureHLSL
 {
 public:
    virtual String getName() { return "Deferred Shading: Glow"; }
@@ -126,7 +134,7 @@ public:
    virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget2; }
 };
 
-class DeferredMatInfoFlagsHLSL : public ShaderFeatureHLSL
+class DeferredMatInfoFlagsHLSL : public DeferredShaderFeatureHLSL
 {
 public:
    virtual String getName() { return "Deferred Shading: Mat Info Flags"; }
@@ -137,7 +145,7 @@ public:
    virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget2; }
 };
 
-class DeferredSpecColorHLSL : public ShaderFeatureHLSL
+class DeferredSpecColorHLSL : public DeferredShaderFeatureHLSL
 {
 public:
    virtual String getName() { return "Deferred Shading: Specular Color"; }
@@ -148,7 +156,7 @@ public:
    virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget1; }
 };
 
-class DeferredSpecStrengthHLSL : public ShaderFeatureHLSL
+class DeferredSpecStrengthHLSL : public DeferredShaderFeatureHLSL
 {
 public:
    virtual String getName() { return "Deferred Shading: Specular Strength"; }
@@ -159,7 +167,7 @@ public:
    virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget2; }
 };
 
-class DeferredSpecPowerHLSL : public ShaderFeatureHLSL
+class DeferredSpecPowerHLSL : public DeferredShaderFeatureHLSL
 {
 public:
    virtual String getName() { return "Deferred Shading: Specular Power"; }
@@ -170,7 +178,7 @@ public:
    virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget2; }
 };
 
-class DeferredEmptySpecHLSL : public ShaderFeatureHLSL
+class DeferredEmptySpecHLSL : public DeferredShaderFeatureHLSL
 {
 public:
    virtual String getName() { return "Deferred Shading: Empty Specular"; }
@@ -181,7 +189,7 @@ public:
    virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget1; }
 };
 
-class DeferredSkyHLSL : public ShaderFeatureHLSL
+class DeferredSkyHLSL : public DeferredShaderFeatureHLSL
 {
 public:
    virtual String getName() { return "Deferred Shading: Sky"; }
@@ -190,7 +198,7 @@ public:
 };
 
 // Translucency Outputs
-class DeferredTranslucencyMapHLSL : public ShaderFeatureHLSL
+class DeferredTranslucencyMapHLSL : public DeferredShaderFeatureHLSL
 {
 public:
    virtual String getName() { return "Deferred Shading: Translucency Map"; }
