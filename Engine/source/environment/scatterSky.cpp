@@ -945,6 +945,8 @@ void ScatterSky::_render( ObjectRenderInst *ri, SceneRenderState *state, BaseMat
    if ( state->isReflectPass() )
    {
        xform.scale(Point3F(1,-1,1));
+       static MatrixF rotMat(EulerF(0.0, 0.0, M_PI_F));
+       xform.mul(rotMat);
    }
 
    mShaderConsts->setSafe( mModelViewProjSC, xform );
