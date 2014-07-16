@@ -1870,7 +1870,7 @@
                               AnchorLeft = "1";
                               AnchorRight = "0";
                               text = "1";
-                              maxLength = "3";
+                              maxLength = "5";
                            };
                         };
                      };
