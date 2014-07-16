@@ -48,6 +48,7 @@
 #include "materials/materialFeatureData.h"
 #include "materials/materialFeatureTypes.h"
 #include "console/engineAPI.h"
+#include "T3D/accumulationVolume.h"
 
 using namespace Torque;
 
@@ -281,6 +282,13 @@ bool TSStatic::onAdd()
 
    _updateShouldTick();
 
+   // Accumulation
+   if ( isClientObject() && mShapeInstance )
+   {
+      if ( mShapeInstance->hasAccumulation() ) 
+         AccumulationVolume::addObject(this);
+   }
+
    return true;
 }
 
@@ -391,6 +399,13 @@ void TSStatic::onRemove()
 {
    SAFE_DELETE( mPhysicsRep );
 
+   // Accumulation
+   if ( isClientObject() && mShapeInstance )
+   {
+      if ( mShapeInstance->hasAccumulation() ) 
+         AccumulationVolume::removeObject(this);
+   }
+
    mConvexList->nukeList();
 
    removeFromScene();
@@ -442,7 +457,7 @@ void TSStatic::reSkin()
       Vector<String> skins;
       String(mSkinNameHandle.getString()).split( ";", skins );
 
-      for (int i = 0; i < skins.size(); i++)
+      for (S32 i = 0; i < skins.size(); i++)
       {
          String oldSkin( mAppliedSkinName.c_str() );
          String newSkin( skins[i] );
@@ -520,6 +535,9 @@ void TSStatic::prepRenderImage( SceneRenderState* state )
    rdata.setFadeOverride( 1.0f );
    rdata.setOriginSort( mUseOriginSort );
 
+   // Acculumation
+   rdata.setAccuTex(mAccuTex);
+
    // If we have submesh culling enabled then prepare
    // the object space frustum to pass to the shape.
    Frustum culler;
@@ -594,6 +612,13 @@ void TSStatic::setTransform(const MatrixF & mat)
    if ( mPhysicsRep )
       mPhysicsRep->setTransform( mat );
 
+   // Accumulation
+   if ( isClientObject() && mShapeInstance )
+   {
+      if ( mShapeInstance->hasAccumulation() ) 
+         AccumulationVolume::updateObject(this);
+   }
+
    // Since this is a static it's render transform changes 1
    // to 1 with it's collision transform... no interpolation.
    setRenderTransform(mat);
@@ -622,6 +647,8 @@ U32 TSStatic::packUpdate(NetConnection *con, U32 mask, BitStream *stream)
    stream->write( mRenderNormalScalar );
 
    stream->write( mForceDetail );
+
+   mShapeInstance->getMaterialList();
 
    stream->writeFlag( mPlayAmbient );
 

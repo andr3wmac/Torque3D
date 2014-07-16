@@ -42,6 +42,7 @@
 #include "math/mathIO.h"
 #include "math/mTransform.h"
 #include "T3D/gameBase/gameProcess.h"
+#include "T3D/accumulationVolume.h"
 
 IMPLEMENT_CONOBJECT(SceneObject);
 
@@ -140,6 +141,8 @@ SceneObject::SceneObject()
 
    mObjectFlags.set( RenderEnabledFlag | SelectionEnabledFlag );
    mIsScopeAlways = false;
+
+   mAccuTex = NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -151,6 +154,7 @@ SceneObject::~SceneObject()
    AssertFatal( !mSceneObjectLinks,
       "SceneObject::~SceneObject() - object is still linked to SceneTrackers" );
 
+   mAccuTex = NULL;
    unlink();
 }
 
@@ -770,7 +774,9 @@ U32 SceneObject::packUpdate( NetConnection* conn, U32 mask, BitStream* stream )
    U32 retMask = Parent::packUpdate( conn, mask, stream );
 
    if ( stream->writeFlag( mask & FlagMask ) )
+   {
       stream->writeRangedU32( (U32)mObjectFlags, 0, getObjectFlagMax() );
+   }
 
    if ( mask & MountedMask ) 
    {                  
@@ -809,7 +815,9 @@ void SceneObject::unpackUpdate( NetConnection* conn, BitStream* stream )
    
    // FlagMask
    if ( stream->readFlag() )      
+   {
       mObjectFlags = stream->readRangedU32( 0, getObjectFlagMax() );
+   }
 
    // MountedMask
    if ( stream->readFlag() ) 

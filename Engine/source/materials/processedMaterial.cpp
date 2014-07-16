@@ -41,7 +41,10 @@ RenderPassData::RenderPassData()
 void RenderPassData::reset()
 {
    for( U32 i = 0; i < Material::MAX_TEX_PER_PASS; ++ i )
+   {
       destructInPlace( &mTexSlot[ i ] );
+      mSamplerNames[ i ].clear();
+   }
 
    dMemset( &mTexSlot, 0, sizeof(mTexSlot) );
    dMemset( &mTexType, 0, sizeof(mTexType) );
@@ -90,6 +93,7 @@ ProcessedMaterial::ProcessedMaterial()
    mCurrentParams( NULL ),
    mHasSetStageData( false ),
    mHasGlow( false ),   
+   mHasAccumulation( false ),   
    mMaxStages( 0 ),
    mVertexFormat( NULL ),
    mUserObject( NULL )

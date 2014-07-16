@@ -68,6 +68,7 @@ public:
    } mTexSlot[Material::MAX_TEX_PER_PASS];
 
    U32 mTexType[Material::MAX_TEX_PER_PASS];
+   String mSamplerNames[Material::MAX_TEX_PER_PASS];
 
    /// The cubemap to use when the texture type is
    /// set to Material::Cube.
@@ -196,6 +197,9 @@ public:
    /// Returns true if any pass glows
    bool hasGlow() const { return mHasGlow; }
 
+   /// Returns true if any pass accumulates
+   bool hasAccumulation() const { return mHasAccumulation; }
+
    /// Gets the stage number for a pass
    U32 getStageFromPass(U32 pass) const
    {
@@ -242,6 +246,9 @@ protected:
 
    /// If we glow
    bool mHasGlow;
+
+   /// If we have accumulation.
+   bool mHasAccumulation;
 
    /// Number of stages (not to be confused with number of passes)
    U32 mMaxStages;

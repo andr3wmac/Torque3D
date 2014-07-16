@@ -65,12 +65,17 @@ protected:
 
 public:  
 
-   RenderInstType( const RenderInstType &type = Invalid ) 
+   RenderInstType()
+      :  mName( Invalid.mName )
+   {
+   }
+
+   RenderInstType( const RenderInstType &type )
       :  mName( type.mName )
    {
    }
 
-   RenderInstType( const String &name ) 
+   RenderInstType( const String &name )
       :  mName( name )
    {
    }
@@ -361,6 +366,7 @@ struct MeshRenderInst : public RenderInst
    GFXTextureObject *backBuffTex;
    GFXTextureObject *reflectTex;
    GFXTextureObject *miscTex;
+   GFXTextureObject *accuTex;
    GFXCubemap   *cubemap;
 
    void clear();

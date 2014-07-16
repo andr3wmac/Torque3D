@@ -82,6 +82,7 @@ function EWCreatorWindow::init( %this )
       %this.registerMissionObject( "SpawnSphere",  "Observer Spawn Sphere", "ObserverDropPoint" );
       %this.registerMissionObject( "SFXSpace",      "Sound Space" );
       %this.registerMissionObject( "OcclusionVolume", "Occlusion Volume" );
+      %this.registerMissionObject( "AccumulationVolume", "Accumulation Volume" );
       %this.registerMissionObject("NavMesh", "Navigation mesh");
       %this.registerMissionObject("NavPath", "Path");
       
@@ -330,7 +331,7 @@ function EWCreatorWindow::navigate( %this, %address )
       {
          if (strstr(%fullPath, "cached.dts") != -1)
          {
-            %fullPath = findNextFileMultiExpr( "*.dts" TAB "*.dae" TAB "*.kmz"  TAB "*.dif" );
+            %fullPath = findNextFileMultiExpr( "*.dts" TAB "*.dae" TAB "*.kmz" TAB "*.dif" );
             continue;
          }
 
@@ -338,7 +339,7 @@ function EWCreatorWindow::navigate( %this, %address )
          %splitPath = strreplace( %fullPath, "/", " " );     
          if( getWord(%splitPath, 0) $= "tools" )
          {
-            %fullPath = findNextFileMultiExpr( "*.dts" TAB "*.dae" TAB "*.kmz"  TAB "*.dif" );
+            %fullPath = findNextFileMultiExpr( "*.dts" TAB "*.dae" TAB "*.kmz" TAB "*.dif" );
             continue;
          }
                       

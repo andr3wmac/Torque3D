@@ -39,7 +39,6 @@
 #include "gfx/gfxDrawUtil.h"
 #include "core/module.h"
 
-
 MODULE_BEGIN( TSShapeInstance )
 
    MODULE_INIT
@@ -616,6 +615,11 @@ S32 TSShapeInstance::setDetailFromDistance( const SceneRenderState *state, F32 s
    F32 pixelRadius = ( mShape->radius / scaledDistance ) * state->getWorldToScreenScale().y * pixelScale;
    F32 pixelSize = pixelRadius * smDetailAdjust;
 
+   if ( pixelSize < smSmallestVisiblePixelSize ) {
+      mCurrentDetailLevel = -1;
+      return mCurrentDetailLevel;
+   }
+
    if (  pixelSize > smSmallestVisiblePixelSize && 
          pixelSize <= mShape->mSmallestVisibleSize )
       pixelSize = mShape->mSmallestVisibleSize + 0.01f;
@@ -776,5 +780,18 @@ void TSShapeInstance::prepCollision()
       if(mShape->meshes[i])
          mShape->meshes[i]->prepOpcodeCollision();
    }
+}
+
+// Returns true is the shape contains any materials with accumulation enabled.
+bool TSShapeInstance::hasAccumulation()
+{
+   bool result = false;
+   for ( U32 i = 0; i < mMaterialList->size(); ++i )
+   {
+      BaseMatInstance* mat = mMaterialList->getMaterialInst(i);
+      if ( mat->hasAccumulation() )
+         result = true;
+   }
+   return result;
 }
 
