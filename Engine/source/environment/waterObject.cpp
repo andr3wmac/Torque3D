@@ -728,7 +728,8 @@ void WaterObject::renderObject( ObjectRenderInst *ri, SceneRenderState *state, B
    //GFX->setProjectionMatrix( projMat );
  
    
-   GFXOcclusionQuery *query = mPlaneReflector.getOcclusionQuery();
+   GFXOcclusionQuery *query = GFX->createOcclusionQuery();
+   mPlaneReflector.setOcclusionQuery(query);
 
    bool doQuery = ( !mPlaneReflector.mQueryPending && query && mReflectorDesc.useOcclusionQuery );
 
@@ -740,6 +741,7 @@ void WaterObject::renderObject( ObjectRenderInst *ri, SceneRenderState *state, B
 
    if ( doQuery )
       query->end();   
+   query->zombify();
 
    if ( mUnderwater && mBasicLighting )
       drawUnderwaterFilter( state );

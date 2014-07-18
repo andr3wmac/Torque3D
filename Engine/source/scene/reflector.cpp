@@ -177,7 +177,7 @@ ReflectorBase::ReflectorBase()
    mIsRendering = false;
    mDesc = NULL;
    mObject = NULL;
-   mOcclusionQuery = GFX->createOcclusionQuery();
+   mOcclusionQuery = NULL;//GFX->createOcclusionQuery();
    mQueryPending = false;
 }
 

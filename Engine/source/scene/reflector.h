@@ -99,6 +99,7 @@ public:
    virtual void updateReflection( const ReflectParams &params ) {}
 
    GFXOcclusionQuery* getOcclusionQuery() const { return mOcclusionQuery; }
+   void setOcclusionQuery(GFXOcclusionQuery* _query) { mOcclusionQuery = _query; }
 
    bool isOccluded() const { return mOccluded; }
 
