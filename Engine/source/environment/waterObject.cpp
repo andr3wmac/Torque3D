@@ -739,7 +739,7 @@ void WaterObject::renderObject( ObjectRenderInst *ri, SceneRenderState *state, B
    innerRender( state );
 
    if ( doQuery )
-      query->end();   
+      query->end();
 
    if ( mUnderwater && mBasicLighting )
       drawUnderwaterFilter( state );

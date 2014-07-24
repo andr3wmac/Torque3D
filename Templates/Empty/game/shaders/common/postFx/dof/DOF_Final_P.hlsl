@@ -40,9 +40,9 @@ uniform float maxFarCoC;
 //static float4 dofLerpBias = float4( 1.0, (1.0 - d2) / d1, 1.0 / d2, (d2 - 1.0) / d2 );
 //static float3 dofEqFar = float3( 2.0, 0.0, 1.0 ); 
 
-float4 tex2Doffset( sampler2D s, float2 tc, float2 offset )  
+half4 tex2Doffset( sampler2D s, float2 tc, float2 offset )  
 {  
-   return tex2D( s, tc + offset * oneOverTargetSize );  
+   return half4(tex2D( s, tc + offset * oneOverTargetSize ));  
 }  
 
 half3 GetSmallBlurSample( float2 tc )  
@@ -72,7 +72,7 @@ half4 InterpolateDof( half3 small, half3 med, half3 large, half t )
    //float4 dofLerpScale = float4( -1 / d0, -1 / d1, -1 / d2, 1 / d2 );  
    //float4 dofLerpBias = float4( 1, (1 – d2) / d1, 1 / d2, (d2 – 1) / d2 );  
    
-   weights = saturate( t * dofLerpScale + dofLerpBias );  
+   weights = half4(saturate( t * dofLerpScale + dofLerpBias ));
    weights.yz = min( weights.yz, 1 - weights.xy );  
    
    // Unblurred sample with weight "weights.x" done by alpha blending  
@@ -100,10 +100,10 @@ half4 main( PFXVertToPix IN ) : COLOR
    small = GetSmallBlurSample( IN.uv0 );  
    //small = half3( 1,0,0 );
    //return half4( small, 1.0 );
-   med = tex2D( smallBlurSampler, IN.uv1 );  
+   med = half4(tex2D( smallBlurSampler, IN.uv1 ));  
    //med.rgb = half3( 0,1,0 );
    //return half4(med.rgb, 0.0);
-   large = tex2D( largeBlurSampler, IN.uv2 ).rgb;  
+   large = half3(tex2D( largeBlurSampler, IN.uv2 ).rgb);
    //large = half3( 0,0,1 );
    //return large;
    //return half4(large.rgb,1.0);
@@ -128,8 +128,8 @@ half4 main( PFXVertToPix IN ) : COLOR
       // dofEqFar.x and dofEqFar.y specify the linear ramp to convert  
       // to depth for the distant out-of-focus region.  
       // dofEqFar.z is the ratio of the far to the near blur radius.  
-      farCoc = clamp( dofEqFar.x * depth + dofEqFar.y, 0.0, maxFarCoC );  
-      coc = max( nearCoc, farCoc * dofEqFar.z );  
+      farCoc = half(clamp( dofEqFar.x * depth + dofEqFar.y, 0.0, maxFarCoC ));  
+      coc = half(max( nearCoc, farCoc * dofEqFar.z ));  
       //coc = nearCoc;
    } 
 

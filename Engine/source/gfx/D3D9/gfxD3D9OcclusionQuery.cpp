@@ -36,7 +36,7 @@ GFXD3D9OcclusionQuery::GFXD3D9OcclusionQuery( GFXDevice *device )
 {
 #ifdef TORQUE_GATHER_METRICS
    mTimer = PlatformTimer::create();
-   mTimer->getElapsedMs();
+   mTimer->reset();
 
    mTimeSinceEnd = 0;
    mBeginFrame = 0;
@@ -71,7 +71,6 @@ bool GFXD3D9OcclusionQuery::begin()
 
    // Add a begin marker to the command buffer queue.
    mQuery->Issue( D3DISSUE_BEGIN );
-
 #ifdef TORQUE_GATHER_METRICS
    mBeginFrame = GuiTSCtrl::getFrameCount();
 #endif
@@ -124,9 +123,16 @@ GFXD3D9OcclusionQuery::OcclusionQueryStatus GFXD3D9OcclusionQuery::getStatus( bo
    DWORD dwOccluded = 0;
 
    if ( block )
-   {      
+   {  
       while( ( hRes = mQuery->GetData( &dwOccluded, sizeof(DWORD), D3DGETDATA_FLUSH ) ) == S_FALSE )
-         ;
+      {
+          //If we're stalled out, proceed with worst-case scenario -BJR
+          if(GFX->mFrameTime->getElapsedMs()>4)
+          {
+              this->end();
+              return NotOccluded;
+          }
+      }
    }
    else
    {
