@@ -329,6 +329,9 @@ public:
    /// the shader disassembly.
    virtual bool getDisassembly( String &outStr ) const { return false; }
 
+   /// Returns compiled bytecode
+   virtual bool getCompiled(String &outStr) const { return false; }
+
    /// Returns the vertex shader file path.
    const String& getVertexShaderFile() const { return mVertexFile.getFullPath(); }
 

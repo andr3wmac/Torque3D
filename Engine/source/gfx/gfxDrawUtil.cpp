@@ -616,6 +616,7 @@ void GFXDrawUtil::drawLine( F32 x1, F32 y1, F32 z1, F32 x2, F32 y2, F32 z2, cons
 
    mDevice->setVertexBuffer( verts );
    mDevice->setStateBlock( mRectFillSB );
+   mDevice->setupGenericShaders();
    mDevice->drawPrimitive( GFXLineList, 0, 1 );
 }
 
@@ -803,7 +804,7 @@ void GFXDrawUtil::drawPolygon( const GFXStateBlockDesc& desc, const Point3F* poi
    if( desc.fillMode == GFXFillWireframe )
       mDevice->drawPrimitive( GFXLineStrip, 0, numPoints );
    else
-      mDevice->drawPrimitive( GFXTriangleFan, 0, numPoints - 2 );
+      mDevice->drawPrimitive( GFXTriangleStrip, 0, numPoints - 2 );
 }
 
 void GFXDrawUtil::drawCube( const GFXStateBlockDesc &desc, const Box3F &box, const ColorI &color, const MatrixF *xfm )
@@ -1065,7 +1066,7 @@ void GFXDrawUtil::_drawSolidPolyhedron( const GFXStateBlockDesc &desc, const Any
    for( U32 i = 0; i < numPolys; ++ i )
    {
       U32 numVerts = numIndicesForPoly[ i ];
-      mDevice->drawIndexedPrimitive( GFXTriangleFan, 0, 0, numPoints, startIndex, numVerts - 2 );
+      mDevice->drawIndexedPrimitive( GFXTriangleStrip, 0, 0, numPoints, startIndex, numVerts - 2 );
       startIndex += numVerts;
    }
 }
@@ -1279,8 +1280,8 @@ void GFXDrawUtil::drawCone( const GFXStateBlockDesc &desc, const Point3F &basePn
    mDevice->setVertexBuffer( verts );
    mDevice->setupGenericShaders( GFXDevice::GSModColorTexture );
 
-   mDevice->drawPrimitive( GFXTriangleFan, 0, numPoints );
-   mDevice->drawPrimitive( GFXTriangleFan, 1, numPoints-1 );
+   mDevice->drawPrimitive( GFXTriangleStrip, 0, numPoints );
+   mDevice->drawPrimitive( GFXTriangleStrip, 1, numPoints-1 );
 
    mDevice->popWorldMatrix();
 }
@@ -1324,8 +1325,8 @@ void GFXDrawUtil::drawCylinder( const GFXStateBlockDesc &desc, const Point3F &ba
    mDevice->setVertexBuffer( verts );
    mDevice->setupGenericShaders( GFXDevice::GSModColorTexture );
 
-   mDevice->drawPrimitive( GFXTriangleFan, 0, numPoints );
-   mDevice->drawPrimitive( GFXTriangleFan, numPoints + 1, numPoints );
+   mDevice->drawPrimitive( GFXTriangleStrip, 0, numPoints );
+   mDevice->drawPrimitive( GFXTriangleStrip, numPoints + 1, numPoints );
    mDevice->drawPrimitive( GFXTriangleStrip, 2 * numPoints + 2, 2 * numPoints);
 
    mDevice->popWorldMatrix();
@@ -1390,13 +1391,13 @@ void GFXDrawUtil::drawSolidPlane( const GFXStateBlockDesc &desc, const Point3F &
    GFXVertexBufferHandle<GFXVertexPC> verts(mDevice, 4, GFXBufferTypeVolatile);
    verts.lock();
 
-   verts[0].point = pos + Point3F( -size.x / 2.0f, -size.y / 2.0f, 0 );
+   verts[0].point = pos + Point3F( size.x / 2.0f, -size.y / 2.0f, 0 );
    verts[0].color = color;
-   verts[1].point = pos + Point3F( -size.x / 2.0f, size.y / 2.0f, 0 );
+   verts[1].point = pos + Point3F( size.x / 2.0f, size.y / 2.0f, 0 );
    verts[1].color = color;
-   verts[2].point = pos + Point3F( size.x / 2.0f, size.y / 2.0f, 0 );
+   verts[2].point = pos + Point3F( -size.x / 2.0f, -size.y / 2.0f, 0 );
    verts[2].color = color;
-   verts[3].point = pos + Point3F( size.x / 2.0f, -size.y / 2.0f, 0 );
+   verts[3].point = pos + Point3F( -size.x / 2.0f, size.y / 2.0f, 0 );
    verts[3].color = color;
 
    verts.unlock();
@@ -1406,7 +1407,7 @@ void GFXDrawUtil::drawSolidPlane( const GFXStateBlockDesc &desc, const Point3F &
    mDevice->setVertexBuffer( verts );
    mDevice->setupGenericShaders();
 
-   mDevice->drawPrimitive( GFXTriangleFan, 0, 2 );
+   mDevice->drawPrimitive( GFXTriangleStrip, 0, 2 );
 }
 
 void GFXDrawUtil::drawPlaneGrid( const GFXStateBlockDesc &desc, const Point3F &pos, const Point2F &size, const Point2F &step, const ColorI &color, Plane plane )

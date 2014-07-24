@@ -19,21 +19,48 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
-#ifndef _SCREENSHOTD3D_H_
-#define _SCREENSHOTD3D_H_
 
-#include "gfx/screenshot.h"
+//-----------------------------------------------------------------------------
+// D3D11 layer created by: Anis A. Hireche (C) 2014 - anishireche@gmail.com
+//-----------------------------------------------------------------------------
 
-//**************************************************************************
-// D3D implementation of screenshot
-//**************************************************************************
-class ScreenShotD3D : public ScreenShot
+#ifndef _GFXD3D11CUBEMAP_H_
+#define _GFXD3D11CUBEMAP_H_
+
+#include "gfx/D3D11/gfxD3D11Device.h"
+#include "gfx/gfxCubemap.h"
+#include "gfx/gfxResource.h"
+#include "gfx/gfxTarget.h"
+
+class GFXD3D11Cubemap : public GFXCubemap
 {
-protected:
+public:
+   virtual void initStatic( GFXTexHandle *faces );
+   virtual void initStatic( DDSFile *dds );
+   virtual void initDynamic( U32 texSize, GFXFormat faceFormat = GFXFormatR8G8B8A8 );
+   virtual void setToTexUnit( U32 tuNum );
+   virtual U32 getSize() const { return mTexSize; }
+   virtual GFXFormat getFormat() const { return mFaceFormat; }
 
-   GBitmap* _captureBackBuffer();
+   GFXD3D11Cubemap();
+   virtual ~GFXD3D11Cubemap();
 
+   // GFXResource interface
+   virtual void zombify();
+   virtual void resurrect();
+
+private:
+
+   friend class GFXD3D11TextureTarget;
+   friend class GFXD3D11Device;
+
+   ID3D11Texture2D*				m_pTexture;
+   ID3D11ShaderResourceView*	m_pShaderResourceView;
+
+   U32  mTexSize;
+   GFXFormat mFaceFormat;
+   
+   void releaseSurfaces();
 };
 
-
-#endif  // _SCREENSHOTD3D_H_
+#endif

@@ -1303,7 +1303,7 @@ void WorldEditor::renderObjectFace(SceneObject * obj, const VectorF & normal, co
 
    PrimBuild::color( col );
 
-   PrimBuild::begin( GFXTriangleFan, 4 );
+   PrimBuild::begin( GFXTriangleStrip, 4 );
       for(U32 k = 0; k < 4; k++)
       {
          PrimBuild::vertex3f(projPnts[k].x, projPnts[k].y, projPnts[k].z);

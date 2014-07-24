@@ -210,7 +210,7 @@ GFXShader* ShaderData::_createShader( const Vector<GFXShaderMacro> &macros )
    // Initialize the right shader type.
    switch( GFX->getAdapterType() )
    {
-      case Direct3D9_360:
+	  case Direct3D11:
       case Direct3D9:
       {
          success = shader->init( mDXVertexShaderName, 

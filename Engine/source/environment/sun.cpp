@@ -453,17 +453,17 @@ void Sun::_renderCorona( ObjectRenderInst *ri, SceneRenderState *state, BaseMatI
 
    // Initialize points with basic info
    Point3F points[4];
-   points[0] = Point3F(-BBRadius, 0.0, -BBRadius);
-   points[1] = Point3F( -BBRadius, 0.0, BBRadius);
-   points[2] = Point3F( BBRadius, 0.0,  BBRadius);
-   points[3] = Point3F( BBRadius, 0.0,  -BBRadius);
+   points[0] = Point3F( BBRadius, 0.0,  -BBRadius);
+   points[1] = Point3F( BBRadius, 0.0,  BBRadius);
+   points[2] = Point3F(-BBRadius, 0.0, -BBRadius);
+   points[3] = Point3F( -BBRadius, 0.0, BBRadius);
 
-   static const Point2F sCoords[4] = 
+   static const Point2F sCoords[4] =
    {
-      Point2F( 0.0f, 0.0f ),
-      Point2F( 0.0f, 1.0f ),      
+      Point2F( 1.0f, 0.0f ),
       Point2F( 1.0f, 1.0f ),
-      Point2F( 1.0f, 0.0f )
+      Point2F( 0.0f, 0.0f ),
+      Point2F( 0.0f, 1.0f )
    };
 
    // Get info we need to adjust points
@@ -512,8 +512,24 @@ void Sun::_renderCorona( ObjectRenderInst *ri, SceneRenderState *state, BaseMatI
       mCoronaMatInst->setTransforms( *mMatrixSet, state );
       mCoronaMatInst->setSceneInfo( state, sgData );
 
+	  // anis -> create a new block state and change back face culling because we no longer use triangle fan.
+      GFXStateBlockDesc desc;
+      desc.setCullMode( GFXCullCW );
+      desc.setBlend( true );
+      desc.setZReadWrite( false, false );
+      desc.samplersDefined = true;
+      desc.samplers[0].addressModeU = GFXAddressWrap;
+      desc.samplers[0].addressModeV = GFXAddressWrap;
+      desc.samplers[0].addressModeW = GFXAddressWrap;
+      desc.samplers[0].magFilter = GFXTextureFilterLinear;
+      desc.samplers[0].minFilter = GFXTextureFilterLinear;
+      desc.samplers[0].mipFilter = GFXTextureFilterLinear;
+      desc.samplers[0].textureColorOp = GFXTOPModulate;
+      
+      GFXStateBlockRef mStateblock = GFX->createStateBlock( desc );  
+      GFX->setStateBlock( mStateblock );
       GFX->setVertexBuffer( vb );      
-      GFX->drawPrimitive( GFXTriangleFan, 0, 2 );
+      GFX->drawPrimitive( GFXTriangleStrip, 0, 2 );
    }
 }
 

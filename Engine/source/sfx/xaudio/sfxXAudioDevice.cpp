@@ -32,8 +32,6 @@
 SFXXAudioDevice::SFXXAudioDevice(   SFXProvider* provider, 
                                     const String& name,
                                     IXAudio2 *xaudio,
-                                    U32 deviceIndex,
-                                    U32 speakerChannelMask,
                                     U32 maxBuffers )
    :  Parent( name, provider, false, maxBuffers ),
       mXAudio( xaudio ),
@@ -49,12 +47,8 @@ SFXXAudioDevice::SFXXAudioDevice(   SFXProvider* provider,
       mMaxBuffers = 64;
 
    // Create the mastering voice.
-   HRESULT hr = mXAudio->CreateMasteringVoice(  &mMasterVoice, 
-                                                XAUDIO2_DEFAULT_CHANNELS,
-                                                XAUDIO2_DEFAULT_SAMPLERATE, 
-                                                0, 
-                                                deviceIndex, 
-                                                NULL );
+   HRESULT hr = mXAudio->CreateMasteringVoice(  &mMasterVoice );
+
    if ( FAILED( hr ) || !mMasterVoice )
    {
       Con::errorf( "SFXXAudioDevice - Failed creating master voice!" );
@@ -63,13 +57,16 @@ SFXXAudioDevice::SFXXAudioDevice(   SFXProvider* provider,
 
    mMasterVoice->GetVoiceDetails( &mMasterVoiceDetails );
 
+   DWORD ChannelMask;
+
+   //mMasterVoice->GetChannelMask(&ChannelMask);
+
    // Init X3DAudio.
-   X3DAudioInitialize(  speakerChannelMask, 
+   X3DAudioInitialize(  ChannelMask, 
                         X3DAUDIO_SPEED_OF_SOUND, 
                         mX3DAudio );
 
    // Start the update thread.
-
    if( !Con::getBoolVariable( "$_forceAllMainThread" ) )
    {
       SFXInternal::gUpdateThread = new AsyncUpdateThread
