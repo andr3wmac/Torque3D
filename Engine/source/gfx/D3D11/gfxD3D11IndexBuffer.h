@@ -20,21 +20,20 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef _GFXD3D9PRIMITIVEBUFFER_H_
-#define _GFXD3D9PRIMITIVEBUFFER_H_
+//-----------------------------------------------------------------------------
+// D3D11 layer created by: Anis A. Hireche (C) 2014 - anishireche@gmail.com
+//-----------------------------------------------------------------------------
 
-#ifndef _GFXPRIMITIVEBUFFER_H_
+#ifndef _GFXD3D11PRIMITIVEBUFFER_H_
+#define _GFXD3D11PRIMITIVEBUFFER_H_
+
 #include "gfx/gfxPrimitiveBuffer.h"
-#endif
 
-
-struct IDirect3DIndexBuffer9;
-
-class GFXD3D9PrimitiveBuffer : public GFXPrimitiveBuffer
+class GFXD3D11PrimitiveBuffer : public GFXPrimitiveBuffer
 {
    public:
-      IDirect3DIndexBuffer9 *ib;
-      StrongRefPtr<GFXD3D9PrimitiveBuffer> mVolatileBuffer;
+	  ID3D11Buffer *ib;
+      StrongRefPtr<GFXD3D11PrimitiveBuffer> mVolatileBuffer;
       U32 mVolatileStart;
 
 #ifdef TORQUE_DEBUG
@@ -47,28 +46,24 @@ class GFXD3D9PrimitiveBuffer : public GFXPrimitiveBuffer
       bool mLocked;
       bool                  mIsFirstLock;
 
-      GFXD3D9PrimitiveBuffer( GFXDevice *device, 
+      GFXD3D11PrimitiveBuffer( GFXDevice *device, 
                               U32 indexCount, 
                               U32 primitiveCount, 
                               GFXBufferType bufferType );
 
-      virtual ~GFXD3D9PrimitiveBuffer();
+      virtual ~GFXD3D11PrimitiveBuffer();
 
       virtual void lock(U32 indexStart, U32 indexEnd, void **indexPtr);
       virtual void unlock();
 
       virtual void prepare();      
 
-#ifdef TORQUE_DEBUG
-   //GFXD3D9PrimitiveBuffer *next;
-#endif
-
       // GFXResource interface
       virtual void zombify();
       virtual void resurrect();
 };
 
-inline GFXD3D9PrimitiveBuffer::GFXD3D9PrimitiveBuffer(   GFXDevice *device, 
+inline GFXD3D11PrimitiveBuffer::GFXD3D11PrimitiveBuffer(   GFXDevice *device, 
                                                          U32 indexCount, 
                                                          U32 primitiveCount, 
                                                          GFXBufferType bufferType ) 

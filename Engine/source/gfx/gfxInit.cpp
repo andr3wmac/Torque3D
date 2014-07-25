@@ -68,17 +68,14 @@ inline static void _GFXInitReportAdapters(Vector<GFXAdapter*> &adapters)
    {
       switch (adapters[i]->mType)
       {
-      case Direct3D9:
-         Con::printf("   Direct 3D (version 9.x) device found");
+      case Direct3D11:
+         Con::printf("   Direct 3D (version 11.x) device found");
          break;
       case OpenGL:
          Con::printf("   OpenGL device found");
          break;
       case NullDevice:
          Con::printf("   Null device found");
-         break;
-      case Direct3D8:
-         Con::printf("   Direct 3D (version 8.1) device found");
          break;
       default :
          Con::printf("   Unknown device found");
@@ -221,7 +218,7 @@ GFXAdapter* GFXInit::chooseAdapter( GFXAdapterType type, const char* outputDevic
 
 const char* GFXInit::getAdapterNameFromType(GFXAdapterType type)
 {
-   static const char* _names[] = { "OpenGL", "D3D9", "D3D8", "NullDevice", "Xenon" };
+   static const char* _names[] = { "OpenGL", "D3D11", "NullDevice", "Xenon" };
    
    if( type < 0 || type >= GFXAdapterType_Count )
    {
@@ -243,8 +240,8 @@ GFXAdapterType GFXInit::getAdapterTypeFromName(const char* name)
    
    if( ret == -1 )
    {
-      Con::errorf( "GFXInit::getAdapterTypeFromName - Invalid renderer name, defaulting to D3D9" );
-      ret = Direct3D9;
+      Con::errorf( "GFXInit::getAdapterTypeFromName - Invalid renderer name, defaulting to D3D11" );
+      ret = Direct3D11;
    }
    
    return (GFXAdapterType)ret;
@@ -268,20 +265,19 @@ GFXAdapter *GFXInit::getBestAdapterChoice()
    //
    // If D3D is unavailable, we're not on windows, so GL is de facto the
    // best choice!
-   F32 highestSM9 = 0.f, highestSMGL = 0.f;
-   GFXAdapter  *foundAdapter8 = NULL, *foundAdapter9 = NULL, 
-               *foundAdapterGL = NULL;
+   F32 highestSM11 = 0.f, highestSMGL = 0.f;
+   GFXAdapter *foundAdapter11 = NULL, *foundAdapterGL = NULL;
 
    for(S32 i=0; i<smAdapters.size(); i++)
    {
       GFXAdapter *currAdapter = smAdapters[i];
       switch(currAdapter->mType)
       {
-      case Direct3D9:
-         if(currAdapter->mShaderModel > highestSM9)
+      case Direct3D11:
+         if(currAdapter->mShaderModel > highestSM11)
          {
-            highestSM9 = currAdapter->mShaderModel;
-            foundAdapter9 = currAdapter;
+            highestSM11 = currAdapter->mShaderModel;
+            foundAdapter11 = currAdapter;
          }
          break;
 
@@ -293,25 +289,18 @@ GFXAdapter *GFXInit::getBestAdapterChoice()
          }
          break;
 
-      case Direct3D8:
-         if(!foundAdapter8)
-            foundAdapter8 = currAdapter;
-         break;
-
       default:
          break;
       }
    }
 
-   // Return best found in order DX9, GL, DX8.
-   if(foundAdapter9)
-      return foundAdapter9;
+   // Return best found in order DX11, GL.
+
+   if(foundAdapter11)
+      return foundAdapter11;
 
    if(foundAdapterGL)
       return foundAdapterGL;
-
-   if(foundAdapter8)
-      return foundAdapter8;
 
    // Uh oh - we didn't find anything. Grab whatever we can that's not Null...
    for(S32 i=0; i<smAdapters.size(); i++)
@@ -431,7 +420,7 @@ DefineEngineStaticMethod( GFXInit, getAdapterOutputName, String, ( S32 index ),,
 }
 
 DefineEngineStaticMethod( GFXInit, getAdapterType, GFXAdapterType, ( S32 index ),,
-   "Returns the type (D3D9, D3D8, GL, Null) of a graphics adapter.\n"
+   "Returns the type (D3D11, OpenGL, Null) of a graphics adapter.\n"
    "@param index The index of the adapter." )
 {
    Vector<GFXAdapter*> adapters( __FILE__, __LINE__ );

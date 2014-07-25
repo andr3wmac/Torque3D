@@ -151,7 +151,9 @@ void DebugDrawer::render()
 
    SimTime curTime = Sim::getCurrentTime();
   
-   GFX->disableShaders();   
+   // andrewmac: D3D9-Refactor
+   GFX->setupGenericShaders();
+   //GFX->disableShaders();  
    
    for(DebugPrim **walk = &mHead; *walk; )
    {

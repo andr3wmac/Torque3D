@@ -20,22 +20,20 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+// Partial refactor by: Anis A. Hireche (C) 2014 - anishireche@gmail.com
+//-----------------------------------------------------------------------------
+
 #ifndef _GFXD3D9TEXTUREOBJECT_H_
 #define _GFXD3D9TEXTUREOBJECT_H_
 
-#ifndef _GFXTEXTUREHANDLE_H_
+#include "gfx/D3D9/gfxD3D9Device.h"
 #include "gfx/gfxTextureHandle.h"
-#endif
-
-#ifndef _GFXTEXTUREMANAGER_H_
 #include "gfx/gfxTextureManager.h"
-#endif
-
 
 class GFXD3D9TextureObject : public GFXTextureObject
 {
 protected:
-   static U32 mTexCount;
    GFXTexHandle   mLockTex;
    D3DLOCKED_RECT mLockRect;
    bool           mLocked;
@@ -57,8 +55,6 @@ public:
    IDirect3DVolumeTexture9 ** get3DTexPtr(){ return (LPDIRECT3DVOLUMETEXTURE9*) &mD3DTexture; }
 
    void release();
-
-   bool isManaged;
 
    virtual GFXLockedRect * lock(U32 mipLevel = 0, RectI *inRect = NULL);
    virtual void unlock(U32 mipLevel = 0 );

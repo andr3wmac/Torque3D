@@ -20,62 +20,38 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+// Partial refactor by: Anis A. Hireche (C) 2014 - anishireche@gmail.com
+//-----------------------------------------------------------------------------
+
 #include "platform/platform.h"
-
-#if defined(TORQUE_OS_XENON)
-#  include <xtl.h>
-#else
-#  include <d3d9.h>
-#endif
-
 #include "gfx/D3D9/gfxD3D9Shader.h"
-#include "gfx/D3D9/gfxD3D9Device.h"
-
 #include "core/frameAllocator.h"
 #include "core/stream/fileStream.h"
 #include "core/util/safeDelete.h"
 #include "console/console.h"
 
-using namespace Torque;
+/*
+	anis -> note:
+
+	To use shaders we need support of shader model 3 (directx9 level).
+	Today almost any videocard support it.
+	
+	from GFXD3D9Device::init:
+
+	Platform::AlertOK("DirectX Error!", "Failed to initialize Direct3D! Make sure you have DirectX 9 installed, and are running a graphics card that supports Shader Model 3.");
+	So, if garage games already say this, it's ok! :D
+*/
 
 extern bool gDisassembleAllShaders;
 
-/// D3DXInclude plugin
-class _gfxD3DXInclude : public ID3DXInclude, public StrongRefBase
+#pragma comment(lib, "d3dcompiler.lib")
+
+gfxD3DIncludeRef GFXD3D9Shader::smD3DInclude = NULL;
+
+HRESULT gfxD3D9Include::Open(THIS_ D3D_INCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID *ppData, UINT *pBytes)
 {
-private:
-
-   Vector<String> mLastPath;
-
-public:
-
-   void setPath( const String &path )
-   {
-      mLastPath.clear();
-      mLastPath.push_back( path );
-   }
-
-   _gfxD3DXInclude() {}
-   virtual ~_gfxD3DXInclude() {}
-
-   STDMETHOD(Close)(THIS_ LPCVOID pData);
-
-   // 360 
-   STDMETHOD(Open)(THIS_ D3DXINCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID *ppData, UINT *pBytes, /* OUT */ LPSTR pFullPath, DWORD cbFullPath);
-
-   // PC
-   STDMETHOD(Open)(THIS_ D3DXINCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID *ppData, UINT *pBytes)
-   {
-      return Open( IncludeType, pFileName, pParentData, ppData, pBytes, NULL, 0 );
-   }
-};
-
-_gfxD3DXIncludeRef GFXD3D9Shader::smD3DXInclude = NULL;
-
-HRESULT _gfxD3DXInclude::Open(THIS_ D3DXINCLUDE_TYPE IncludeType, LPCSTR pFileName, 
-                              LPCVOID pParentData, LPCVOID *ppData, UINT *pBytes, 
-                              LPSTR pFullPath, DWORD cbFullPath)
-{
+   using namespace Torque;
    // First try making the path relative to the parent.
    Torque::Path path = Torque::Path::Join( mLastPath.last(), '/', pFileName );
    path = Torque::Path::CompressPath( path );
@@ -103,7 +79,7 @@ HRESULT _gfxD3DXInclude::Open(THIS_ D3DXINCLUDE_TYPE IncludeType, LPCSTR pFileNa
    return S_OK;
 }
 
-HRESULT _gfxD3DXInclude::Close( THIS_ LPCVOID pData )
+HRESULT gfxD3D9Include::Close( THIS_ LPCVOID pData )
 {
    // Free the data file and pop its path off the stack.
    delete [] (U8*)pData;
@@ -224,8 +200,7 @@ GFXD3D9ShaderConstBuffer::GFXD3D9ShaderConstBuffer( GFXD3D9Shader* shader,
 
    // We hold on to this so we don't have to call
    // this virtual method during activation.
-   mDevice = static_cast<GFXD3D9Device*>( GFX )->getDevice();
-   
+
    mShader = shader;
 
    // TODO: Remove buffers and layouts that don't exist for performance?
@@ -261,7 +236,7 @@ GFXShader* GFXD3D9ShaderConstBuffer::getShader()
 template<class T>
 inline void GFXD3D9ShaderConstBuffer::SET_CONSTANT( GFXShaderConstHandle* handle, const T& fv, GenericConstBuffer *vBuffer, GenericConstBuffer *pBuffer )
 {
-   AssertFatal(dynamic_cast<const GFXD3D9ShaderConstHandle*>(handle), "Incorrect const buffer type!");
+   AssertFatal(static_cast<const GFXD3D9ShaderConstHandle*>(handle), "Incorrect const buffer type!");
    const GFXD3D9ShaderConstHandle* h = static_cast<const GFXD3D9ShaderConstHandle*>(handle);
    AssertFatal(h, "Handle is NULL!" );
    AssertFatal(h->isValid(), "Handle is not valid!" );
@@ -385,7 +360,6 @@ void GFXD3D9ShaderConstBuffer::set(GFXShaderConstHandle* handle, const MatrixF& 
    AssertFatal(handle, "Handle is NULL!" );
    AssertFatal(handle->isValid(), "Handle is not valid!" );
 
-   AssertFatal(dynamic_cast<const GFXD3D9ShaderConstHandle*>(handle), "Incorrect const buffer type!"); 
    const GFXD3D9ShaderConstHandle* h = static_cast<const GFXD3D9ShaderConstHandle*>(handle); 
    AssertFatal(!h->isSampler(), "Handle is sampler constant!" );
    AssertFatal(h->mShader == mShader, "Mismatched shaders!"); 
@@ -413,7 +387,6 @@ void GFXD3D9ShaderConstBuffer::set(GFXShaderConstHandle* handle, const MatrixF* 
    AssertFatal(handle, "Handle is NULL!" );
    AssertFatal(handle->isValid(), "Handle is not valid!" );
 
-   AssertFatal(dynamic_cast<const GFXD3D9ShaderConstHandle*>(handle), "Incorrect const buffer type!"); 
    const GFXD3D9ShaderConstHandle* h = static_cast<const GFXD3D9ShaderConstHandle*>(handle); 
    AssertFatal(!h->isSampler(), "Handle is sampler constant!" );
    AssertFatal(h->mShader == mShader, "Mismatched shaders!"); 
@@ -530,25 +503,25 @@ void GFXD3D9ShaderConstBuffer::activate( GFXD3D9ShaderConstBuffer *prevShaderBuf
    if ( mVertexConstBufferF->isDirty() )
    {
       buf = mVertexConstBufferF->getDirtyBuffer( &start, &bufferSize );
-      mDevice->SetVertexShaderConstantF( start / bytesToFloat4, (float*)buf, bufferSize / bytesToFloat4 );
+      D3D9DEVICE->SetVertexShaderConstantF( start / bytesToFloat4, (float*)buf, bufferSize / bytesToFloat4 );
    }
 
    if ( mPixelConstBufferF->isDirty() )    
    {
       buf = mPixelConstBufferF->getDirtyBuffer( &start, &bufferSize );
-      mDevice->SetPixelShaderConstantF( start / bytesToFloat4, (float*)buf, bufferSize / bytesToFloat4 );      
+      D3D9DEVICE->SetPixelShaderConstantF( start / bytesToFloat4, (float*)buf, bufferSize / bytesToFloat4 );      
    }
 
    if ( mVertexConstBufferI->isDirty() )
    {
       buf = mVertexConstBufferI->getDirtyBuffer( &start, &bufferSize );
-      mDevice->SetVertexShaderConstantI( start / bytesToInt4, (int*)buf, bufferSize / bytesToInt4 );
+      D3D9DEVICE->SetVertexShaderConstantI( start / bytesToInt4, (int*)buf, bufferSize / bytesToInt4 );
    }
 
    if ( mPixelConstBufferI->isDirty() )    
    {
       buf = mPixelConstBufferI->getDirtyBuffer( &start, &bufferSize );
-      mDevice->SetPixelShaderConstantI( start / bytesToInt4, (int*)buf, bufferSize / bytesToInt4 );      
+      D3D9DEVICE->SetPixelShaderConstantI( start / bytesToInt4, (int*)buf, bufferSize / bytesToInt4 );      
    }
 
    #ifdef TORQUE_DEBUG
@@ -597,8 +570,7 @@ GFXD3D9Shader::GFXD3D9Shader()
 {
    VECTOR_SET_ASSOCIATION( mShaderConsts );
 
-   mD3D9Device = dynamic_cast<GFXD3D9Device *>(GFX)->getDevice();
-   AssertFatal(mD3D9Device, "Invalid device for shader.");
+   AssertFatal(D3D9DEVICE, "Invalid device for shader.");
    mVertShader = NULL;
    mPixShader = NULL;
    mVertexConstBufferLayoutF = NULL;
@@ -606,8 +578,8 @@ GFXD3D9Shader::GFXD3D9Shader()
    mVertexConstBufferLayoutI = NULL;
    mPixelConstBufferLayoutI = NULL;
 
-   if( smD3DXInclude == NULL )
-      smD3DXInclude = new _gfxD3DXInclude;
+   if( smD3DInclude == NULL )
+      smD3DInclude = new gfxD3D9Include;
 }
 
 //------------------------------------------------------------------------------
@@ -627,64 +599,30 @@ GFXD3D9Shader::~GFXD3D9Shader()
 bool GFXD3D9Shader::_init()
 {
    PROFILE_SCOPE( GFXD3D9Shader_Init );
-   
-   if ( mPixVersion > GFX->getPixelShaderVersion() )
-   {
-      if ( smLogErrors )
-         Con::errorf( "GFXD3D9Shader::init - Bad pixel shader version!" );
-
-      return false;
-   }
-
-   if ( mPixVersion < 1.0f && mPixelFile.getFileName().isNotEmpty() )
-   {
-      if ( smLogErrors )
-         Con::errorf( "GFXD3D9Shader::init - Pixel shaders not supported on SM %.1f!", mPixVersion );
-
-      return false;
-   }
 
    SAFE_RELEASE(mVertShader);
    SAFE_RELEASE(mPixShader);
 
-   U32 mjVer = (U32)mFloor( mPixVersion );
-   U32 mnVer = (U32)( ( mPixVersion - F32( mjVer ) ) * 10.01f ); // 10.01 instead of 10.0 because of floating point issues
-
-   String vertTarget = String::ToString("vs_%d_%d", mjVer, mnVer);
-   String pixTarget = String::ToString("ps_%d_%d", mjVer, mnVer);
-
-   // Adjust version for vertex shaders
-   if (mjVer == 2 && mnVer == 1)
-   {      
-      pixTarget  = "ps_2_a";
-      vertTarget = "vs_2_0";
-   }
-   else if ( mjVer == 2 && mnVer == 2 )
-   {      
-      pixTarget  = "ps_2_b";
-      vertTarget = "vs_2_0";
-   }
-   else if ( ( mPixVersion < 2.0f ) && ( mPixVersion > 1.101f ) )
-      vertTarget = "vs_1_1";      
-
    // Create the macro array including the system wide macros.
    const U32 macroCount = smGlobalMacros.size() + mMacros.size() + 2;
-   FrameTemp<D3DXMACRO> d3dXMacros( macroCount );
+   FrameTemp<D3D_SHADER_MACRO> d3dMacros( macroCount );
+
    for ( U32 i=0; i < smGlobalMacros.size(); i++ )
    {
-      d3dXMacros[i].Name = smGlobalMacros[i].name.c_str();
-      d3dXMacros[i].Definition = smGlobalMacros[i].value.c_str();
+      d3dMacros[i].Name = smGlobalMacros[i].name.c_str();
+      d3dMacros[i].Definition = smGlobalMacros[i].value.c_str();
    }
+
    for ( U32 i=0; i < mMacros.size(); i++ )
    {
-      d3dXMacros[i+smGlobalMacros.size()].Name = mMacros[i].name.c_str();
-      d3dXMacros[i+smGlobalMacros.size()].Definition = mMacros[i].value.c_str();
+      d3dMacros[i+smGlobalMacros.size()].Name = mMacros[i].name.c_str();
+      d3dMacros[i+smGlobalMacros.size()].Definition = mMacros[i].value.c_str();
    }
-   String smVersion = String::ToString( mjVer * 10 + mnVer );
-   d3dXMacros[macroCount - 2].Name = "TORQUE_SM";
-   d3dXMacros[macroCount - 2].Definition = smVersion.c_str();
-   d3dXMacros[macroCount - 1].Name = NULL;
-   d3dXMacros[macroCount - 1].Definition = NULL;
+
+   d3dMacros[macroCount - 2].Name = "TORQUE_SM";
+   d3dMacros[macroCount - 2].Definition = "30";
+
+   memset(&d3dMacros[macroCount - 1], 0, sizeof(D3D_SHADER_MACRO));
 
    if ( !mVertexConstBufferLayoutF )
       mVertexConstBufferLayoutF = new GFXD3D9ShaderBufferLayout();
@@ -709,32 +647,28 @@ bool GFXD3D9Shader::_init()
    mSamplerDescriptions.clear();
    mShaderConsts.clear();
 
-   if ( GFXD3DX.isLoaded && !Con::getBoolVariable( "$shaders::forceLoadCSF", false ) )
+   if ( !Con::getBoolVariable( "$shaders::forceLoadCSF", false ) )
    {
-      if (  !mVertexFile.isEmpty() &&
-            !_compileShader( mVertexFile, vertTarget, d3dXMacros, mVertexConstBufferLayoutF, mVertexConstBufferLayoutI, mSamplerDescriptions ) )
+      if (  !mVertexFile.isEmpty() && !_compileShader( mVertexFile, "vs_3_0", d3dMacros, mVertexConstBufferLayoutF, mVertexConstBufferLayoutI, mSamplerDescriptions ) )
          return false;
 
-      if (  !mPixelFile.isEmpty() &&
-            !_compileShader( mPixelFile, pixTarget, d3dXMacros, mPixelConstBufferLayoutF, mPixelConstBufferLayoutI, mSamplerDescriptions ) )
+      if (  !mPixelFile.isEmpty() && !_compileShader( mPixelFile, "ps_3_0", d3dMacros, mPixelConstBufferLayoutF, mPixelConstBufferLayoutI, mSamplerDescriptions ) )
          return false;
    } 
    else 
    {
-      if ( !_loadCompiledOutput( mVertexFile, vertTarget, mVertexConstBufferLayoutF, mVertexConstBufferLayoutI, mSamplerDescriptions ) )
+      if ( !_loadCompiledOutput( mVertexFile, "vs_3_0", mVertexConstBufferLayoutF, mVertexConstBufferLayoutI, mSamplerDescriptions ) )
       {
          if ( smLogErrors )
-            Con::errorf( "GFXD3D9Shader::init - Unable to load precompiled vertex shader for '%s'.", 
-               mVertexFile.getFullPath().c_str() );
+            Con::errorf( "GFXD3D9Shader::init - Unable to load precompiled vertex shader for '%s'.",  mVertexFile.getFullPath().c_str() );
 
          return false;
       }
 
-      if ( !_loadCompiledOutput( mPixelFile, pixTarget, mPixelConstBufferLayoutF, mPixelConstBufferLayoutI, mSamplerDescriptions ) )
+      if ( !_loadCompiledOutput( mPixelFile, "ps_3_0", mPixelConstBufferLayoutF, mPixelConstBufferLayoutI, mSamplerDescriptions ) )
       {
          if ( smLogErrors )
-            Con::errorf( "GFXD3D9Shader::init - Unable to load precompiled pixel shader for '%s'.", 
-               mPixelFile.getFullPath().c_str() );
+            Con::errorf( "GFXD3D9Shader::init - Unable to load precompiled pixel shader for '%s'.",  mPixelFile.getFullPath().c_str() );
 
          return false;
       }
@@ -765,67 +699,70 @@ bool GFXD3D9Shader::_init()
 
 bool GFXD3D9Shader::_compileShader( const Torque::Path &filePath, 
                                     const String& target,                                  
-                                    const D3DXMACRO *defines, 
+                                    const D3D_SHADER_MACRO *defines, 
                                     GenericConstBufferLayout* bufferLayoutF, 
                                     GenericConstBufferLayout* bufferLayoutI,
                                     Vector<GFXShaderConstDesc> &samplerDescriptions )
 {
    PROFILE_SCOPE( GFXD3D9Shader_CompileShader );
 
-   HRESULT res = D3DERR_INVALIDCALL;
-   LPD3DXBUFFER code = NULL;
-   LPD3DXBUFFER errorBuff = NULL;
+   using namespace Torque;
+
+   HRESULT res = E_FAIL;
+   ID3DBlob* code = NULL;
+   ID3DBlob* errorBuff = NULL;
+   bool HasValidConstants = false;
 
 #ifdef TORQUE_DEBUG
-   U32 flags = D3DXSHADER_DEBUG;
+
+   // anis -> note:
+
+   /*
+		warning: Using D3DCOMPILE_SKIP_OPTIMIZATION (tested on directx9)
+		cause a possible D3DCompile error return for excessive number of asm instruction generated (>64).
+		At the moment D3DCOMPILE_DEBUG it's enough for debugging purpose....
+   */
+
+   U32 flags = D3DCOMPILE_DEBUG /*| D3DCOMPILE_SKIP_OPTIMIZATION*/;
+
 #else
-   U32 flags = 0;
+
+   // anis -> useful flags for shader compiler:
+
+   /*
+		D3DCOMPILE_OPTIMIZATION_LEVEL0
+		D3DCOMPILE_OPTIMIZATION_LEVEL1
+		D3DCOMPILE_OPTIMIZATION_LEVEL2
+		D3DCOMPILE_OPTIMIZATION_LEVEL3
+		D3DCOMPILE_WARNINGS_ARE_ERRORS
+   */
+
+   U32 flags = 0; //place here flags for optimization level customization =)
+
 #endif
 
-#ifdef TORQUE_OS_XENON
-   flags |= D3DXSHADER_PREFER_FLOW_CONTROL;
-#endif
+   /* 
+   
+	   anis -> useful flag for D3D11 engine to make compile under 5_0 target without touching effects...
 
-#ifdef D3DXSHADER_USE_LEGACY_D3DX9_31_DLL
-   if( D3DX_SDK_VERSION >= 32 )
-   {
-      // will need to use old compiler for 1_1 shaders - check for pixel
-      // or vertex shader with appropriate version.
-      if ((target.compare("vs1", 3) == 0) || (target.compare("vs_1", 4) == 0))      
-         flags |= D3DXSHADER_USE_LEGACY_D3DX9_31_DLL;
+	   flags |= D3DCOMPILE_ENABLE_BACKWARDS_COMPATIBILITY;
 
-      if ((target.compare("ps1", 3) == 0) || (target.compare("ps_1", 4) == 0))
-         flags |= D3DXSHADER_USE_LEGACY_D3DX9_31_DLL;
-   }
-#endif
-
-#if !defined(TORQUE_OS_XENON) && (D3DX_SDK_VERSION <= 40)
-#error This version of the DirectX SDK is too old. Please install a newer version of the DirectX SDK: http://msdn.microsoft.com/en-us/directx/default.aspx
-#endif
-
-   ID3DXConstantTable* table = NULL;
-
-   static String sHLSLStr( "hlsl" );
-   static String sOBJStr( "obj" );
+   */
 
    // Is it an HLSL shader?
-   if ( filePath.getExtension().equal(sHLSLStr, String::NoCase) )   
+   if(filePath.getExtension().equal("hlsl", String::NoCase))   
    {
-      FrameAllocatorMarker fam;
-      char *buffer = NULL;
-
-      // Set this so that the D3DXInclude::Open will have this 
+      // Set this so that the D3DInclude::Open will have this 
       // information for relative paths.
-      smD3DXInclude->setPath( filePath.getRootAndPath() );
+      smD3DInclude->setPath(filePath.getRootAndPath());
 
       FileStream s;
-      if ( !s.open( filePath, Torque::FS::File::Read ) )
+      if (!s.open(filePath, Torque::FS::File::Read))
       {
          AssertISV(false, avar("GFXD3D9Shader::initShader - failed to open shader '%s'.", filePath.getFullPath().c_str()));
 
          if ( smLogErrors )
-            Con::errorf( "GFXD3D9Shader::_compileShader - Failed to open shader file '%s'.", 
-               filePath.getFullPath().c_str() );
+            Con::errorf( "GFXD3D9Shader::_compileShader - Failed to open shader file '%s'.", filePath.getFullPath().c_str() );
 
          return false;
       }
@@ -833,26 +770,23 @@ bool GFXD3D9Shader::_compileShader( const Torque::Path &filePath,
       // Convert the path which might have virtualized
       // mount paths to a real file system path.
       Torque::Path realPath;
-      if ( !FS::GetFSPath( filePath, realPath ) )
+      if (!FS::GetFSPath( filePath, realPath))
          realPath = filePath;
 
-      // Add a #line pragma so that error and warning messages
-      // returned by the HLSL compiler report the right file.
-      String linePragma = String::ToString( "#line 1 \"%s\"\r\n", realPath.getFullPath().c_str() );
-      U32 linePragmaLen = linePragma.length();
-
       U32 bufSize = s.getStreamSize();
-      buffer = (char *)fam.alloc( bufSize + linePragmaLen + 1 );
-      dStrncpy( buffer, linePragma.c_str(), linePragmaLen );
-      s.read( bufSize, buffer + linePragmaLen );
-      buffer[bufSize+linePragmaLen] = 0;
 
-      res = GFXD3DX.D3DXCompileShader( buffer, bufSize + linePragmaLen, defines, smD3DXInclude, "main", 
-         target, flags, &code, &errorBuff, &table );
+      FrameAllocatorMarker fam;
+      char *buffer = NULL;
+
+      buffer = (char*)fam.alloc(bufSize + 1);
+      s.read(bufSize, buffer);
+      buffer[bufSize] = 0;
+
+	  res = D3DCompile(buffer, bufSize, realPath.getFullPath().c_str(), defines, smD3DInclude, "main", target, flags, 0, &code, &errorBuff);
    }
 
    // Is it a precompiled obj shader?
-   else if ( filePath.getExtension().equal( sOBJStr, String::NoCase ) )
+   else if(filePath.getExtension().equal("obj", String::NoCase))
    {     
       FileStream  s;
       if(!s.open(filePath, Torque::FS::File::Read))
@@ -860,70 +794,63 @@ bool GFXD3D9Shader::_compileShader( const Torque::Path &filePath,
          AssertISV(false, avar("GFXD3D9Shader::initShader - failed to open shader '%s'.", filePath.getFullPath().c_str()));
 
          if ( smLogErrors )
-            Con::errorf( "GFXD3D9Shader::_compileShader - Failed to open shader file '%s'.", 
-               filePath.getFullPath().c_str() );
+            Con::errorf( "GFXD3D9Shader::_compileShader - Failed to open shader file '%s'.", filePath.getFullPath().c_str() );
 
          return false;
       }
 
-      res = GFXD3DX.D3DXCreateBuffer(s.getStreamSize(), &code);
-      AssertISV(res == D3D_OK, "Unable to create buffer!");
+	  res = D3DCreateBlob(s.getStreamSize(), &code);
+      AssertISV(SUCCEEDED(res), "Unable to create buffer!");
       s.read(s.getStreamSize(), code->GetBufferPointer());
-      
-      if (res == D3D_OK)
-      {
-         DWORD* data = (DWORD*) code->GetBufferPointer();
-         res = GFXD3DX.D3DXGetShaderConstantTable(data, &table);
-      }
    }
    else
    {
-      if ( smLogErrors )
-         Con::errorf( "GFXD3D9Shader::_compileShader - Unsupported shader file type '%s'.", 
-            filePath.getFullPath().c_str() );
+      if (smLogErrors)
+         Con::errorf("GFXD3D9Shader::_compileShader - Unsupported shader file type '%s'.", filePath.getFullPath().c_str());
 
       return false;
    }
 
-   if ( res != D3D_OK && smLogErrors )
-      Con::errorf( "GFXD3D9Shader::_compileShader - Error compiling shader: %s: %s (%x)", 
-         DXGetErrorStringA(res), DXGetErrorDescriptionA(res), res );
+   if(SUCCEEDED(res) && code)
+   {
+	   // anis -> HasValidConstants == false ? -> if this condition is true, there should be a problem inside the bytecode parser...
+       void* buffer = code->GetBufferPointer();
+       HasValidConstants = buffer && table.Create(buffer);
+   }
 
-   if ( errorBuff )
+   if(errorBuff)
    {
       // remove \n at end of buffer
       U8 *buffPtr = (U8*) errorBuff->GetBufferPointer();
       U32 len = dStrlen( (const char*) buffPtr );
       buffPtr[len-1] = '\0';
 
-      if( res != D3D_OK )
+      if(FAILED(res))
       {
-         if ( smLogErrors )
-            Con::errorf( "   %s", (const char*) errorBuff->GetBufferPointer() );
+         if(smLogErrors)
+            Con::errorf("failed to compile shader: %s", buffPtr);
       }
       else
       {
-         if ( smLogWarnings )
-            Con::warnf( "%s", (const char*) errorBuff->GetBufferPointer() );
+         if(smLogWarnings)
+            Con::errorf("shader compiled with warning(s): %s", buffPtr);
       }
    }
-   else if ( code == NULL && smLogErrors )
-      Con::errorf( "GFXD3D9Shader::_compileShader - no compiled code produced; possibly missing file '%s'.", 
-         filePath.getFullPath().c_str() );
+   else if (code == NULL && smLogErrors)
+      Con::errorf( "GFXD3D9Shader::_compileShader - no compiled code produced; possibly missing file '%s'.", filePath.getFullPath().c_str() );
 
-   // Create the proper shader if we have code
-   if( code != NULL )
+   if(code != NULL)
    {
       #ifndef TORQUE_SHIPPING
 
-         LPD3DXBUFFER disassem = NULL;
-         D3DXDisassembleShader( (DWORD*)code->GetBufferPointer(), false, NULL, &disassem );
+		 ID3DBlob* disassem = NULL;
+         D3DDisassemble(code->GetBufferPointer(), code->GetBufferSize(), 0, NULL, &disassem);
          mDissasembly = (const char*)disassem->GetBufferPointer();         
-         SAFE_RELEASE( disassem );
+         SAFE_RELEASE(disassem);
 
-         if ( gDisassembleAllShaders )
+         if(gDisassembleAllShaders)
          {
-             String filename = filePath.getFullPath();
+			String filename = filePath.getFullPath();
             filename.replace( ".hlsl", "_dis.txt" );
 
             FileStream *fstream = FileStream::createAndOpen( filename, Torque::FS::File::Write );
@@ -938,206 +865,193 @@ bool GFXD3D9Shader::_compileShader( const Torque::Path &filePath,
       #endif
 
       if (target.compare("ps_", 3) == 0)      
-         res = mD3D9Device->CreatePixelShader( (DWORD*)code->GetBufferPointer(), &mPixShader );
+         res = D3D9DEVICE->CreatePixelShader((DWORD*)code->GetBufferPointer(), &mPixShader);
       else
-         res = mD3D9Device->CreateVertexShader( (DWORD*)code->GetBufferPointer(), &mVertShader );
+         res = D3D9DEVICE->CreateVertexShader((DWORD*)code->GetBufferPointer(), &mVertShader);
 
-      if (res == S_OK)
-         _getShaderConstants(table, bufferLayoutF, bufferLayoutI, samplerDescriptions);
+      if (SUCCEEDED(res) && HasValidConstants)
+         _getShaderConstants(bufferLayoutF, bufferLayoutI, samplerDescriptions);
 
 #ifdef TORQUE_ENABLE_CSF_GENERATION
 
       // Ok, we've got a valid shader and constants, let's write them all out.
-      if ( !_saveCompiledOutput(filePath, code, bufferLayoutF, bufferLayoutI) && smLogErrors )
+      if (!_saveCompiledOutput(filePath, code, bufferLayoutF, bufferLayoutI) && smLogErrors)
          Con::errorf( "GFXD3D9Shader::_compileShader - Unable to save shader compile output for: %s", 
-            filePath.getFullPath().c_str() );
+            filePath.getFullPath().c_str());
 
 #endif
 
-      SAFE_RELEASE(table);
-
-      if ( res != S_OK && smLogErrors )
-         Con::errorf( "GFXD3D9Shader::_compileShader - Unable to create shader for '%s'.", 
-            filePath.getFullPath().c_str() );
+      if(FAILED(res) && smLogErrors)
+         Con::errorf("GFXD3D9Shader::_compileShader - Unable to create shader for '%s'.", filePath.getFullPath().c_str());
    }
 
-   bool result = code != NULL && res == S_OK;
+   bool result = code && SUCCEEDED(res) && HasValidConstants;
 
-   SAFE_RELEASE( code );
-   SAFE_RELEASE( errorBuff );
+   SAFE_RELEASE(code);
+   SAFE_RELEASE(errorBuff);
 
    return result;
 }
 
-void GFXD3D9Shader::_getShaderConstants( ID3DXConstantTable *table, 
-                                         GenericConstBufferLayout *bufferLayoutF, 
+void GFXD3D9Shader::_getShaderConstants( GenericConstBufferLayout *bufferLayoutF, 
                                          GenericConstBufferLayout* bufferLayoutI,
                                          Vector<GFXShaderConstDesc> &samplerDescriptions )
 {
    PROFILE_SCOPE( GFXD3D9Shader_GetShaderConstants );
 
-   AssertFatal(table, "NULL constant table not allowed, is this an assembly shader?");
-
-   D3DXCONSTANTTABLE_DESC tableDesc;
-   D3D9Assert(table->GetDesc(&tableDesc), "Unable to get constant table info.");
-
-   for (U32 i = 0; i < tableDesc.Constants; i++)
+   for (U32 i = 0; i < table.GetConstantCount(); i++)
    {
-      D3DXHANDLE handle = table->GetConstant(0, i);
-      const U32 descSize=16;
-      D3DXCONSTANT_DESC constantDescArray[descSize];
-      U32 size = descSize;
-      if (table->GetConstantDesc(handle, constantDescArray, &size) == S_OK)
-      {
-         D3DXCONSTANT_DESC& constantDesc = constantDescArray[0];
-         GFXShaderConstDesc desc;
-                  
-         desc.name = String(constantDesc.Name);
-         // Prepend a "$" if it doesn't exist.  Just to make things consistent.
-         if (desc.name.find("$") != 0)
-            desc.name = String::ToString("$%s", desc.name.c_str());
-         //Con::printf("name %s: , offset: %d, size: %d, constantDesc.Elements: %d", desc.name.c_str(), constantDesc.RegisterIndex, constantDesc.Bytes, constantDesc.Elements);
-         desc.arraySize = constantDesc.Elements;         
-                  
-         GenericConstBufferLayout* bufferLayout = NULL;
-         switch (constantDesc.RegisterSet)
-         {
-            case D3DXRS_INT4 :   
-               {
-                  bufferLayout = bufferLayoutI;
-                  switch (constantDesc.Class)
-                  {
-                     case D3DXPC_SCALAR :
-                        desc.constType = GFXSCT_Int;
-                        break;
-                     case D3DXPC_VECTOR :
-                        {
-                           switch (constantDesc.Columns)
-                           {
-                           case 1 :
-                              desc.constType = GFXSCT_Int;
-                              break;
-                           case 2 :
-                              desc.constType = GFXSCT_Int2;
-                              break;
-                           case 3 :
-                              desc.constType = GFXSCT_Int3;
-                              break;
-                           case 4 :
-                              desc.constType = GFXSCT_Int4;
-                              break;                           
-                           default:
-                              AssertFatal(false, "Unknown int vector type!");
-                              break;
-                           }
-                        }
-                        break;
-                  }
-                  desc.constType = GFXSCT_Int4;
-                  break;
-               }
-            case D3DXRS_FLOAT4 :
-               {  
-                  bufferLayout = bufferLayoutF;
-                  switch (constantDesc.Class)
-                  {
-                  case D3DXPC_SCALAR:                     
-                     desc.constType = GFXSCT_Float;
-                     break;
-                  case D3DXPC_VECTOR :               
-                     {                     
-                        switch (constantDesc.Columns)
-                        {
-                           case 1 :
-                              desc.constType = GFXSCT_Float;
-                              break;
-                           case 2 :
-                              desc.constType = GFXSCT_Float2;
-                              break;
-                           case 3 :
-                              desc.constType = GFXSCT_Float3;
-                              break;
-                           case 4 :
-                              desc.constType = GFXSCT_Float4;
-                              break;                           
-                           default:
-                              AssertFatal(false, "Unknown float vector type!");
-                              break;
-                        }
-                     }
-                     break;
-                  case D3DXPC_MATRIX_ROWS :
-                  case D3DXPC_MATRIX_COLUMNS :                     
-                     {
-                        switch (constantDesc.RegisterCount)                        
-                        {
-                           case 3 :
-                              desc.constType = GFXSCT_Float3x3;
-                              break;
-                           case 4 :
-                              desc.constType = GFXSCT_Float4x4;
-                              break;
-                        }
-                     }
-                     break;
-                  case D3DXPC_OBJECT :
-                  case D3DXPC_STRUCT :
-                     bufferLayout = NULL;
-                     break;
-                  }
-               }
-               break;
-            case D3DXRS_SAMPLER :
-               {
-                  AssertFatal( constantDesc.Elements == 1, "Sampler Arrays not yet supported!" );
+	    const ConstantDesc& constantDesc = table.GetConstantByIndex(i)[0];
 
-                  switch (constantDesc.Type)
-                  {
-                     case D3DXPT_SAMPLER :
-                     case D3DXPT_SAMPLER1D :
-                     case D3DXPT_SAMPLER2D :
-                     case D3DXPT_SAMPLER3D :
-                        // Hi-jack the desc's arraySize to store the registerIndex.
-                        desc.constType = GFXSCT_Sampler;
-                        desc.arraySize = constantDesc.RegisterIndex;
-                        samplerDescriptions.push_back( desc );
-                        break;
-                     case D3DXPT_SAMPLERCUBE :
-                        desc.constType = GFXSCT_SamplerCube;
-                        desc.arraySize = constantDesc.RegisterIndex;
-                        samplerDescriptions.push_back( desc );
-                        break;
-                  }
-               }
-               break;
-            default:               
-               AssertFatal(false, "Unknown shader constant class enum");               
-               break;
-         }         
+        GFXShaderConstDesc desc;
+                  
+		desc.name = String(constantDesc.Name.c_str());
+        // Prepend a "$" if it doesn't exist.  Just to make things consistent.
+        if (desc.name.find("$") != 0) desc.name = String::ToString("$%s", desc.name.c_str());
+
+#ifdef TORQUE_DEBUG
+        Con::printf("name %s:, offset: %d, size: %d, constantDesc.Elements: %d", desc.name.c_str(), constantDesc.RegisterIndex, constantDesc.Bytes, constantDesc.Elements);
+#endif
+        desc.arraySize = constantDesc.Elements;         
+                  
+        GenericConstBufferLayout* bufferLayout = NULL;
+        switch (constantDesc.RegisterSet)
+        {
+			case D3DRS_INT4:   
+				{
+					bufferLayout = bufferLayoutI;
+					switch (constantDesc.Class)
+					{
+						case D3DPC_SCALAR:
+							desc.constType = GFXSCT_Int;
+							break;
+						case D3DPC_VECTOR:
+						{
+							switch (constantDesc.Columns)
+							{
+							case 1 :
+								desc.constType = GFXSCT_Int;
+								break;
+							case 2 :
+								desc.constType = GFXSCT_Int2;
+								break;
+							case 3 :
+								desc.constType = GFXSCT_Int3;
+								break;
+							case 4 :
+								desc.constType = GFXSCT_Int4;
+								break;                           
+							default:
+								AssertFatal(false, "Unknown int vector type!");
+								break;
+							}
+						}
+						break;
+					}
+					desc.constType = GFXSCT_Int4;
+					break;
+				}
+			case D3DRS_FLOAT4:
+				{  
+					bufferLayout = bufferLayoutF;
+					switch (constantDesc.Class)
+					{
+					case D3DPC_SCALAR:                     
+						desc.constType = GFXSCT_Float;
+						break;
+					case D3DPC_VECTOR:               
+						{                     
+						switch (constantDesc.Columns)
+						{
+							case 1 :
+								desc.constType = GFXSCT_Float;
+								break;
+							case 2 :
+								desc.constType = GFXSCT_Float2;
+								break;
+							case 3 :
+								desc.constType = GFXSCT_Float3;
+								break;
+							case 4 :
+								desc.constType = GFXSCT_Float4;
+								break;                           
+							default:
+								AssertFatal(false, "Unknown float vector type!");
+								break;
+						}
+						}
+						break;
+					case D3DPC_MATRIX_ROWS:
+					case D3DPC_MATRIX_COLUMNS:                     
+						{
+						switch (constantDesc.RegisterCount)                        
+						{
+							case 3 :
+								desc.constType = GFXSCT_Float3x3;
+								break;
+							case 4 :
+								desc.constType = GFXSCT_Float4x4;
+								break;
+						}
+						}
+						break;
+					case D3DPC_OBJECT:
+					case D3DPC_STRUCT:
+						bufferLayout = NULL;
+						break;
+					}
+				}
+				break;
+			case D3DRS_SAMPLER:
+				{
+					AssertFatal( constantDesc.Elements == 1, "Sampler Arrays not yet supported!" );
+
+					switch (constantDesc.Type)
+					{
+						case D3DPT_SAMPLER:
+						case D3DPT_SAMPLER1D:
+						case D3DPT_SAMPLER2D:
+						case D3DPT_SAMPLER3D:
+						// Hi-jack the desc's arraySize to store the registerIndex.
+						desc.constType = GFXSCT_Sampler;
+						desc.arraySize = constantDesc.RegisterIndex;
+						samplerDescriptions.push_back( desc );
+						break;
+						case D3DPT_SAMPLERCUBE :
+						desc.constType = GFXSCT_SamplerCube;
+						desc.arraySize = constantDesc.RegisterIndex;
+						samplerDescriptions.push_back( desc );
+						break;
+					}
+				}
+				break;
+			default:               
+				AssertFatal(false, "Unknown shader constant class enum");               
+				break;
+        }         
          
-         if (bufferLayout)
-         {
-            mShaderConsts.push_back(desc);
+        if (bufferLayout)
+        {
+			mShaderConsts.push_back(desc);
 
-            U32 alignBytes = getAlignmentValue(desc.constType);
-            U32 paramSize = alignBytes * desc.arraySize;
-            bufferLayout->addParameter(   desc.name, 
-                                          desc.constType, 
-                                          constantDesc.RegisterIndex * sizeof(Point4F), 
-                                          paramSize, 
-                                          desc.arraySize, 
-                                          alignBytes );
-         }
-      }
-      else
-         AssertFatal(false, "Unable to get shader constant description! (may need more elements of constantDesc");
+			U32 alignBytes = getAlignmentValue(desc.constType);
+			U32 paramSize = alignBytes * desc.arraySize;
+			bufferLayout->addParameter( desc.name, 
+										desc.constType, 
+										constantDesc.RegisterIndex * sizeof(Point4F), 
+										paramSize, 
+										desc.arraySize, 
+										alignBytes );
+        }
    }
+
+   table.ClearConstants();
 }
 
 const U32 GFXD3D9Shader::smCompiledShaderTag = MakeFourCC('t','c','s','f');
 
 bool GFXD3D9Shader::_saveCompiledOutput( const Torque::Path &filePath, 
-                                         LPD3DXBUFFER buffer, 
+                                         ID3DBlob *buffer, 
                                          GenericConstBufferLayout *bufferLayoutF, 
                                          GenericConstBufferLayout *bufferLayoutI,
                                          Vector<GFXShaderConstDesc> &samplerDescriptions )
@@ -1226,9 +1140,9 @@ bool GFXD3D9Shader::_loadCompiledOutput( const Torque::Path &filePath,
 
    HRESULT res;
    if (target.compare("ps_", 3) == 0)      
-      res = mD3D9Device->CreatePixelShader(buffer, &mPixShader );
+      res = D3D9DEVICE->CreatePixelShader(buffer, &mPixShader );
    else
-      res = mD3D9Device->CreateVertexShader(buffer, &mVertShader );
+      res = D3D9DEVICE->CreateVertexShader(buffer, &mVertShader );
    AssertFatal(SUCCEEDED(res), "Unable to load shader!");
 
    FrameAllocator::setWaterMark(waterMark);
@@ -1390,6 +1304,17 @@ GFXShaderConstHandle* GFXD3D9Shader::getShaderConstHandle(const String& name)
    }      
 }
 
+GFXShaderConstHandle* GFXD3D9Shader::findShaderConstHandle(const String& name)
+{
+   HandleMap::Iterator i = mHandles.find(name);
+   if(i != mHandles.end())
+      return i->value;
+   else
+   {
+      return NULL;
+   }
+}
+
 const Vector<GFXShaderConstDesc>& GFXD3D9Shader::getShaderConstDesc() const
 {
    return mShaderConsts;
@@ -1434,10 +1359,8 @@ U32 GFXD3D9Shader::getAlignmentValue(const GFXShaderConstType constType) const
 
 void GFXD3D9Shader::zombify()
 {
-   // Shaders don't need zombification
 }
 
 void GFXD3D9Shader::resurrect()
 {
-   // Shaders are never zombies, and therefore don't have to be brought back.
 }

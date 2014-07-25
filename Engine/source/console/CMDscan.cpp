@@ -1910,8 +1910,13 @@ extern int isatty (int );
         b->yy_bs_column = 0;
     }
 
-    b->yy_is_interactive = file ? (isatty( fileno(file) ) > 0) : 0;
-	errno = oerrno;
+#ifdef _MSC_VER
+    b->yy_is_interactive = file ? (isatty( _fileno( file ) ) > 0) : 0;
+#else
+    b->yy_is_interactive = file ? (isatty(  fileno( file ) ) > 0) : 0;
+#endif
+
+    errno = oerrno; 
 }
 
 /** Discard all buffered characters. On the next scan, YY_INPUT will be called.
@@ -2354,7 +2359,7 @@ void CMDerror(char *format, ...)
    char tempBuf[BUFMAX];
    va_list args;
    va_start( args, format );
-#ifdef TORQUE_OS_WIN
+#ifdef TORQUE_OS_WIN32
    _vsnprintf( tempBuf, BUFMAX, format, args );
 #else
    vsnprintf( tempBuf, BUFMAX, format, args );

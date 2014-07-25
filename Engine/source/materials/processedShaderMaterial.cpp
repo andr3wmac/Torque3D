@@ -688,7 +688,9 @@ bool ProcessedShaderMaterial::setupPass( SceneRenderState *state, const SceneDat
    }
    else
    {
-      GFX->disableShaders();
+      // andrewmac: D3D9-Refactor
+      GFX->setupGenericShaders();
+      //GFX->disableShaders();
       GFX->setShaderConstBuffer(NULL);
    } 
 

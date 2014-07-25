@@ -20,6 +20,10 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+// Partial refactor by: Anis A. Hireche (C) 2014 - anishireche@gmail.com
+//-----------------------------------------------------------------------------
+
 #ifndef _GFXD3D9CUBEMAP_H_
 #define _GFXD3D9CUBEMAP_H_
 
@@ -28,9 +32,6 @@
 #include "gfx/gfxResource.h"
 #include "gfx/gfxTarget.h"
 
-//**************************************************************************
-// Cube map
-//**************************************************************************
 class GFXD3D9Cubemap : public GFXCubemap
 {
 public:
@@ -48,25 +49,18 @@ public:
    virtual void zombify();
    virtual void resurrect();
 
-protected:
+private:
 
-   friend class GFXPCD3D9TextureTarget;
-   friend class GFX360TextureTarget;
+   friend class GFXD3D9TextureTarget;
    friend class GFXD3D9Device;
 
-   LPDIRECT3DCUBETEXTURE9  mCubeTex;
+   LPDIRECT3DCUBETEXTURE9 mCubeTex;
 
-   static _D3DCUBEMAP_FACES faceList[6];
-   bool mDynamic;
-   U32  mTexSize;
+   U32 mTexSize;
+   U32 mSupportsAutoMips;
    GFXFormat mFaceFormat;
-   
-   void fillCubeTextures( GFXTexHandle *faces, LPDIRECT3DDEVICE9 D3DDevice );
-   void releaseSurfaces();
 
-   /// The callback used to get texture events.
-   /// @see GFXTextureManager::addEventDelegate
-   void _onTextureEvent( GFXTexCallbackCode code );
+   void releaseSurfaces();
 };
 
-#endif // GFXD3D9CUBEMAP
+#endif

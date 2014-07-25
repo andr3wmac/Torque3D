@@ -60,7 +60,9 @@ void FontRenderBatcher::render( F32 rot, const Point2F &offset )
       return;
 
    GFX->setStateBlock(mFontSB);
-   GFX->disableShaders();
+   // andrewmac: D3D9-Refactor
+   GFX->setupGenericShaders();
+   //GFX->disableShaders();
    for(U32 i = 0; i < GFX->getNumSamplers(); i++)
       GFX->setTexture(i, NULL);
 

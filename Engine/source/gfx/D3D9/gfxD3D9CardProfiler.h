@@ -20,19 +20,20 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+// Partial refactor by: Anis A. Hireche (C) 2014 - anishireche@gmail.com
+//-----------------------------------------------------------------------------
+
 #ifndef _GFXD3D9CARDPROFILER_H_
 #define _GFXD3D9CARDPROFILER_H_
 
-
 #include "gfx/gfxCardProfile.h"
+#include "gfx/D3D9/gfxD3D9Device.h"
 
-struct IDirect3DDevice9;
 class GFXD3D9CardProfiler : public GFXCardProfiler
 {
 private:
    typedef GFXCardProfiler Parent;
-
-   IDirect3DDevice9 *mD3DDevice;
    UINT mAdapterOrdinal;
 
 public:

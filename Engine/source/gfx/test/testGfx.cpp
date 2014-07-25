@@ -119,7 +119,7 @@
 //
 //      // Create a device.
 //      GFXAdapter a;
-//      a.mType = Direct3D9;
+//      a.mType = Direct3D11;
 //      a.mIndex = 0;
 //
 //      mDevice = GFXInit::createDevice(&a);
@@ -681,15 +681,16 @@
 //         {
 //            d->setViewport(viewport);
 //            PrimBuild::color4f( 0.0, 1.0, 0.0, 1.0 );
-//            PrimBuild::begin( GFXTriangleFan, 4 );
+//            PrimBuild::begin( GFXTriangleStrip, 4 );
+//
+//            PrimBuild::vertex3f(  1.0, -1.0, 0.0 );
+//
+//            PrimBuild::vertex3f(  1.0,  1.0, 0.0 );
 //
 //            PrimBuild::vertex3f( -1.0, -1.0, 0.0 );
 //
 //            PrimBuild::vertex3f( -1.0,  1.0, 0.0 );
 //
-//            PrimBuild::vertex3f(  1.0,  1.0, 0.0 );
-//
-//            PrimBuild::vertex3f(  1.0, -1.0, 0.0 ); 
 //            PrimBuild::end();
 //            viewport.point.y += 2;
 //         }

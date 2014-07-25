@@ -273,7 +273,8 @@ bool ProcessedCustomMaterial::setupPass( SceneRenderState *state, const SceneDat
    if ( rpd->shader )
       GFX->setShader( rpd->shader );
    else
-      GFX->disableShaders();
+      GFX->setupGenericShaders(); // andrewmac: D3D9-Refactor
+      //GFX->disableShaders();
 
    // Set our textures   
    setTextureStages( state, sgData, pass );   

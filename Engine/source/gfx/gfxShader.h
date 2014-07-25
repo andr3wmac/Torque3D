@@ -240,8 +240,7 @@ protected:
    /// Ordered SamplerNames
    /// We need to store a list of sampler for allow OpenGL to
    /// assign correct location for each sampler.
-   /// GLSL 150 not allow explicit uniform location.
-   /// Only used on OpenGL   
+   /// GLSL 150 not allow explicit uniform location.   
    Vector<String> mSamplerNamesOrdered;
 
    /// The pixel version this is compiled for.
@@ -299,15 +298,6 @@ public:
    virtual ~GFXShader();
 
    ///
-   /// Deprecated. Remove on T3D 4.0
-#ifndef TORQUE_OPENGL
-   bool init(  const Torque::Path &vertFile, 
-               const Torque::Path &pixFile, 
-               F32 pixVersion, 
-               const Vector<GFXShaderMacro> &macros );
-#endif
-
-   ///
    bool init(  const Torque::Path &vertFile, 
                const Torque::Path &pixFile, 
                F32 pixVersion, 
@@ -332,6 +322,9 @@ public:
    /// if the constant doesn't exist at this time.
    virtual GFXShaderConstHandle* getShaderConstHandle( const String& name ) = 0; 
 
+   /// Returns a shader constant handle for the name constant, if the variable doesn't exist NULL is returned.
+   virtual GFXShaderConstHandle* findShaderConstHandle( const String& name ) = 0;
+
    /// Returns the alignment value for constType
    virtual U32 getAlignmentValue(const GFXShaderConstType constType) const = 0;   
 
@@ -345,6 +338,9 @@ public:
    /// Device specific shaders can override this method to return
    /// the shader disassembly.
    virtual bool getDisassembly( String &outStr ) const { return false; }
+
+   /// Returns compiled bytecode
+   virtual bool getCompiled( String &outStr ) const { return false; }
 
    /// Returns the vertex shader file path.
    const String& getVertexShaderFile() const { return mVertexFile.getFullPath(); }

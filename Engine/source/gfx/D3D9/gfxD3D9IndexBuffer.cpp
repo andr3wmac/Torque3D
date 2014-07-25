@@ -20,23 +20,31 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+// Partial refactor by: Anis A. Hireche (C) 2014 - anishireche@gmail.com
+//-----------------------------------------------------------------------------
+
 #include "gfx/D3D9/gfxD3D9Device.h"
-#include "gfx/D3D9/gfxD3D9PrimitiveBuffer.h"
+#include "gfx/D3D9/gfxD3D9EnumTranslate.h"
+#include "gfx/D3D9/gfxD3D9IndexBuffer.h"
 #include "core/util/safeRelease.h"
+
+void GFXD3D9PrimitiveBuffer::prepare()
+{
+	D3D9->_setPrimitiveBuffer(this);
+}
 
 void GFXD3D9PrimitiveBuffer::lock(U32 indexStart, U32 indexEnd, void **indexPtr)
 {
    AssertFatal(!mLocked, "GFXD3D9PrimitiveBuffer::lock - Can't lock a primitive buffer more than once!");
+
    mLocked = true;
    U32 flags=0;
+
    switch(mBufferType)
    {
    case GFXBufferTypeStatic:
-      // flags |= D3DLOCK_DISCARD;
-      break;
-
    case GFXBufferTypeDynamic:
-      // Always discard the content within a locked region.
       flags |= D3DLOCK_DISCARD;
       break;
 
@@ -46,12 +54,12 @@ void GFXD3D9PrimitiveBuffer::lock(U32 indexStart, U32 indexEnd, void **indexPtr)
       AssertFatal(indexEnd < MAX_DYNAMIC_INDICES, "Cannot get more than MAX_DYNAMIC_INDICES in a volatile buffer. Up the constant!");
 
       // Get the primtive buffer
-      mVolatileBuffer = ((GFXD3D9Device*)mDevice)->mDynamicPB;
+      mVolatileBuffer = D3D9->mDynamicPB;
 
       AssertFatal( mVolatileBuffer, "GFXD3D9PrimitiveBuffer::lock - No dynamic primitive buffer was available!");
 
       // We created the pool when we requested this volatile buffer, so assume it exists...
-      if( mVolatileBuffer->mIndexCount + indexEnd > MAX_DYNAMIC_INDICES ) 
+      if(mVolatileBuffer->mIndexCount + indexEnd > MAX_DYNAMIC_INDICES) 
       {
          flags |= D3DLOCK_DISCARD;
          mVolatileStart = indexStart  = 0;
@@ -70,8 +78,12 @@ void GFXD3D9PrimitiveBuffer::lock(U32 indexStart, U32 indexEnd, void **indexPtr)
       break;
    }
 
-   D3D9Assert( ib->Lock(indexStart * sizeof(U16), (indexEnd - indexStart) * sizeof(U16), indexPtr, flags),
-      "GFXD3D9PrimitiveBuffer::lock - Could not lock primitive buffer.");
+    HRESULT hr = ib->Lock(indexStart * sizeof(U16), (indexEnd - indexStart) * sizeof(U16), indexPtr, flags);
+
+	if(FAILED(hr)) 
+	{
+		AssertFatal(false, "GFXD3D9PrimitiveBuffer::lock - Could not lock primitive buffer.");
+	}
 
    #ifdef TORQUE_DEBUG
    
@@ -92,3 +104,50 @@ void GFXD3D9PrimitiveBuffer::lock(U32 indexStart, U32 indexEnd, void **indexPtr)
    #endif // TORQUE_DEBUG
 }
 
+void GFXD3D9PrimitiveBuffer::unlock()
+{
+   #ifdef TORQUE_DEBUG
+   
+      if ( mDebugGuardBuffer )
+      {
+         const U32 guardSize = sizeof( _PBGuardString );
+
+         // First check the guard areas for overwrites.
+         AssertFatal( dMemcmp( mDebugGuardBuffer, _PBGuardString, guardSize ) == 0,
+            "GFXD3D9PrimitiveBuffer::unlock - Caught lock memory underrun!" );
+         AssertFatal( dMemcmp( mDebugGuardBuffer + mLockedSize + guardSize, _PBGuardString, guardSize ) == 0,
+            "GFXD3D9PrimitiveBuffer::unlock - Caught lock memory overrun!" );
+
+         // Copy the debug content down to the real PB.
+         dMemcpy( mLockedBuffer, mDebugGuardBuffer + guardSize, mLockedSize );
+
+         // Cleanup.
+         delete [] mDebugGuardBuffer;
+         mDebugGuardBuffer = NULL;
+         mLockedBuffer = NULL;
+         mLockedSize = 0;
+      }
+
+   #endif // TORQUE_DEBUG
+
+   ib->Unlock();
+   mLocked = false;
+   mIsFirstLock = false;
+   mVolatileBuffer = NULL;
+}
+
+GFXD3D9PrimitiveBuffer::~GFXD3D9PrimitiveBuffer() 
+{
+   if( mBufferType != GFXBufferTypeVolatile )
+   {
+      SAFE_RELEASE( ib );
+   }
+}
+
+void GFXD3D9PrimitiveBuffer::zombify()
+{
+}
+
+void GFXD3D9PrimitiveBuffer::resurrect()
+{
+}

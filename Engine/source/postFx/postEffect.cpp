@@ -1215,7 +1215,8 @@ void PostEffect::process(  const SceneRenderState *state,
       GFX->setShaderConstBuffer( mShaderConsts );
    }
    else
-      GFX->disableShaders();
+      GFX->setupGenericShaders(); // andrewmac: D3D9-Refactor
+      //GFX->disableShaders();
 
    Frustum frustum;
    if ( state )

@@ -19,22 +19,22 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+// Partial refactor by: Anis A. Hireche (C) 2014 - anishireche@gmail.com
+//-----------------------------------------------------------------------------
+
 #ifndef _GFXD3D9STATEBLOCK_H_
 #define _GFXD3D9STATEBLOCK_H_
 
-#ifndef _GFXSTATEBLOCK_H_
+#include "gfx/D3D9/gfxD3D9Device.h"
 #include "gfx/gfxStateBlock.h"
-#endif
 
-struct IDirect3DDevice9;
 class GFXD3D9StateBlock : public GFXStateBlock
 {   
 public:
-   // 
-   // GFXD3D9StateBlock interface
-   //
 
-   GFXD3D9StateBlock(const GFXStateBlockDesc& desc, IDirect3DDevice9 *d3dDevice);
+   GFXD3D9StateBlock(const GFXStateBlockDesc& desc);
    virtual ~GFXD3D9StateBlock();
 
    /// Called by D3D9 device to active this state block.
@@ -61,11 +61,7 @@ public:
 private:
    GFXStateBlockDesc mDesc;
    U32 mCachedHashValue;
-   IDirect3DDevice9 *mD3DDevice;  ///< Handle for D3DDevice
-   // Cached D3D specific things, these are "calculated" from GFXStateBlock
    U32 mColorMask; 
-   U32 mZBias;
-   U32 mZSlopeBias;
 };
 
 typedef StrongRefPtr<GFXD3D9StateBlock> GFXD3D9StateBlockRef;

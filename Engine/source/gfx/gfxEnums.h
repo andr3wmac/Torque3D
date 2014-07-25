@@ -67,7 +67,6 @@ enum GFXPrimitiveType
    GFXLineStrip,
    GFXTriangleList,
    GFXTriangleStrip,
-   GFXTriangleFan,
    GFXPT_COUNT
 };
 
@@ -181,6 +180,7 @@ enum GFXFormat
    // 32 bit texture formats...
    GFXFormatR8G8B8A8,// first in group...
    GFXFormatR8G8B8X8,
+   GFXFormatB8G8R8A8,
    GFXFormatR32F,
    GFXFormatR16G16,
    GFXFormatR16G16F,
@@ -275,10 +275,9 @@ enum GFXBlend
 enum GFXAdapterType 
 {
    OpenGL = 0,
-   Direct3D9,
-   Direct3D8,
+   Direct3D11,
+   Direct3D9 = Direct3D11,
    NullDevice,
-   Direct3D9_360,
    GFXAdapterType_Count
 };
 
@@ -445,11 +444,6 @@ enum GFXRenderState
    GFXRSBlendOpAlpha,
    GFXRenderState_COUNT          ///< Don't use this one, this is a counter
 };
-
-#define GFXCOLORWRITEENABLE_RED     1
-#define GFXCOLORWRITEENABLE_GREEN   2
-#define GFXCOLORWRITEENABLE_BLUE    4
-#define GFXCOLORWRITEENABLE_ALPHA   8
 
 enum GFXTextureStageState 
 {
