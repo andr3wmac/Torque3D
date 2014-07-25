@@ -40,7 +40,7 @@
       new GuiControl() {
          canSaveDynamicFields = "0";
          isContainer = "1";
-         Profile = "ToolsGuiDefaultProfile";
+         Profile = "ToolsGuiEditorProfile";
          HorizSizing = "width";
          VertSizing = "height";
          Position = "0 0";
@@ -698,7 +698,7 @@
             new GuiControl(GuiEditorRegion) {
                canSaveDynamicFields = "0";
                isContainer = "1";
-               Profile = "ToolsGuiDefaultProfile";
+               Profile = "ToolsGuiEditorProfile";
                HorizSizing = "left";
                VertSizing = "top";
                Position = "1 1";
@@ -726,7 +726,7 @@
                new GuiControl(GuiEditorContent) {
                   canSaveDynamicFields = "0";
                   isContainer = "1";
-                  Profile = "ToolsGuiDefaultProfile";
+                  Profile = "ToolsGuiEditorProfile";
                   HorizSizing = "width";
                   VertSizing = "height";
                   Position = "0 0";
@@ -824,7 +824,6 @@
                   columns = "0";
                   rows = "0 338";
                   borderWidth = "1";
-                  borderColor = "207 207 207 207";
                   borderEnable = "dynamic";
                   borderMovable = "dynamic";
                   autoBalance = "1";
@@ -1093,7 +1092,7 @@
                      ChangeChildSizeToFit = "1";
                      ChangeChildPosition = "1";
                      isContainer = "1";
-                     Profile = "ToolsGuiDefaultProfile";
+                     Profile = "ToolsGuiProfile";
                      HorizSizing = "width";
                      VertSizing = "bottom";
                      position = "3 3";
@@ -1137,7 +1136,6 @@
                   columns = "0";
                   rows = "0 338";
                   borderWidth = "1";
-                  borderColor = "207 207 207 207";
                   borderEnable = "dynamic";
                   borderMovable = "dynamic";
                   autoBalance = "1";

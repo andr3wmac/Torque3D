@@ -36,7 +36,7 @@ singleton GuiControlProfile (EditorToolButtonProfile)
 singleton GuiControlProfile (EditorTextProfile)
 {
    fontType = "Arial Bold";
-   fontColor = "0 0 0";
+   fontColor = "196 196 196 255";
    autoSizeWidth = true;
    autoSizeHeight = true;
    category = "Editor";

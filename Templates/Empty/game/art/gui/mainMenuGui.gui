@@ -1,10 +1,10 @@
 //--- OBJECT WRITE BEGIN ---
 %guiContent = new GuiChunkedBitmapCtrl(MainMenuGui) {
-   bitmap = "art/gui/background";
+   bitmap = "core/art/gui/images/background.png";
    useVariable = "0";
    tile = "0";
    position = "0 0";
-   extent = "1024 768";
+   extent = "1280 720";
    minExtent = "8 8";
    horizSizing = "width";
    vertSizing = "height";
@@ -20,9 +20,9 @@
       isDecoy = "0";
 
    new GuiBitmapCtrl(MainMenuAppLogo) {
-      bitmap = "art/gui/Torque-3D-logo.png";
+      bitmap = "art/gui/Torque-3D-logo_alt.png";
       wrap = "0";
-      position = "540 30";
+      position = "796 30";
       extent = "443 139";
       minExtent = "8 2";
       horizSizing = "left";
@@ -39,7 +39,7 @@
          isDecoy = "0";
    };
    new GuiControl() {
-      position = "359 171";
+      position = "487 147";
       extent = "306 425";
       minExtent = "8 2";
       horizSizing = "center";

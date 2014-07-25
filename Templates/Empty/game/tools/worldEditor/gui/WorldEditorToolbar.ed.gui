@@ -579,7 +579,7 @@
             internalName = "worldTransformBtn";
             Enabled = "1";
             isContainer = "0";
-            Profile = "GuiIconProfile";
+            Profile = "ToolsGuiIconButtonProfile";
             HorizSizing = "right";
             VertSizing = "bottom";
             Position = "5 5";
