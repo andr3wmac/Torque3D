@@ -1,61 +1,77 @@
-Torque 3D v3.5.1 - PhysX 3.3 Advanced
-==========================
+Greed v00.00.05a
+-------
 
-Sample Project Available At:
+Changelog :
+-------
 
-https://github.com/andr3wmac/Torque3D-PhysX-Samples
+###### .01a : 95% of physx3 should be working thanks to rextimmy/andr3wmac. ######
+###### .for .01b : new avatar, new weapons, new vehicles.
+###### .02b : the Greed folder was updated to current physx3 from rextimmy, more to come
+###### on physx3.
+###### .03b : re-added default readme, started proper changelog.
+###### .04b : switched theme of torque3d to the DarkUi.
+http://www.garagegames.com/community/resources/view/22590
+###### .05a  : alpha : started testing fps performances on d3d9-refactor. (avg fps on default : 103.45)
+----------------
+This is a fork of the MIT Licensed Torque 3D (see http://www.garagegames.com/products/torque-3d).
 
-Setting up PhysX 3.3 using the Torque 3D Project Manager
-------------------------------------------
- - You can find a pre compiled binary of the Torque3D Project Manager that supports PhysX 3.3 here: http://www.narivtech.com/downloads/T3DProjectManager-2-1-devel.zip and source code here: https://github.com/rextimmy/Torque3D-ProjectManager/tree/development
- - For the Project Manager to find PhysX 3.3 SDK you have two options 1)Create an environment variable called TORQUE_PHYSX3_PATH and have that pointing to the location you installed the SDK 2)Place the SDK into a folder called "Program Files"/NVIDIA Corporation/NVIDIA PhysX SDK/v3.3.0_win
- - Simply choose PhysX 3.3 physics from the modules list in the project manager and everything should be automatically taken care of.
+More Information
+----------------
 
-Setting up PhysX 3.3 manually
-------------------------------------------
+* This repository is there for the purpose of developping the gameplay engine behind TheFunZ and h-72.
+* 
+* Torque 3D [GitHub Wiki](https://github.com/GarageGames/Torque3D/wiki)
+* Documentation is in the [Torque3D-Documentation](https://github.com/GarageGames/Torque3D-Documentation) GitHub repo.
+* Project Manager is in the [Torque3D-ProjectManager](https://github.com/GarageGames/Torque3D-ProjectManager) GitHub repo.
+* T3D [Beginner's Forum](http://www.garagegames.com/community/forums/73)
+* T3D [Professional Forum](http://www.garagegames.com/community/forums/63)
+* Torque 3D [FPS Tutorial](http://www.garagegames.com/products/torque-3d/fps#/1-setup/1)
+* GarageGames [Store](http://www.garagegames.com/products)
+* GarageGames [Professional Services](http://services.garagegames.com/)
 
- - You will need the latest SDK from NVIDIA. This requires signing up for their developer program. If you don't already have access to their developer site then sign up now as access is not immediate.
- - Set up a standard Torque3D project, don't include any PhysX or Bullet, just regular Torque Physics in project manager options (if you're using it)
- - Generate Projects and open the source code in Visual Studio ( or the IDE of your choice )
- - In the solution explorer in the DLL for your project you should find Source Files -> Engine -> T3D -> physics
- - Add a new filter "physx3" and then right click on it and add existing item
- - Add all the files found under Engine\Source\T3D\physics\physx3\
- - Now you need to add the PhysX SDK. 
- - Under the properties for the DLL project, under Linker -> Additional Library Directories add the lib\win32 directory for the PhysX 3.3 SDK. For example, mine is in: C:\Program Files (x86)\NVIDIA Corporation\NVIDIA PhysX SDK\v3.3.0_win\Lib\win32
- - In the same window under C/C++ you should see Additional Include Directories, you need to add the Include directory for the PhysX 3.3 SDK. For example, mine is in: C:\Program Files %28x86%29\NVIDIA Corporation\NVIDIA PhysX SDK\v3.3.0_win\Include
- - You should now be able to compile now without any issues.
-
-The following libraries will also be needed:
- 
-Release , Debug
-
- - PhysX3_x86.lib,PhysX3CHECKED_x86.lib
- - PhysX3Common_x86.lib,PhysX3CommonCHECKED_x86.lib
- - PhysX3Extensions.lib,PhysX3ExtensionsCHECKED.lib
- - PhysX3Cooking_x86.lib,PhysX3CookingCHECKED_x86.lib
- - PxTask.lib,PxTaskCHECKED.lib
- - PhysX3CharacterKinematic_x86.lib,PhysX3CharacterKinematicCHECKED_x86.lib
- - PhysXVisualDebuggerSDK.lib, PhysXVisualDebuggerSDKCHECKED.lib
- - PhysXProfileSDK.lib, PhysXProfileSDKCHECKED.lib
-
-With debug build feel free to change CHECKED to DEBUG if you prefer but it will still require the CHECKED dll's though.
- 
-Running a project
+Creating a New Project Based on a Template
 ------------------------------------------
 
- - To run a release project you will need the following from the SDK bin folder:
-   1. PhysX3_x86.dll
-   2. PhysX3CharacterKinematic_x86.dll
-   3. PhysX3Common_x86.dll
-   4. PhysX3Cooking_x86.dll
-   
- - To run a debug project you will need the following from the SDK bin folder:
-   1. PhysX3CHECKED_x86.dll
-   2. nvToolsExt32_1.dll
-   3. PhysX3CookingCHECKED_x86.dll
-   4. PhysX3CommonCHECKED_x86.dll
-   5. PhysX3CharacterKinematicCHECKED_x86.dll
- 
-Place these files along side the exe and this should get you up and running.
+The templates included with Torque 3D provide a starting point for your project.  
+Once we have created our own project based on a template, we may then compile an 
+executable and begin work on our game.  
+The following templates are included in this version of Torque 3D:
 
+* Empty
+* Full
+
+### Using PhysX ###
+As of 0.3b, basic PhysX 3.3 is integrated as a module.
+todo : GMK (asap).
+
+### Using the Project Manager to Create a Project ###
+
+The *Project Manager* may be used to create a new game project based on one of the templates that are included with Greed. 
+For now only base Full and Empty templates are available, altough, fps tutorial is probably useable.
+
+Greed License
+-------
+Greed is MIT Licensed as the original Torque 3D software is.
+-------
+Hénarès Sébastien aka dragutux / FrantiK.
+
+Original Copyright Torque 3D MIT 3.5 (c) 2012 GarageGames, LLC
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to
+deal in the Software without restriction, including without limitation the
+rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+sell copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+IN THE SOFTWARE.
 
