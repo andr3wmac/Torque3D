@@ -1641,10 +1641,11 @@ void ReflectCubeFeatHLSL::processVert( Vector<ShaderComponent*> &componentList,
    // If a base or bump tex is present in the material, but not in the
    // current pass - we need to add one to the current pass to use
    // its alpha channel as a gloss map.  Here we just need the tex coords.
-   if( !fd.features[MFT_DiffuseMap] &&
+   if( !fd.features[MFT_DiffuseMap] && !fd.features[MFT_DeferredDiffuseMap] &&
        !fd.features[MFT_NormalMap] )
    {
       if( fd.materialFeatures[MFT_DiffuseMap] ||
+          fd.features[MFT_DeferredDiffuseMap] ||
           fd.materialFeatures[MFT_NormalMap] )
       {
          // find incoming texture var
@@ -1837,7 +1838,7 @@ ShaderFeature::Resources ReflectCubeFeatHLSL::getResources( const MaterialFeatur
 {
    Resources res; 
 
-   if( fd.features[MFT_DiffuseMap] ||
+   if( fd.features[MFT_DiffuseMap] || fd.features[MFT_DeferredDiffuseMap] ||
        fd.features[MFT_NormalMap] )
    {
       res.numTex = 1;
@@ -1860,11 +1861,12 @@ void ReflectCubeFeatHLSL::setTexData(  Material::StageData &stageDat,
    // set up a gloss map if one is not present in the current pass
    // but is present in the current material stage
    if( !passData.mFeatureData.features[MFT_DiffuseMap] &&
+       !passData.mFeatureData.features[MFT_DeferredDiffuseMap] &&
        !passData.mFeatureData.features[MFT_NormalMap] )
    {
       GFXTextureObject *tex = stageDat.getTex( MFT_DetailMap );
       if (  tex &&
-            stageFeatures.features[MFT_DiffuseMap] )
+            (stageFeatures.features[MFT_DiffuseMap] || stageFeatures.features[MFT_DeferredDiffuseMap]) )
          passData.mTexSlot[ texIndex++ ].texObject = tex;
       else
       {
