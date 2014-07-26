@@ -209,6 +209,12 @@
 #endif
 #endif
 
+// Physx 3.3 - nVidia wants either _DEBUG or NDEBUG to be set
+// - andrewmac
+#ifndef _DEBUG
+#define NDEBUG
+#endif
+
 
 #endif // _TORQUECONFIG_H_
 

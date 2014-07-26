@@ -44,6 +44,7 @@ public:
    virtual PhysicsCollision* createCollision();
    virtual PhysicsBody* createBody();
    virtual PhysicsPlayer* createPlayer();
+   virtual PhysicsCloth* createCloth(TSShapeInstance* shapeInst, const MatrixF &transform);
    virtual bool isSimulationEnabled() const;
    virtual void enableSimulation( const String &worldName, bool enable );
    virtual void setTimeScale( const F32 timeScale );

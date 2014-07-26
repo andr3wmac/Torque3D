@@ -56,6 +56,9 @@ protected:
    /// the mass center on a dynamic.
    btCompoundShape *mCompound;
 
+   /// The body flags set at creation time.
+   U32 mBodyFlags;
+
    ///
    F32 mMass;
 
@@ -111,6 +114,8 @@ public:
                               F32 staticFriction );
    virtual void applyCorrection( const MatrixF &xfm );
    virtual void applyImpulse( const Point3F &origin, const Point3F &force );
+
+   virtual void moveKinematicTo( const MatrixF &xfm );
 };
 
 #endif // _T3D_PHYSICS_BTBODY_H_

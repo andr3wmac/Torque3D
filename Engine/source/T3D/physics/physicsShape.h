@@ -112,6 +112,8 @@ public:
    // The density of this object used for water buoyancy effects.
    F32 buoyancyDensity;
 
+   // Continuous Collision Detection support,ignored if not supported by underlying plugin
+   bool ccdEnabled;
 
    enum SimType
    {
@@ -149,7 +151,8 @@ class PhysicsShape : public GameBase
    typedef GameBase Parent;
 
 protected:
-
+   /// Datablock
+   PhysicsShapeData *mDataBlock;
    /// The abstracted physics actor.
    PhysicsBody *mPhysicsRep;
 
@@ -228,9 +231,6 @@ public:
    virtual ~PhysicsShape();
 
    DECLARE_CONOBJECT( PhysicsShape );
-
-   /// Returns the PhysicsShapeData datablock.
-   PhysicsShapeData* getDataBlock() { return static_cast<PhysicsShapeData*>( Parent::getDataBlock() ); }
 
    // SimObject
    static void consoleInit();

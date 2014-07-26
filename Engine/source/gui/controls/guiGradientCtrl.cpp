@@ -332,59 +332,61 @@ void GuiGradientCtrl::drawBlendRangeBox(RectI &bounds, bool vertical, Vector<Col
 	
 	if(colorRange.size() == 1) // Only one color to draw
 	{
-		PrimBuild::begin( GFXTriangleFan, 4 );
+		PrimBuild::begin( GFXTriangleStrip, 4 );
 
 		PrimBuild::color( colorRange.first().swatch->getColor() );
 		PrimBuild::vertex2i( l, t );
-		PrimBuild::vertex2i( l, b );
+		PrimBuild::vertex2i( r, t );
 
 		PrimBuild::color( colorRange.first().swatch->getColor() );
+		PrimBuild::vertex2i( l, b );
 		PrimBuild::vertex2i( r, b );
-		PrimBuild::vertex2i( r, t );
 
 		PrimBuild::end();
 	}
 	else
 	{
-		PrimBuild::begin( GFXTriangleFan, 4 );
+		PrimBuild::begin( GFXTriangleStrip, 4 );
 
 		PrimBuild::color( colorRange.first().swatch->getColor() );
 		PrimBuild::vertex2i( l, t );
-		PrimBuild::vertex2i( l, b );
+		PrimBuild::vertex2i( l + colorRange.first().swatch->getPosition().x, t );
 
 		PrimBuild::color( colorRange.first().swatch->getColor() );
+		PrimBuild::vertex2i( l, b );
 		PrimBuild::vertex2i( l + colorRange.first().swatch->getPosition().x, b );
-		PrimBuild::vertex2i( l + colorRange.first().swatch->getPosition().x, t );
 
 		PrimBuild::end();
 
 		for( U16 i = 0;i < colorRange.size() - 1; i++ ) 
 		{
-			PrimBuild::begin( GFXTriangleFan, 4 );
+			PrimBuild::begin( GFXTriangleStrip, 4 );
 			if (!vertical)  // Horizontal (+x)
 			{
 				// First color
 				PrimBuild::color( colorRange[i].swatch->getColor() );
 				PrimBuild::vertex2i( l + colorRange[i].swatch->getPosition().x, t );
-				PrimBuild::vertex2i( l + colorRange[i].swatch->getPosition().x, b );
+				PrimBuild::color( colorRange[i+1].swatch->getColor() );
+				PrimBuild::vertex2i( l + colorRange[i+1].swatch->getPosition().x, t );
 				
 				// First color
+				PrimBuild::color( colorRange[i].swatch->getColor() );
+				PrimBuild::vertex2i( l + colorRange[i].swatch->getPosition().x, b );
 				PrimBuild::color( colorRange[i+1].swatch->getColor() );
 				PrimBuild::vertex2i( l + colorRange[i+1].swatch->getPosition().x, b );
-				PrimBuild::vertex2i( l + colorRange[i+1].swatch->getPosition().x, t );
 			}
 			PrimBuild::end();
 		}
 
-		PrimBuild::begin( GFXTriangleFan, 4 );
+		PrimBuild::begin( GFXTriangleStrip, 4 );
 
 		PrimBuild::color( colorRange.last().swatch->getColor() );
 		PrimBuild::vertex2i( l + colorRange.last().swatch->getPosition().x, t );
-		PrimBuild::vertex2i( l + colorRange.last().swatch->getPosition().x, b );
+		PrimBuild::vertex2i( r, t );
 		
 		PrimBuild::color( colorRange.last().swatch->getColor() );
+		PrimBuild::vertex2i( l + colorRange.last().swatch->getPosition().x, b );
 		PrimBuild::vertex2i( r, b );
-		PrimBuild::vertex2i( r, t );
 
 		PrimBuild::end();
 	}

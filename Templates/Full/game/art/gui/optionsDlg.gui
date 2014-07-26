@@ -117,7 +117,7 @@
                fitParentWidth = "1";
                clipColumnText = "0";
                position = "1 1";
-               extent = "329 780";
+               extent = "332 416";
                minExtent = "8 8";
                horizSizing = "right";
                vertSizing = "bottom";
@@ -179,47 +179,49 @@
             canSave = "1";
             canSaveDynamicFields = "0";
          };
-		 
-         new GuiSliderCtrl(OptMouseSensitivity) {  
-            range = "0.02 2";  
-            ticks = "10";  
-            value = "0.75";  
-            isContainer = "0";  
-            Profile = "GuiSliderProfile";  
-            HorizSizing = "right";  
-            VertSizing = "bottom";  
-            position = "105 182";  
-            Extent = "244 18";  
-            MinExtent = "8 2";  
-            canSave = "1";  
-            Visible = "1";  
-            Command = "OptMouseSetSensitivity(OptMouseSensitivity.value);";  
-            tooltipprofile = "GuiToolTipProfile";  
-            hovertime = "1000";  
-            canSaveDynamicFields = "0";  
-         };  
-         new GuiTextCtrl() {  
-            text = "Mouse Sensitivity:"; 
-            maxLength = "255";  
-            Margin = "0 0 0 0";  
-            Padding = "0 0 0 0";  
-            AnchorTop = "1";  
-            AnchorBottom = "0";  
-            AnchorLeft = "1";  
-            AnchorRight = "0";  
-            isContainer = "0";  
-            Profile = "GuiTextProfile";  
-            HorizSizing = "right";  
-            VertSizing = "bottom";  
-            position = "15 182";  
-            Extent = "85 18";  
-            MinExtent = "8 8";  
-            canSave = "1";  
-            Visible = "1";  
-            tooltipprofile = "GuiToolTipProfile";  
-            hovertime = "1000";  
-            canSaveDynamicFields = "0";  
-         };  
+         new GuiSliderCtrl(OptMouseSensitivity) {
+            range = "0.02 2";
+            ticks = "10";
+            snap = "0";
+            value = "1";
+            position = "105 182";
+            extent = "244 18";
+            minExtent = "8 2";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            profile = "GuiSliderProfile";
+            visible = "1";
+            active = "1";
+            command = "OptMouseSetSensitivity(OptMouseSensitivity.value);";
+            tooltipProfile = "GuiToolTipProfile";
+            hovertime = "1000";
+            isContainer = "0";
+            canSave = "1";
+            canSaveDynamicFields = "0";
+         };
+         new GuiTextCtrl() {
+            text = "Mouse Sensitivity:";
+            maxLength = "255";
+            margin = "0 0 0 0";
+            padding = "0 0 0 0";
+            anchorTop = "1";
+            anchorBottom = "0";
+            anchorLeft = "1";
+            anchorRight = "0";
+            position = "15 182";
+            extent = "85 18";
+            minExtent = "8 8";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            profile = "GuiTextProfile";
+            visible = "1";
+            active = "1";
+            tooltipProfile = "GuiToolTipProfile";
+            hovertime = "1000";
+            isContainer = "0";
+            canSave = "1";
+            canSaveDynamicFields = "0";
+         };
       };
       new GuiBitmapBorderCtrl() {
          position = "9 55";
@@ -286,7 +288,7 @@
             sbUsesNAColor = "0";
             reverseTextList = "0";
             bitmapBounds = "16 16";
-            text = "Null";
+            text = "OpenAL";
             maxLength = "255";
             margin = "0 0 0 0";
             padding = "0 0 0 0";
@@ -336,7 +338,7 @@
             sbUsesNAColor = "0";
             reverseTextList = "0";
             bitmapBounds = "16 16";
-            text = "SFX Null Device";
+            text = "ASUS Xonar D2X Audio Device";
             maxLength = "255";
             margin = "0 0 0 0";
             padding = "0 0 0 0";
@@ -687,7 +689,7 @@
             sbUsesNAColor = "0";
             reverseTextList = "0";
             bitmapBounds = "16 16";
-            text = "ATI Radeon HD 5700 Series (D3D9)";
+            text = "NVIDIA GeForce GTX 660 Ti (D3D9)";
             maxLength = "255";
             margin = "0 0 0 0";
             padding = "0 0 0 0";
@@ -695,8 +697,8 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "88 8";
-            extent = "258 18";
+            position = "89 8";
+            extent = "252 18";
             minExtent = "8 8";
             horizSizing = "right";
             vertSizing = "bottom";
@@ -714,7 +716,7 @@
             sbUsesNAColor = "0";
             reverseTextList = "0";
             bitmapBounds = "16 16";
-            text = "1024 x 768  (4:3)";
+            text = "1768 x 992  (16:9)";
             maxLength = "255";
             margin = "0 0 0 0";
             padding = "0 0 0 0";
@@ -722,7 +724,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "67 35";
+            position = "89 35";
             extent = "127 18";
             minExtent = "8 8";
             horizSizing = "right";
@@ -747,7 +749,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "207 35";
+            position = "239 35";
             extent = "45 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -774,7 +776,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "252 35";
+            position = "292 35";
             extent = "49 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -799,7 +801,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "21 91";
+            position = "11 89";
             extent = "62 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -818,7 +820,7 @@
             sbUsesNAColor = "0";
             reverseTextList = "0";
             bitmapBounds = "16 16";
-            text = "Low";
+            text = "Custom";
             maxLength = "255";
             margin = "0 0 0 0";
             padding = "0 0 0 0";
@@ -826,7 +828,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "90 91";
+            position = "90 89";
             extent = "78 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -848,7 +850,7 @@
             sbUsesNAColor = "0";
             reverseTextList = "0";
             bitmapBounds = "16 16";
-            text = "Low";
+            text = "Normal";
             maxLength = "255";
             margin = "0 0 0 0";
             padding = "0 0 0 0";
@@ -856,7 +858,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "90 118";
+            position = "90 115";
             extent = "78 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -882,7 +884,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "11 118";
+            position = "11 115";
             extent = "77 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -901,7 +903,7 @@
             sbUsesNAColor = "0";
             reverseTextList = "0";
             bitmapBounds = "16 16";
-            text = "Low";
+            text = "Custom";
             maxLength = "255";
             margin = "0 0 0 0";
             padding = "0 0 0 0";
@@ -909,7 +911,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "90 143";
+            position = "90 141";
             extent = "78 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -935,7 +937,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "11 143";
+            position = "11 140";
             extent = "73 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -958,7 +960,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "191 91";
+            position = "187 89";
             extent = "73 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -984,7 +986,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "263 91";
+            position = "263 89";
             extent = "78 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -1010,7 +1012,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "186 118";
+            position = "187 115";
             extent = "77 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -1029,7 +1031,7 @@
             sbUsesNAColor = "0";
             reverseTextList = "0";
             bitmapBounds = "16 16";
-            text = "Low";
+            text = "High";
             maxLength = "255";
             margin = "0 0 0 0";
             padding = "0 0 0 0";
@@ -1037,7 +1039,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "263 118";
+            position = "263 115";
             extent = "78 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -1117,7 +1119,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "22 167";
+            position = "11 165";
             extent = "105 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -1144,7 +1146,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "123 167";
+            position = "123 166";
             extent = "45 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -1186,7 +1188,7 @@
             groupNum = "-1";
             buttonType = "PushButton";
             useMouseEvents = "0";
-            position = "205 152";
+            position = "231 157";
             extent = "110 27";
             minExtent = "8 2";
             horizSizing = "right";
@@ -1206,6 +1208,7 @@
             sbUsesNAColor = "0";
             reverseTextList = "0";
             bitmapBounds = "16 16";
+            text = "4x";
             maxLength = "255";
             margin = "0 0 0 0";
             padding = "0 0 0 0";
@@ -1230,7 +1233,7 @@
             canSaveDynamicFields = "0";
          };
          new GuiTextCtrl() {
-            text = "Anti-aliasing";
+            text = "Anti-aliasing:";
             maxLength = "255";
             margin = "0 0 0 0";
             padding = "0 0 0 0";
@@ -1238,7 +1241,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "191 62";
+            position = "187 62";
             extent = "73 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -1272,7 +1275,7 @@
                range = "0.001 2.2";
                ticks = "0";
                snap = "0";
-               value = "1";
+               value = "1.01527";
                position = "76 -1";
                extent = "268 15";
                minExtent = "8 2";
@@ -1297,7 +1300,7 @@
                anchorBottom = "0";
                anchorLeft = "1";
                anchorRight = "0";
-               position = "22 -4";
+               position = "12 -4";
                extent = "105 18";
                minExtent = "8 2";
                horizSizing = "right";

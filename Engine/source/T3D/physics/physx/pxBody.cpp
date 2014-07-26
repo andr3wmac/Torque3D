@@ -27,6 +27,7 @@
 #include "T3D/physics/physX/pxCasts.h"
 #include "T3D/physics/physX/pxWorld.h"
 #include "T3D/physics/physX/pxCollision.h"
+#include "console/console.h"
 
 
 PxBody::PxBody() :
@@ -372,6 +373,21 @@ void PxBody::setTransform( const MatrixF &transform )
       mActor->setAngularVelocity( NxVec3( 0, 0, 0 ) );
       mActor->wakeUp();
    }
+}
+
+void PxBody::moveKinematicTo( const MatrixF &transform )
+{
+   AssertFatal( mActor, "BtBody::moveKinematicTo - The actor is null!" );
+   const bool isKinematic = mBodyFlags & BF_KINEMATIC;
+   if (!isKinematic )
+   {
+      Con::errorf("PxBody::moveKinematicTo is only for kinematic bodies.");
+      return;
+   }
+
+   NxMat34 xfm;
+   xfm.setRowMajor44( transform );
+   mActor->moveGlobalPose( xfm );
 }
 
 void PxBody::applyCorrection( const MatrixF &transform )

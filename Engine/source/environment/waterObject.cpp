@@ -825,22 +825,22 @@ void WaterObject::drawUnderwaterFilter( SceneRenderState *state )
    GFXVertexBufferHandle<GFXVertexPC> verts( GFX, 4, GFXBufferTypeVolatile );
    verts.lock();
 
-   verts[0].point.set( -1.0 - copyOffsetX, -1.0 + copyOffsetY, 0.0 );
+   verts[0].point.set( 1.0 - copyOffsetX, -1.0 + copyOffsetY, 0.0 );
    verts[0].color = mUnderwaterColor;
 
-   verts[1].point.set( -1.0 - copyOffsetX, 1.0 + copyOffsetY, 0.0 );
+   verts[1].point.set( 1.0 - copyOffsetX, 1.0 + copyOffsetY, 0.0 );
    verts[1].color = mUnderwaterColor;
 
-   verts[2].point.set( 1.0 - copyOffsetX, 1.0 + copyOffsetY, 0.0 );
+   verts[2].point.set( -1.0 - copyOffsetX, -1.0 + copyOffsetY, 0.0 );
    verts[2].color = mUnderwaterColor;
 
-   verts[3].point.set( 1.0 - copyOffsetX, -1.0 + copyOffsetY, 0.0 );
+   verts[3].point.set( -1.0 - copyOffsetX, 1.0 + copyOffsetY, 0.0 );
    verts[3].color = mUnderwaterColor;
 
    verts.unlock();
 
    GFX->setVertexBuffer( verts );
-   GFX->drawPrimitive( GFXTriangleFan, 0, 2 );
+   GFX->drawPrimitive( GFXTriangleStrip, 0, 2 );
 
    // reset states / transforms
    GFX->setProjectionMatrix( proj );

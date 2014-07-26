@@ -124,9 +124,8 @@ namespace
       desc.setCullMode(GFXCullNone);
       desc.setZReadWrite(false);
       desc.setBlend(true, GFXBlendSrcAlpha, GFXBlendInvSrcAlpha);
-      GFX->setupGenericShaders(); // D3D9Refractor fix  
       GFX->setStateBlockByDesc( desc );
-
+	  GFX->setupGenericShaders();
       GFX->drawPrimitive( GFXTriangleStrip, 0, 2 );
    }
 }

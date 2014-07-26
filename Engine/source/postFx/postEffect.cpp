@@ -480,11 +480,6 @@ void PostEffect::_updateScreenGeometry(   const Frustum &frustum,
 
    PFXVertex *vert = outVB->lock();
 
-   vert->point.set( -1.0, -1.0, 0.0 );
-   vert->texCoord.set( 0.0f, 1.0f );
-   vert->wsEyeRay = frustumPoints[Frustum::FarBottomLeft] - cameraOffsetPos;
-   vert++;
-
    vert->point.set( -1.0, 1.0, 0.0 );
    vert->texCoord.set( 0.0f, 0.0f );
    vert->wsEyeRay = frustumPoints[Frustum::FarTopLeft] - cameraOffsetPos;
@@ -493,6 +488,11 @@ void PostEffect::_updateScreenGeometry(   const Frustum &frustum,
    vert->point.set( 1.0, 1.0, 0.0 );
    vert->texCoord.set( 1.0f, 0.0f );
    vert->wsEyeRay = frustumPoints[Frustum::FarTopRight] - cameraOffsetPos;
+   vert++;
+
+   vert->point.set( -1.0, -1.0, 0.0 );
+   vert->texCoord.set( 0.0f, 1.0f );
+   vert->wsEyeRay = frustumPoints[Frustum::FarBottomLeft] - cameraOffsetPos;
    vert++;
 
    vert->point.set( 1.0, -1.0, 0.0 );
@@ -1209,14 +1209,13 @@ void PostEffect::process(  const SceneRenderState *state,
    // Setup the shader and constants.
    if ( mShader )
    {
+      GFX->setShader( mShader );
       _setupConstants( state );
 
-      GFX->setShader( mShader );
       GFX->setShaderConstBuffer( mShaderConsts );
    }
    else
-      GFX->setupGenericShaders(); // andrewmac: D3D9-Refactor
-      //GFX->disableShaders();
+      GFX->setupGenericShaders();
 
    Frustum frustum;
    if ( state )
@@ -1235,7 +1234,7 @@ void PostEffect::process(  const SceneRenderState *state,
 
    // Draw it.
    GFX->setVertexBuffer( vb );
-   GFX->drawPrimitive( GFXTriangleFan, 0, 2 );
+   GFX->drawPrimitive( GFXTriangleStrip, 0, 2 );
 
    // Allow PostEffecVis to hook in.
    PFXVIS->onPFXProcessed( this );

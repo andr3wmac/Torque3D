@@ -35,7 +35,7 @@ singleton GuiControlProfile (GuiMatEdRightJustifyProfile)
    fontSize = 14;
    fontCharset = ANSI;
 
-   fontColor = "0 0 0";
+   fontColor = "196 196 196 255";
    
    justify = "right";
    category = "Editor";
@@ -63,7 +63,7 @@ singleton GuiControlProfile(GuiMatEdPopUpMenuProfile)
 
 singleton GuiControlProfile (MatEdCenteredTextProfile)
 {
-   fontColor = "0 0 0";
+   fontColor = "196 196 196 255";
    justify = "center";
    category = "Editor";
 };

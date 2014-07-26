@@ -336,7 +336,7 @@ function ShapeEditorPlugin::initSettings( %this )
    EditorSettings.beginGroup( "ShapeEditor", true );
 
    // Display options
-   EditorSettings.setDefaultValue( "BackgroundColor",    "0 0 0 100" );
+   EditorSettings.setDefaultValue( "BackgroundColor",    "0 0 0 240" );
    EditorSettings.setDefaultValue( "HighlightMaterial", 1 );
    EditorSettings.setDefaultValue( "ShowNodes", 1 );
    EditorSettings.setDefaultValue( "ShowBounds", 0 );

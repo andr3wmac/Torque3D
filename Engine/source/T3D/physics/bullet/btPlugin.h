@@ -53,6 +53,7 @@ public:
    virtual PhysicsWorld* getWorld( const String &worldName ) const;
    virtual PhysicsWorld* getWorld() const;
    virtual U32 getWorldCount() const;
+   virtual PhysicsCloth* createCloth(TSShapeInstance* shapeInst, const MatrixF &transform);
 };
 
 #endif // _T3D_PHYSICS_PXPLUGIN_H_

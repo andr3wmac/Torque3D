@@ -24,8 +24,8 @@
 // D3D11 layer created by: Anis A. Hireche (C) 2014 - anishireche@gmail.com
 //-----------------------------------------------------------------------------
 
-#ifndef _GFXD3D11VERTEXBUFFER_H_
-#define _GFXD3D11VERTEXBUFFER_H_
+#ifndef _GFXD3D_VERTEXBUFFER_H_
+#define _GFXD3D_VERTEXBUFFER_H_
 
 #include "gfx/D3D11/gfxD3D11Device.h"
 #include "core/util/safeDelete.h"

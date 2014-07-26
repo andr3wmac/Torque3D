@@ -42,6 +42,8 @@
 #include "T3D/physics/physicsCommon.h"
 #endif
 
+#include "T3D/physics/physicsCloth.h"
+#include "ts/tsShapeInstance.h"
 
 class Player;
 class SceneRenderState;
@@ -52,7 +54,7 @@ class PhysicsBody;
 class PhysicsWorld;
 class PhysicsPlayer;
 class PhysicsCollision;
-
+class PhysicsMaterial;
 
 typedef Delegate<PhysicsObject*( const SceneObject *)> CreatePhysicsObjectFn; 
 typedef Map<StringNoCase, CreatePhysicsObjectFn> CreateFnMap;
@@ -130,6 +132,11 @@ public:
    virtual void destroyWorld( const String &worldName ) = 0;
 
    virtual PhysicsWorld* getWorld( const String &worldName ) const = 0;
+
+   // andrewmac: Cloth
+   virtual PhysicsCloth* createCloth(TSShapeInstance* shapeInst, const MatrixF &transform) = 0;
+
+   virtual PhysicsMaterial* createMaterial(const F32 restitution,const F32 staticFriction,const F32 dynamicFritction)=0;
 
 protected:
 

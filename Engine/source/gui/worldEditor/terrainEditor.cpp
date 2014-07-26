@@ -1431,14 +1431,15 @@ void TerrainEditor::renderSelection( const Selection & sel, const ColorF & inCol
 
          GFXVertexPC *verts = &(vertexBuffer[i * 5]);
 
-         verts[0].point = wPos + Point3F(-squareSize, -squareSize, 0);
+         verts[0].point = wPos + Point3F(-squareSize,  squareSize, 0);
          verts[0].color = iColor;
-         verts[1].point = wPos + Point3F( squareSize, -squareSize, 0);
+         verts[1].point = wPos + Point3F( squareSize,  squareSize, 0);
          verts[1].color = iColor;
-         verts[2].point = wPos + Point3F( squareSize,  squareSize, 0);
+         verts[2].point = wPos + Point3F(-squareSize, -squareSize, 0);
          verts[2].color = iColor;
-         verts[3].point = wPos + Point3F(-squareSize,  squareSize, 0);
+         verts[3].point = wPos + Point3F( squareSize, -squareSize, 0);
          verts[3].color = iColor;
+
          verts[4].point = verts[0].point;
          verts[4].color = iColor;
       }
@@ -1516,7 +1517,7 @@ void TerrainEditor::renderSelection( const Selection & sel, const ColorF & inCol
 
    if(renderFill)
       for(U32 i=0; i < sel.size(); i++)
-         GFX->drawPrimitive( GFXTriangleFan, i*5, 4);
+         GFX->drawPrimitive( GFXTriangleStrip, i*5, 4);
 
    if(renderFrame)
       for(U32 i=0; i < sel.size(); i++)
@@ -1586,39 +1587,38 @@ void TerrainEditor::renderBorder()
       for(U32 i = 0; i < 2; i++)
       {
          //
-         if(i){ PrimBuild::color(a); PrimBuild::begin( GFXTriangleFan, 4 ); } else { PrimBuild::color(b); PrimBuild::begin( GFXLineStrip, 5 ); }
-
+         if(i){ PrimBuild::color(a); PrimBuild::begin( GFXTriangleStrip, 4 ); } else { PrimBuild::color(b); PrimBuild::begin( GFXLineStrip, 5 ); }
+         PrimBuild::vertex3f(min.x, min.y, height);
+         PrimBuild::vertex3f(max.x, min.y, height);
          PrimBuild::vertex3f(min.x, min.y, 0);
          PrimBuild::vertex3f(max.x, min.y, 0);
-         PrimBuild::vertex3f(max.x, min.y, height);
-         PrimBuild::vertex3f(min.x, min.y, height);
          if(!i) PrimBuild::vertex3f( min.x, min.y, 0.f );
          PrimBuild::end();
 
          //
-         if(i){ PrimBuild::color(a); PrimBuild::begin( GFXTriangleFan, 4 ); } else { PrimBuild::color(b); PrimBuild::begin( GFXLineStrip, 5 ); }
+         if(i){ PrimBuild::color(a); PrimBuild::begin( GFXTriangleStrip, 4 ); } else { PrimBuild::color(b); PrimBuild::begin( GFXLineStrip, 5 ); }
+         PrimBuild::vertex3f(min.x, max.y, height);
+         PrimBuild::vertex3f(max.x, max.y, height);
          PrimBuild::vertex3f(min.x, max.y, 0);
          PrimBuild::vertex3f(max.x, max.y, 0);
-         PrimBuild::vertex3f(max.x, max.y, height);
-         PrimBuild::vertex3f(min.x, max.y, height);
          if(!i) PrimBuild::vertex3f( min.x, min.y, 0.f );
          PrimBuild::end();
 
          //
-         if(i){ PrimBuild::color(a); PrimBuild::begin( GFXTriangleFan, 4 ); } else { PrimBuild::color(b); PrimBuild::begin( GFXLineStrip, 5 ); }
+         if(i){ PrimBuild::color(a); PrimBuild::begin( GFXTriangleStrip, 4 ); } else { PrimBuild::color(b); PrimBuild::begin( GFXLineStrip, 5 ); }
+         PrimBuild::vertex3f(min.x, min.y, height);
+         PrimBuild::vertex3f(min.x, max.y, height);
          PrimBuild::vertex3f(min.x, min.y, 0);
          PrimBuild::vertex3f(min.x, max.y, 0);
-         PrimBuild::vertex3f(min.x, max.y, height);
-         PrimBuild::vertex3f(min.x, min.y, height);
          if(!i) PrimBuild::vertex3f( min.x, min.y, 0.f );
          PrimBuild::end();
 
          //
-         if(i){ PrimBuild::color(a); PrimBuild::begin( GFXTriangleFan, 4 ); } else { PrimBuild::color(b); PrimBuild::begin( GFXLineStrip, 5 ); }
+         if(i){ PrimBuild::color(a); PrimBuild::begin( GFXTriangleStrip, 4 ); } else { PrimBuild::color(b); PrimBuild::begin( GFXLineStrip, 5 ); }
+         PrimBuild::vertex3f(max.x, min.y, height);
+         PrimBuild::vertex3f(max.x, max.y, height);
          PrimBuild::vertex3f(max.x, min.y, 0);
          PrimBuild::vertex3f(max.x, max.y, 0);
-         PrimBuild::vertex3f(max.x, max.y, height);
-         PrimBuild::vertex3f(max.x, min.y, height);
          if(!i) PrimBuild::vertex3f( min.x, min.y, 0.f );
          PrimBuild::end();
       }

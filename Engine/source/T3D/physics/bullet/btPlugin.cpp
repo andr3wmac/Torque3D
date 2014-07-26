@@ -216,3 +216,9 @@ U32 BtPlugin::getWorldCount() const
 { 
    return mPhysicsWorldLookup.size(); 
 }
+
+PhysicsCloth* BtPlugin::createCloth(TSShapeInstance* shapeInst, const MatrixF &transform)
+{
+   Con::errorf("BtPlugin does not support PhysicsCloth at this stage");
+   return NULL;
+}

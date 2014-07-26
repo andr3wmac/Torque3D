@@ -51,7 +51,6 @@
          columns = "0";
          rows = "0 206";
          borderWidth = "0";
-         borderColor = "84 12 136 1";
          borderEnable = "dynamic";
          borderMovable = "dynamic";
          autoBalance = "0";

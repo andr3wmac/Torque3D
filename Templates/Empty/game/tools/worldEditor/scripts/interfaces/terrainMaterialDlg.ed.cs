@@ -20,9 +20,7 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
-
 function TerrainMaterialDlg::show( %this, %matIndex, %terrMat, %onApplyCallback )
 {
    Canvas.pushDialog( %this );
@@ -50,6 +48,21 @@ function TerrainMaterialDlg::show( %this, %matIndex, %terrMat, %onApplyCallback 
          }
       }
    }
+   
+   %this-->restitutionPopUpMenu.clear();
+   %this-->restitutionPopUpMenu.add("Average",0);
+   %this-->restitutionPopUpMenu.add("Min",1);
+   %this-->restitutionPopUpMenu.add("Multiply",2);
+   %this-->restitutionPopUpMenu.add("Max",3);
+   %this-->restitutionPopUpMenu.setSelected(%terrMat.restitutionCombine);
+   
+   %this-->frictionPopUpMenu.clear();
+   %this-->frictionPopUpMenu.add("Average",0);
+   %this-->frictionPopUpMenu.add("Min",1);
+   %this-->frictionPopUpMenu.add("Multiply",2);
+   %this-->frictionPopUpMenu.add("Max",3);
+   %this-->frictionPopUpMenu.setSelected(%terrMat.frictionCombine); 
+   
 }
 
 //-----------------------------------------------------------------------------
@@ -96,7 +109,8 @@ function TerrainMaterialDlg::onWake( %this )
    %item = %matLibTree.getFirstRootItem();
    %matLibTree.expandItem( %item );
    
-   %this.activateMaterialCtrls( true );      
+   %this.activateMaterialCtrls( true );  
+   
 }
 
 //-----------------------------------------------------------------------------
@@ -404,7 +418,13 @@ function TerrainMaterialDlg::setActiveMaterial( %this, %mat )
 
       %this-->macroSizeCtrl.setText( %mat.macroSize );
       %this-->macroStrengthCtrl.setText( %mat.macroStrength );
-      %this-->macroDistanceCtrl.setText( %mat.macroDistance );      
+      %this-->macroDistanceCtrl.setText( %mat.macroDistance );
+	  
+      %this-->restitutionCtrl.setValue( %mat.restitution );
+      %this-->dynamicFrictionCtrl.setValue( %mat.dynamicFriction );
+      %this-->staticFrictionCtrl.setValue( %mat.staticFriction );
+      %this-->restitutionPopUpMenu.setSelected( %mat.restitutionCombine );
+      %this-->frictionPopUpMenu.setSelected( %mat.frictionCombine );
             
       %this.activateMaterialCtrls( true );      
    }
@@ -457,7 +477,13 @@ function TerrainMaterialDlg::saveDirtyMaterial( %this, %mat )
 
    %macroSize = %this-->macroSizeCtrl.getText();      
    %macroStrength = %this-->macroStrengthCtrl.getText();
-   %macroDistance = %this-->macroDistanceCtrl.getText();   
+   %macroDistance = %this-->macroDistanceCtrl.getText();
+   
+   %restitution = %this-->restitutionCtrl.getValue();
+   %staticFriction = %this-->staticFrictionCtrl.getValue();
+   %dynamicFriction = %this-->dynamicFrictionCtrl.getValue();
+   %frictionCombine = %this-->frictionPopUpMenu.getSelected();
+   %restitutionCombine = %this-->restitutionPopUpMenu.getSelected();
    
    // If no properties of this materials have changed,
    // return.
@@ -475,7 +501,12 @@ function TerrainMaterialDlg::saveDirtyMaterial( %this, %mat )
          %mat.macroSize == %macroSize &&
          %mat.macroStrength == %macroStrength &&
          %mat.macroDistance == %macroDistance &&         
-         %mat.parallaxScale == %parallaxScale )               
+         %mat.parallaxScale == %parallaxScale &&
+         %mat.restitution == %restitution &&
+         %mat.staticFriction == %staticFriction &&
+         %mat.dynamicFriction == %dynamicFriction &&
+         %mat.frictionCombine == %frictionCombine &&
+         %mat.restitutionCombine == %restitutionCombine )		 
       return;
       
    // Make sure the material name is unique.
@@ -509,6 +540,13 @@ function TerrainMaterialDlg::saveDirtyMaterial( %this, %mat )
    %mat.macroDistance = %macroDistance;    
    %mat.useSideProjection = %useSideProjection;
    %mat.parallaxScale = %parallaxScale;
+   
+   %mat.restitution = %restitution;
+   %mat.dynamicFriction = %dynamicFriction;
+   %mat.staticFriction = %staticFriction;
+   %mat.restitutionCombine = %restitutionCombine;
+   %mat.frictionCombine = %frictionCombine;   
+
    
    // Mark the material as dirty and needing saving.
    
@@ -554,6 +592,11 @@ function TerrainMaterialDlg::snapshotMaterials( %this )
          macroDistance = %mat.macroDistance;
          useSideProjection = %mat.useSideProjection;
          parallaxScale = %mat.parallaxScale;
+         restitution = %mat.restitution;
+         dynamicFriction = %mat.dynamicFriction;
+         staticFriction = %mat.staticFriction;
+         frictionCombine = %mat.frictionCombine;
+         restitutionCombine = %mat.restitutionCombine;
       };
    }
 }
@@ -588,6 +631,11 @@ function TerrainMaterialDlg::restoreMaterials( %this )
       %mat.macroDistance = %obj.macroDistance;
       %mat.useSideProjection = %obj.useSideProjection;
       %mat.parallaxScale = %obj.parallaxScale;
+      %mat.restitution = %obj.restitution;
+      %mat.dynamicFriction = %obj.dynamicFriction;
+      %mat.staticFriction = %obj.staticFriction;
+      %mat.frictionCombine = %obj.frictionCombine;
+      %mat.restitutionCombine = %obj.restitutionCombine;
    }
 }
 

@@ -41,10 +41,10 @@ new GuiControlProfile (GuiDefaultProfile)
 
    // fill color
    opaque = false;
-   fillColor = "242 241 240";
-   fillColorHL ="228 228 235";
-   fillColorSEL = "98 100 137";
-   fillColorNA = "255 255 255 ";
+   fillColor = "21 21 21 255";
+   fillColorHL ="72 72 72 255";
+   fillColorSEL = "72 12 0 255";
+   fillColorNA = "18 18 18 255";
 
    // border color
    border = 0;
@@ -57,13 +57,12 @@ new GuiControlProfile (GuiDefaultProfile)
    fontSize = 14;
    fontCharset = ANSI;
 
-   fontColor = "0 0 0";
-   fontColorHL = "0 0 0";
-   fontColorNA = "0 0 0";
-   fontColorSEL= "255 255 255";
+   fontColor = "196 196 196 255";
+   fontColorHL = "255 255 255 255";
+   fontColorNA = "128 128 128 255";
+   fontColorSEL= "196 116 108 255";
 
    // bitmap information
-   bitmap = "";
    bitmapBase = "";
    textOffset = "0 0";
 
@@ -121,15 +120,15 @@ if( !isObject( GuiToolTipProfile ) )
 new GuiControlProfile (GuiToolTipProfile)
 {
    // fill color
-   fillColor = "239 237 222";
+   fillColor = "72 72 72";
 
    // border color
-   borderColor   = "138 134 122";
+   borderColor   = "196 196 196 255";
 
    // font
    fontType = "Arial";
    fontSize = 14;
-   fontColor = "0 0 0";
+   fontColor = "255 255 255 255";
 
    category = "Core";
 };
@@ -144,8 +143,8 @@ new GuiControlProfile( GuiModelessDialogProfile )
 if( !isObject( GuiFrameSetProfile ) )
 new GuiControlProfile (GuiFrameSetProfile)
 {
-   fillcolor = "255 255 255";
-   borderColor = "246 245 244";
+   fillcolor = "21 21 21 255";
+   borderColor = "128 128 128";
    border = 1;
    opaque = true;
    border = true;
@@ -156,20 +155,31 @@ if( !isObject( GuiWindowProfile ) )
 new GuiControlProfile (GuiWindowProfile)
 {
    opaque = false;
-   border = 2;
-   fillColor = "242 241 240";
-   fillColorHL = "221 221 221";
-   fillColorNA = "200 200 200";
-   fontColor = "50 50 50";
-   fontColorHL = "0 0 0";
+   border = "0";
+   fillColor = "32 32 32 255";
+   fillColorHL = "72 72 72 255";
+   fillColorNA = "18 18 18 255";
+   fontColor = "196 196 196 255";
+   fontColorHL = "255 255 255 255";
    bevelColorHL = "255 255 255";
    bevelColorLL = "0 0 0";
    text = "untitled";
-   bitmap = "./images/window";
+   bitmap = "core/art/gui/images/window";
    textOffset = "8 4";
    hasBitmapArray = true;
    justify = "left";
    category = "Core";
+   fontColors[0] = "196 196 196 255";
+   fontColors[1] = "255 255 255 255";
+   fontColors[2] = "128 128 128 255";
+   fontColorNA = "128 128 128 255";
+   fillColorSEL = "72 12 0 255";
+   borderThickness = "0";
+   fontColors[4] = "160 72 64 255";
+   fontColors[5] = "196 116 108 255";
+   fontColorLink = "160 72 64 255";
+   fontColorLinkHL = "196 116 108 255";
+   locked = "1";
 };
 
 if( !isObject( GuiInputCtrlProfile ) )
@@ -184,8 +194,21 @@ if( !isObject( GuiTextProfile ) )
 new GuiControlProfile (GuiTextProfile)
 {
    justify = "left";
-   fontColor = "20 20 20";
+   fontColor = "196 196 196 255";
    category = "Core";
+   fillColor = "32 32 32 255";
+   fillColorHL = "72 72 72 255";
+   fillColorNA = "18 18 18 255";
+   fontColors[0] = "196 196 196 255";
+   fillColorSEL = "72 12 0 255";
+   fontColors[1] = "255 255 255 255";
+   fontColors[2] = "128 128 128 255";
+   fontColorHL = "255 255 255 255";
+   fontColorNA = "128 128 128 255";
+   fontColors[4] = "160 72 64 255";
+   fontColors[5] = "196 116 108 255";
+   fontColorLink = "160 72 64 255";
+   fontColorLinkHL = "196 116 108 255";
 };
 
 if( !isObject( GuiTextRightProfile ) )
@@ -198,10 +221,11 @@ new GuiControlProfile (GuiTextRightProfile : GuiTextProfile)
 if( !isObject( GuiAutoSizeTextProfile ) )
 new GuiControlProfile (GuiAutoSizeTextProfile)
 {
-   fontColor = "0 0 0";
+   fontColor = "196 196 196 255";
    autoSizeWidth = true;
    autoSizeHeight = true;   
    category = "Core";
+   fontColors[0] = "196 196 196 255";
 };
 
 if( !isObject( GuiMediumTextProfile ) )
@@ -221,20 +245,36 @@ new GuiControlProfile( GuiBigTextProfile : GuiTextProfile )
 if( !isObject( GuiMLTextProfile ) )
 new GuiControlProfile( GuiMLTextProfile )
 {
-   fontColorLink = "100 100 100";
-   fontColorLinkHL = "255 255 255";
+   fontColorLink = "160 72 64 255";
+   fontColorLinkHL = "196 116 108 255";
    autoSizeWidth = true;
    autoSizeHeight = true;  
    border = false;
    category = "Core";
+   fillColor = "32 32 32 255";
+   fillColorHL = "72 72 72 255";
+   fillColorNA = "18 18 18 255";
+   fillColorSEL = "72 12 0 255";
+   fontColors[4] = "160 72 64 255";
+   fontColors[5] = "196 116 108 255";
+   fontColors[0] = "196 196 196 255";
+   fontColors[1] = "255 255 255 255";
+   fontColors[2] = "128 128 128 255";
+   fontColors[3] = "196 116 108 255";
+   fontColor = "196 196 196 255";
+   fontColorHL = "255 255 255 255";
+   fontColorNA = "128 128 128 255";
+   fontColorSEL = "196 116 108 255";
 };
 
 if( !isObject( GuiTextArrayProfile ) )
 new GuiControlProfile( GuiTextArrayProfile : GuiTextProfile )
 {
-   fontColor = "50 50 50";
-   fontColorHL = " 0 0 0";
-   fontColorSEL = "0 0 0";
+   fontColor = "196 196 196 255";
+   fontColorSEL = "196 116 108 255";
+   fontColorHL = "255 255 255 255";
+   fontColorNA = "128 128 128 255";
+   
    fillColor ="200 200 200";
    fillColorHL = "228 228 235";
    fillColorSEL = "200 200 200";
@@ -246,17 +286,17 @@ if( !isObject( GuiTextEditProfile ) )
 new GuiControlProfile( GuiTextEditProfile )
 {
    opaque = true;
-   bitmap = "./images/textEdit";
+   bitmap = "core/art/gui/images/textEdit";
    hasBitmapArray = true; 
    border = -2; // fix to display textEdit img
    //borderWidth = "1";  // fix to display textEdit img
    //borderColor = "100 100 100";
-   fillColor = "242 241 240 0";
-   fillColorHL = "255 255 255";
-   fontColor = "0 0 0";
+   fillColor = "21 21 21 255";
+   fillColorHL = "72 72 72 255";
+   fontColor = "196 196 196 255";
    fontColorHL = "255 255 255";
-   fontColorSEL = "98 100 137";
-   fontColorNA = "200 200 200";
+   fontColorSEL = "72 12 0 255";
+   fontColorNA = "128 128 128 255";
    textOffset = "4 2";
    autoSizeWidth = false;
    autoSizeHeight = true;
@@ -264,6 +304,12 @@ new GuiControlProfile( GuiTextEditProfile )
    tab = true;
    canKeyFocus = true;   
    category = "Core";
+   fillColorNA = "18 18 18 0";
+   fillColorSEL = "72 72 72 255";
+   fontColors[1] = "255 255 255 255";
+   fontColors[2] = "128 128 128 255";
+   fontColors[3] = "72 12 0 255";
+   fontColors[0] = "196 196 196 255";
 };
 
 if( !isObject( GuiProgressProfile ) )
@@ -290,7 +336,7 @@ new GuiControlProfile( GuiProgressTextProfile )
 {
    fontSize = "14";
 	fontType = "Arial";
-   fontColor = "0 0 0";
+   fontColor = "196 196 196 255";
    justify = "center";
    category = "Core";   
 };
@@ -299,18 +345,26 @@ if( !isObject( GuiButtonProfile ) )
 new GuiControlProfile( GuiButtonProfile )
 {
    opaque = true;
-   border = true;
+   border = "0";
 	 
-   fontColor = "50 50 50";
-   fontColorHL = "0 0 0";
-	 fontColorNA = "200 200 200";
+   fontColor = "224 224 224 255";
+   fontColorHL = "255 255 255 255";
+	 fontColorNA = "64 64 64 255";
 	 //fontColorSEL ="0 0 0";
-   fixedExtent = false;
+   fixedExtent = 0;
    justify = "center";
    canKeyFocus = false;
-	bitmap = "./images/button";
+	bitmap = "core/art/gui/images/button";
    hasBitmapArray = false;
    category = "Core";
+   fillColor = "116 116 116 255";
+   fontColors[0] = "224 224 224 255";
+   fontColors[2] = "64 64 64 255";
+   fillColorHL = "128 128 128 255";
+   fillColorNA = "24 24 24 255";
+   fillColorSEL = "90 90 90 255";
+   borderThickness = "0";
+   fontColors[1] = "255 255 255 255";
 };
 
 if( !isObject( GuiMenuButtonProfile ) )
@@ -320,74 +374,108 @@ new GuiControlProfile( GuiMenuButtonProfile )
    border = false;
    fontSize = 18;
    fontType = "Arial Bold";
-   fontColor = "50 50 50";
-   fontColorHL = "0 0 0";
-   fontColorNA = "200 200 200";
+   fontColor = "224 224 224 255";
+   fontColorHL = "255 255 255 255";
+   fontColorNA = "64 64 64 255";
    //fontColorSEL ="0 0 0";
-   fixedExtent = false;
+   fixedExtent = 0;
    justify = "center";
    canKeyFocus = false;
-	bitmap = "./images/selector-button";
+	bitmap = "core/art/gui/images/selector-button";
    hasBitmapArray = false;
    category = "Core";
+   fillColor = "116 116 116 255";
+   fillColorHL = "128 128 128 255";
+   fillColorNA = "24 24 24 255";
+   fillColorSEL = "90 90 90 255";
+   fontColors[0] = "224 224 224 255";
+   fontColors[2] = "64 64 64 255";
+   fontColors[1] = "255 255 255 255";
 };
 
 if( !isObject( GuiButtonTabProfile ) )
 new GuiControlProfile( GuiButtonTabProfile )
 {
    opaque = true;
-   border = true;
-   fontColor = "50 50 50";
-   fontColorHL = "0 0 0";
-   fontColorNA = "0 0 0";
-   fixedExtent = false;
+   border = "0";
+   fontColor = "224 224 224 255";
+   fontColorHL = "255 255 255 255";
+   fontColorNA = "64 64 64 255";
+   fixedExtent = 0;
    justify = "center";
    canKeyFocus = false;
-   bitmap = "./images/buttontab";
+   bitmap = "core/art/gui/images/buttontab";
    category = "Core";
+   fillColor = "72 72 72 255";
+   fillColorHL = "116 116 116 255";
+   fillColorNA = "90 90 90 255";
+   fillColorSEL = "116 116 116 255";
+   fontColors[0] = "224 224 224 255";
+   borderThickness = "0";
+   fontColors[1] = "255 255 255 255";
+   fontColors[2] = "64 64 64 255";
+   fontColors[4] = "160 72 64 255";
+   fontColors[5] = "196 116 108 255";
+   fontColorLink = "160 72 64 255";
+   fontColorLinkHL = "196 116 108 255";
 };
 
 if( !isObject( GuiCheckBoxProfile ) )
 new GuiControlProfile( GuiCheckBoxProfile )
 {
    opaque = false;
-   fillColor = "232 232 232";
+   fillColor = "116 116 116 255";
    border = false;
    borderColor = "100 100 100";
    fontSize = 14;
-   fontColor = "20 20 20";
-   fontColorHL = "80 80 80";
-	fontColorNA = "200 200 200";
-   fixedExtent = true;
+   fontColor = "196 196 196 255";
+   fontColorHL = "255 255 255 255";
+	fontColorNA = "128 128 128 255";
+   fixedExtent = 1;
    justify = "left";
-   bitmap = "./images/checkbox";
+   bitmap = "core/art/gui/images/checkbox";
    hasBitmapArray = true;
    category = "Core";
+   fillColorHL = "128 128 128 255";
+   fillColorNA = "24 24 24 255";
+   fillColorSEL = "90 90 90 255";
+   fontColors[0] = "196 196 196 255";
+   fontColors[1] = "255 255 255 255";
+   fontColors[2] = "128 128 128 255";
+   fontColors[3] = "196 116 108 255";
+   fontColors[4] = "160 72 64 255";
+   fontColorSEL = "196 116 108 255";
+   fontColorLink = "160 72 64 255";
+   fontColors[5] = "196 116 108 255";
+   fontColorLinkHL = "196 116 108 255";
 };
 
 if( !isObject( GuiScrollProfile ) )
 new GuiControlProfile( GuiScrollProfile )
 {
    opaque = true;
-   fillcolor = "255 255 255";
-   fontColor = "0 0 0";
-   fontColorHL = "150 150 150";
+   fillcolor = "21 21 21 255";
+   fontColor = "180 180 180 255";
+   fontColorHL = "255 255 255 255";
    //borderColor = GuiDefaultProfile.borderColor;
-   border = true;
-   bitmap = "./images/scrollBar";
+   border = "1";
+   bitmap = "core/art/gui/images/scrollBar";
    hasBitmapArray = true;
    category = "Core";
+   fontColors[0] = "180 180 180 255";
+   fontColors[1] = "255 255 255 255";
 };
 
 if( !isObject( GuiOverlayProfile ) )
 new GuiControlProfile( GuiOverlayProfile )
 {
    opaque = true;
-   fillcolor = "255 255 255";
+   fillcolor = "0 0 0 100";
    fontColor = "0 0 0";
    fontColorHL = "255 255 255";
 	fillColor = "0 0 0 100";
    category = "Core";
+   fontColors[0] = "0 0 0 255";
 };
 
 if( !isObject( GuiSliderProfile ) )
@@ -412,48 +500,112 @@ if( !isObject( GuiPopupMenuItemBorder ) )
 new GuiControlProfile( GuiPopupMenuItemBorder : GuiButtonProfile )
 {
    opaque = true;
-   border = true;
-   fontColor = "0 0 0";
-   fontColorHL = "0 0 0";
-   fontColorNA = "255 255 255";
-   fixedExtent = false;
+   border = "1";
+   fontColor = "196 196 196 255";
+   fontColorHL = "128 128 128 255";
+   fontColorNA = "24 24 24 255";
    justify = "center";
    canKeyFocus = false;
-   bitmap = "./images/button";
+   bitmap = "core/art/gui/images/button";
    category = "Core";
+   borderColor = "128 128 128 255";
+   fontColors[0] = "196 196 196 255";
+   fontColors[1] = "128 128 128 255";
+   fontColors[2] = "24 24 24 255";
 };
 
-if( !isObject( GuiPopUpMenuDefault ) )
-new GuiControlProfile( GuiPopUpMenuDefault : GuiDefaultProfile )
+new GuiControlProfile( GuiPopUpMenuDefault )
 {
-   opaque = true;
-   mouseOverSelected = true;
+   bitmap = "tools/gui/images/scrollBar";
+   category = "Tools";
+   mouseOverSelected = "1";
+   opaque = "1";
+   borderThickness = "0";
    textOffset = "3 3";
+   hasBitmapArray = "1";
+   profileForChildren = "GuiPopupMenuItemBorder";
+   fixedExtent = "1";
+   fillColorHL = "72 72 72 255";
+   fillColorNA = "18 18 18 255";
+   fillColorSEL = "116 116 116 255";
+   fontColors[0] = "196 196 196 255";
+   fontColors[1] = "255 255 255 255";
+   fontColors[2] = "128 128 128 255";
+   fontColors[4] = "160 72 64 255";
+   fontColors[5] = "196 116 108 255";
+   fontColor = "196 196 196 255";
+   fontColorHL = "255 255 255 255";
+   fontColorNA = "128 128 128 255";
+   fontColorLink = "160 72 64 255";
+   fontColorLinkHL = "196 116 108 255";
+};
+
+
+if( !isObject( GuiPopUpMenuDefault ) )
+new GuiControlProfile( GuiTabBookProfile : GuiDefaultProfile )
+{
+   opaque = "0";
+   mouseOverSelected = "0";
+   textOffset = "0 -3";
    border = 0;
-   borderThickness = 0;
-   fixedExtent = true;
-   bitmap = "./images/scrollbar";
-   hasBitmapArray = true;
+   borderThickness = "1";
+   fixedExtent = 1;
+   bitmap = "core/art/gui/images/tab";
+   hasBitmapArray = "0";
    profileForChildren = GuiPopupMenuItemBorder;
-   fillColor = "242 241 240 ";//"255 255 255";//100
-   fillColorHL = "228 228 235 ";//"204 203 202";
-   fillColorSEL = "98 100 137 ";//"204 203 202";
-   // font color is black
-   fontColorHL = "0 0 0 ";//"0 0 0";
-   fontColorSEL = "255 255 255";//"0 0 0";
+   fillColor = "21 21 21 255";
+   fillColorHL = "100 100 100 255";
+   fillColorSEL = "72 12 0 255";
+   fontColorHL = "255 255 255 255";
+   fontColorSEL = "255 255 255 255";
    borderColor = "100 100 100";
    category = "Core";
+   fillColorNA = "150 150 150 255";
+   fontColors[0] = "240 240 240 255";
+   fontColors[1] = "255 255 255 255";
+   fontColors[2] = "128 128 128 255";
+   fontColors[3] = "255 255 255 255";
+   fontColors[4] = "255 0 255 255";
+   fontColors[5] = "255 0 255 255";
+   fontColor = "240 240 240 255";
+   fontColorNA = "128 128 128 255";
+   fontColorLink = "255 0 255 255";
+   fontColorLinkHL = "255 0 255 255";
+   tab = "1";
+   canKeyFocus = "1";
+   justify = "Center";
+   tabRotation = "Horizontal";
+   tabHeight = "24";
+   tabPosition = "Top";
+   tabWidth = "64";
 };
 
 if( !isObject( GuiPopUpMenuProfile ) )
 new GuiControlProfile( GuiPopUpMenuProfile : GuiPopUpMenuDefault )
 {
    textOffset         = "6 4";
-   bitmap             = "./images/dropDown";
+   bitmap             = "core/art/gui/images/dropDown";
    hasBitmapArray     = true;
-   border             = 1;
+   border             = "0";
    profileForChildren = GuiPopUpMenuDefault;
    category = "Core";
+   fontColors[0] = "196 196 196 255";
+   fontColors[1] = "255 255 255 255";
+   fontColor = "196 196 196 255";
+   fontColorHL = "255 255 255 255";
+   fontColors[2] = "128 128 128 255";
+   fontColorNA = "128 128 128 255";
+   fontCharset = "ANSI";
+   fontColors[3] = "255 255 255 255";
+   fontColorSEL = "255 255 255 255";
+   fontColors[4] = "160 72 64 255";
+   fontColors[5] = "196 116 108 255";
+   fontColorLink = "160 72 64 255";
+   fontColorLinkHL = "196 116 108 255";
+   fillColor = "21 21 21 255";
+   fillColorHL = "72 72 72 255";
+   fillColorNA = "18 18 18 255";
+   fillColorSEL = "116 116 116 255";
 };
 
 if( !isObject( GuiTabBookProfile ) )
@@ -484,10 +636,14 @@ new GuiControlProfile( GuiTabPageProfile : GuiDefaultProfile )
    fontType = "Arial";
    fontSize = 10;
    justify = "center";
-   bitmap = "./images/tab";
+   bitmap = "core/art/gui/images/tab";
    opaque = false;
-   fillColor = "240 239 238";
+   fillColor = "21 21 21 255";
    category = "Core";
+   fontColors[3] = "255 255 255 255";
+   fontColorSEL = "255 255 255 255";
+   fontColors[0] = "196 196 196 255";
+   fontColor = "196 196 196 255";
 };
 
 if( !isObject( GuiConsoleProfile ) )
@@ -508,16 +664,17 @@ new GuiControlProfile( GuiConsoleProfile )
 if( !isObject( GuiConsoleTextProfile ) )
 new GuiControlProfile( GuiConsoleTextProfile )
 {   
-   fontColor = "0 0 0";
+   fontColor = "196 196 196";
    autoSizeWidth = true;
    autoSizeHeight = true;   
    textOffset = "2 2";
    opaque = true;   
-   fillColor = "255 255 255";
-   border = true;
+   fillColor = "21 21 21 255";
+   border = "1";
    borderThickness = 1;
-   borderColor = "0 0 0";
+   borderColor = "128 128 128";
    category = "Core";
+   fontColors[0] = "196 196 196 255";
 };
 
 $ConsoleDefaultFillColor = "0 0 0 175";
@@ -536,8 +693,6 @@ new GuiControlProfile( ConsoleScrollProfile : GuiScrollProfile )
 if( !isObject( ConsoleTextEditProfile ) )
 new GuiControlProfile( ConsoleTextEditProfile : GuiTextEditProfile )
 {
-   fillColor = "242 241 240 255";
-   fillColorHL = "255 255 255";   
    category = "Core";
 };
 
@@ -573,12 +728,16 @@ new GuiControlProfile ( CenterPrintTextProfile )
 if( !isObject( GuiRadioProfile ) )
 new GuiControlProfile( GuiRadioProfile )
 {
+   // +++ changed Dark UI 1.3
    fontSize = 14;
-   fillColor = "232 232 232";
-   fontColor = "20 20 20";
-   fontColorHL = "80 80 80";
-   fixedExtent = true;
-   bitmap = "./images/radioButton";
+   fillColor = "32 32 32 255";
+   fontColor = "196 196 196 255";
+   fontColorHL = "255 255 255 255";
+   fixedExtent = 1;
+   bitmap = "tools/gui/images/radioButton";
    hasBitmapArray = true;
-   category = "Core";
+   category = "Tools";
+   modal = "1";
+   fontColors[0] = "196 196 196 255";
+   fontColors[1] = "255 255 255 255";
 };
