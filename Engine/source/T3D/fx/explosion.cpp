@@ -106,31 +106,18 @@ ConsoleDocClass( Explosion,
    "   lightEndBrightness = 0.0;\n"
    "   lightNormalOffset = 2.0;\n"
    "};\n\n"
-   "function ServerPlayExplosion(%position, %datablock)\n"
+   "function createExplosion()\n"
    "{\n"
-   "   // Play the given explosion on every client.\n"
-   "   // The explosion will be transmitted as an event, not attached to any object.\n"
-   "   for(%idx = 0; %idx < ClientGroup.getCount(); %idx++)\n"
+   "   // Create a new explosion - it will explode automatically\n"
+   "   %pos = \"0 0 100\";\n"
+   "   %obj = new Explosion()\n"
    "   {\n"
-   "      %client = ClientGroup.getObject(%idx);\n"
-   "      commandToClient(%client, 'PlayExplosion', %position, %datablock.getId());\n"
-   "   }\n"
-   "}\n\n"
-   "function clientCmdPlayExplosion(%position, %effectDataBlock)\n"
-   "{\n"
-   "   // Play an explosion sent by the server. Make sure this function is defined\n"
-   "   // on the client.\n"
-   "   if (isObject(%effectDataBlock))\n"
-   "   {\n"
-   "      new Explosion()\n"
-   "      {\n"
-   "         position = %position;\n"
-   "         dataBlock = %effectDataBlock;\n"
-   "      };\n"
-   "   }\n"
+   "      position = %pos;\n"
+   "      dataBlock = GrenadeLauncherExplosion;\n"
+   "   };\n"
    "}\n\n"
    "// schedule an explosion\n"
-   "schedule(1000, 0, ServerPlayExplosion, \"0 0 0\", GrenadeLauncherExplosion);\n"
+   "schedule(1000, 0, createExplosion);\n"
    "@endtsexample"
 );
 
@@ -749,9 +736,9 @@ bool ExplosionData::preload(bool server, String &errorStr)
       
    if( !server )
    {
-      String sfxErrorStr;
-      if( !sfxResolve( &soundProfile, sfxErrorStr ) )
-         Con::errorf(ConsoleLogEntry::General, "Error, unable to load sound profile for explosion datablock: %s", sfxErrorStr.c_str());
+      String errorStr;
+      if( !sfxResolve( &soundProfile, errorStr ) )
+         Con::errorf(ConsoleLogEntry::General, "Error, unable to load sound profile for explosion datablock: %s", errorStr.c_str());
       if (!particleEmitter && particleEmitterId != 0)
          if (Sim::findObject(particleEmitterId, particleEmitter) == false)
             Con::errorf(ConsoleLogEntry::General, "Error, unable to load particle emitter for explosion datablock");
@@ -784,7 +771,6 @@ bool ExplosionData::preload(bool server, String &errorStr)
 //--------------------------------------
 //
 Explosion::Explosion()
-   : mDataBlock( NULL )
 {
    mTypeMask |= ExplosionObjectType | LightObjectType;
 
@@ -844,12 +830,6 @@ bool Explosion::onAdd()
    GameConnection *conn = GameConnection::getConnectionToServer();
    if ( !conn || !Parent::onAdd() )
       return false;
-
-   if( !mDataBlock )
-   {
-      Con::errorf("Explosion::onAdd - Fail - No datablok");
-      return false;
-   }
 
    mDelayMS = mDataBlock->delayMS + sgRandom.randI( -mDataBlock->delayVariance, mDataBlock->delayVariance );
    mEndingMS = mDataBlock->lifetimeMS + sgRandom.randI( -mDataBlock->lifetimeVariance, mDataBlock->lifetimeVariance );
@@ -949,7 +929,7 @@ bool Explosion::onAdd()
 
 void Explosion::onRemove()
 {
-   for( S32 i=0; i<ExplosionData::EC_NUM_EMITTERS; i++ )
+   for( int i=0; i<ExplosionData::EC_NUM_EMITTERS; i++ )
    {
       if( mEmitterList[i] )
       {
@@ -1134,7 +1114,7 @@ void Explosion::updateEmitters( F32 dt )
 {
    Point3F pos = getPosition();
 
-   for( S32 i=0; i<ExplosionData::EC_NUM_EMITTERS; i++ )
+   for( int i=0; i<ExplosionData::EC_NUM_EMITTERS; i++ )
    {
       if( mEmitterList[i] )
       {
@@ -1154,7 +1134,7 @@ void Explosion::launchDebris( Point3F &axis )
       return;
 
    bool hasDebris = false;
-   for( S32 j=0; j<ExplosionData::EC_NUM_DEBRIS_TYPES; j++ )
+   for( int j=0; j<ExplosionData::EC_NUM_DEBRIS_TYPES; j++ )
    {
       if( mDataBlock->debrisList[j] )
       {
@@ -1180,7 +1160,7 @@ void Explosion::launchDebris( Point3F &axis )
 
    U32 numDebris = mDataBlock->debrisNum + sgRandom.randI( -mDataBlock->debrisNumVariance, mDataBlock->debrisNumVariance );
 
-   for( S32 i=0; i<numDebris; i++ )
+   for( int i=0; i<numDebris; i++ )
    {
 
       Point3F launchDir = MathUtils::randomDir( axis, mDataBlock->debrisThetaMin, mDataBlock->debrisThetaMax,
@@ -1269,7 +1249,7 @@ bool Explosion::explode()
          Point3F::Zero, U32(mDataBlock->particleDensity * mFade));
    }
 
-   for( S32 i=0; i<ExplosionData::EC_NUM_EMITTERS; i++ )
+   for( int i=0; i<ExplosionData::EC_NUM_EMITTERS; i++ )
    {
       if( mDataBlock->emitterList[i] != NULL )
       {

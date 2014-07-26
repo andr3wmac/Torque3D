@@ -304,9 +304,8 @@ ConsoleType( WayPointTeam, TypeWayPointTeam, WayPointTeam )
 
 ConsoleGetType( TypeWayPointTeam )
 {
-   static const U32 bufSize = 32;
-   char * buf = Con::getReturnBuffer(bufSize);
-   dSprintf(buf, bufSize, "%d", ((WayPointTeam*)dptr)->mTeamId);
+   char * buf = Con::getReturnBuffer(32);
+   dSprintf(buf, 32, "%d", ((WayPointTeam*)dptr)->mTeamId);
    return(buf);
 }
 

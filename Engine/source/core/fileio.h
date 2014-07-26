@@ -31,7 +31,7 @@ class File
 {
 public:
    /// What is the status of our file handle?
-   enum FileStatus
+   enum Status
    {
       Ok = 0,           ///< Ok!
       IOError,          ///< Read or Write error
@@ -59,7 +59,7 @@ public:
 
 private:
    void *handle;           ///< Pointer to the file handle.
-   FileStatus currentStatus;   ///< Current status of the file (Ok, IOError, etc.).
+   Status currentStatus;   ///< Current status of the file (Ok, IOError, etc.).
    U32 capability;         ///< Keeps track of file capabilities.
 
    File(const File&);              ///< This is here to disable the copy constructor.
@@ -72,7 +72,7 @@ public:
    /// Opens a file for access using the specified AccessMode
    ///
    /// @returns The status of the file
-   FileStatus open(const char *filename, const AccessMode openMode);
+   Status open(const char *filename, const AccessMode openMode);
 
    /// Gets the current position in the file
    ///
@@ -99,7 +99,7 @@ public:
    /// @endcode
    ///
    /// @returns The status of the file
-   FileStatus setPosition(S32 position, bool absolutePos = true);
+   Status setPosition(S32 position, bool absolutePos = true);
 
    /// Returns the size of the file
    U32 getSize() const;
@@ -107,25 +107,25 @@ public:
    /// Make sure everything that's supposed to be written to the file gets written.
    ///
    /// @returns The status of the file.
-   FileStatus flush();
+   Status flush();
 
    /// Closes the file
    ///
    /// @returns The status of the file.
-   FileStatus close();
+   Status close();
 
    /// Gets the status of the file
-   FileStatus getStatus() const;
+   Status getStatus() const;
 
    /// Reads "size" bytes from the file, and dumps data into "dst".
    /// The number of actual bytes read is returned in bytesRead
    /// @returns The status of the file
-   FileStatus read(U32 size, char *dst, U32 *bytesRead = NULL);
+   Status read(U32 size, char *dst, U32 *bytesRead = NULL);
 
    /// Writes "size" bytes into the file from the pointer "src".
    /// The number of actual bytes written is returned in bytesWritten
    /// @returns The status of the file
-   FileStatus write(U32 size, const char *src, U32 *bytesWritten = NULL);
+   Status write(U32 size, const char *src, U32 *bytesWritten = NULL);
 
    /// Returns whether or not this file is capable of the given function.
    bool hasCapability(Capability cap) const;
@@ -133,8 +133,8 @@ public:
    const void* getHandle() { return handle; }
 
 protected:
-   FileStatus setStatus();                 ///< Called after error encountered.
-   FileStatus setStatus(FileStatus status);    ///< Setter for the current status.
+   Status setStatus();                 ///< Called after error encountered.
+   Status setStatus(Status status);    ///< Setter for the current status.
 };
 
 #endif // _FILE_IO_H_

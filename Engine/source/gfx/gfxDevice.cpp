@@ -103,7 +103,7 @@ GFXDevice::GFXDevice()
    mViewMatrix.identity();
    mProjectionMatrix.identity();
    
-   for( S32 i = 0; i < WORLD_STACK_MAX; i++ )
+   for( int i = 0; i < WORLD_STACK_MAX; i++ )
       mWorldMatrix[i].identity();
    
    AssertFatal(smGFXDevice == NULL, "Already a GFXDevice created! Bad!");
@@ -112,7 +112,7 @@ GFXDevice::GFXDevice()
    // Vertex buffer cache
    mCurrVertexDecl = NULL;
    mVertexDeclDirty = false;
-   for ( U32 i=0; i < MAX_VERTEX_STREAM_COUNT; i++ )
+   for ( U32 i=0; i < VERTEX_STREAM_COUNT; i++ )
    {
       mVertexBufferDirty[i] = false;
       mVertexBufferFrequency[i] = 0;
@@ -136,9 +136,6 @@ GFXDevice::GFXDevice()
       mTextureMatrix[i].identity();
       mTextureMatrixDirty[i] = false;
    }
-
-   mTexelPixelOffset = true;
-   mNumVertexStream = MAX_VERTEX_STREAM_COUNT;
 
    mLightsDirty = false;
    for(U32 i = 0; i < LIGHT_STAGE_COUNT; i++)
@@ -187,8 +184,8 @@ GFXDevice::GFXDevice()
    // Add a few system wide shader macros.
    GFXShader::addGlobalMacro( "TORQUE", "1" );
    GFXShader::addGlobalMacro( "TORQUE_VERSION", String::ToString(getVersionNumber()) );
-   #if defined TORQUE_OS_WIN
-      GFXShader::addGlobalMacro( "TORQUE_OS_WIN" );
+   #if defined TORQUE_OS_WIN32
+      GFXShader::addGlobalMacro( "TORQUE_OS_WIN32" );
    #elif defined TORQUE_OS_MAC
       GFXShader::addGlobalMacro( "TORQUE_OS_MAC" );
    #elif defined TORQUE_OS_LINUX
@@ -258,7 +255,7 @@ GFXDevice::~GFXDevice()
 
    // Clean up our current buffers.
    mCurrentPrimitiveBuffer = NULL;
-   for ( U32 i=0; i < MAX_VERTEX_STREAM_COUNT; i++ )
+   for ( U32 i=0; i < VERTEX_STREAM_COUNT; i++ )
       mCurrentVertexBuffer[i] = NULL;
 
    // Clear out our current texture references
@@ -269,9 +266,6 @@ GFXDevice::~GFXDevice()
       mCurrentCubemap[i] = NULL;
       mNewCubemap[i] = NULL;
    }
-
-   mRTStack.clear();
-   mCurrentRT = NULL;
 
    // Release all the unreferenced textures in the cache.
    mTextureManager->cleanupCache();
@@ -371,7 +365,7 @@ void GFXDevice::updateStates(bool forceSetAll /*=false*/)
 
       setVertexDecl( mCurrVertexDecl );
 
-      for ( U32 i=0; i < MAX_VERTEX_STREAM_COUNT; i++ )
+      for ( U32 i=0; i < VERTEX_STREAM_COUNT; i++ )
       {
          setVertexStream( i, mCurrentVertexBuffer[i] );
          setVertexStreamFrequency( i, mVertexBufferFrequency[i] );
@@ -457,7 +451,7 @@ void GFXDevice::updateStates(bool forceSetAll /*=false*/)
 
    if( mTextureMatrixCheckDirty )
    {
-      for( S32 i = 0; i < getNumSamplers(); i++ )
+      for( int i = 0; i < getNumSamplers(); i++ )
       {
          if( mTextureMatrixDirty[i] )
          {
@@ -477,7 +471,7 @@ void GFXDevice::updateStates(bool forceSetAll /*=false*/)
    }
 
    // Update the vertex buffers.
-   for ( U32 i=0; i < MAX_VERTEX_STREAM_COUNT; i++ )
+   for ( U32 i=0; i < VERTEX_STREAM_COUNT; i++ )
    {
       if ( mVertexBufferDirty[i] )
       {
@@ -1285,7 +1279,7 @@ DefineEngineFunction( getPixelShaderVersion, F32, (),,
    return GFX->getPixelShaderVersion();
 }   
 
-DefineEngineFunction( setPixelShaderVersion, void, ( F32 version ),,
+DefineEngineFunction( setPixelShaderVersion, void, ( float version ),,
    "@brief Sets the pixel shader version for the active device.\n"
    "This can be used to force a lower pixel shader version than is supported by "
    "the device for testing or performance optimization.\n"

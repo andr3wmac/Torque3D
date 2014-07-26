@@ -616,11 +616,6 @@ S32 TSShapeInstance::setDetailFromDistance( const SceneRenderState *state, F32 s
    F32 pixelRadius = ( mShape->radius / scaledDistance ) * state->getWorldToScreenScale().y * pixelScale;
    F32 pixelSize = pixelRadius * smDetailAdjust;
 
-   if ( pixelSize < smSmallestVisiblePixelSize ) {
-      mCurrentDetailLevel = -1;
-      return mCurrentDetailLevel;
-   }
-
    if (  pixelSize > smSmallestVisiblePixelSize && 
          pixelSize <= mShape->mSmallestVisibleSize )
       pixelSize = mShape->mSmallestVisibleSize + 0.01f;
@@ -752,14 +747,12 @@ void TSShapeInstance::MeshObjectInstance::render(  S32 objectDetail,
    const U32 currTime = Sim::getCurrentTime();
    bool isSkinDirty = currTime != mLastTime;
 
-	// andrewmac: Vertex Override
-	mesh->render(  materials, 
-					rdata, 
-					isSkinDirty,
-					*mTransforms, 
-					mVertexBuffer,
-					mPrimitiveBuffer, 
-					vertexOverride );
+   mesh->render(  materials, 
+                  rdata, 
+                  isSkinDirty,
+                  *mTransforms, 
+                  mVertexBuffer,
+                  mPrimitiveBuffer );
 
    // Update the last render time.
    mLastTime = currTime;
@@ -769,8 +762,7 @@ void TSShapeInstance::MeshObjectInstance::render(  S32 objectDetail,
 
 TSShapeInstance::MeshObjectInstance::MeshObjectInstance() 
    : meshList(0), object(0), frame(0), matFrame(0),
-     visible(1.0f), forceHidden(false), mLastTime( 0 ),
-	 vertexOverride(NULL) // andrewmac: vertex override.
+     visible(1.0f), forceHidden(false), mLastTime( 0 )
 {
 }
 
@@ -786,17 +778,3 @@ void TSShapeInstance::prepCollision()
    }
 }
 
-// andremwac : Find Mesh Instances by name.
-Vector<TSShapeInstance::MeshObjectInstance*> TSShapeInstance::findMeshInstances(const String& meshPrefix)
-{
-	Vector<TSShapeInstance::MeshObjectInstance*> results;
-	for ( U32 i = 0; i < mMeshObjects.size(); i++ )
-    {
-		TSShapeInstance::MeshObjectInstance* mesh = &mMeshObjects[i];
-		if ( mShape->getMeshName(i).startsWith(meshPrefix) )
-		{
-			results.push_back(mesh);
-		}
-	}
-	return results;
-}

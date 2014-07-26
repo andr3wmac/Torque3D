@@ -83,7 +83,7 @@ private:
    S32 mNodeBase;
    S32 mNodeCount;
    F32 mPosition;
-   S32 mState;
+   int mState;
    F32 mTarget;
    bool mTargetSet;
 

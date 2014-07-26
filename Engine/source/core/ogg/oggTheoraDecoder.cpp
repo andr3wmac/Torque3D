@@ -169,7 +169,7 @@ bool OggTheoraDecoder::_init()
          break;
       }
       
-      S32 result = th_decode_headerin( &mTheoraInfo, &mTheoraComment, &mTheoraSetup, &nextPacket );
+      int result = th_decode_headerin( &mTheoraInfo, &mTheoraComment, &mTheoraSetup, &nextPacket );
       if( result < 0 )
       {
          haveTheoraHeader = false;

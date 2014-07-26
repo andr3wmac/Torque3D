@@ -1068,7 +1068,7 @@ bool Win32Window::translateMessage(MSG &msg)
 	if(mAccelHandle == NULL || mWindowHandle == NULL || !mEnableAccelerators)
 		return false;
 
-	S32 ret = TranslateAccelerator(mWindowHandle, mAccelHandle, &msg);
+	int ret = TranslateAccelerator(mWindowHandle, mAccelHandle, &msg);
 	return ret != 0;
 }
 

@@ -1197,7 +1197,7 @@ void SceneContainer::cleanupSearchVectors()
 //-----------------------------------------------------------------------------
 
 static Point3F sgSortReferencePoint;
-static S32 QSORT_CALLBACK cmpSearchPointers(const void* inP1, const void* inP2)
+static int QSORT_CALLBACK cmpSearchPointers(const void* inP1, const void* inP2)
 {
    SimObjectPtr<SceneObject>** p1 = (SimObjectPtr<SceneObject>**)inP1;
    SimObjectPtr<SceneObject>** p2 = (SimObjectPtr<SceneObject>**)inP2;
@@ -1631,11 +1631,10 @@ DefineEngineFunction( containerRayCast, const char*,
       pExempt->enableCollision();
 
    // add the hit position and normal?
-   static const U32 bufSize = 256;
-   char *returnBuffer = Con::getReturnBuffer(bufSize);
+   char *returnBuffer = Con::getReturnBuffer(256);
    if(ret)
    {
-      dSprintf(returnBuffer, bufSize, "%d %g %g %g %g %g %g %g",
+      dSprintf(returnBuffer, 256, "%d %g %g %g %g %g %g %g",
                ret, rinfo.point.x, rinfo.point.y, rinfo.point.z,
                rinfo.normal.x, rinfo.normal.y, rinfo.normal.z, rinfo.distance);
    }

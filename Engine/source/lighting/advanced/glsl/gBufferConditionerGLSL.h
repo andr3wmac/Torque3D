@@ -42,13 +42,6 @@ public:
       CartesianXYZ,
       CartesianXY,
       Spherical,
-      LambertAzimuthal,
-   };
-
-   enum NormalSpace
-   {
-      WorldSpace,
-      ViewSpace,
    };
    
 protected:
@@ -59,7 +52,7 @@ protected:
 
 public:
 
-   GBufferConditionerGLSL( const GFXFormat bufferFormat, const NormalSpace nrmSpace );
+   GBufferConditionerGLSL( const GFXFormat bufferFormat );
    virtual ~GBufferConditionerGLSL();
 
 

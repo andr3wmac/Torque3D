@@ -106,7 +106,7 @@ public:
 
    enum Compression
    {
-      NONE,
+      None,
       DXT1,
       DXT2,
       DXT3,
@@ -114,7 +114,7 @@ public:
       DXT5,
    };
 
-   GFXTextureProfile(const String &name, Types type, U32 flags, Compression compression = NONE);
+   GFXTextureProfile(const String &name, Types type, U32 flags, Compression compression = None);
 
    // Accessors
    String getName() const { return mName; };

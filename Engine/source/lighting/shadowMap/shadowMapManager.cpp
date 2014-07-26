@@ -37,7 +37,7 @@
 GFX_ImplementTextureProfile(ShadowMapTexProfile,
                             GFXTextureProfile::DiffuseMap, 
                             GFXTextureProfile::PreserveSize | GFXTextureProfile::Dynamic , 
-                            GFXTextureProfile::NONE);
+                            GFXTextureProfile::None);
 
 
 MODULE_BEGIN( ShadowMapManager )

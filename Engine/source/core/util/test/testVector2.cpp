@@ -72,10 +72,10 @@ CreateUnitTest( TestVector, "Util/Vector" )
       TEST( dtorVals[ 9 ] );
    }
    
-   static S32 QSORT_CALLBACK sortInts( const S32* a, const S32* b )
+   static S32 QSORT_CALLBACK sortInts( const int* a, const int* b )
    {
-      S32 av = *a;
-      S32 bv = *b;
+      int av = *a;
+      int bv = *b;
       
       if( av < bv )
          return -1;
@@ -87,7 +87,7 @@ CreateUnitTest( TestVector, "Util/Vector" )
    
    void testSort()
    {
-      Vector< S32 > v;
+      Vector< int > v;
       
       v.push_back( 0 );
       v.push_back( 10 );

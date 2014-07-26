@@ -248,7 +248,7 @@ File::~File()
 // Sets capability appropriate to the openMode.
 // Returns the currentStatus of the file.
 //-----------------------------------------------------------------------------
-File::FileStatus File::open(const char *filename, const AccessMode openMode)
+File::Status File::open(const char *filename, const AccessMode openMode)
 {
    AssertFatal(NULL != filename, "File::open: NULL fname");
    AssertWarn(INVALID_HANDLE_VALUE == (HANDLE)handle, "File::open: handle already valid");
@@ -363,7 +363,7 @@ U32 File::getPosition() const
 //
 // Returns the currentStatus of the file.
 //-----------------------------------------------------------------------------
-File::FileStatus File::setPosition(S32 position, bool absolutePos)
+File::Status File::setPosition(S32 position, bool absolutePos)
 {
     AssertFatal(Closed != currentStatus, "File::setPosition: file closed");
     AssertFatal(INVALID_HANDLE_VALUE != (HANDLE)handle, "File::setPosition: invalid file handle");
@@ -425,7 +425,7 @@ U32 File::getSize() const
 // It is an error to flush a read-only file.
 // Returns the currentStatus of the file.
 //-----------------------------------------------------------------------------
-File::FileStatus File::flush()
+File::Status File::flush()
 {
     AssertFatal(Closed != currentStatus, "File::flush: file closed");
     AssertFatal(INVALID_HANDLE_VALUE != (HANDLE)handle, "File::flush: invalid file handle");
@@ -442,7 +442,7 @@ File::FileStatus File::flush()
 //
 // Returns the currentStatus
 //-----------------------------------------------------------------------------
-File::FileStatus File::close()
+File::Status File::close()
 {
     // check if it's already closed...
     if (Closed == currentStatus)
@@ -461,7 +461,7 @@ File::FileStatus File::close()
 //-----------------------------------------------------------------------------
 // Self-explanatory.
 //-----------------------------------------------------------------------------
-File::FileStatus File::getStatus() const
+File::Status File::getStatus() const
 {
     return currentStatus;
 }
@@ -469,7 +469,7 @@ File::FileStatus File::getStatus() const
 //-----------------------------------------------------------------------------
 // Sets and returns the currentStatus when an error has been encountered.
 //-----------------------------------------------------------------------------
-File::FileStatus File::setStatus()
+File::Status File::setStatus()
 {
     switch (GetLastError())
     {
@@ -489,7 +489,7 @@ File::FileStatus File::setStatus()
 //-----------------------------------------------------------------------------
 // Sets and returns the currentStatus to status.
 //-----------------------------------------------------------------------------
-File::FileStatus File::setStatus(File::FileStatus status)
+File::Status File::setStatus(File::Status status)
 {
     return currentStatus = status;
 }
@@ -500,7 +500,7 @@ File::FileStatus File::setStatus(File::FileStatus status)
 // The number of bytes read is available in bytesRead if a non-Null pointer is
 // provided.
 //-----------------------------------------------------------------------------
-File::FileStatus File::read(U32 size, char *dst, U32 *bytesRead)
+File::Status File::read(U32 size, char *dst, U32 *bytesRead)
 {
     AssertFatal(Closed != currentStatus, "File::read: file closed");
     AssertFatal(INVALID_HANDLE_VALUE != (HANDLE)handle, "File::read: invalid file handle");
@@ -531,7 +531,7 @@ File::FileStatus File::read(U32 size, char *dst, U32 *bytesRead)
 // The number of bytes written is available in bytesWritten if a non-Null
 // pointer is provided.
 //-----------------------------------------------------------------------------
-File::FileStatus File::write(U32 size, const char *src, U32 *bytesWritten)
+File::Status File::write(U32 size, const char *src, U32 *bytesWritten)
 {
     AssertFatal(Closed != currentStatus, "File::write: file closed");
     AssertFatal(INVALID_HANDLE_VALUE != (HANDLE)handle, "File::write: invalid file handle");
@@ -1140,7 +1140,7 @@ void Platform::getVolumeNamesList( Vector<const char*>& out_rNameVector, bool bO
 
    out_rNameVector.clear();
 		
-	for(S32 i = 0; i < 32; i++ )
+	for(int i = 0; i < 32; i++ )
 	{
 		dMemset(driveLetter,0,12);
 		if( dwDrives & dwMask )

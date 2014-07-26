@@ -1168,7 +1168,9 @@ void Precipitation::destroySplash(Raindrop *drop)
    PROFILE_START(PrecipDestroySplash);
    if (drop == mSplashHead)
    {
-      mSplashHead = mSplashHead->nextSplashDrop;
+      mSplashHead = NULL;
+      PROFILE_END();
+      return;
    }
 
    if (drop->nextSplashDrop)

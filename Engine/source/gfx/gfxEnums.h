@@ -275,8 +275,8 @@ enum GFXBlend
 enum GFXAdapterType 
 {
    OpenGL = 0,
+   Direct3D9,
    Direct3D11,
-   Direct3D9 = Direct3D11,
    NullDevice,
    GFXAdapterType_Count
 };

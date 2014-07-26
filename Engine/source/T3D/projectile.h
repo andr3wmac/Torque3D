@@ -215,9 +215,9 @@ public:
 
    void updateSound();    
 
-   virtual bool calculateImpact( F32 simTime,
+   virtual bool calculateImpact( float simTime,
                                  Point3F &pointOfImpact,
-                                 F32 &impactTime );
+                                 float &impactTime );
 
    void setInitialPosition( const Point3F& pos );
    void setInitialVelocity( const Point3F& vel );

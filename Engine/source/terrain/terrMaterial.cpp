@@ -25,13 +25,9 @@
 #include "console/consoleTypes.h"
 #include "gfx/gfxTextureManager.h"
 #include "gfx/bitmap/gBitmap.h"
-#include "T3D/physics/PhysicsPlugin.h"
-#include "T3D/physics/PhysicsMaterial.h"
 
 
 IMPLEMENT_CONOBJECT( TerrainMaterial );
-
-Vector<TerrainMaterial*> TerrainMaterial::smAllTerrainMaterials;
 
 ConsoleDocClass( TerrainMaterial,
 	"@brief The TerrainMaterial class orginizes the material settings "
@@ -69,25 +65,12 @@ TerrainMaterial::TerrainMaterial()
       mMacroSize( 200.0f ),
       mMacroStrength( 0.7f ),
       mMacroDistance( 500.0f ),
-      mParallaxScale( 0.0f ),
-      mPhysicsMaterial(NULL),
-      mRestitution(0.1f),
-      mStaticFriction(0.6f),
-      mRestitutionCombine(S32(PhysicsMaterial::Average)),
-      mFrictionCombine(S32(PhysicsMaterial::Average)),
-      mDynamicFriction( 0.4f)
+      mParallaxScale( 0.0f )
 {
-   createPhysicsMaterial();
-   updatePhysicsMaterial();
-   smAllTerrainMaterials.push_back( this );
 }
 
 TerrainMaterial::~TerrainMaterial()
 {
-   if(mPhysicsMaterial)
-      SAFE_DELETE(mPhysicsMaterial);
-
-   smAllTerrainMaterials.remove( this );
 }
 
 void TerrainMaterial::initPersistFields()
@@ -114,40 +97,10 @@ void TerrainMaterial::initPersistFields()
    addField( "parallaxScale", TypeF32, Offset( mParallaxScale, TerrainMaterial ), "Used to scale the height from the normal map to give some self "
 	   "occlusion effect (aka parallax) to the terrain material" );
 
-
-	addGroup("PhysicsMaterial");
-
-	addField("restitution", TypeF32, Offset(mRestitution, TerrainMaterial),
-	         "@brief Coeffecient of a bounce applied to the shape in response to a collision.\n\n"
-	         "A value of 0 makes the object bounce as little as possible, while higher values up to 1.0 result in more bounce.\n\n"
-	         "@note Values close to or above 1.0 may cause stability problems and/or increasing energy.");
-	addField("staticFriction", TypeF32, Offset(mStaticFriction, TerrainMaterial),
-	         "@brief Coefficient of static %friction to be applied.\n\n"
-	         "Static %friction determines the force needed to start moving an at-rest object in contact with a surface. "
-	         "If the force applied onto shape cannot overcome the force of static %friction, the shape will remain at rest. "
-	         "A higher coefficient will require a larger force to start motion. "
-	         "@note This value should be larger than 0.\n\n");
-	addField("dynamicFriction", TypeF32,	Offset(mDynamicFriction, TerrainMaterial),
-	         "@brief Coefficient of dynamic %friction to be applied.\n\n"
-	         "Dynamic %friction reduces the velocity of a moving object while it is in contact with a surface. "
-	         "A higher coefficient will result in a larger reduction in velocity. "
-	         "A shape's dynamicFriction should be equal to or larger than 0.\n\n");
-
-   addField("restitutionCombine",TypeS32,Offset(mRestitutionCombine,TerrainMaterial),"");
-
-   addField("frictionCombine",TypeS32,Offset(mFrictionCombine,TerrainMaterial),"");
-
-	endGroup("PhysicsMaterial");
-
    Parent::initPersistFields();
+
    // Gotta call this at least once or it won't get created!
    Sim::getTerrainMaterialSet();
-}
-
-PhysicsMaterial *TerrainMaterial::getPhysicsMaterial()
-{
-   AssertFatal(mPhysicsMaterial,"TerrainMaterial::getPhysicsMaterial");
-   return mPhysicsMaterial;
 }
 
 bool TerrainMaterial::onAdd()
@@ -177,18 +130,6 @@ TerrainMaterial* TerrainMaterial::getWarningMaterial()
    return findOrCreate( NULL );
 }
 
-void TerrainMaterial::updatePhysicsMaterial()
-{
-   AssertFatal(mPhysicsMaterial,"TerrainMaterial::updatePhysicsMaterial");
-   mPhysicsMaterial->update(mRestitution,mStaticFriction,mDynamicFriction,(PhysicsMaterial::CombineMode)mFrictionCombine,(PhysicsMaterial::CombineMode)mRestitutionCombine);
-}
-
-void TerrainMaterial::createPhysicsMaterial()
-{
-   if(!mPhysicsMaterial)
-      mPhysicsMaterial = PHYSICSMGR->createMaterial(mRestitution,mStaticFriction,mDynamicFriction);
-}
-
 TerrainMaterial* TerrainMaterial::findOrCreate( const char *nameOrPath )
 {
    SimSet *set = Sim::getTerrainMaterialSet();
@@ -199,10 +140,7 @@ TerrainMaterial* TerrainMaterial::findOrCreate( const char *nameOrPath )
    // See if we can just find it.
    TerrainMaterial *mat = dynamic_cast<TerrainMaterial*>( set->findObjectByInternalName( StringTable->insert( nameOrPath ) ) );
    if ( mat )
-   {
-      mat->updatePhysicsMaterial();
       return mat;
-   }
 
    // We didn't find it... so see if its a path to a
    // file.  If it is lets assume its the texture.
@@ -212,9 +150,7 @@ TerrainMaterial* TerrainMaterial::findOrCreate( const char *nameOrPath )
       mat->setInternalName( nameOrPath );
       mat->mDiffuseMap = nameOrPath;
       mat->registerObject();
-      mat->updatePhysicsMaterial();
       Sim::getRootGroup()->addObject( mat );
-      
       return mat;
    }
 
@@ -231,10 +167,10 @@ TerrainMaterial* TerrainMaterial::findOrCreate( const char *nameOrPath )
       mat->mDiffuseSize = 500;
       mat->mDetailMap = GFXTextureManager::getWarningTexturePath();
       mat->mDetailSize = 5;
-      mat->mMacroMap = GFXTextureManager::getWarningTexturePath();
-      mat->mMacroSize = 200;
+	  mat->mMacroMap = GFXTextureManager::getWarningTexturePath();
+	  mat->mMacroSize = 200;
       mat->registerObject();
-      mat->updatePhysicsMaterial();
+      
       Sim::getRootGroup()->addObject( mat );
    }
 

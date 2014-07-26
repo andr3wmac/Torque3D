@@ -71,12 +71,6 @@ bool VehicleBlocker::onAdd()
 
    mObjBox.minExtents.set(-mDimensions.x, -mDimensions.y, 0);
    mObjBox.maxExtents.set( mDimensions.x,  mDimensions.y, mDimensions.z);
-   if( !mObjBox.isValidBox() )
-   {
-      Con::errorf("VehicleBlocker::onAdd - Fail - No valid object box");
-      return false;
-   }
-
    resetWorldBox();
    setRenderTransform(mObjToWorld);
 

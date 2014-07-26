@@ -50,11 +50,11 @@ static struct _privateRegisterJPG
 //-------------------------------------- Replacement I/O for standard LIBjpeg
 //                                        functions.  we don't wanna use
 //                                        FILE*'s...
-static S32 jpegReadDataFn(void *client_data, U8 *data, S32 length)
+static int jpegReadDataFn(void *client_data, unsigned char *data, int length)
 {
    Stream *stream = (Stream*)client_data;
    AssertFatal(stream != NULL, "jpegReadDataFn::No stream.");
-   S32 pos = stream->getPosition();
+   int pos = stream->getPosition();
    if (stream->read(length, data))
       return length;
 
@@ -66,7 +66,7 @@ static S32 jpegReadDataFn(void *client_data, U8 *data, S32 length)
 
 
 //--------------------------------------
-static S32 jpegWriteDataFn(void *client_data, U8 *data, S32 length)
+static int jpegWriteDataFn(void *client_data, unsigned char *data, int length)
 {
    Stream *stream = (Stream*)client_data;
    AssertFatal(stream != NULL, "jpegWriteDataFn::No stream.");
@@ -78,7 +78,7 @@ static S32 jpegWriteDataFn(void *client_data, U8 *data, S32 length)
 
 
 //--------------------------------------
-static S32 jpegFlushDataFn(void *)
+static int jpegFlushDataFn(void *)
 {
    // do nothing since we can't flush the stream object
    return 0;
@@ -86,7 +86,7 @@ static S32 jpegFlushDataFn(void *)
 
 
 //--------------------------------------
-static S32 jpegErrorFn(void *client_data)
+static int jpegErrorFn(void *client_data)
 {
    Stream *stream = (Stream*)client_data;
    AssertFatal(stream != NULL, "jpegErrorFn::No stream.");

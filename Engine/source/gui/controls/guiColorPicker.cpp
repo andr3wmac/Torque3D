@@ -119,64 +119,72 @@ void GuiColorPickerCtrl::drawBlendBox(RectI &bounds, ColorF &c1, ColorF &c2, Col
    if(c1 == colorWhite && c3 == colorAlpha && c4 == colorBlack)
    {
 		//Color
-		PrimBuild::begin( GFXTriangleFan, 4 );
-		PrimBuild::color( c2 );
-		PrimBuild::vertex2i( r, t );
+		PrimBuild::begin( GFXTriangleStrip, 4 );
 
 		PrimBuild::color( c2 );
-		PrimBuild::vertex2i( r, b );
+		PrimBuild::vertex2i( l, t );
+
+		PrimBuild::color( c2 );
+		PrimBuild::vertex2i( r, t );
 
 		PrimBuild::color( c2 );
 		PrimBuild::vertex2i( l, b );
 
 		PrimBuild::color( c2 );
-		PrimBuild::vertex2i( l, t );
+		PrimBuild::vertex2i( r, b );
+
 		PrimBuild::end();
 
 		//White
-		PrimBuild::begin( GFXTriangleFan, 4 );
-		PrimBuild::color( colorAlphaW );
-		PrimBuild::vertex2i( r, t );
+		PrimBuild::begin( GFXTriangleStrip, 4 );
+
+		PrimBuild::color( c1 );
+		PrimBuild::vertex2i( l, t );
 
 		PrimBuild::color( colorAlphaW );
-		PrimBuild::vertex2i( r, b );
+		PrimBuild::vertex2i( r, t );
 
 		PrimBuild::color( c1 );
 		PrimBuild::vertex2i( l, b );
 
-		PrimBuild::color( c1 );
-		PrimBuild::vertex2i( l, t );
+		PrimBuild::color( colorAlphaW );
+		PrimBuild::vertex2i( r, b );
+
 		PrimBuild::end();
 
 		//Black 
-		PrimBuild::begin( GFXTriangleFan, 4 );
+		PrimBuild::begin( GFXTriangleStrip, 4 );
+
+		PrimBuild::color( c3 );
+		PrimBuild::vertex2i( l, t );
+
 		PrimBuild::color( c3 );
 		PrimBuild::vertex2i( r, t );
 
 		PrimBuild::color( c4 );
-		PrimBuild::vertex2i( r, b );
-
-		PrimBuild::color( c4 );
 		PrimBuild::vertex2i( l, b );
 
-		PrimBuild::color( c3 );
-		PrimBuild::vertex2i( l, t );
+		PrimBuild::color( c4 );
+		PrimBuild::vertex2i( r, b );
+
 		PrimBuild::end();
    }
    else
    {
-	  PrimBuild::begin( GFXTriangleFan, 4 );
+      PrimBuild::begin( GFXTriangleStrip, 4 );
+
       PrimBuild::color( c1 );
       PrimBuild::vertex2i( l, t );
 
       PrimBuild::color( c2 );
       PrimBuild::vertex2i( r, t );
 
+      PrimBuild::color( c4 );
+      PrimBuild::vertex2i( l, b );
+
       PrimBuild::color( c3 );
       PrimBuild::vertex2i( r, b );
 
-      PrimBuild::color( c4 );
-      PrimBuild::vertex2i( l, b );
       PrimBuild::end();
    }
 }
@@ -198,19 +206,21 @@ void GuiColorPickerCtrl::drawBlendRangeBox(RectI &bounds, bool vertical, U8 numC
    for( U16 i = 0;i < numColors - 1; i++ ) 
    {
       // This is not efficent, but then again it doesn't really need to be. -pw
-      PrimBuild::begin( GFXTriangleFan, 4 );
+      PrimBuild::begin( GFXTriangleStrip, 4 );
 
       if (!vertical)  // Horizontal (+x)
       {
          // First color
          PrimBuild::color( colors[i] );
          PrimBuild::vertex2i( l, t );
-         PrimBuild::vertex2i( l, b );
+         PrimBuild::color( colors[i+1] );
+         PrimBuild::vertex2i( l + x_inc, t );
 
          // Second color
+         PrimBuild::color( colors[i] );
+         PrimBuild::vertex2i( l, b );
          PrimBuild::color( colors[i+1] );
          PrimBuild::vertex2i( l + x_inc, b );
-         PrimBuild::vertex2i( l + x_inc, t );
          l += x_inc;
       }
       else  // Vertical (+y)
@@ -218,12 +228,14 @@ void GuiColorPickerCtrl::drawBlendRangeBox(RectI &bounds, bool vertical, U8 numC
          // First color
          PrimBuild::color( colors[i] );
          PrimBuild::vertex2i( l, t );
-         PrimBuild::vertex2i( r, t );
+         PrimBuild::color( colors[i+1] );
+         PrimBuild::vertex2i( l, t + y_inc );
 
          // Second color
+         PrimBuild::color( colors[i] );
+         PrimBuild::vertex2i( r, t );
          PrimBuild::color( colors[i+1] );
          PrimBuild::vertex2i( r, t + y_inc );
-         PrimBuild::vertex2i( l, t + y_inc );
          t += y_inc;
       }
       PrimBuild::end();
@@ -353,9 +365,7 @@ void GuiColorPickerCtrl::onRender(Point2I offset, const RectI& updateRect)
          Point2I resolution = getRoot()->getExtent();
 
          U32 buf_x = offset.x + mSelectorPos.x + 1;
-         U32 buf_y = ( extent.y - ( offset.y + mSelectorPos.y + 1 ) );
-         if(GFX->getAdapterType() != OpenGL)
-            buf_y = resolution.y - buf_y;
+         U32 buf_y = resolution.y - ( extent.y - ( offset.y + mSelectorPos.y + 1 ) );
 
          GFXTexHandle bb( resolution.x, 
                           resolution.y, 
@@ -528,11 +538,10 @@ void GuiColorPickerCtrl::setScriptValue(const char *value)
 
 ConsoleMethod(GuiColorPickerCtrl, getSelectorPos, const char*, 2, 2, "Gets the current position of the selector")
 {
-   static const U32 bufSize = 256;
-   char *temp = Con::getReturnBuffer(bufSize);
+   char *temp = Con::getReturnBuffer(256);
    Point2I pos;
    pos = object->getSelectorPos();
-   dSprintf(temp,bufSize,"%d %d",pos.x, pos.y); 
+   dSprintf(temp,256,"%d %d",pos.x, pos.y); 
    return temp;
 }
 

@@ -91,17 +91,9 @@ public:
    // for this functionality later
    void unit_test( UnitTest *test )
    {
-      AssertFatal(test, "CachedInterfaceExampleComponent::unit_test - NULL UnitTest");
-
-      if( !test )
-         return;
-
       test->test( mpU32 != NULL, "Pointer to dependent interface is NULL" );
-      if( mpU32 )
-      {
-         test->test( *(*mpU32) & ( 1 << 24 ), "Pointer to interface data is bogus." );
-         test->test( *(*mpU32) != *mMyId, "Two of me have the same ID, bad!" );
-      }
+      test->test( *(*mpU32) & ( 1 << 24 ), "Pointer to interface data is bogus." );
+      test->test( *(*mpU32) != *mMyId, "Two of me have the same ID, bad!" );
    }
 };
 
@@ -138,16 +130,13 @@ CreateUnitTest(TestComponentInterfacing, "Components/Composition")
       test( componentB->getOwner() == testComponent, "testComponent did not properly set the mOwner field of componentB to NULL." );
 
       // Register the object with the simulation, kicking off the interface registration
-      const bool registered = testComponent->registerObject();
-      test( registered, "Failed to register testComponent" );
+      test( testComponent->registerObject(), "Failed to register testComponent" );
 
       // Interface tests
-      if( registered )
-      {
-         componentA->unit_test( this );
-         componentB->unit_test( this );
-         testComponent->deleteObject();
-      } 
+      componentA->unit_test( this );
+      componentB->unit_test( this );
+
+      testComponent->deleteObject();
 
       test( m.check(), "Component composition test leaked memory." );
    }

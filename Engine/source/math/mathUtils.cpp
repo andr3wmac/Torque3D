@@ -819,7 +819,7 @@ U32 greatestCommonDivisor( U32 u, U32 v )
 {
    // http://en.wikipedia.org/wiki/Binary_GCD_algorithm
       
-   S32 shift;
+   int shift;
 
    /* GCD(0,x) := x */
    if (u == 0 || v == 0)
@@ -845,7 +845,7 @@ U32 greatestCommonDivisor( U32 u, U32 v )
       if (u < v) {
          v -= u;
       } else {
-         U32 diff = u - v;
+         unsigned int diff = u - v;
          u = v;
          v = diff;
       }
@@ -1086,7 +1086,7 @@ struct QuadSortPoint
 };
 
 // Used by sortQuadWindingOrder.
-S32 QSORT_CALLBACK cmpAngleAscending( const void *a, const void *b )
+int QSORT_CALLBACK cmpAngleAscending( const void *a, const void *b )
 {
    const QuadSortPoint *p0 = (const QuadSortPoint*)a;
    const QuadSortPoint *p1 = (const QuadSortPoint*)b;   
@@ -1102,7 +1102,7 @@ S32 QSORT_CALLBACK cmpAngleAscending( const void *a, const void *b )
 }
 
 // Used by sortQuadWindingOrder.
-S32 QSORT_CALLBACK cmpAngleDescending( const void *a, const void *b )
+int QSORT_CALLBACK cmpAngleDescending( const void *a, const void *b )
 {
 	const QuadSortPoint *p0 = (const QuadSortPoint*)a;
 	const QuadSortPoint *p1 = (const QuadSortPoint*)b;   

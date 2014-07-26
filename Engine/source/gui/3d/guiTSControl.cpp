@@ -124,9 +124,8 @@ namespace
       desc.setCullMode(GFXCullNone);
       desc.setZReadWrite(false);
       desc.setBlend(true, GFXBlendSrcAlpha, GFXBlendInvSrcAlpha);
-      GFX->setupGenericShaders(); // D3D9Refractor fix  
       GFX->setStateBlockByDesc( desc );
-
+	  GFX->setupGenericShaders();
       GFX->drawPrimitive( GFXTriangleStrip, 0, 2 );
    }
 }
@@ -540,7 +539,7 @@ DefineEngineMethod( GuiTSCtrl, getWorldToScreenScale, Point2F, (),,
 
 //-----------------------------------------------------------------------------
 
-DefineEngineMethod( GuiTSCtrl, calculateViewDistance, F32, ( F32 radius ),,
+DefineEngineMethod( GuiTSCtrl, calculateViewDistance, float, ( float radius ),,
    "Given the camera's current FOV, get the distance from the camera's viewpoint at which the given radius will fit in the render area.\n"
    "@param radius Radius in world-space units which should fit in the view.\n"
    "@return The distance from the viewpoint at which the given radius would be fully visible." )

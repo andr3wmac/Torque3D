@@ -49,9 +49,6 @@
 #include "materials/materialFeatureTypes.h"
 #include "console/engineAPI.h"
 
-// andrewmac: Cloth Addon
-#include "T3D/physics/physicsCloth.h"
-
 using namespace Torque;
 
 extern bool gEditingMission;
@@ -114,16 +111,10 @@ TSStatic::TSStatic()
    mMeshCulling = false;
    mUseOriginSort = false;
 
+   mPhysicsRep = NULL;
+
    mCollisionType = CollisionMesh;
    mDecalType = CollisionMesh;
-
-   // andrewmac : Cloth Options
-   mCloth = NULL;
-   mClothEnabled = false;
-
-   // andrewmac : Physics Options
-   mEnablePhysicsRep = true;
-   mPhysicsRep = NULL;
 }
 
 TSStatic::~TSStatic()
@@ -200,16 +191,6 @@ void TSStatic::initPersistFields()
          "When set to false, the slightest bump will stop the player from walking on top of the object.\n");
    
    endGroup("Collision");
-
-   addGroup("Cloth");
-      addField( "clothEnabled",      TypeBool,         Offset( mClothEnabled, TSStatic ), 
-         "@brief Uses available physics engine to simulate cloth pieces.\n");
-   endGroup("Cloth");
-
-   addGroup("Physics");
-      addField( "enablePhysicsRep",  TypeBool,         Offset( mEnablePhysicsRep, TSStatic ), 
-         "@brief Creates a representation of the object in the physics plugin.\n");
-   endGroup("Physics");
 
    addGroup("Debug");
 
@@ -305,61 +286,58 @@ bool TSStatic::onAdd()
 
 bool TSStatic::_createShape()
 {
-    // Cleanup before we create.
-    mCollisionDetails.clear();
-    mLOSDetails.clear();
-    SAFE_DELETE( mPhysicsRep );
-    SAFE_DELETE( mShapeInstance );
-    mAmbientThread = NULL;
-    mShape = NULL;
+   // Cleanup before we create.
+   mCollisionDetails.clear();
+   mLOSDetails.clear();
+   SAFE_DELETE( mPhysicsRep );
+   SAFE_DELETE( mShapeInstance );
+   mAmbientThread = NULL;
+   mShape = NULL;
 
-    if (!mShapeName || mShapeName[0] == '\0') 
-    {
-        Con::errorf( "TSStatic::_createShape() - No shape name!" );
-        return false;
-    }
+   if (!mShapeName || mShapeName[0] == '\0') 
+   {
+      Con::errorf( "TSStatic::_createShape() - No shape name!" );
+      return false;
+   }
 
-    mShapeHash = _StringTable::hashString(mShapeName);
+   mShapeHash = _StringTable::hashString(mShapeName);
 
-    mShape = ResourceManager::get().load(mShapeName);
-    if ( bool(mShape) == false )
-    {
-        Con::errorf( "TSStatic::_createShape() - Unable to load shape: %s", mShapeName );
-        return false;
-    }
+   mShape = ResourceManager::get().load(mShapeName);
+   if ( bool(mShape) == false )
+   {
+      Con::errorf( "TSStatic::_createShape() - Unable to load shape: %s", mShapeName );
+      return false;
+   }
 
-    if (  isClientObject() && 
-            !mShape->preloadMaterialList(mShape.getPath()) && 
-            NetConnection::filesWereDownloaded() )
-        return false;
+   if (  isClientObject() && 
+         !mShape->preloadMaterialList(mShape.getPath()) && 
+         NetConnection::filesWereDownloaded() )
+      return false;
 
-    mObjBox = mShape->bounds;
-    resetWorldBox();
+   mObjBox = mShape->bounds;
+   resetWorldBox();
 
-    mShapeInstance = new TSShapeInstance( mShape, isClientObject() );
+   mShapeInstance = new TSShapeInstance( mShape, isClientObject() );
 
-    if( isGhost() )
-    {
-        // Reapply the current skin
-        mAppliedSkinName = "";
-        reSkin();
-    }
+   if( isGhost() )
+   {
+      // Reapply the current skin
+      mAppliedSkinName = "";
+      reSkin();
+   }
 
-    prepCollision();
+   prepCollision();
 
-    // Find the "ambient" animation if it exists
-    S32 ambientSeq = mShape->findSequence("ambient");
+   // Find the "ambient" animation if it exists
+   S32 ambientSeq = mShape->findSequence("ambient");
 
-    if ( ambientSeq > -1 && !mAmbientThread )
-        mAmbientThread = mShapeInstance->addThread();
+   if ( ambientSeq > -1 && !mAmbientThread )
+      mAmbientThread = mShapeInstance->addThread();
 
-    if ( mAmbientThread )
-        mShapeInstance->setSequence( mAmbientThread, ambientSeq, 0);
+   if ( mAmbientThread )
+      mShapeInstance->setSequence( mAmbientThread, ambientSeq, 0);
 
-    if ( mClothEnabled )
-        _enableCloth();
-
-    return true;
+   return true;
 }
 
 void TSStatic::prepCollision()
@@ -386,9 +364,6 @@ void TSStatic::_updatePhysics()
 {
    SAFE_DELETE( mPhysicsRep );
 
-   // andrewmac: Physics Options.
-   if ( !mEnablePhysicsRep ) return;
-
    if ( !PHYSICSMGR || mCollisionType == None )
       return;
 
@@ -414,24 +389,21 @@ void TSStatic::_updatePhysics()
 
 void TSStatic::onRemove()
 {
-    SAFE_DELETE( mPhysicsRep );
-    // andrewmac : Cloth
-   	if ( mClothEnabled )
-        _disableCloth();
+   SAFE_DELETE( mPhysicsRep );
 
-    mConvexList->nukeList();
+   mConvexList->nukeList();
 
-    removeFromScene();
+   removeFromScene();
 
-    // Remove the resource change signal.
-    ResourceManager::get().getChangedSignal().remove( this, &TSStatic::_onResourceChanged );
+   // Remove the resource change signal.
+   ResourceManager::get().getChangedSignal().remove( this, &TSStatic::_onResourceChanged );
 
-    delete mShapeInstance;
-    mShapeInstance = NULL;
+   delete mShapeInstance;
+   mShapeInstance = NULL;
 
-    mAmbientThread = NULL;
+   mAmbientThread = NULL;
 
-    Parent::onRemove();
+   Parent::onRemove();
 }
 
 void TSStatic::_onResourceChanged( const Torque::Path &path )
@@ -470,7 +442,7 @@ void TSStatic::reSkin()
       Vector<String> skins;
       String(mSkinNameHandle.getString()).split( ";", skins );
 
-      for (S32 i = 0; i < skins.size(); i++)
+      for (int i = 0; i < skins.size(); i++)
       {
          String oldSkin( mAppliedSkinName.c_str() );
          String newSkin( skins[i] );
@@ -493,15 +465,10 @@ void TSStatic::reSkin()
 
 void TSStatic::processTick( const Move *move )
 {
-    // andrewmac : Cloth
-   	if ( mClothEnabled && mCloth )
-        mCloth->processTick();
-    
-	// Die gracefully.
-    if ( !(mPlayAmbient && mAmbientThread) ) return;
+   AssertFatal( mPlayAmbient && mAmbientThread, "TSSTatic::adanceTime called with nothing to play." );
 
-    if ( isServerObject() )
-        mShapeInstance->advanceTime( TickSec, mAmbientThread );
+   if ( isServerObject() )
+      mShapeInstance->advanceTime( TickSec, mAmbientThread );
 }
 
 void TSStatic::interpolateTick( F32 delta )
@@ -510,22 +477,17 @@ void TSStatic::interpolateTick( F32 delta )
 
 void TSStatic::advanceTime( F32 dt )
 {
-	// andrewmac : Die gracefully.
-    if ( !(mPlayAmbient && mAmbientThread) ) return;
+   AssertFatal( mPlayAmbient && mAmbientThread, "TSSTatic::advanceTime called with nothing to play." );
    
-	mShapeInstance->advanceTime( dt, mAmbientThread );
+   mShapeInstance->advanceTime( dt, mAmbientThread );
 }
 
 void TSStatic::_updateShouldTick()
 {
-    bool shouldTick = mPlayAmbient && mAmbientThread;
+   bool shouldTick = mPlayAmbient && mAmbientThread;
 
-    if ( isTicking() != shouldTick )
-        setProcessTick( shouldTick );
-
-    // andrewmac: Cloth Add-on
-    if ( mClothEnabled )
-        setProcessTick(true);
+   if ( isTicking() != shouldTick )
+      setProcessTick( shouldTick );
 }
 
 void TSStatic::prepRenderImage( SceneRenderState* state )
@@ -666,12 +628,6 @@ U32 TSStatic::packUpdate(NetConnection *con, U32 mask, BitStream *stream)
    if ( mLightPlugin )
       retMask |= mLightPlugin->packUpdate(this, AdvancedStaticOptionsMask, con, mask, stream);
 
-   // andrewmac: Cloth
-   stream->writeFlag( mClothEnabled );
-
-   // andrewmac: Physics Options
-   stream->writeFlag( mEnablePhysicsRep );
-
    return retMask;
 }
 
@@ -731,24 +687,6 @@ void TSStatic::unpackUpdate(NetConnection *con, BitStream *stream)
       mLightPlugin->unpackUpdate(this, con, stream);
    }
 
-   // andrewmac: Cloth
-   bool clothFlag = stream->readFlag();
-   if ( clothFlag != mClothEnabled )
-   {
-       if ( clothFlag )
-           _enableCloth();
-       else
-           _disableCloth();
-   }
-
-   // andrewmac: Physics Options
-   bool physicsRepFlag = stream->readFlag();
-   if ( physicsRepFlag != mEnablePhysicsRep )
-   {
-        mEnablePhysicsRep = physicsRepFlag;
-        _updatePhysics();
-   }
-   
    if ( isProperlyAdded() )
       _updateShouldTick();
 }
@@ -1209,22 +1147,4 @@ DefineEngineMethod( TSStatic, getModelFile, const char *, (),,
    )
 {
 	return object->getShapeFileName();
-}
-
-// andrewmac: cloth
-void TSStatic::_enableCloth()
-{
-    _disableCloth();
-    mClothEnabled = true;
-    mCloth = PHYSICSMGR->createCloth(mShapeInstance, getTransform());
-}
-
-void TSStatic::_disableCloth()
-{
-    mClothEnabled = false;
-    if ( mCloth )
-    {
-        mCloth->release();
-        SAFE_DELETE(mCloth);
-    }
 }

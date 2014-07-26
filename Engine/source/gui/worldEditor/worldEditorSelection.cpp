@@ -642,11 +642,10 @@ ConsoleMethod( WorldEditorSelection, containsGlobalBounds, bool, 2, 2, "() - Tru
 
 ConsoleMethod( WorldEditorSelection, getCentroid, const char*, 2, 2, "() - Return the median of all object positions in the selection." )
 {
-   static const U32 bufSize = 256;
-   char* buffer = Con::getReturnBuffer( bufSize );
+   char* buffer = Con::getReturnBuffer( 256 );
    const Point3F& centroid = object->getCentroid();
    
-   dSprintf( buffer, bufSize, "%g %g %g", centroid.x, centroid.y, centroid.z );
+   dSprintf( buffer, 256, "%g %g %g", centroid.x, centroid.y, centroid.z );
    return buffer;
 }
 
@@ -654,11 +653,10 @@ ConsoleMethod( WorldEditorSelection, getCentroid, const char*, 2, 2, "() - Retur
 
 ConsoleMethod( WorldEditorSelection, getBoxCentroid, const char*, 2, 2, "() - Return the center of the bounding box around the selection." )
 {
-   static const U32 bufSize = 256;
-   char* buffer = Con::getReturnBuffer( bufSize );
+   char* buffer = Con::getReturnBuffer( 256 );
    const Point3F& boxCentroid = object->getBoxCentroid();
    
-   dSprintf( buffer, bufSize, "%g %g %g", boxCentroid.x, boxCentroid.y, boxCentroid.z );
+   dSprintf( buffer, 256, "%g %g %g", boxCentroid.x, boxCentroid.y, boxCentroid.z );
    return buffer;
 }
 

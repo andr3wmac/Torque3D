@@ -40,9 +40,6 @@
 
 static void _onRegisterFeatures( GFXAdapterType type )
 {
-   if ( type != OpenGL )
-      return;
-
    FEATUREMGR->registerFeature( MFT_WindEffect, new WindDeformationGLSL );
 }
 
@@ -86,14 +83,29 @@ void WindDeformationGLSL::processVert( Vector<ShaderComponent*> &componentList,
    // save constant space and reduce the memory copied to the
    // card.
    //
+   // This in particular helps when we're instancing.
+   //
    // .x = bend scale
    // .y = branch amplitude
    // .z = detail amplitude
    // .w = detail frequency
    //
-   Var *windParams = new Var( "windParams", "vec4" );
+   Var *windParams;
+   if ( fd.features[MFT_UseInstancing] ) 
+   {
+      ShaderConnector *vertStruct = dynamic_cast<ShaderConnector *>( componentList[C_VERT_STRUCT] );
+      windParams = vertStruct->getElement( RT_TEXCOORD );
+      windParams->setName( "inst_windParams" );
+      windParams->setType( "vec4" );
+
+      mInstancingFormat->addElement( "windParams", GFXDeclType_Float4, windParams->constNum );
+   }
+   else
+   {
+      windParams = new Var( "windParams", "vec4" );
       windParams->uniform = true;
       windParams->constSortPos = cspPotentialPrimitive;
+   }
 
    // If we're instancing then we need to instance the wind direction
    // and speed as its unique for each tree instance.
@@ -102,7 +114,6 @@ void WindDeformationGLSL::processVert( Vector<ShaderComponent*> &componentList,
    {
       ShaderConnector *vertStruct = dynamic_cast<ShaderConnector *>( componentList[C_VERT_STRUCT] );
       windDirAndSpeed = vertStruct->getElement( RT_TEXCOORD );
-      windDirAndSpeed->setStructName( "IN" );
       windDirAndSpeed->setName( "inst_windDirAndSpeed" );
       windDirAndSpeed->setType( "vec3" );
 
@@ -132,31 +143,16 @@ void WindDeformationGLSL::processVert( Vector<ShaderComponent*> &componentList,
    if ( !inPosition )
       inPosition = (Var*)LangElement::find( "position" );
 
-   // Copy the input position to the output first as 
-   // the wind effects are conditional.
-   Var *outPosition = (Var*)LangElement::find( "inPosition" );
-   if ( !outPosition )
-   {
-      outPosition = new Var;
-      outPosition->setType( "vec3" );
-      outPosition->setName( "inPosition" );
-      meta->addStatement( new GenOp("   @ = @.xyz;\r\n", new DecOp( outPosition ), inPosition ) );
-   }
-
    // Get the incoming color data
    Var *inColor = (Var*)LangElement::find( "diffuse" );
-
-   // Do a dynamic branch based on wind force.
-   if ( GFX->getPixelShaderVersion() >= 3.0f )
-      meta->addStatement( new GenOp("   if ( any( bvec3(@) ) ) {\r\n", windDirAndSpeed ) );
 
    // Do the branch and detail bending first so that 
    // it can work in pure object space of the tree.
    LangElement *effect = 
       new GenOp(  "windBranchBending( "
 
-                     "@, "                  // vPos
-                     "normalize( IN_normal ), " // vNormal
+                     "@.xyz, "                  // vPos
+                     "normalize( normal ), " // vNormal
 
                      "@, " // fTime
                      "@.z, " // fWindSpeed
@@ -165,13 +161,13 @@ void WindDeformationGLSL::processVert( Vector<ShaderComponent*> &componentList,
                      "@.y, "    // fBranchAmp
                      "@.r, "  // fBranchAtten
 
-                     "dot( @[3], vec4(1) ), "    // fDetailPhase
+                     "dot( @[3], vec4( 1.0 ) ), "    // fDetailPhase
                      "@.z, "  // fDetailAmp
                      "@.w, "  // fDetailFreq
-                     
+
                      "@.b )", // fEdgeAtten
 
-         outPosition,    // vPos
+         inPosition,    // vPos
                         // vNormal
 
          accumTime,  // fTime
@@ -187,15 +183,22 @@ void WindDeformationGLSL::processVert( Vector<ShaderComponent*> &componentList,
 
          inColor ); // fEdgeAtten
 
-   meta->addStatement( new GenOp( "   @ = @;\r\n", outPosition, effect ) );
+   Var *outPosition = (Var*)LangElement::find( "inPosition" );
+   if ( outPosition )
+      meta->addStatement( new GenOp( "   @.xyz = @;\r\n", outPosition, effect, inPosition ) );
+   else    
+   {
+      outPosition = new Var;
+      outPosition->setType( "vec3" );
+      outPosition->setName( "inPosition" );
+      meta->addStatement( new GenOp("   vec3 inPosition = @;\r\n", effect, inPosition ) );
+   }
 
    // Now do the trunk bending.
-   meta->addStatement( new GenOp("   @ = windTrunkBending( @, @.xy, @.z * @.x );\r\n", 
-      outPosition, outPosition, windDirAndSpeed, outPosition, windParams ) );
+   effect = new GenOp( "windTrunkBending( @, @.xy, @.z * @.x )",
+                        outPosition, windDirAndSpeed, outPosition, windParams );
 
-   // End the dynamic branch.
-   if ( GFX->getPixelShaderVersion() >= 3.0f )
-      meta->addStatement( new GenOp("   } // [branch]\r\n" ) );
+   meta->addStatement( new GenOp("   @ = @;\r\n", outPosition, effect ) );
 }
 
 ShaderFeatureConstHandles* WindDeformationGLSL::createConstHandles( GFXShader *shader, SimObject *userObject )

@@ -606,7 +606,7 @@ GFXVertexBufferHandle<AdvancedLightManager::LightVertex> AdvancedLightManager::g
       mConeIndices.lock( &idx );
       // Build the cone
       U32 idxIdx = 0;
-      for( U32 i = 1; i < numPoints + 1; i++ )
+      for( int i = 1; i < numPoints + 1; i++ )
       {
          idx[idxIdx++] = 0; // Triangles on cone start at top point
          idx[idxIdx++] = i;
@@ -614,7 +614,7 @@ GFXVertexBufferHandle<AdvancedLightManager::LightVertex> AdvancedLightManager::g
       }
 
       // Build the bottom of the cone (reverse winding order)
-      for( U32 i = 1; i < numPoints - 1; i++ )
+      for( int i = 1; i < numPoints - 1; i++ )
       {
          idx[idxIdx++] = 1;
          idx[idxIdx++] = i + 2;
@@ -664,9 +664,8 @@ ConsoleFunction( setShadowVizLight, const char*, 2, 2, "" )
    const Point3I &size = texObject->getSize();
    F32 aspect = (F32)size.x / (F32)size.y;
 
-   static const U32 bufSize = 64;
-   char *result = Con::getReturnBuffer( bufSize );
-   dSprintf( result, bufSize, "%d %d %g", size.x, size.y, aspect ); 
+   char *result = Con::getReturnBuffer( 64 );
+   dSprintf( result, 64, "%d %d %g", size.x, size.y, aspect ); 
    return result;
 }
 

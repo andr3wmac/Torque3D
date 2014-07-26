@@ -324,7 +324,7 @@ namespace Torque
          return mFileData->mPath;
       }
 
-      FileNode::NodeStatus MemFile::getStatus() const
+      FileNode::Status MemFile::getStatus() const
       {
          return mStatus;
       }
@@ -502,7 +502,7 @@ namespace Torque
          return mDirectoryData->getAttributes(attr);
       }
 
-      FileNode::NodeStatus MemDirectory::getStatus() const
+      FileNode::Status MemDirectory::getStatus() const
       {
          return mStatus;
       }

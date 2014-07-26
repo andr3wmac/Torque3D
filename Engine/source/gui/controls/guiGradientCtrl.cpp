@@ -89,9 +89,8 @@ bool GuiGradientSwatchCtrl::onWake()
 	if ( !Parent::onWake() )
       return false;
 	
-	static const U32 bufSize = 512;
-	char* altCommand = Con::getReturnBuffer(bufSize);
-	dSprintf( altCommand, bufSize, "%s(%i.color, \"%i.setColor\");", mColorFunction, getId(), getId() );
+	char* altCommand = Con::getReturnBuffer(512);
+	dSprintf( altCommand, 512, "%s(%i.color, \"%i.setColor\");", mColorFunction, getId(), getId() );
 	setField( "altCommand", altCommand );
 
 	return true;
@@ -333,59 +332,61 @@ void GuiGradientCtrl::drawBlendRangeBox(RectI &bounds, bool vertical, Vector<Col
 	
 	if(colorRange.size() == 1) // Only one color to draw
 	{
-		PrimBuild::begin( GFXTriangleFan, 4 );
+		PrimBuild::begin( GFXTriangleStrip, 4 );
 
 		PrimBuild::color( colorRange.first().swatch->getColor() );
 		PrimBuild::vertex2i( l, t );
-		PrimBuild::vertex2i( l, b );
+		PrimBuild::vertex2i( r, t );
 
 		PrimBuild::color( colorRange.first().swatch->getColor() );
+		PrimBuild::vertex2i( l, b );
 		PrimBuild::vertex2i( r, b );
-		PrimBuild::vertex2i( r, t );
 
 		PrimBuild::end();
 	}
 	else
 	{
-		PrimBuild::begin( GFXTriangleFan, 4 );
+		PrimBuild::begin( GFXTriangleStrip, 4 );
 
 		PrimBuild::color( colorRange.first().swatch->getColor() );
 		PrimBuild::vertex2i( l, t );
-		PrimBuild::vertex2i( l, b );
+		PrimBuild::vertex2i( l + colorRange.first().swatch->getPosition().x, t );
 
 		PrimBuild::color( colorRange.first().swatch->getColor() );
+		PrimBuild::vertex2i( l, b );
 		PrimBuild::vertex2i( l + colorRange.first().swatch->getPosition().x, b );
-		PrimBuild::vertex2i( l + colorRange.first().swatch->getPosition().x, t );
 
 		PrimBuild::end();
 
 		for( U16 i = 0;i < colorRange.size() - 1; i++ ) 
 		{
-			PrimBuild::begin( GFXTriangleFan, 4 );
+			PrimBuild::begin( GFXTriangleStrip, 4 );
 			if (!vertical)  // Horizontal (+x)
 			{
 				// First color
 				PrimBuild::color( colorRange[i].swatch->getColor() );
 				PrimBuild::vertex2i( l + colorRange[i].swatch->getPosition().x, t );
-				PrimBuild::vertex2i( l + colorRange[i].swatch->getPosition().x, b );
+				PrimBuild::color( colorRange[i+1].swatch->getColor() );
+				PrimBuild::vertex2i( l + colorRange[i+1].swatch->getPosition().x, t );
 				
 				// First color
+				PrimBuild::color( colorRange[i].swatch->getColor() );
+				PrimBuild::vertex2i( l + colorRange[i].swatch->getPosition().x, b );
 				PrimBuild::color( colorRange[i+1].swatch->getColor() );
 				PrimBuild::vertex2i( l + colorRange[i+1].swatch->getPosition().x, b );
-				PrimBuild::vertex2i( l + colorRange[i+1].swatch->getPosition().x, t );
 			}
 			PrimBuild::end();
 		}
 
-		PrimBuild::begin( GFXTriangleFan, 4 );
+		PrimBuild::begin( GFXTriangleStrip, 4 );
 
 		PrimBuild::color( colorRange.last().swatch->getColor() );
 		PrimBuild::vertex2i( l + colorRange.last().swatch->getPosition().x, t );
-		PrimBuild::vertex2i( l + colorRange.last().swatch->getPosition().x, b );
+		PrimBuild::vertex2i( r, t );
 		
 		PrimBuild::color( colorRange.last().swatch->getColor() );
+		PrimBuild::vertex2i( l + colorRange.last().swatch->getPosition().x, b );
 		PrimBuild::vertex2i( r, b );
-		PrimBuild::vertex2i( r, t );
 
 		PrimBuild::end();
 	}
@@ -617,11 +618,10 @@ ConsoleMethod(GuiGradientCtrl, getColor, const char*, 3, 3, "Get color value")
 	{
 		if ( idx >= 0 && idx < object->mColorRange.size() )
 		{
-			static const U32 bufSize = 256;
-			char* rColor = Con::getReturnBuffer(bufSize);
+			char* rColor = Con::getReturnBuffer(256);
 			rColor[0] = 0;
 
-			dSprintf(rColor, bufSize, "%f %f %f %f",
+			dSprintf(rColor, 256, "%f %f %f %f",
 				object->mColorRange[idx].swatch->getColor().red,
 				object->mColorRange[idx].swatch->getColor().green,
 				object->mColorRange[idx].swatch->getColor().blue,
@@ -634,11 +634,10 @@ ConsoleMethod(GuiGradientCtrl, getColor, const char*, 3, 3, "Get color value")
 	{
 		if ( idx >= 0 && idx < object->mAlphaRange.size() )
 		{
-			static const U32 bufSize = 256;
-			char* rColor = Con::getReturnBuffer(bufSize);
+			char* rColor = Con::getReturnBuffer(256);
 			rColor[0] = 0;
 
-			dSprintf(rColor, bufSize, "%f %f %f %f",
+			dSprintf(rColor, 256, "%f %f %f %f",
 				object->mAlphaRange[idx].swatch->getColor().red,
 				object->mAlphaRange[idx].swatch->getColor().green,
 				object->mAlphaRange[idx].swatch->getColor().blue,

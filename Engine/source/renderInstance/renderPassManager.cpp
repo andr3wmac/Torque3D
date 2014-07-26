@@ -255,9 +255,7 @@ void RenderPassManager::render(SceneRenderState * state)
    GFX->setProjectionMatrix( proj );
       
    // Restore a clean state for subsequent rendering.
-   // andrewmac: D3D9-Refactor
    GFX->setupGenericShaders();
-   //GFX->disableShaders();
    for(S32 i = 0; i < GFX->getNumSamplers(); ++i)
       GFX->setTexture(i, NULL);
 }

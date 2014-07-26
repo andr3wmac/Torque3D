@@ -96,7 +96,7 @@ public:
    }
 
    // Accessors
-   S32 getCount() const { return mCount; }
+   int getCount() const { return mCount; }
    F32 getTime() const { return mT; }
    F32 getMaxHeight() const { return mMaxHeight; }
 

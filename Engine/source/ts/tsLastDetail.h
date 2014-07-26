@@ -62,12 +62,12 @@ GFXDeclareVertexFormat( ImposterState )
    /// .xyz = imposter center
    /// .w = billboard corner... damn SM 2.0
    Point3F center;
-   F32 corner;
+   float corner;
 
    /// .x = scaled half size
    /// .y = alpha fade out
-   F32 halfSize;
-   F32 alpha;
+   float halfSize;
+   float alpha;
 
    /// The rotation encoded as the up
    /// and right vectors... cross FTW.

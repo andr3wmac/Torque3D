@@ -382,11 +382,10 @@ ConsoleFunction( buildTaggedString, const char*, 2, 11, "(string format, ...)"
    if (*indexPtr == StringTagPrefixByte)
       indexPtr++;
    const char *fmtString = gNetStringTable->lookupString(dAtoi(indexPtr));
-   static const U32 bufSize = 512;
-   char *strBuffer = Con::getReturnBuffer(bufSize);
+   char *strBuffer = Con::getReturnBuffer(512);
    const char *fmtStrPtr = fmtString;
    char *strBufPtr = strBuffer;
-   S32 strMaxLength = bufSize - 1;
+   S32 strMaxLength = 511;
    if (!fmtString)
       goto done;
 

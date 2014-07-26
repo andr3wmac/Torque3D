@@ -251,9 +251,6 @@ PlayerData::PlayerData()
    renderFirstPerson = true;
    firstPersonShadows = false;
 
-   // andrewmac: Physics Collision Flag
-   physicsCollision = true;
-
    // Used for third person image rendering
    imageAnimPrefix = StringTable->insert("");
 
@@ -430,9 +427,9 @@ bool PlayerData::preload(bool server, String &errorStr)
    {
       for( U32 i = 0; i < MaxSounds; ++ i )
       {
-         String sfxErrorStr;
-         if( !sfxResolve( &sound[ i ], sfxErrorStr ) )
-            Con::errorf( "PlayerData::preload: %s", sfxErrorStr.c_str() );
+         String errorStr;
+         if( !sfxResolve( &sound[ i ], errorStr ) )
+            Con::errorf( "PlayerData::preload: %s", errorStr.c_str() );
       }
    }
 
@@ -470,7 +467,7 @@ bool PlayerData::preload(bool server, String &errorStr)
       // Extract ground transform velocity from animations
       // Get the named ones first so they can be indexed directly.
       ActionAnimation *dp = &actionList[0];
-      for (S32 i = 0; i < NumTableActionAnims; i++,dp++)
+      for (int i = 0; i < NumTableActionAnims; i++,dp++)
       {
          ActionAnimationDef *sp = &ActionAnimationList[i];
          dp->name          = sp->name;
@@ -495,7 +492,7 @@ bool PlayerData::preload(bool server, String &errorStr)
          if (dStricmp(sp->name, "jet") != 0)
             AssertWarn(dp->sequence != -1, avar("PlayerData::preload - Unable to find named animation sequence '%s'!", sp->name));
       }
-      for (S32 b = 0; b < mShape->sequences.size(); b++)
+      for (int b = 0; b < mShape->sequences.size(); b++)
       {
          if (!isTableSequence(b))
          {
@@ -512,7 +509,7 @@ bool PlayerData::preload(bool server, String &errorStr)
       // Resolve lookAction index
       dp = &actionList[0];
       String lookName("look");
-      for (S32 c = 0; c < actionCount; c++,dp++)
+      for (int c = 0; c < actionCount; c++,dp++)
          if( dStricmp( dp->name, lookName ) == 0 )
             lookAction = c;
 
@@ -560,7 +557,7 @@ bool PlayerData::preload(bool server, String &errorStr)
       if (!Sim::findObject(dustID, dustEmitter))
          Con::errorf(ConsoleLogEntry::General, "PlayerData::preload - Invalid packet, bad datablockId(dustEmitter): 0x%x", dustID);
 
-   for (S32 i=0; i<NUM_SPLASH_EMITTERS; i++)
+   for (int i=0; i<NUM_SPLASH_EMITTERS; i++)
       if( !splashEmitterList[i] && splashEmitterIDList[i] != 0 )
          if( Sim::findObject( splashEmitterIDList[i], splashEmitterList[i] ) == false)
             Con::errorf(ConsoleLogEntry::General, "PlayerData::onAdd - Invalid packet, bad datablockId(particle emitter): 0x%x", splashEmitterIDList[i]);
@@ -589,10 +586,7 @@ bool PlayerData::preload(bool server, String &errorStr)
             Torque::FS::FileNodeRef    fileRef = Torque::FS::GetFileNode(mShapeFP[i].getPath());
 
             if (!fileRef)
-            {
-               errorStr = String::ToString("PlayerData: Mounted image %d loading failed, shape \"%s\" is not found.",i,mShapeFP[i].getPath().getFullPath().c_str());
                return false;
-            }
 
             if(server)
                mCRCFP[i] = fileRef->getChecksum();
@@ -653,7 +647,7 @@ bool PlayerData::isTableSequence(S32 seq)
 {
    // The sequences from the table must already have
    // been loaded for this to work.
-   for (S32 i = 0; i < NumTableActionAnims; i++)
+   for (int i = 0; i < NumTableActionAnims; i++)
       if (actionList[i].sequence == seq)
          return true;
    return false;
@@ -699,11 +693,6 @@ void PlayerData::initPersistFields()
    endGroup( "Camera" );
 
    addGroup( "Movement" );
-
-      // andrewmac: Physics Collision Flag
-      addField( "physicsCollision", TypeBool, Offset(physicsCollision, PlayerData),
-         "@brief Flag controlling whether standard torque collision is"
-		 " used or collision enhanced with an active physics plugin.\n\n" );
 
       addField( "maxStepHeight", TypeF32, Offset(maxStepHeight, PlayerData),
          "@brief Maximum height the player can step up.\n\n"
@@ -1193,9 +1182,6 @@ void PlayerData::packData(BitStream* stream)
 
    stream->writeFlag(renderFirstPerson);
    stream->writeFlag(firstPersonShadows);
-
-   // andrewmac: Physics Collision Flag
-   stream->writeFlag(physicsCollision);
    
    stream->write(minLookAngle);
    stream->write(maxLookAngle);
@@ -1378,9 +1364,6 @@ void PlayerData::unpackData(BitStream* stream)
 
    renderFirstPerson = stream->readFlag();
    firstPersonShadows = stream->readFlag();
-
-   // andrewmac: Physics Collision Flag
-   physicsCollision = stream->readFlag();
 
    stream->read(&minLookAngle);
    stream->read(&maxLookAngle);
@@ -1961,7 +1944,7 @@ void Player::reSkin()
       Vector<String> skins;
       String(mSkinNameHandle.getString()).split( ";", skins );
 
-      for ( S32 i = 0; i < skins.size(); i++ )
+      for ( int i = 0; i < skins.size(); i++ )
       {
          String oldSkin( mAppliedSkinName.c_str() );
          String newSkin( skins[i] );
@@ -1978,7 +1961,7 @@ void Player::reSkin()
 
          // Apply skin to both 3rd person and 1st person shape instances
          mShapeInstance->reSkin( newSkin, oldSkin );
-         for ( S32 j = 0; j < ShapeBase::MaxMountedImages; j++ )
+         for ( int j = 0; j < ShapeBase::MaxMountedImages; j++ )
          {
             if (mShapeFPInstance[j])
                mShapeFPInstance[j]->reSkin( newSkin, oldSkin );
@@ -2126,8 +2109,7 @@ void Player::processTick(const Move* move)
       PROFILE_START(Player_PhysicsSection);
       if ( isServerObject() || didRenderLastRender() || getControllingClient() )
       {
-		  // andrewmac: Physics Collision Flag
-		  if ( !mPhysicsRep || !mDataBlock->physicsCollision )
+         if ( !mPhysicsRep )
          {
             if ( isMounted() )
             {
@@ -2489,8 +2471,8 @@ void Player::setPose( Pose pose )
    onScaleChanged();
 
    // Resize the PhysicsPlayer rep. should we have one
-   //if ( mPhysicsRep )
-   //   mPhysicsRep->setSpacials( getPosition(), boxSize );
+   if ( mPhysicsRep )
+      mPhysicsRep->setSpacials( getPosition(), boxSize );
 
    if ( isServerObject() )
       mDataBlock->onPoseChange_callback( this, EngineMarshallData< PlayerPose >(oldPose), EngineMarshallData< PlayerPose >(mPose));
@@ -2784,9 +2766,7 @@ void Player::updateMove(const Move* move)
       // the player to "rest" on the ground.
       // However, no need to do that if we're using a physics library.
       // It will take care of itself.
-
-	  // andrewmac: Physics Collision Flag
-	  if ( !mPhysicsRep || !mDataBlock->physicsCollision )
+      if (!mPhysicsRep)
       {
          F32 vd = -mDot(acc,contactNormal);
          if (vd > 0.0f) {
@@ -2830,8 +2810,7 @@ void Player::updateMove(const Move* move)
             pvl = pv.len();
          }
       }
-	  // andrewmac: Physics Collision Flag
-	  else if ( !mPhysicsRep || !mDataBlock->physicsCollision )
+      else if (!mPhysicsRep)
       {
          // We only do this if we're not using a physics library.  The
          // library will take care of itself.
@@ -2973,7 +2952,7 @@ void Player::updateMove(const Move* move)
 
       // Clamp acceleration.
       F32 maxAcc = (mDataBlock->swimForce / getMass()) * TickSec;
-      if ( swimSpeed > maxAcc )
+      if ( false && swimSpeed > maxAcc )
          swimAcc *= maxAcc / swimSpeed;      
 
       acc += swimAcc;
@@ -3296,8 +3275,7 @@ bool Player::canCrouch()
 		return true;
 
    // Do standard Torque physics test here!
-   // andrewmac: Physics Collision Flag
-	if ( !mPhysicsRep || !mDataBlock->physicsCollision )
+   if ( !mPhysicsRep )
    {
       F32 radius;
 
@@ -3348,8 +3326,7 @@ bool Player::canStand()
 		return true;
 
    // Do standard Torque physics test here!
-   // andrewmac: Physics Collision Flag
-   if ( !mPhysicsRep || !mDataBlock->physicsCollision )
+   if ( !mPhysicsRep )
    {
       F32 radius;
 
@@ -3406,8 +3383,7 @@ bool Player::canProne()
       return false;
 
    // Do standard Torque physics test here!
-   // andrewmac: Physics Collision Flag
-   if ( !mPhysicsRep || !mDataBlock->physicsCollision )
+   if ( !mPhysicsRep )
       return true;
 
 	// We are already in this pose, so don't test it again...
@@ -4970,8 +4946,8 @@ bool Player::updatePos(const F32 travelTime)
 
    // DEBUG:
    //Point3F savedVelocity = mVelocity;
-   // andrewmac: Physics Collision Flag
-   if ( mPhysicsRep && mDataBlock->physicsCollision )
+
+   if ( mPhysicsRep )
    {
       static CollisionList collisionList;
       collisionList.clear();
@@ -5174,8 +5150,7 @@ void Player::findContact( bool *run, bool *jump, VectorF *contactNormal )
    SceneObject *contactObject = NULL;
 
    Vector<SceneObject*> overlapObjects;
-   // andrewmac: Physics Collision Flag
-   if ( mPhysicsRep && mDataBlock->physicsCollision )
+   if ( mPhysicsRep )
       mPhysicsRep->findContact( &contactObject, contactNormal, &overlapObjects );
    else
       _findContact( &contactObject, contactNormal, &overlapObjects );
@@ -5847,7 +5822,7 @@ bool Player::castRay(const Point3F &start, const Point3F &end, RayInfo* info)
    F32 const *si = &start.x;
    F32 const *ei = &end.x;
 
-   for (S32 i = 0; i < 3; i++) {
+   for (int i = 0; i < 3; i++) {
       if (*si < *ei) {
          if (*si > *bmax || *ei < *bmin)
             return false;
@@ -6532,9 +6507,8 @@ DefineEngineMethod( Player, getDamageLocation, const char*, ( Point3F pos ),,
 
    object->getDamageLocation(pos, buffer1, buffer2);
 
-   static const U32 bufSize = 128;
-   char *buff = Con::getReturnBuffer(bufSize);
-   dSprintf(buff, bufSize, "%s %s", buffer1, buffer2);
+   char *buff = Con::getReturnBuffer(128);
+   dSprintf(buff, 128, "%s %s", buffer1, buffer2);
    return buff;
 }
 

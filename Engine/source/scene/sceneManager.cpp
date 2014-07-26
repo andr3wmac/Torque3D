@@ -156,7 +156,9 @@ void SceneManager::renderScene( ScenePassType passType, U32 objectMask )
    {
       // Store the camera state so if we lock, this will become the
       // locked state.
-      smLockedDiffuseCamera = cameraState;
+
+      if( passType == SPT_Diffuse )
+         smLockedDiffuseCamera = cameraState;
    }
    
    // Create the render state.
@@ -605,7 +607,6 @@ bool SceneManager::addObjectToScene( SceneObject* object )
 
 void SceneManager::removeObjectFromScene( SceneObject* obj )
 {
-   AssertFatal( obj, "SceneManager::removeObjectFromScene - Object is not declared" );
    AssertFatal( obj->getSceneManager() == this, "SceneManager::removeObjectFromScene - Object not part of SceneManager" );
 
    // Notify the object.
@@ -614,8 +615,7 @@ void SceneManager::removeObjectFromScene( SceneObject* obj )
 
    // Remove the object from the container.
 
-   if( getContainer() )
-      getContainer()->removeObject( obj );
+   getContainer()->removeObject( obj );
 
    // Remove the object from the zoning system.
 

@@ -27,31 +27,18 @@
 #include "T3D/shapeBase.h"
 #endif
 
-class PhysicsBody;
 //----------------------------------------------------------------------------
 
-struct StaticShapeData: public ShapeBaseData
-{
+struct StaticShapeData: public ShapeBaseData {
    typedef ShapeBaseData Parent;
 
-   /// The different types of mesh data types
-   enum MeshType
-   {
-      None = 0,            ///< No mesh
-      Bounds = 1,          ///< Bounding box of the shape
-      CollisionMesh = 2,   ///< Specifically designated collision meshes
-      VisibleMesh = 3      ///< Rendered mesh polygons
-   };
-
+  public:
    StaticShapeData();
 
    bool  noIndividualDamage;
    S32   dynamicTypeField;
    bool  isShielded;
    F32   energyPerDamagePoint;
-   bool  enablePhysicsRep;
-   bool  kinematic;
-   MeshType collisionType;
 
    //
    DECLARE_CONOBJECT(StaticShapeData);
@@ -60,8 +47,7 @@ struct StaticShapeData: public ShapeBaseData
    virtual void unpackData(BitStream* stream);
 };
 
-typedef StaticShapeData::MeshType SSDMeshType;
-DefineEnumType( SSDMeshType );
+
 //----------------------------------------------------------------------------
 
 class StaticShape: public ShapeBase
@@ -70,11 +56,8 @@ class StaticShape: public ShapeBase
 
    StaticShapeData*  mDataBlock;
    bool              mPowered;
-   PhysicsBody       *mPhysicsRep;
 
    void onUnmount(ShapeBase* obj,S32 node);
-
-   void _createPhysics();
 
 protected:
    enum MaskBits {

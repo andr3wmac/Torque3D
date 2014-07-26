@@ -285,7 +285,7 @@ void ProcessedShaderMaterial::_determineFeatures(  U32 stageNum,
 {
    PROFILE_SCOPE( ProcessedShaderMaterial_DetermineFeatures );
 
-   const F32 shaderVersion = GFX->getPixelShaderVersion();
+   const float shaderVersion = GFX->getPixelShaderVersion();
    AssertFatal(shaderVersion > 0.0 , "Cannot create a shader material if we don't support shaders");
 
    bool lastStage = stageNum == (mMaxStages-1);
@@ -688,9 +688,7 @@ bool ProcessedShaderMaterial::setupPass( SceneRenderState *state, const SceneDat
    }
    else
    {
-      // andrewmac: D3D9-Refactor
-      GFX->setupGenericShaders();
-      //GFX->disableShaders();
+	  GFX->setupGenericShaders();
       GFX->setShaderConstBuffer(NULL);
    } 
 

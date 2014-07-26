@@ -469,7 +469,7 @@ bool dPathCopy(const char *fromName, const char *toName, bool nooverwrite)
  // Sets capability appropriate to the openMode.
  // Returns the currentStatus of the file.
  //-----------------------------------------------------------------------------
- File::FileStatus File::open(const char *filename, const AccessMode openMode)
+ File::Status File::open(const char *filename, const AccessMode openMode)
  {
     AssertFatal(NULL != filename, "File::open: NULL filename");
     AssertWarn(NULL == handle, "File::open: handle already valid");
@@ -584,7 +584,7 @@ bool dPathCopy(const char *fromName, const char *toName, bool nooverwrite)
  //
  // Returns the currentStatus of the file.
  //-----------------------------------------------------------------------------
- File::FileStatus File::setPosition(S32 position, bool absolutePos)
+ File::Status File::setPosition(S32 position, bool absolutePos)
  {
      AssertFatal(Closed != currentStatus, "File::setPosition: file closed");
      AssertFatal(NULL != handle, "File::setPosition: invalid file handle");
@@ -645,7 +645,7 @@ bool dPathCopy(const char *fromName, const char *toName, bool nooverwrite)
  // It is an error to flush a read-only file.
  // Returns the currentStatus of the file.
  //-----------------------------------------------------------------------------
- File::FileStatus File::flush()
+ File::Status File::flush()
  {
      AssertFatal(Closed != currentStatus, "File::flush: file closed");
      AssertFatal(NULL != handle, "File::flush: invalid file handle");
@@ -662,7 +662,7 @@ bool dPathCopy(const char *fromName, const char *toName, bool nooverwrite)
  //
  // Returns the currentStatus
  //-----------------------------------------------------------------------------
- File::FileStatus File::close()
+ File::Status File::close()
  {
     // if the handle is non-NULL, close it if necessary and free it
     if (NULL != handle)
@@ -684,7 +684,7 @@ bool dPathCopy(const char *fromName, const char *toName, bool nooverwrite)
  //-----------------------------------------------------------------------------
  // Self-explanatory.
  //-----------------------------------------------------------------------------
- File::FileStatus File::getStatus() const
+ File::Status File::getStatus() const
  {
      return currentStatus;
  }
@@ -692,7 +692,7 @@ bool dPathCopy(const char *fromName, const char *toName, bool nooverwrite)
  //-----------------------------------------------------------------------------
  // Sets and returns the currentStatus when an error has been encountered.
  //-----------------------------------------------------------------------------
- File::FileStatus File::setStatus()
+ File::Status File::setStatus()
  {
     Con::printf("File IO error: %s", strerror(errno));
     return currentStatus = IOError;
@@ -701,7 +701,7 @@ bool dPathCopy(const char *fromName, const char *toName, bool nooverwrite)
  //-----------------------------------------------------------------------------
  // Sets and returns the currentStatus to status.
  //-----------------------------------------------------------------------------
- File::FileStatus File::setStatus(File::FileStatus status)
+ File::Status File::setStatus(File::Status status)
  {
      return currentStatus = status;
  }
@@ -712,7 +712,7 @@ bool dPathCopy(const char *fromName, const char *toName, bool nooverwrite)
  // The number of bytes read is available in bytesRead if a non-Null pointer is
  // provided.
  //-----------------------------------------------------------------------------
- File::FileStatus File::read(U32 size, char *dst, U32 *bytesRead)
+ File::Status File::read(U32 size, char *dst, U32 *bytesRead)
  {
  #ifdef DEBUG
  //   fprintf(stdout,"reading %d bytes\n",size);fflush(stdout);
@@ -770,7 +770,7 @@ bool dPathCopy(const char *fromName, const char *toName, bool nooverwrite)
  // The number of bytes written is available in bytesWritten if a non-Null
  // pointer is provided.
  //-----------------------------------------------------------------------------
- File::FileStatus File::write(U32 size, const char *src, U32 *bytesWritten)
+ File::Status File::write(U32 size, const char *src, U32 *bytesWritten)
  {
     // JMQ: despite the U32 parameters, the maximum filesize supported by this
     // function is probably the max value of S32, due to the unix syscall

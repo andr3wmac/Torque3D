@@ -109,8 +109,8 @@ protected:
 public:
 
    /// @see DecalData
-   static F32 smFadeStartPixelSize;
-   static F32 smFadeEndPixelSize;
+   static float smFadeStartPixelSize;
+   static float smFadeEndPixelSize;
 
    ProjectedShadow( SceneObject *object );
    virtual ~ProjectedShadow();

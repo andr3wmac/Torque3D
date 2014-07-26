@@ -53,6 +53,7 @@ public:
    }
 };
 
+
 /// A texture source for the PixSpecular feature
 class SpecularMapGLSL : public ShaderFeatureGLSL
 {
@@ -74,4 +75,5 @@ public:
    }
 };
 
-#endif // _PIXSPECULAR_HLSL_H_
+
+#endif // _PIXSPECULAR_GLSL_H_

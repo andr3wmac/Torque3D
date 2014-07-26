@@ -27,7 +27,6 @@
 #include "console/simBase.h"
 #endif
 
-class PhysicsMaterial;
 
 /// The TerrainMaterial class orginizes the material settings 
 /// for a single terrain material layer.
@@ -72,15 +71,6 @@ protected:
    F32 mMacroStrength;
    F32 mMacroDistance;
 
-   // Physics
-	F32 mRestitution;
-	F32 mStaticFriction;
-	F32 mDynamicFriction;
-   S32 mRestitutionCombine;
-   S32 mFrictionCombine;
-
-   PhysicsMaterial *mPhysicsMaterial;
-
    ///
    F32 mParallaxScale;
 
@@ -93,8 +83,6 @@ public:
    static void initPersistFields();
 
    DECLARE_CONOBJECT( TerrainMaterial );
-
-   PhysicsMaterial *getPhysicsMaterial();
 
    /// This method locates the TerrainMaterial if it exists, tries 
    /// to create a new one if a valid texture path was passed, or
@@ -130,11 +118,6 @@ public:
    bool useSideProjection() const { return mSideProjection; }
 
    F32 getParallaxScale() const { return mParallaxScale; }
-
-   void createPhysicsMaterial();
-   void updatePhysicsMaterial();
-
-   static Vector<TerrainMaterial*> smAllTerrainMaterials;
 
 };
 

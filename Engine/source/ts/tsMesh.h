@@ -103,17 +103,6 @@ class TSMesh
    friend class TSShape;
   public:
    struct TSMeshVertexArray;
-
-   // andrewmac: Vertex Info contains no duplicate
-   //   vertices. mapsTo provides a list of duplicates
-   //   that it applys to.
-   struct TSMeshVertexInfo
-   {
-	   Point3F point;
-	   S32 bone;
-	   F32 weight;
-	   Vector<U32> mapsTo;
-   };
   protected:
 
    U32 meshType;
@@ -131,8 +120,7 @@ class TSMesh
    GFXPrimitiveBufferHandle mPB;
 
    void _convertToAlignedMeshData( TSMeshVertexArray &vertexData, const Vector<Point3F> &_verts, const Vector<Point3F> &_norms );
-   // andrewmac: Vertex Override
-   void _createVBIB( TSVertexBufferHandle &vb, GFXPrimitiveBufferHandle &pb, TSMeshVertexArray* vertexOverride = NULL ); 
+   void _createVBIB( TSVertexBufferHandle &vb, GFXPrimitiveBufferHandle &pb );
 
   public:
 
@@ -226,7 +214,7 @@ class TSMesh
       }
 
       // Vector-like interface
-      __TSMeshVertexBase &operator[](S32 idx) const { AssertFatal(idx < numElements, "Out of bounds access!"); return *reinterpret_cast<__TSMeshVertexBase *>(base + idx * vertSz); }
+      __TSMeshVertexBase &operator[](int idx) const { AssertFatal(idx < numElements, "Out of bounds access!"); return *reinterpret_cast<__TSMeshVertexBase *>(base + idx * vertSz); }
       __TSMeshVertexBase *address() const { return reinterpret_cast<__TSMeshVertexBase *>(base); }
       U32 size() const { return numElements; }
       dsize_t mem_size() const { return numElements * vertSz; }
@@ -298,8 +286,7 @@ class TSMesh
                         bool isSkinDirty,
                         const Vector<MatrixF> &transforms, 
                         TSVertexBufferHandle &vertexBuffer,
-                        GFXPrimitiveBufferHandle &primitiveBuffer,
-						TSMeshVertexArray* vertexOverride = NULL); // andrewmac: Vertex Override
+                        GFXPrimitiveBufferHandle &primitiveBuffer );
 
    void innerRender( TSMaterialList *, const TSRenderState &data, TSVertexBufferHandle &vb, GFXPrimitiveBufferHandle &pb );
 
@@ -522,13 +509,6 @@ public:
    Vector<S32> boneIndex;
    Vector<S32> vertexIndex;
 
-   // andrewmac: Requirements for cloth mesh.
-   bool mHasSkinned;
-   bool hasSkinned();
-   TSMeshVertexArray* getVertexData();
-   Vector<TSMesh::TSMeshVertexInfo> getVertexInfo();
-   Vector<U32>* getIndices();
-
    /// set verts and normals...
    void updateSkin( const Vector<MatrixF> &transforms, TSVertexBufferHandle &instanceVB, GFXPrimitiveBufferHandle &instancePB );
 
@@ -539,8 +519,7 @@ public:
                   bool isSkinDirty,
                   const Vector<MatrixF> &transforms, 
                   TSVertexBufferHandle &vertexBuffer,
-                  GFXPrimitiveBufferHandle &primitiveBuffer,
-   				  TSMeshVertexArray* vertexOverride = NULL); // andrewmac: Vertex Override
+                  GFXPrimitiveBufferHandle &primitiveBuffer );
 
    // collision methods...
    bool buildPolyList( S32 frame, AbstractPolyList *polyList, U32 &surfaceKey, TSMaterialList *materials );

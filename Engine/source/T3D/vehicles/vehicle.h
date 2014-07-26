@@ -126,7 +126,6 @@ struct VehicleData: public ShapeBaseData
    S32 splashEmitterIDList[VC_NUM_SPLASH_EMITTERS];
    F32 splashFreqMod;
    F32 splashVelEpsilon;
-   bool enablePhysicsRep;
 
    //
    VehicleData();
@@ -143,7 +142,7 @@ struct VehicleData: public ShapeBaseData
 
 
 //----------------------------------------------------------------------------
-class PhysicsBody;
+
 class Vehicle: public ShapeBase
 {
    typedef ShapeBase Parent;
@@ -178,9 +177,6 @@ class Vehicle: public ShapeBase
       Point3F cameraRotVec;
    };
 
-   PhysicsBody *mPhysicsRep;
-   void _createPhysics();
-
    StateDelta mDelta;
    S32 mPredictionCount;            ///< Number of ticks to predict
    VehicleData* mDataBlock;
@@ -206,7 +202,7 @@ class Vehicle: public ShapeBase
    CollisionList mContacts;
    Rigid mRigid;
    ShapeBaseConvex mConvex;
-   S32 restCount;
+   int restCount;
 
    SimObjectPtr<ParticleEmitter> mDustEmitterList[VehicleData::VC_NUM_DUST_EMITTERS];
    SimObjectPtr<ParticleEmitter> mDamageEmitterList[VehicleData::VC_NUM_DAMAGE_EMITTERS];

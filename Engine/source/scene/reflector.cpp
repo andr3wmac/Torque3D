@@ -760,7 +760,7 @@ MatrixF PlaneReflector::getCameraReflection( const MatrixF &camTrans )
    return newTrans;
 }
 
-inline F32 sgn(F32 a)
+inline float sgn(float a)
 {
    if (a > 0.0F) return (1.0F);
    if (a < 0.0F) return (-1.0F);

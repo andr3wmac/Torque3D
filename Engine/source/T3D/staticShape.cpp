@@ -34,9 +34,6 @@
 #include "math/mathIO.h"
 #include "sim/netConnection.h"
 #include "scene/sceneObjectLightingPlugin.h"
-#include "T3D/physics/physicsPlugin.h"
-#include "T3D/physics/physicsBody.h"
-#include "T3D/physics/physicsCollision.h"
 
 extern void wireCube(F32 size,Point3F pos);
 
@@ -90,23 +87,13 @@ ConsoleDocClass( StaticShapeData,
 	"@ingroup gameObjects\n"
 	"@ingroup Datablocks");
 
-ImplementEnumType( SSDMeshType,
-   "Type of mesh data available in a shape.\n"
-   "@ingroup gameObjects" )
-   { StaticShapeData::None,          "None",           "No mesh data." },
-   { StaticShapeData::Bounds,        "Bounds",         "Bounding box of the shape." },
-   { StaticShapeData::CollisionMesh, "Collision Mesh", "Specifically desingated \"collision\" meshes." },
-   { StaticShapeData::VisibleMesh,   "Visible Mesh",   "Rendered mesh polygons." },
-EndImplementEnumType;
-
 StaticShapeData::StaticShapeData()
 {
-   dynamicTypeField = 0;
+   dynamicTypeField     = 0;
+
    shadowEnable = true;
+
    noIndividualDamage = false;
-   enablePhysicsRep = true;
-   kinematic = false;
-   collisionType = CollisionMesh;
 }
 
 void StaticShapeData::initPersistFields()
@@ -117,18 +104,6 @@ void StaticShapeData::initPersistFields()
       "This allows you to extend the type mask for a StaticShape that uses this datablock.  Type masks "
       "are used for container queries, etc.");
 
-   addGroup("Physics");
-      addField( "enablePhysicsRep", TypeBool,   Offset( enablePhysicsRep, StaticShapeData ), 
-         "@brief Creates a representation of the object in the physics plugin.\n");
-      addField( "collisionType", TypeSSDMeshType,  Offset( collisionType,StaticShapeData ),
-         "The type of mesh data to use for collision queries." );
-      addField( "kinematic",TypeBool, Offset(kinematic,StaticShapeData),
-         "@brief Set the physics body to be a kinematic rigid body.");
-   endGroup("Physics");
-
-   // don't need mass on a static item
-   //removeField("mass");
-
    Parent::initPersistFields();
 }
 
@@ -137,9 +112,6 @@ void StaticShapeData::packData(BitStream* stream)
    Parent::packData(stream);
    stream->writeFlag(noIndividualDamage);
    stream->write(dynamicTypeField);
-   stream->write(enablePhysicsRep);
-   stream->write(kinematic);
-   stream->write((U32)collisionType);
 }
 
 void StaticShapeData::unpackData(BitStream* stream)
@@ -147,11 +119,6 @@ void StaticShapeData::unpackData(BitStream* stream)
    Parent::unpackData(stream);
    noIndividualDamage = stream->readFlag();
    stream->read(&dynamicTypeField);
-   stream->read(&enablePhysicsRep);
-   stream->read(&kinematic);
-   U32 colType = CollisionMesh;
-   stream->read(&colType);
-   collisionType = (MeshType)colType;
 }
 
 
@@ -206,12 +173,12 @@ StaticShape::StaticShape()
 {
    mTypeMask |= StaticShapeObjectType | StaticObjectType;
    mDataBlock = 0;
-   mPhysicsRep = NULL;
 }
 
 StaticShape::~StaticShape()
 {
 }
+
 
 //----------------------------------------------------------------------------
 
@@ -220,52 +187,10 @@ void StaticShape::initPersistFields()
    Parent::initPersistFields();
 }
 
-void StaticShape::_createPhysics()
-{
-   SAFE_DELETE( mPhysicsRep );
-
-   if ( !mDataBlock->enablePhysicsRep )
-      return;
-
-   StaticShapeData::MeshType colType = mDataBlock->collisionType;
-
-   if ( !PHYSICSMGR || colType == StaticShapeData::None )
-      return;
-
-   bool kinematic = mDataBlock->kinematic;
-   TSShape *shape = mShapeInstance->getShape();
-   PhysicsCollision *colShape = NULL;
-   if ( colType == StaticShapeData::Bounds )
-   {
-      MatrixF offset( true );
-      offset.setPosition( shape->center );
-      colShape = PHYSICSMGR->createCollision();
-      colShape->addBox( getObjBox().getExtents() * 0.5f * mObjScale, offset );         
-   }
-   else
-   {
-      colShape = shape->buildColShape( colType == StaticShapeData::VisibleMesh, getScale() );
-   }
-
-   U32 bodyFlags=0;
-   if(kinematic)
-      bodyFlags = PhysicsBody::BF_KINEMATIC;
-
-   if ( colShape )
-   {
-      PhysicsWorld *world = PHYSICSMGR->getWorld( isServerObject() ? "server" : "client" );
-      mPhysicsRep = PHYSICSMGR->createBody();
-      mPhysicsRep->init( colShape, 0, bodyFlags, this, world );
-      mPhysicsRep->setTransform( getTransform() );
-   }
-}
-
 bool StaticShape::onAdd()
 {
    if(!Parent::onAdd() || !mDataBlock)
       return false;
-
-   _createPhysics();
 
    // We need to modify our type mask based on what our datablock says...
    mTypeMask |= (mDataBlock->dynamicTypeField & sgAllowedDynamicTypes);
@@ -274,8 +199,7 @@ bool StaticShape::onAdd()
 
    if (isServerObject())
       scriptOnAdd();
-
-    return true;
+   return true;
 }
 
 bool StaticShape::onNewDataBlock(GameBaseData* dptr, bool reload)
@@ -290,7 +214,6 @@ bool StaticShape::onNewDataBlock(GameBaseData* dptr, bool reload)
 
 void StaticShape::onRemove()
 {
-   SAFE_DELETE( mPhysicsRep );
    scriptOnRemove();
    removeFromScene();
    Parent::onRemove();
@@ -330,13 +253,6 @@ void StaticShape::setTransform(const MatrixF& mat)
 {
    Parent::setTransform(mat);
    setMaskBits(PositionMask);
-   if ( mPhysicsRep )
-   {
-      if(mDataBlock->kinematic)
-         mPhysicsRep->moveKinematicTo( mat );
-      else
-         mPhysicsRep->setTransform( mat );
-   }
 }
 
 void StaticShape::onUnmount(ShapeBase*,S32)

@@ -1031,9 +1031,9 @@ void GFXTextureManager::_validateTexParams( const U32 width, const U32 height,
    // If the format is non-compressed, and the profile requests a compressed format
    // than change the format.
    GFXFormat testingFormat = inOutFormat;
-   if( profile->getCompression() != GFXTextureProfile::NONE )
+   if( profile->getCompression() != GFXTextureProfile::None )
    {
-      const S32 offset = profile->getCompression() - GFXTextureProfile::DXT1;
+      const int offset = profile->getCompression() - GFXTextureProfile::DXT1;
       testingFormat = GFXFormat( GFXFormatDXT1 + offset );
 
       // No auto-gen mips on compressed textures

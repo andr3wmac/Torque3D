@@ -194,7 +194,7 @@ void CameraSpline::renderTimeMap()
    if(!ptr) return;
 
    MRandomLCG random(1376312589 * (U32)this);
-   S32 index = 0;
+   int index = 0;
    for(Vector<TimeMap>::iterator itr=mTimeMap.begin(); itr != mTimeMap.end(); itr++)
    {
       Knot a;
@@ -214,9 +214,7 @@ void CameraSpline::renderTimeMap()
 
    // Render the buffer
    GFX->pushWorldMatrix();
-   // andrewmac: D3D9-Refactor
    GFX->setupGenericShaders();
-   //GFX->disableShaders();
    GFX->setVertexBuffer(vb);
    GFX->drawPrimitive(GFXLineStrip,0,index);
    GFX->popWorldMatrix();

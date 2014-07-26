@@ -87,8 +87,8 @@ CreateUnitTest( TestTCPRequest, "Platform/Net/TCPRequest")
 
       // Open a TCP connection to garagegames.com
       mSocket = Net::openConnectTo("ip:72.246.107.193:80");
-      U32 limit = Platform::getRealMilliseconds() + (5*1000);
-      while(Process::processEvents() && (Platform::getRealMilliseconds() < limit) )
+
+      while(Process::processEvents())
          ;
 
       // Unhook from the signals.
@@ -175,12 +175,6 @@ CreateUnitTest( TestTCPRequestJournal, "Platform/Net/JournalTCPRequest")
    void run()
    {
       Journal::Record("journalTCP.jrn");
-
-      if( !Journal::IsRecording() )
-      {
-         test(0, "Failed.");
-         return;
-      }
 
       makeRequest();
 

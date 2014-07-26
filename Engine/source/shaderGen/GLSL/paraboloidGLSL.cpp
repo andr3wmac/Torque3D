@@ -65,7 +65,7 @@ void ParaboloidVertTransformGLSL::processVert(  Vector<ShaderComponent*> &compon
    // http://www.gamedev.net/reference/articles/article2308.asp
 
    // Swizzle z and y post-transform
-   meta->addStatement( new GenOp( "   @ = tMul(@, float4(@.xyz,1)).xzyw;\r\n", outPosition, worldViewOnly, inPosition ) );
+   meta->addStatement( new GenOp( "   @ = vec4(@ * vec4(@.xyz,1)).xzyw;\r\n", outPosition, worldViewOnly, inPosition ) );
    meta->addStatement( new GenOp( "   float L = length(@.xyz);\r\n", outPosition ) ); 
 
    if ( isSinglePass )
@@ -73,8 +73,7 @@ void ParaboloidVertTransformGLSL::processVert(  Vector<ShaderComponent*> &compon
       // Flip the z in the back case
       Var *outIsBack = connectComp->getElement( RT_TEXCOORD );
       outIsBack->setType( "float" );
-      outIsBack->setName( "isBack" );
-      outIsBack->setStructName( "OUT" );
+      outIsBack->setName( "outIsBack" );
 
       meta->addStatement( new GenOp( "   bool isBack = @.z < 0.0;\r\n", outPosition ) ); 
       meta->addStatement( new GenOp( "   @ = isBack ? -1.0 : 1.0;\r\n", outIsBack ) ); 
@@ -95,16 +94,15 @@ void ParaboloidVertTransformGLSL::processVert(  Vector<ShaderComponent*> &compon
    // TODO: If we change other shadow shaders to write out
    // linear depth, than fix this as well!
    //
-   // (L - zNear)/(lightParams.x - zNear);
+   // (L - 1.0)/(lightParams.x - 1.0);
    //
    meta->addStatement( new GenOp( "   @.z = L / @.x;\r\n", outPosition, lightParams ) ); 
    meta->addStatement( new GenOp( "   @.w = 1.0;\r\n", outPosition ) ); 
 
    // Pass unmodified to pixel shader to allow it to clip properly.
    Var *outPosXY = connectComp->getElement( RT_TEXCOORD );
-   outPosXY->setType( "float2" );
-   outPosXY->setName( "posXY" );
-   outPosXY->setStructName( "OUT" );
+   outPosXY->setType( "vec2" );
+   outPosXY->setName( "outPosXY" );
    meta->addStatement( new GenOp( "   @ = @.xy;\r\n", outPosXY, outPosition ) ); 
 
    // Scale and offset so it shows up in the atlas properly.
@@ -138,18 +136,16 @@ void ParaboloidVertTransformGLSL::processPix(   Vector<ShaderComponent*> &compon
    {
       // Cull things on the back side of the map.
       Var *isBack = connectComp->getElement( RT_TEXCOORD );
-      isBack->setName( "isBack" );
-      isBack->setStructName( "IN" );
+      isBack->setName( "outIsBack" );
       isBack->setType( "float" );
       meta->addStatement( new GenOp( "   if ( ( abs( @ ) - 0.999 ) < 0 ) discard;\r\n", isBack ) );
    }
 
    // Cull pixels outside of the valid paraboloid.
    Var *posXY = connectComp->getElement( RT_TEXCOORD );
-   posXY->setName( "posXY" );
-   posXY->setStructName( "IN" );
-   posXY->setType( "float2" );
-   meta->addStatement( new GenOp( "   clip( 1.0 - abs(@.x) );\r\n", posXY ) );
+   posXY->setName( "outPosXY" );
+   posXY->setType( "vec2" );
+   meta->addStatement( new GenOp( "   if ( ( 1.0 - length( @ ) ) < 0 ) discard;\r\n", posXY ) );
 
    output = meta;
 }

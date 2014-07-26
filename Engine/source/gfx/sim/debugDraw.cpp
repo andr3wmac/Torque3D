@@ -150,13 +150,10 @@ void DebugDrawer::render()
    }
 
    SimTime curTime = Sim::getCurrentTime();
-  
-   // andrewmac: D3D9-Refactor
-   GFX->setupGenericShaders();
-   //GFX->disableShaders();  
    
    for(DebugPrim **walk = &mHead; *walk; )
    {
+	  GFX->setupGenericShaders();
       DebugPrim *p = *walk;
 
       // Set up the state block...

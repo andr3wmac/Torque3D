@@ -686,8 +686,7 @@ void SFXSystem::_onRemoveSource( SFXSource* source )
    if( dynamic_cast< SFXSound* >( source ) )
    {
       SFXSoundVector::iterator iter = find( mSounds.begin(), mSounds.end(), static_cast< SFXSound* >( source ) );
-      if( iter != mSounds.end() )
-         mSounds.erase_fast( iter );
+      mSounds.erase_fast( iter );
          
       mStatNumSounds = mSounds.size();
    }
@@ -855,7 +854,7 @@ void SFXSystem::_updateSources()
       if(   source->getLastStatus() == SFXStatusStopped &&
             source->getSavedStatus() != SFXStatusPlaying )
       {
-         S32 index = iter - mPlayOnceSources.begin();
+         int index = iter - mPlayOnceSources.begin();
 
          // Erase it from the vector first, so that onRemoveSource
          // doesn't do it during cleanup and screw up our loop here!

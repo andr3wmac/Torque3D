@@ -188,7 +188,7 @@ bool Trigger::castRay(const Point3F &start, const Point3F &end, RayInfo* info)
    F32 const *si = &start.x;
    F32 const *ei = &end.x;
 
-   for (S32 i = 0; i < 3; i++)
+   for (int i = 0; i < 3; i++)
    {
       if (*si < *ei)
       {
@@ -259,9 +259,8 @@ ConsoleGetType( TypeTriggerPolyhedron )
    AssertFatal(currVec == 3, "Internal error: Bad trigger polyhedron");
 
    // Build output string.
-   static const U32 bufSize = 1024;
-   char* retBuf = Con::getReturnBuffer(bufSize);
-   dSprintf(retBuf, bufSize, "%7.7f %7.7f %7.7f %7.7f %7.7f %7.7f %7.7f %7.7f %7.7f %7.7f %7.7f %7.7f",
+   char* retBuf = Con::getReturnBuffer(1024);
+   dSprintf(retBuf, 1023, "%7.7f %7.7f %7.7f %7.7f %7.7f %7.7f %7.7f %7.7f %7.7f %7.7f %7.7f %7.7f",
             origin.x, origin.y, origin.z,
             vecs[0].x, vecs[0].y, vecs[0].z,
             vecs[2].x, vecs[2].y, vecs[2].z,
@@ -603,9 +602,13 @@ void Trigger::setTriggerPolyhedron(const Polyhedron& rPolyhedron)
    {
       PhysicsCollision *colShape = PHYSICSMGR->createCollision();
 
-      MatrixF colMat( true );
-      colMat.scale( mObjScale );
-      colShape->addConvex( mTriggerPolyhedron.pointList.address(), mTriggerPolyhedron.pointList.size(), colMat );
+      MatrixF colMat( true );      
+      colMat.displace( Point3F( 0, 0, mObjBox.getExtents().z * 0.5f * mObjScale.z ) );
+      
+      colShape->addBox( mObjBox.getExtents() * 0.5f * mObjScale, colMat );
+      //MatrixF colMat( true );
+      //colMat.scale( mObjScale );
+      //colShape->addConvex( mTriggerPolyhedron.pointList.address(), mTriggerPolyhedron.pointList.size(), colMat );
 
       PhysicsWorld *world = PHYSICSMGR->getWorld( isServerObject() ? "server" : "client" );
       mPhysicsRep = PHYSICSMGR->createBody();

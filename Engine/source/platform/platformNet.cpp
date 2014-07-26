@@ -23,18 +23,14 @@
 #include "platform/platformNet.h"
 #include "core/strings/stringFunctions.h"
 
-#if defined (TORQUE_OS_WIN)
+#if defined (TORQUE_OS_WIN32)
 #define TORQUE_USE_WINSOCK
 #include <errno.h>
 #include <winsock.h>
-
-#ifndef EINPROGRESS
 #define EINPROGRESS             WSAEINPROGRESS
-#endif // EINPROGRESS
-
 #define ioctl ioctlsocket
 
-typedef S32 socklen_t;
+typedef int socklen_t;
 
 #elif defined ( TORQUE_OS_MAC )
 
@@ -88,7 +84,7 @@ typedef in_addr IN_ADDR;
 #define TORQUE_USE_WINSOCK
 #define EINPROGRESS WSAEINPROGRESS
 #define ioctl ioctlsocket
-typedef S32 socklen_t;
+typedef int socklen_t;
 
 DWORD _getLastErrorAndClear()
 {
@@ -103,7 +99,7 @@ DWORD _getLastErrorAndClear()
 #endif
 
 #if defined(TORQUE_USE_WINSOCK)
-static const char* strerror_wsa( S32 code )
+static const char* strerror_wsa( int code )
 {
    switch( code )
    {
@@ -141,7 +137,7 @@ static const char* strerror_wsa( S32 code )
 static Net::Error getLastError();
 static S32 defaultPort = 28000;
 static S32 netPort = 0;
-static S32 udpSocket = InvalidSocket;
+static int udpSocket = InvalidSocket;
 
 ConnectionNotifyEvent   Net::smConnectionNotify;
 ConnectionAcceptedEvent Net::smConnectionAccept;
@@ -445,7 +441,7 @@ void Net::closeConnectTo(NetSocket sock)
       return;
 
    // if this socket is in the list of polled sockets, remove it
-   for (S32 i = 0; i < gPolledSockets.size(); ++i)
+   for (int i = 0; i < gPolledSockets.size(); ++i)
    {
       if (gPolledSockets[i]->fd == sock)
       {
@@ -458,7 +454,7 @@ void Net::closeConnectTo(NetSocket sock)
    closeSocket(sock);
 }
 
-Net::Error Net::sendtoSocket(NetSocket socket, const U8 *buffer, S32  bufferSize)
+Net::Error Net::sendtoSocket(NetSocket socket, const U8 *buffer, int  bufferSize)
 {
    if(Journal::IsPlaying())
    {
@@ -484,7 +480,7 @@ bool Net::openPort(S32 port, bool doBind)
    // we turn off VDP in non-release builds because VDP does not support broadcast packets
    // which are required for LAN queries (PC->Xbox connectivity).  The wire protocol still
    // uses the VDP packet structure, though.
-   S32 protocol = 0;
+   int protocol = 0;
    bool useVDP = false;
 #ifdef TORQUE_DISABLE_PC_CONNECTIVITY
    // Xbox uses a VDP (voice/data protocol) socket for networking
@@ -621,7 +617,7 @@ void Net::process()
    sockaddr_in ipAddr;
    NetSocket incoming = InvalidSocket;
    char out_h_addr[1024];
-   S32 out_h_length = 0;
+   int out_h_length = 0;
    RawData readBuff;
 
    for (S32 i = 0; i < gPolledSockets.size();
@@ -731,7 +727,7 @@ void Net::process()
             if(::connect(currentSock->fd, (struct sockaddr *)&ipAddr,
                sizeof(ipAddr)) == -1)
             {
-               S32 errorCode;
+               int errorCode;
 #if defined(TORQUE_USE_WINSOCK)
                errorCode = WSAGetLastError();
                if( errorCode == WSAEINPROGRESS || errorCode == WSAEWOULDBLOCK )
@@ -790,7 +786,7 @@ void Net::process()
 
 NetSocket Net::openSocket()
 {
-   S32 retSocket;
+   int retSocket;
    retSocket = socket(AF_INET, SOCK_STREAM, 0);
 
    if(retSocket == InvalidSocket)
@@ -835,7 +831,7 @@ NetSocket Net::accept(NetSocket acceptSocket, NetAddress *remoteAddress)
    sockaddr_in socketAddress;
    socklen_t addrLen = sizeof(socketAddress);
 
-   S32 retVal = ::accept(acceptSocket, (sockaddr *) &socketAddress,  &addrLen);
+   int retVal = ::accept(acceptSocket, (sockaddr *) &socketAddress,  &addrLen);
    if(retVal != InvalidSocket)
    {
       IPSocketToNetAddress(&socketAddress, remoteAddress);

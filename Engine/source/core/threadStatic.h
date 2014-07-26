@@ -47,7 +47,6 @@ public:
     :  mHitCount( 0 ) 
 #endif
    { };
-   virtual ~_TorqueThreadStatic() { }
 
    static const U32 getListIndex(){ return mListIndex; }
 

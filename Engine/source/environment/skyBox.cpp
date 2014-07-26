@@ -400,11 +400,7 @@ void SkyBox::_initRender()
    }
 
    GFXVertexPNTT *vertPtr = mVB.lock();
-   if (!vertPtr)
-   {
-      delete[] tmpVerts;
-      return;
-   }
+   if(!vertPtr) return;
 
    dMemcpy( vertPtr, tmpVerts, sizeof ( GFXVertexPNTT ) * vertCount );
 

@@ -195,11 +195,8 @@ StringTableEntry _StringTable::lookupn(const char* val, S32 len, const bool  cas
 }
 
 //--------------------------------------
-void _StringTable::resize(const U32 _newSize)
+void _StringTable::resize(const U32 newSize)
 {
-   /// avoid a possible 0 division
-   const U32 newSize = _newSize ? _newSize : 1;
-
    Node *head = NULL, *walk, *temp;
    U32 i;
    // reverse individual bucket lists

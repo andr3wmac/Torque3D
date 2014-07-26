@@ -54,9 +54,6 @@ struct PlayerData: public ShapeBaseData {
    };
    bool renderFirstPerson;    ///< Render the player shape in first person
 
-   // andrewmac: Physics Collision flag
-   bool physicsCollision;
-
    /// Render shadows while in first person when 
    /// renderFirstPerson is disabled.
    bool firstPersonShadows; 

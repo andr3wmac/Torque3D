@@ -57,7 +57,7 @@
 #  include "platformXbox/platformXbox.h"
 #endif
 
-GFXPrimitiveType drawTypes[] = { GFXTriangleList, GFXTriangleStrip, GFXTriangleFan };
+GFXPrimitiveType drawTypes[] = { GFXTriangleList, GFXTriangleStrip };
 #define getDrawType(a) (drawTypes[a])
 
 
@@ -80,7 +80,7 @@ Vector<S32*>     TSSkinMesh::smNodeIndexList;
 
 Vector<Point3F> gNormalStore;
 
-bool TSMesh::smUseTriangles = false; // convert all primitives to triangle lists on load
+bool TSMesh::smUseTriangles = true; // convert all primitives to triangle lists on load
 bool TSMesh::smUseOneStrip  = true; // join triangle strips into one long strip on load
 S32  TSMesh::smMinStripSize = 1;     // smallest number of _faces_ allowed per strip (all else put in tri list)
 bool TSMesh::smUseEncodedNormals = false;
@@ -136,8 +136,7 @@ void TSMesh::render( TSMaterialList *materials,
                      bool isSkinDirty,
                      const Vector<MatrixF> &transforms, 
                      TSVertexBufferHandle &vertexBuffer,
-                     GFXPrimitiveBufferHandle &primitiveBuffer,
-					 TSMeshVertexArray* vertexOverride) // andrewmac: Vertex Override
+                     GFXPrimitiveBufferHandle &primitiveBuffer )
 {
    // These are only used by TSSkinMesh.
    TORQUE_UNUSED( isSkinDirty );   
@@ -1204,7 +1203,7 @@ void TSSkinMesh::updateSkin( const Vector<MatrixF> &transforms, TSVertexBufferHa
 
    // set up bone transforms
    PROFILE_START(TSSkinMesh_UpdateTransforms);
-   for( S32 i=0; i<batchData.nodeIndex.size(); i++ )
+   for( int i=0; i<batchData.nodeIndex.size(); i++ )
    {
       S32 node = batchData.nodeIndex[i];
       sBoneTransforms[i].mul( transforms[node], batchData.initialTransforms[i] );
@@ -1234,7 +1233,7 @@ void TSSkinMesh::updateSkin( const Vector<MatrixF> &transforms, TSVertexBufferHa
          skinnedVert.zero();
          skinnedNorm.zero();
 
-         for( S32 tOp = 0; tOp < curVert.transformCount; tOp++ )
+         for( int tOp = 0; tOp < curVert.transformCount; tOp++ )
          {      
             const BatchData::TransformOp &transformOp = curVert.transform[tOp];
 
@@ -1292,9 +1291,6 @@ void TSSkinMesh::updateSkin( const Vector<MatrixF> &transforms, TSVertexBufferHa
       instanceVB.unlock();
 #endif
    }
-
-   // andrewmac: Has Skinned Flag.
-   mHasSkinned = true;
 }
 
 S32 QSORT_CALLBACK _sort_BatchedVertWeight( const void *a, const void *b )
@@ -1422,7 +1418,7 @@ void TSSkinMesh::createBatchData()
       itr != batchOperations.end(); itr++ )
    {
       const BatchData::BatchedVertex &curTransform = *itr;
-      for( S32 i = 0; i < curTransform.transformCount; i++ )
+      for( int i = 0; i < curTransform.transformCount; i++ )
       {
          const BatchData::TransformOp &transformOp = curTransform.transform[i];
 
@@ -1447,8 +1443,8 @@ void TSSkinMesh::createBatchData()
 
    // Now iterate the resulting operations and convert the vectors to aligned
    // memory locations
-   const S32 numBatchOps = batchData.transformKeys.size();
-   for(S32 i = 0; i < numBatchOps; i++)
+   const int numBatchOps = batchData.transformKeys.size();
+   for(int i = 0; i < numBatchOps; i++)
    {
       BatchData::BatchedTransform &curTransform = *batchData.transformBatchOperations.retreive(batchData.transformKeys[i]);
       const S32 numVerts = curTransform._tmpVec->size();
@@ -1466,7 +1462,7 @@ void TSSkinMesh::createBatchData()
    }
 
    // Now sort the batch data so that the skin function writes close to linear output
-   for(S32 i = 0; i < numBatchOps; i++)
+   for(int i = 0; i < numBatchOps; i++)
    {
       BatchData::BatchedTransform &curTransform = *batchData.transformBatchOperations.retreive(batchData.transformKeys[i]);
       dQsort(curTransform.alignedMem, curTransform.numElements, sizeof(BatchData::BatchedVertWeight), _sort_BatchedVertWeight);
@@ -1484,8 +1480,7 @@ void TSSkinMesh::render(   TSMaterialList *materials,
                            bool isSkinDirty,
                            const Vector<MatrixF> &transforms, 
                            TSVertexBufferHandle &vertexBuffer,
-                           GFXPrimitiveBufferHandle &primitiveBuffer,
-						   TSMeshVertexArray* vertexOverride)
+                           GFXPrimitiveBufferHandle &primitiveBuffer )
 {
    PROFILE_SCOPE(TSSkinMesh_render);
 
@@ -1506,14 +1501,11 @@ void TSSkinMesh::render(   TSMaterialList *materials,
 
    if ( primsChanged || vertsChanged || isSkinDirty )
    {
-		// Perform skinning
-		// andrewmac: no point in doing this if we're overriding.
-		if ( vertexOverride == NULL )
-			updateSkin( transforms, vertexBuffer, primitiveBuffer );
+      // Perform skinning
+      updateSkin( transforms, vertexBuffer, primitiveBuffer );
       
-		// Update GFX vertex buffer
-		// andrewmac: Vertex Override
-		_createVBIB( vertexBuffer, primitiveBuffer, vertexOverride );
+      // Update GFX vertex buffer
+      _createVBIB( vertexBuffer, primitiveBuffer );
    }
 
    // render...
@@ -2373,7 +2365,7 @@ void TSMesh::createVBIB()
    _createVBIB( mVB, mPB );
 }
 
-void TSMesh::_createVBIB( TSVertexBufferHandle &vb, GFXPrimitiveBufferHandle &pb, TSMeshVertexArray* vertexOverride )
+void TSMesh::_createVBIB( TSVertexBufferHandle &vb, GFXPrimitiveBufferHandle &pb )
 {
    AssertFatal(mVertexData.isReady(), "Call convertToAlignedMeshData() before calling _createVBIB()");
 
@@ -2401,18 +2393,13 @@ void TSMesh::_createVBIB( TSVertexBufferHandle &vb, GFXPrimitiveBufferHandle &pb
             GFXBufferTypeDynamic : GFXBufferTypeStatic );
 #endif
 
-      // andrewmac: Vertex Override.
-      TSMeshVertexArray* vertexArray = &mVertexData;
-      if ( vertexOverride != NULL )
-      vertexArray = vertexOverride;
-
       // Copy from aligned memory right into GPU memory
       U8 *vertData = (U8*)vb.lock();
       if(!vertData) return;
 #if defined(TORQUE_OS_XENON)
       XMemCpyStreaming_WriteCombined( vertData, mVertexData.address(), mVertexData.mem_size() );
 #else
-      dMemcpy( vertData, vertexArray->address(), vertexArray->mem_size() );
+      dMemcpy( vertData, mVertexData.address(), mVertexData.mem_size() );
 #endif
       vb.unlock();
 #if defined(USE_MEM_VERTEX_BUFFERS)
@@ -2446,7 +2433,6 @@ void TSMesh::_createVBIB( TSVertexBufferHandle &vb, GFXPrimitiveBufferHandle &pb
             break;
 
          case GFXTriangleStrip:
-         case GFXTriangleFan:
             pInfo.type = drawType;
             pInfo.numPrimitives = draw.numElements - 2;
             pInfo.startIndex = draw.start;
@@ -2571,7 +2557,7 @@ void TSMesh::assemble( bool skip )
       // need to copy to temporary arrays
       deleteInputArrays = true;
       primIn = new TSDrawPrimitive[szPrimIn];
-      for (S32 i = 0; i < szPrimIn; i++)
+      for (int i = 0; i < szPrimIn; i++)
       {
          primIn[i].start = prim16[i*2];
          primIn[i].numElements = prim16[i*2+1];
@@ -2895,9 +2881,6 @@ TSSkinMesh::TSSkinMesh()
    meshType = SkinMeshType;
    mDynamic = true;
    batchDataInitialized = false;
-
-   // andrewmac: Has Skinned Flag.
-   mHasSkinned = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -2933,11 +2916,8 @@ inline void TSMesh::findTangent( U32 index1,
    F32 denom = (s1 * t2 - s2 * t1);
 
    if( mFabs( denom ) < 0.0001f )
-   {
-	   // handle degenerate triangles from strips
-	   if (denom<0) denom = -0.0001f;
-	   else denom = 0.0001f;
-   }
+      return;  // handle degenerate triangles from strips
+
    F32 r = 1.0f / denom;
 
    Point3F sdir(  (t2 * x1 - t1 * x2) * r, 
@@ -3005,17 +2985,6 @@ void TSMesh::createTangents(const Vector<Point3F> &_verts, const Vector<Point3F>
             {
                findTangent( p1Index, p2Index, baseIdx[j], tan0.address(), tan1, _verts );
                p1Index = p2Index;
-               p2Index = baseIdx[j];
-            }
-            break;
-         }
-      case GFXTriangleFan:
-         {
-            p1Index = baseIdx[0];
-            p2Index = baseIdx[1];
-            for( U32 j = 2; j < numElements; j++ )
-            {
-               findTangent( p1Index, p2Index, baseIdx[j], tan0.address(), tan1, _verts );
                p2Index = baseIdx[j];
             }
             break;
@@ -3133,91 +3102,4 @@ void TSMesh::_convertToAlignedMeshData( TSMeshVertexArray &vertexData, const Vec
    tverts.free_memory();
    tverts2.free_memory();
    colors.free_memory();
-}
-
-
-// andrewmac:
-//   Returns a pointer to vertex data array. This is shared
-//   across all instances of the mesh, so it's best not to
-//   alter it, but instead use a vertex overide in the shape
-//   instance.
-
-TSSkinMesh::TSMeshVertexArray* TSSkinMesh::getVertexData()
-{
-	return &mVertexData;
-}
-
-// andewmac:
-//	 Returns pointer to list of indicies. This is essentially
-//   a list of triangles with each vertex index one after the
-//   other. Example: 0 1 2 1 2 3 would be a square with 4 verts
-//   making 2 triangles.
-Vector<U32>* TSSkinMesh::getIndices()
-{
-	return &indices;
-}
-
-// andrewmac:
-//   Returns an array of TSMeshVertexInfo. One for each >unique<
-//   vertex found. Includes bone and weight data as well. 
-//   Because this only reports unique vertices, it also includes
-//   a mapTo vector that contains a list of the vertex numbers
-//   it matches to in mVertexData. In order change the position of
-//   a vertex it's nessicary to update the position of all the
-//   vertices it maps to.
-Vector<TSMesh::TSMeshVertexInfo> TSSkinMesh::getVertexInfo()
-{
-   S32 * curVtx = vertexIndex.begin();
-   S32 * curBone = boneIndex.begin();
-   F32 * curWeight = weight.begin();
-   const S32 * endVtx = vertexIndex.end();
-   Vector<TSMesh::TSMeshVertexInfo> result;
-
-   while( curVtx != endVtx )
-   {
-		const S32 vidx = *curVtx;
-		++curVtx;
-
-		const S32 midx = *curBone;
-		++curBone;
-
-		const F32 w = *curWeight;
-		++curWeight;
-
-		__TSMeshVertexBase &dest = mVertexData[vidx];
-
-		bool valid = true;
-		for (U32 i = 0; i < result.size(); i++)
-		{
-			TSMesh::TSMeshVertexInfo v = result[i];
-			if ( dest._vert.x == v.point.x 
-				&& dest._vert.y == v.point.y 
-				&& dest._vert.z == v.point.z )
-			{
-				valid = false;
-				result[i].mapsTo.push_back(vidx);
-			}
-		}
-		if ( valid )
-		{
-			TSMesh::TSMeshVertexInfo new_v;
-			new_v.point = Point3F(dest._vert.x, dest._vert.y, dest._vert.z);
-			new_v.bone = midx;
-			new_v.weight = w;
-			new_v.mapsTo.clear();
-			new_v.mapsTo.push_back(vidx);
-			result.push_back(new_v);
-		}
-   }
-
-   return result;
-}
-
-// andrewmac:
-//   hasSkinned() allows to me choose the right time to
-//   copy the vertex list. I'd rather wait until after 
-//   Torque has skinned the mesh initially. 
-bool TSSkinMesh::hasSkinned()
-{
-	return mHasSkinned;
 }

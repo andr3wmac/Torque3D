@@ -29,8 +29,6 @@
 
 #include "unit/test.h"
 
-#include "core/util/journal/process.h"
-
 
 namespace UnitTesting
 {
@@ -42,10 +40,10 @@ TestRegistry *TestRegistry::_list = 0;
 
 //-----------------------------------------------------------------------------
 
-static const S32 MaxMarginCount = 32;
-static const S32 MaxMarginValue = 128;
-static S32 _Margin[MaxMarginCount] = { 3 };
-static S32* _MarginPtr = _Margin;
+static const int MaxMarginCount = 32;
+static const int MaxMarginValue = 128;
+static int _Margin[MaxMarginCount] = { 3 };
+static int* _MarginPtr = _Margin;
 static char _MarginString[MaxMarginValue];
 
 static void _printMargin()
@@ -54,7 +52,7 @@ static void _printMargin()
       ::fwrite(_MarginString,1,*_MarginPtr,stdout);
 }
 
-void UnitMargin::Push(S32 margin)
+void UnitMargin::Push(int margin)
 {
    if (_MarginPtr < _Margin + MaxMarginCount) {
       *++_MarginPtr = (margin < MaxMarginValue)? margin: MaxMarginValue;
@@ -70,7 +68,7 @@ void UnitMargin::Pop()
    }
 }
 
-S32 UnitMargin::Current()
+int UnitMargin::Current()
 {
    return *_MarginPtr;
 }
@@ -249,7 +247,7 @@ bool TestRun::test(const char* module, bool skipInteractive)
 {
    StringTableEntry cwdSave = Platform::getCurrentDirectory();
 
-   S32 len = strlen(module);
+   int len = strlen(module);
 
    const char *skipMsg = skipInteractive ? "(skipping interactive tests)" : "";
 
@@ -276,9 +274,6 @@ bool TestRun::test(const char* module, bool skipInteractive)
    printStats();
 
    Platform::setCurrentDirectory(cwdSave);
-
-   // sanity check for avoid Process::requestShutdown() called on some tests
-   Process::processEvents();
 
    // And indicate our failure situation in the return value.
    return !_failureCount;

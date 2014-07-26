@@ -30,7 +30,6 @@
 #include "shaderGen/langElement.h"
 #endif
 
-
 /// A shared base class for terrain features which
 /// includes some helper functions.
 class TerrainFeatGLSL : public ShaderFeatureGLSL
@@ -39,17 +38,13 @@ protected:
    
    Var* _getInDetailCoord(Vector<ShaderComponent*> &componentList );
    
-   Var* _getInMacroCoord(Vector<ShaderComponent*> &componentList );
-
    Var* _getNormalMapTex();
    
    static Var* _getUniformVar( const char *name, const char *type, ConstantSortPosition csp );
    
    Var* _getDetailIdStrengthParallax();
-   Var* _getMacroIdStrengthParallax();
       
 };
-
 
 class TerrainBaseMapFeatGLSL : public TerrainFeatGLSL
 {
@@ -66,12 +61,10 @@ public:
    virtual String getName() { return "Terrain Base Texture"; }
 };
 
-
 class TerrainDetailMapFeatGLSL : public TerrainFeatGLSL
 {
 protected:
 
-   ShaderIncludeDependency mTorqueDep;
    ShaderIncludeDependency mTerrainDep;
 
 public:
@@ -90,16 +83,9 @@ public:
 };
 
 
-class TerrainMacroMapFeatGLSL : public TerrainFeatGLSL
+class TerrainNormalMapFeatGLSL : public TerrainFeatGLSL
 {
-protected:
-
-   ShaderIncludeDependency mTorqueDep;
-   ShaderIncludeDependency mTerrainDep;
-
 public:
-
-   TerrainMacroMapFeatGLSL();
 
    virtual void processVert(  Vector<ShaderComponent*> &componentList,
                               const MaterialFeatureData &fd );
@@ -109,14 +95,19 @@ public:
 
    virtual Resources getResources( const MaterialFeatureData &fd );
 
-   virtual String getName() { return "Terrain Macro Texture"; }
+   virtual String getName() { return "Terrain Normal Texture"; }
 };
 
-
-class TerrainNormalMapFeatGLSL : public TerrainFeatGLSL
+class TerrainParallaxMapFeatGLSL : public TerrainFeatGLSL
 {
+protected:
+
+   ShaderIncludeDependency mIncludeDep;
+
 public:
 
+   TerrainParallaxMapFeatGLSL();
+   
    virtual void processVert(  Vector<ShaderComponent*> &componentList,
                             const MaterialFeatureData &fd );
    
@@ -125,7 +116,7 @@ public:
    
    virtual Resources getResources( const MaterialFeatureData &fd );
    
-   virtual String getName() { return "Terrain Normal Texture"; }
+   virtual String getName() { return "Terrain Parallax Texture"; }
 };
 
 class TerrainLightMapFeatGLSL : public TerrainFeatGLSL

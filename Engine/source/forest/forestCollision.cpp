@@ -64,14 +64,13 @@ ScriptMethod( Forest, forestRayCast, const char*, 4, 4, "( Point3F start, Point3
    dSscanf(argv[2], "%g %g %g", &start.x, &start.y, &start.z);
    dSscanf(argv[3], "%g %g %g", &end.x,   &end.y,   &end.z);   
 
-   static const U32 bufSize = 256;
-   char *returnBuffer = Con::getReturnBuffer(bufSize);
+   char *returnBuffer = Con::getReturnBuffer(256);
    returnBuffer[0] = '0';
    returnBuffer[1] = '\0';
 
    ForestRayInfo rinfo;
    if ( object->castRayI( start, end, &rinfo ) )
-      dSprintf( returnBuffer, bufSize, "%d %d %g", rinfo.item->getData()->getId(), rinfo.key, rinfo.t );
+      dSprintf( returnBuffer, 256, "%d %d %g", rinfo.item->getData()->getId(), rinfo.key, rinfo.t );
 
    return returnBuffer;
 }

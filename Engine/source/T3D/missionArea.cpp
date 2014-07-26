@@ -176,11 +176,10 @@ DefineEngineFunction(getMissionAreaServerObject, MissionArea*, (),,
 DefineEngineMethod( MissionArea, getArea, const char *, (),,
               "Returns 4 fields: starting x, starting y, extents x, extents y.\n")
 {
-   static const U32 bufSize = 48;
-   char* returnBuffer = Con::getReturnBuffer(bufSize);
+   char* returnBuffer = Con::getReturnBuffer(48);
 
    RectI area = object->getArea();
-   dSprintf(returnBuffer, bufSize, "%d %d %d %d", area.point.x, area.point.y, area.extent.x, area.extent.y);
+   dSprintf(returnBuffer, sizeof(returnBuffer), "%d %d %d %d", area.point.x, area.point.y, area.extent.x, area.extent.y);
    return(returnBuffer);
 }
 

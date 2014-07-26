@@ -203,7 +203,7 @@ ShapeBaseImageData::ShapeBaseImageData()
    scriptAnimTransitionTime = 0.25f;
 
    //
-   for (S32 i = 0; i < MaxStates; i++) {
+   for (int i = 0; i < MaxStates; i++) {
       stateName[i] = 0;
 
       stateTransitionLoaded[i] = 0;
@@ -462,10 +462,7 @@ bool ShapeBaseImageData::preload(bool server, String &errorStr)
             Torque::FS::FileNodeRef    fileRef = Torque::FS::GetFileNode(shape[i].getPath());
 
             if (!fileRef)
-            {
-               errorStr = String::ToString("ShapeBaseImageData: Couldn't load shape \"%s\"",name);
                return false;
-            }
 
             if(server)
             {
@@ -3060,7 +3057,7 @@ TICKAGAIN:
 
       if (image.spinThread[i])
       {
-         F32 timeScale;
+         float timeScale;
 
          switch (stateData.spin) 
          {

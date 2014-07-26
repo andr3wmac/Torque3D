@@ -25,77 +25,48 @@
 #ifdef WIN32
 
 #include <windows.h>
-#include <string>
+#include <stdio.h>
 
 extern "C"
 {
    int (*torque_winmain)( HINSTANCE hInstance, HINSTANCE h, LPSTR lpszCmdLine, int nShow) = NULL;
 };
 
-bool getDllName(std::wstring& dllName, const std::wstring suffix)
-{
-   wchar_t filenameBuf[MAX_PATH];
-   DWORD length = GetModuleFileNameW( NULL, filenameBuf, MAX_PATH );
-   if(length == 0) return false;
-   dllName = std::wstring(filenameBuf);
-   size_t dotPos = dllName.find_last_of(L".");
-   if(dotPos == std::wstring::npos)
-   {
-      dllName.clear();
-      return false;
-   }
-   dllName.erase(dotPos);
-   dllName += suffix + L".dll";
-   return true;
-}
-
 int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCommandShow)
 {
-   // Try to find the game DLL, which may have one of several file names.
-   HMODULE hGame = NULL;
-   std::wstring dllName = std::wstring();
-   // The file name is the same as this executable's name, plus a suffix.
-   const std::wstring dllSuffices[] = {L"", L" DLL"};
-   const unsigned int numSuffices = sizeof(dllSuffices) / sizeof(std::wstring);
+   char filename[4096];
+   char gameLib[4096];
 
-   for (unsigned int i = 0; i < numSuffices; i++)
-   {
-      // Attempt to glue the suffix onto the current filename.
-      if(!getDllName(dllName, dllSuffices[i]))
-         continue;
-      // Load the DLL at that address.
-      hGame = LoadLibraryW(dllName.c_str());
-      if (hGame)
-         break;
-   }
+   GetModuleFileNameA(NULL, filename, 4096);
+   filename[strlen(filename)-4] = 0;
+   sprintf(gameLib, "%s.dll", filename);
 
-   if(!dllName.length())
-   {
-      MessageBoxW(NULL, L"Unable to find game dll", L"Error",  MB_OK|MB_ICONWARNING);
-      return -1;
-   }
+   HMODULE hGame = LoadLibraryA(gameLib);
 
+   if (hGame)
+      torque_winmain = (int (*)(HINSTANCE hInstance, HINSTANCE h, LPSTR lpszCmdLine, int nShow))GetProcAddress(hGame, "torque_winmain");
+
+   char error[4096];
    if (!hGame)
    {
-      wchar_t error[4096];
-      _swprintf_l(error, sizeof(error), L"Unable to load game library: %s.  Please make sure it exists and the latest DirectX is installed.", _get_current_locale(), dllName.c_str());
-      MessageBoxW(NULL, error, L"Error",  MB_OK|MB_ICONWARNING);
+      sprintf(error, "Unable to load game library: %s.  Please make sure it exists and the latest DirectX is installed.", gameLib);
+      MessageBoxA(NULL, error, "Error",  MB_OK|MB_ICONWARNING);
       return -1;
    }
 
-   torque_winmain = (int (*)(HINSTANCE hInstance, HINSTANCE h, LPSTR lpszCmdLine, int nShow))GetProcAddress(hGame, "torque_winmain");
    if (!torque_winmain)
    {
-      wchar_t error[4096];
-      _swprintf_l(error, sizeof(error), L"Missing torque_winmain export in game library: %s.  Please make sure that it exists and the latest DirectX is installed.", _get_current_locale(), dllName.c_str());
-      MessageBoxW(NULL, error, L"Error",  MB_OK|MB_ICONWARNING);
+      sprintf(error, "Missing torque_winmain export in game library: %s.  Please make sure that it exists and the latest DirectX is installed.", gameLib);
+      MessageBoxA(NULL, error, "Error",  MB_OK|MB_ICONWARNING);
       return -1;
    }
 
-   int ret = torque_winmain(hInstance, hPrevInstance, lpszCmdLine, nCommandShow);
+   int ret = torque_winmain(hInstance, hPrevInstance, lpszCmdLine, nCommandShow );
 
    FreeLibrary(hGame);
+
    return ret;
+
 }
 #endif // WIN32
 

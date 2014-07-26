@@ -561,7 +561,7 @@ class SFXMaterialProperties
 
 
 /// An array of float values with optional random variances.
-template< S32 NUM_VALUES >
+template< int NUM_VALUES >
 struct SFXVariantFloat
 {
    /// Base value.

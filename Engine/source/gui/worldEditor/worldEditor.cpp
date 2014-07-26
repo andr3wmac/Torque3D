@@ -1303,7 +1303,7 @@ void WorldEditor::renderObjectFace(SceneObject * obj, const VectorF & normal, co
 
    PrimBuild::color( col );
 
-   PrimBuild::begin( GFXTriangleFan, 4 );
+   PrimBuild::begin( GFXTriangleStrip, 4 );
       for(U32 k = 0; k < 4; k++)
       {
          PrimBuild::vertex3f(projPnts[k].x, projPnts[k].y, projPnts[k].z);
@@ -2882,9 +2882,8 @@ const Point3F& WorldEditor::getSelectionCentroid()
 const char* WorldEditor::getSelectionCentroidText()
 {
    const Point3F & centroid = getSelectionCentroid();
-   static const U32 bufSize = 100;
-   char * ret = Con::getReturnBuffer(bufSize);
-   dSprintf(ret, bufSize, "%g %g %g", centroid.x, centroid.y, centroid.z);
+   char * ret = Con::getReturnBuffer(100);
+   dSprintf(ret, 100, "%g %g %g", centroid.x, centroid.y, centroid.z);
    return ret;	
 }
 
@@ -3264,9 +3263,8 @@ ConsoleMethod( WorldEditor, getSelectionCentroid, const char *, 2, 2, "")
 ConsoleMethod( WorldEditor, getSelectionExtent, const char *, 2, 2, "")
 {
    Point3F bounds = object->getSelectionExtent();
-   static const U32 bufSize = 100;
-   char * ret = Con::getReturnBuffer(bufSize);
-   dSprintf(ret, bufSize, "%g %g %g", bounds.x, bounds.y, bounds.z);
+   char * ret = Con::getReturnBuffer(100);
+   dSprintf(ret, 100, "%g %g %g", bounds.x, bounds.y, bounds.z);
    return ret;	
 }
 

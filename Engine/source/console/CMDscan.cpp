@@ -1910,13 +1910,9 @@ extern int isatty (int );
         b->yy_bs_column = 0;
     }
 
-#ifdef _MSC_VER
-    b->yy_is_interactive = file ? (isatty( _fileno( file ) ) > 0) : 0;
-#else
-    b->yy_is_interactive = file ? (isatty(  fileno( file ) ) > 0) : 0;
-#endif
-
-    errno = oerrno; 
+        b->yy_is_interactive = file ? (isatty( fileno(file) ) > 0) : 0;
+    
+	errno = oerrno;
 }
 
 /** Discard all buffered characters. On the next scan, YY_INPUT will be called.

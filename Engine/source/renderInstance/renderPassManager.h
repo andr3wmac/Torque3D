@@ -56,14 +56,14 @@ typedef U32 RenderInstTypeHash;
 /// that we can assign the RIT to RenderInst::type field.
 class RenderInstType
 {
-   /// For direct access to mName.
-   friend class RenderBinManager;
+	/// For direct access to mName.
+	friend class RenderBinManager;
 
 protected:
-      
-   String mName;
 
-public:  
+	String mName;
+
+public:
 
 	RenderInstType()
 		: mName(Invalid.mName)
@@ -80,182 +80,182 @@ public:
 	{
 	}
 
-   ~RenderInstType() {}
+	~RenderInstType() {}
 
-   operator RenderInstTypeHash() const { return (RenderInstTypeHash)mName.getHashCaseInsensitive(); }
+	operator RenderInstTypeHash() const { return (RenderInstTypeHash)mName.getHashCaseInsensitive(); }
 
-   const String& getName() const { return mName; }
+	const String& getName() const { return mName; }
 
-   bool isValid() const { return (RenderInstTypeHash)*this != (RenderInstTypeHash)Invalid; }
+	bool isValid() const { return (RenderInstTypeHash)*this != (RenderInstTypeHash)Invalid; }
 
-   static const RenderInstType Invalid;
+	static const RenderInstType Invalid;
 };
 
 
 ///
 class RenderPassManager : public SimObject
 {
-   typedef SimObject Parent;
-
-public:   
-
-   // Default bin types.  Not necessarily the only bin types in the system.
-   // RIT = "R"ender "I"nstance "T"ype
-   static const RenderInstType RIT_Mesh;
-   static const RenderInstType RIT_Shadow;
-   static const RenderInstType RIT_Sky;
-   static const RenderInstType RIT_Terrain;
-   static const RenderInstType RIT_Object;   // objects that do their own rendering
-   static const RenderInstType RIT_ObjectTranslucent;// self rendering; but sorted with static const RenderInstType RIT_Translucent
-   static const RenderInstType RIT_Decal;
-   static const RenderInstType RIT_Water;
-   static const RenderInstType RIT_Foliage;
-   static const RenderInstType RIT_Translucent;
-   static const RenderInstType RIT_Begin;
-   static const RenderInstType RIT_Custom;
-   static const RenderInstType RIT_Particle;
-   static const RenderInstType RIT_Occluder;
-   static const RenderInstType RIT_Editor;
+	typedef SimObject Parent;
 
 public:
 
-   RenderPassManager();
-   virtual ~RenderPassManager();
+	// Default bin types.  Not necessarily the only bin types in the system.
+	// RIT = "R"ender "I"nstance "T"ype
+	static const RenderInstType RIT_Mesh;
+	static const RenderInstType RIT_Shadow;
+	static const RenderInstType RIT_Sky;
+	static const RenderInstType RIT_Terrain;
+	static const RenderInstType RIT_Object;   // objects that do their own rendering
+	static const RenderInstType RIT_ObjectTranslucent;// self rendering; but sorted with static const RenderInstType RIT_Translucent
+	static const RenderInstType RIT_Decal;
+	static const RenderInstType RIT_Water;
+	static const RenderInstType RIT_Foliage;
+	static const RenderInstType RIT_Translucent;
+	static const RenderInstType RIT_Begin;
+	static const RenderInstType RIT_Custom;
+	static const RenderInstType RIT_Particle;
+	static const RenderInstType RIT_Occluder;
+	static const RenderInstType RIT_Editor;
 
-   /// @name Allocation interface
-   /// @{
+public:
 
-   /// Allocate a render instance, use like so:  MyRenderInstType* t = gRenderInstMgr->allocInst<MyRenderInstType>();
-   /// Valid until ::clear called.
-   template <typename T>
-   T* allocInst()
-   {
-      T* inst = mChunker.alloc<T>();
-      inst->clear();
-      return inst;
-   }
+	RenderPassManager();
+	virtual ~RenderPassManager();
 
-   /// Allocate a matrix, valid until ::clear called.
-   MatrixF* allocUniqueXform(const MatrixF& data) 
-   { 
-      MatrixF *r = mChunker.alloc<MatrixF>(); 
-      *r = data; 
-      return r; 
-   }
+	/// @name Allocation interface
+	/// @{
 
-   enum SharedTransformType
-   {
-      View,
-      Projection,
-   };
+	/// Allocate a render instance, use like so:  MyRenderInstType* t = gRenderInstMgr->allocInst<MyRenderInstType>();
+	/// Valid until ::clear called.
+	template <typename T>
+	T* allocInst()
+	{
+		T* inst = mChunker.alloc<T>();
+		inst->clear();
+		return inst;
+	}
 
-   const MatrixF* allocSharedXform(SharedTransformType stt);
+	/// Allocate a matrix, valid until ::clear called.
+	MatrixF* allocUniqueXform(const MatrixF& data)
+	{
+		MatrixF *r = mChunker.alloc<MatrixF>();
+		*r = data;
+		return r;
+	}
 
-   void assignSharedXform(SharedTransformType stt, const MatrixF &xfm);
+	enum SharedTransformType
+	{
+		View,
+		Projection,
+	};
 
-   MatrixSet &getMatrixSet() { return *mMatrixSet; }
+	const MatrixF* allocSharedXform(SharedTransformType stt);
 
-   /// Allocate a GFXPrimitive object which will remain valid 
-   /// until the pass manager is cleared.
-   GFXPrimitive* allocPrim() { return mChunker.alloc<GFXPrimitive>(); }
-   /// @}
+	void assignSharedXform(SharedTransformType stt, const MatrixF &xfm);
 
-   /// Add a RenderInstance to the list
-   virtual void addInst( RenderInst *inst );
-   
-   /// Sorts the list of RenderInst's per bin. (Normally, one should just call renderPass)
-   void sort();
+	MatrixSet &getMatrixSet() { return *mMatrixSet; }
 
-   /// Renders the list of RenderInsts (Normally, one should just call renderPass)
-   void render( SceneRenderState *state );
+	/// Allocate a GFXPrimitive object which will remain valid 
+	/// until the pass manager is cleared.
+	GFXPrimitive* allocPrim() { return mChunker.alloc<GFXPrimitive>(); }
+	/// @}
 
-   /// Resets our allocated RenderInstances and Matrices. (Normally, one should just call renderPass)
-   void clear();
+	/// Add a RenderInstance to the list
+	virtual void addInst(RenderInst *inst);
 
-   // Calls sort, render, and clear
-   void renderPass( SceneRenderState *state );
+	/// Sorts the list of RenderInst's per bin. (Normally, one should just call renderPass)
+	void sort();
 
-   /// Returns the active depth buffer for this pass (NOTE: This value may be GFXTextureTarget::sDefaultDepthStencil)
-   GFXTextureObject *getDepthTargetTexture();
+	/// Renders the list of RenderInsts (Normally, one should just call renderPass)
+	void render(SceneRenderState *state);
 
-   /// Assigns the value for the above method
-   void setDepthTargetTexture(GFXTextureObject *zTarget);
+	/// Resets our allocated RenderInstances and Matrices. (Normally, one should just call renderPass)
+	void clear();
 
-   /// @name RenderBinManager interface
-   /// @{
+	// Calls sort, render, and clear
+	void renderPass(SceneRenderState *state);
 
-   /// Add a render bin manager to the list of render bin manager, this SceneRenderPassManager now owns the render bin manager and will free it when needed.
-   /// @param mgr Render manager to add
-   /// @param processAddOrder Where to add the manager in the addInst list, set to NO_PROCESSADD to skip processing
-   ///        this is in place for RenderManagers that will bypass the main ::addInst interface and doesn't want to process
-   ///        them.
-   /// @param renderOrder Where to add the manager in the render list.
-   void addManager(RenderBinManager* mgr);
-   
-   /// Removes a manager from render and process add lists
-   /// @param mgr Render bin manager to remove, the caller is now responsible for freeing the mgr.
-   void removeManager(RenderBinManager* mgr);
+	/// Returns the active depth buffer for this pass (NOTE: This value may be GFXTextureTarget::sDefaultDepthStencil)
+	GFXTextureObject *getDepthTargetTexture();
 
-   /// How many render bin managers do we have?
-   U32 getManagerCount() const { return mRenderBins.size(); }
+	/// Assigns the value for the above method
+	void setDepthTargetTexture(GFXTextureObject *zTarget);
 
-   /// Get the render manager at i
-   RenderBinManager* getManager( S32 i ) const;
+	/// @name RenderBinManager interface
+	/// @{
 
-   /// @}
+	/// Add a render bin manager to the list of render bin manager, this SceneRenderPassManager now owns the render bin manager and will free it when needed.
+	/// @param mgr Render manager to add
+	/// @param processAddOrder Where to add the manager in the addInst list, set to NO_PROCESSADD to skip processing
+	///        this is in place for RenderManagers that will bypass the main ::addInst interface and doesn't want to process
+	///        them.
+	/// @param renderOrder Where to add the manager in the render list.
+	void addManager(RenderBinManager* mgr);
 
-   /// Get scene manager which this render pass belongs to.
-   SceneManager* getSceneManager()
-   {
-      if ( !mSceneManager )
-         mSceneManager = gClientSceneGraph;
+	/// Removes a manager from render and process add lists
+	/// @param mgr Render bin manager to remove, the caller is now responsible for freeing the mgr.
+	void removeManager(RenderBinManager* mgr);
 
-      return mSceneManager;
-   }
+	/// How many render bin managers do we have?
+	U32 getManagerCount() const { return mRenderBins.size(); }
 
-   /// This signal is triggered when a render bin is about to be rendered.
-   ///
-   /// @param bin    The render bin we're signaling.
-   /// @param state  The current scene state.
-   /// @params preRender   If true it is before the bin is rendered, else its 
-   ///                     after being rendered.
-   ///
-   typedef Signal <void (  RenderBinManager *bin, 
-                           const SceneRenderState *state, 
-                           bool preRender )> RenderBinEventSignal;
+	/// Get the render manager at i
+	RenderBinManager* getManager(S32 i) const;
 
-   /// @see RenderBinEventSignal
-   static RenderBinEventSignal& getRenderBinSignal();
+	/// @}
+
+	/// Get scene manager which this render pass belongs to.
+	SceneManager* getSceneManager()
+	{
+		if (!mSceneManager)
+			mSceneManager = gClientSceneGraph;
+
+		return mSceneManager;
+	}
+
+	/// This signal is triggered when a render bin is about to be rendered.
+	///
+	/// @param bin    The render bin we're signaling.
+	/// @param state  The current scene state.
+	/// @params preRender   If true it is before the bin is rendered, else its 
+	///                     after being rendered.
+	///
+	typedef Signal <void(RenderBinManager *bin,
+		const SceneRenderState *state,
+		bool preRender)> RenderBinEventSignal;
+
+	/// @see RenderBinEventSignal
+	static RenderBinEventSignal& getRenderBinSignal();
 
 
-   typedef Signal<void(RenderInst *inst)> AddInstSignal;
+	typedef Signal<void(RenderInst *inst)> AddInstSignal;
 
-   AddInstSignal& getAddSignal( RenderInstTypeHash type )
-   {
-      return mAddInstSignals.findOrInsert( type )->value; 
-   }
+	AddInstSignal& getAddSignal(RenderInstTypeHash type)
+	{
+		return mAddInstSignals.findOrInsert(type)->value;
+	}
 
-   // ConsoleObject interface
-   static void initPersistFields();
-   DECLARE_CONOBJECT(RenderPassManager);
+	// ConsoleObject interface
+	static void initPersistFields();
+	DECLARE_CONOBJECT(RenderPassManager);
 
 protected:
 
-   MultiTypedChunker mChunker;
-      
-   Vector< RenderBinManager* > mRenderBins;
+	MultiTypedChunker mChunker;
+
+	Vector< RenderBinManager* > mRenderBins;
 
 
-   typedef HashTable<RenderInstTypeHash,AddInstSignal> AddInstTable;
+	typedef HashTable<RenderInstTypeHash, AddInstSignal> AddInstTable;
 
-   AddInstTable mAddInstSignals;
+	AddInstTable mAddInstSignals;
 
-   SceneManager * mSceneManager;
-   GFXTexHandle mDepthBuff;
-   MatrixSet *mMatrixSet;
+	SceneManager * mSceneManager;
+	GFXTexHandle mDepthBuff;
+	MatrixSet *mMatrixSet;
 
-   /// Do a sorted insert into a vector, renderOrder bool controls which test we run for insertion.
-   void _insertSort(Vector<RenderBinManager*>& list, RenderBinManager* mgr, bool renderOrder);
+	/// Do a sorted insert into a vector, renderOrder bool controls which test we run for insertion.
+	void _insertSort(Vector<RenderBinManager*>& list, RenderBinManager* mgr, bool renderOrder);
 };
 
 //**************************************************************************
@@ -263,166 +263,166 @@ protected:
 //**************************************************************************
 struct RenderInst
 {
-   /// The type of render instance this is.
-   RenderInstTypeHash type;
+	/// The type of render instance this is.
+	RenderInstTypeHash type;
 
-   /// This should be true if the object needs to be sorted 
-   /// back to front with other translucent instances.
-   /// @see sortDistSq
-   bool translucentSort;  
+	/// This should be true if the object needs to be sorted 
+	/// back to front with other translucent instances.
+	/// @see sortDistSq
+	bool translucentSort;
 
-   /// The reference squared distance from the camera used for
-   /// back to front sorting of the instances.
-   /// @see translucentSort
-   F32 sortDistSq;
+	/// The reference squared distance from the camera used for
+	/// back to front sorting of the instances.
+	/// @see translucentSort
+	F32 sortDistSq;
 
-   /// The default key used by render managers for
-   /// internal sorting.
-   U32 defaultKey;
+	/// The default key used by render managers for
+	/// internal sorting.
+	U32 defaultKey;
 
-   /// The secondary key used by render managers for
-   /// internal sorting.
-   U32 defaultKey2;
+	/// The secondary key used by render managers for
+	/// internal sorting.
+	U32 defaultKey2;
 
-   /// Does a memset to clear the render instance.
-   void clear();
+	/// Does a memset to clear the render instance.
+	void clear();
 };
 
 struct ObjectRenderInst : public RenderInst
 {
-   /// This is a delegate specific index which is usually
-   /// used to define a mounted object.
-   S32 objectIndex;
+	/// This is a delegate specific index which is usually
+	/// used to define a mounted object.
+	S32 objectIndex;
 
-   /// Extra data to be used within the render callback.
-   /// ObjectRenderInst does not own or cleanup this data.
-   void *userData;
+	/// Extra data to be used within the render callback.
+	/// ObjectRenderInst does not own or cleanup this data.
+	void *userData;
 
-   /// The delegate callback function to call to render
-   /// this object instance.
-   ///
-   /// @param ri           The ObjectRenderInst that called the delegate.
-   ///
-   /// @param state        The scene state we're rendering.
-   ///
-   /// @param overrideMat  An alternative material to use during rendering... usually
-   ///                     used for special renders like shadows.  If the object doesn't
-   ///                     support override materials it shouldn't render at all.
-   Delegate<void( ObjectRenderInst *ri, 
-                  SceneRenderState *state, 
-                  BaseMatInstance *overrideMat )> renderDelegate;
+	/// The delegate callback function to call to render
+	/// this object instance.
+	///
+	/// @param ri           The ObjectRenderInst that called the delegate.
+	///
+	/// @param state        The scene state we're rendering.
+	///
+	/// @param overrideMat  An alternative material to use during rendering... usually
+	///                     used for special renders like shadows.  If the object doesn't
+	///                     support override materials it shouldn't render at all.
+	Delegate<void(ObjectRenderInst *ri,
+		SceneRenderState *state,
+		BaseMatInstance *overrideMat)> renderDelegate;
 
-   // Clear this instance.
-   void clear();
+	// Clear this instance.
+	void clear();
 };
 
 struct MeshRenderInst : public RenderInst
 {
-   ////
-   GFXVertexBufferHandleBase *vertBuff;
-   
-   ////
-   GFXPrimitiveBufferHandle *primBuff;
+	////
+	GFXVertexBufferHandleBase *vertBuff;
 
-   /// If not NULL it is used to draw the primitive, else
-   /// the primBuffIndex is used.
-   /// @see primBuffIndex
-   GFXPrimitive *prim;
+	////
+	GFXPrimitiveBufferHandle *primBuff;
 
-   /// If prim is NULL then this index is used to draw the
-   /// indexed primitive from the primitive buffer.
-   /// @see prim
-   U32 primBuffIndex;
-   
-   /// The material to setup when drawing this instance.
-   BaseMatInstance *matInst;
+	/// If not NULL it is used to draw the primitive, else
+	/// the primBuffIndex is used.
+	/// @see primBuffIndex
+	GFXPrimitive *prim;
 
-   /// The object to world transform (world transform in most API's).
-   const MatrixF *objectToWorld;       
-   
-   /// The worldToCamera (view transform in most API's).
-   const MatrixF* worldToCamera;       
-   
-   /// The projection matrix.
-   const MatrixF* projection;         
+	/// If prim is NULL then this index is used to draw the
+	/// indexed primitive from the primitive buffer.
+	/// @see prim
+	U32 primBuffIndex;
 
-   // misc render states
-   U8    transFlags;
-   bool  reflective;
-   F32   visibility;
+	/// The material to setup when drawing this instance.
+	BaseMatInstance *matInst;
 
-   /// A generic hint value passed from the game
-   /// code down to the material for use by shader 
-   /// features.
-   void *materialHint;
+	/// The object to world transform (world transform in most API's).
+	const MatrixF *objectToWorld;
 
-   /// The lights we pass to the material for this 
-   /// mesh in order light importance.
-   LightInfo* lights[8];
+	/// The worldToCamera (view transform in most API's).
+	const MatrixF* worldToCamera;
 
-   // textures
-   GFXTextureObject *lightmap;
-   GFXTextureObject *fogTex;
-   GFXTextureObject *backBuffTex;
-   GFXTextureObject *reflectTex;
-   GFXTextureObject *miscTex;
-   GFXCubemap   *cubemap;
+	/// The projection matrix.
+	const MatrixF* projection;
 
-   void clear();
+	// misc render states
+	U8    transFlags;
+	bool  reflective;
+	F32   visibility;
+
+	/// A generic hint value passed from the game
+	/// code down to the material for use by shader 
+	/// features.
+	void *materialHint;
+
+	/// The lights we pass to the material for this 
+	/// mesh in order light importance.
+	LightInfo* lights[8];
+
+	// textures
+	GFXTextureObject *lightmap;
+	GFXTextureObject *fogTex;
+	GFXTextureObject *backBuffTex;
+	GFXTextureObject *reflectTex;
+	GFXTextureObject *miscTex;
+	GFXCubemap   *cubemap;
+
+	void clear();
 };
 
 enum ParticleSystemState
 {
-   PSS_AwaitingHighResDraw = 0, // Keep this as first element so that if the offscreen manager rejects a particle system it will get drawn high-res
-   PSS_AwaitingOffscreenDraw,
-   PSS_AwaitingCompositeDraw,
-   PSS_AwaitingMixedResDraw,
-   PSS_DrawComplete,
+	PSS_AwaitingHighResDraw = 0, // Keep this as first element so that if the offscreen manager rejects a particle system it will get drawn high-res
+	PSS_AwaitingOffscreenDraw,
+	PSS_AwaitingCompositeDraw,
+	PSS_AwaitingMixedResDraw,
+	PSS_DrawComplete,
 };
 
 /// A special render instance for particles.
 struct ParticleRenderInst : public RenderInst
 {
-   /// The vertex buffer.
-   GFXVertexBufferHandleBase *vertBuff;
-   
-   /// The primitive buffer.
-   GFXPrimitiveBufferHandle *primBuff;
+	/// The vertex buffer.
+	GFXVertexBufferHandleBase *vertBuff;
 
-   /// The total particle count to render.
-   S32 count;
+	/// The primitive buffer.
+	GFXPrimitiveBufferHandle *primBuff;
 
-   /// The combined model, camera, and projection transform.
-   const MatrixF *modelViewProj;       
-        
-   /// Blend style for the particle system 
-   enum BlendStyle {
-      BlendUndefined = 0,
-      BlendNormal,
-      BlendAdditive,
-      BlendSubtractive,
-      BlendPremultAlpha,
-      BlendGreyscale,
-      BlendStyle_COUNT,
-   };
-   U8 blendStyle;
+	/// The total particle count to render.
+	S32 count;
 
-   /// For the offscreen particle manager
-   U8 targetIndex;
+	/// The combined model, camera, and projection transform.
+	const MatrixF *modelViewProj;
 
-   /// State for the particle system
-   ParticleSystemState systemState;
+	/// Blend style for the particle system 
+	enum BlendStyle {
+		BlendUndefined = 0,
+		BlendNormal,
+		BlendAdditive,
+		BlendSubtractive,
+		BlendPremultAlpha,
+		BlendGreyscale,
+		BlendStyle_COUNT,
+	};
+	U8 blendStyle;
 
-   /// The soft particle fade distance in meters.
-   F32 softnessDistance;
+	/// For the offscreen particle manager
+	U8 targetIndex;
 
-   /// Bounding box render transform
-   const MatrixF *bbModelViewProj;
+	/// State for the particle system
+	ParticleSystemState systemState;
 
-   /// The particle texture.
-   GFXTextureObject *diffuseTex;
+	/// The soft particle fade distance in meters.
+	F32 softnessDistance;
 
-   void clear();
+	/// Bounding box render transform
+	const MatrixF *bbModelViewProj;
+
+	/// The particle texture.
+	GFXTextureObject *diffuseTex;
+
+	void clear();
 };
 
 class GFXOcclusionQuery;
@@ -430,21 +430,21 @@ class SceneObject;
 
 /// A special render instance for occlusion tests.
 struct OccluderRenderInst : public RenderInst
-{   
-   Point3F scale;
-   Point3F position;   
-   const MatrixF *orientation;
-   GFXOcclusionQuery *query; 
-   
-   // This optional query will have all pixels rendered.
-   // Its purpose is to return to the user the full pixel count for comparison
-   // with the other query.
-   GFXOcclusionQuery *query2;
+{
+	Point3F scale;
+	Point3F position;
+	const MatrixF *orientation;
+	GFXOcclusionQuery *query;
 
-   /// Render a sphere or a box.
-   bool isSphere;
+	// This optional query will have all pixels rendered.
+	// Its purpose is to return to the user the full pixel count for comparison
+	// with the other query.
+	GFXOcclusionQuery *query2;
 
-   void clear();
+	/// Render a sphere or a box.
+	bool isSphere;
+
+	void clear();
 };
 
 #endif // _RENDERPASSMANAGER_H_

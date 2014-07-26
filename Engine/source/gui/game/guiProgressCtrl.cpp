@@ -59,9 +59,8 @@ GuiProgressCtrl::GuiProgressCtrl()
 
 const char* GuiProgressCtrl::getScriptValue()
 {
-   static const U32 bufSize = 64;
-   char * ret = Con::getReturnBuffer(bufSize);
-   dSprintf(ret, bufSize, "%g", mProgress);
+   char * ret = Con::getReturnBuffer(64);
+   dSprintf(ret, 64, "%g", mProgress);
    return ret;
 }
 

@@ -1223,10 +1223,9 @@ ConsoleMethod( GuiMeshRoadEditorCtrl, setNodeDepth, void, 3, 3, "" )
 
 ConsoleMethod( GuiMeshRoadEditorCtrl, getNodePosition, const char*, 2, 2, "" )
 {
-	static const U32 bufSize = 256;
-	char* returnBuffer = Con::getReturnBuffer(bufSize);
+	char* returnBuffer = Con::getReturnBuffer(256);
 
-	dSprintf(returnBuffer, bufSize, "%f %f %f",
+	dSprintf(returnBuffer, 256, "%f %f %f",
       object->getNodePosition().x, object->getNodePosition().y, object->getNodePosition().z);
 
 	return returnBuffer;
@@ -1250,10 +1249,9 @@ ConsoleMethod( GuiMeshRoadEditorCtrl, setNodePosition, void, 3, 3, "" )
 
 ConsoleMethod( GuiMeshRoadEditorCtrl, getNodeNormal, const char*, 2, 2, "" )
 {
-   static const U32 bufSize = 256;
-   char* returnBuffer = Con::getReturnBuffer(bufSize);
+   char* returnBuffer = Con::getReturnBuffer(256);
 
-	dSprintf(returnBuffer, bufSize, "%f %f %f",
+	dSprintf(returnBuffer, 256, "%f %f %f",
       object->getNodeNormal().x, object->getNodeNormal().y, object->getNodeNormal().z);
 
 	return returnBuffer;

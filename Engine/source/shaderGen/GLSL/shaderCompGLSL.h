@@ -40,10 +40,7 @@ public:
    virtual void reset();
    virtual void sortVars();
 
-   virtual void print( Stream &stream) {} // TODO OPENGL temporal fix for dedicated build on Linux
-   virtual void print( Stream &stream, bool isVerterShader );
-   void printStructDefines( Stream &stream, bool in );
-   virtual void printOnMain( Stream &stream, bool isVerterShader );
+   virtual void print( Stream &stream );
 };
 
 class AppVertConnectorGLSL : public ShaderConnector
@@ -56,23 +53,21 @@ public:
    virtual void reset();
    virtual void sortVars();
    
-   virtual void print( Stream &stream) {} // TODO OPENGL temporal fix for dedicated build on Linux
-   virtual void print( Stream &stream, bool isVerterShader );   
-   virtual void printOnMain( Stream &stream, bool isVerterShader );
+   virtual void print( Stream &stream );
 };
 
 
 class VertexParamsDefGLSL : public ParamsDef
 {
 public:
-   virtual void print( Stream &stream, bool isVerterShader );   
+   virtual void print( Stream &stream );
 };
 
 
 class PixelParamsDefGLSL : public ParamsDef
 {
 public:
-   virtual void print( Stream &stream, bool isVerterShader );
+   virtual void print( Stream &stream );
 };
 
 #endif // _SHADERCOMP_GLSL_H_

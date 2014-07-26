@@ -74,7 +74,7 @@ namespace Torque
          virtual ~MemFile();
 
          Path getName() const;
-         NodeStatus getStatus() const;
+         Status getStatus() const;
          bool getAttributes(Attributes*);
 
          U32 getPosition();
@@ -91,7 +91,7 @@ namespace Torque
 
          MemFileSystem* mFileSystem;
          MemFileData* mFileData;
-         NodeStatus   mStatus;
+         Status   mStatus;
          U32 mCurrentPos;
 
          bool _updateInfo();
@@ -108,7 +108,7 @@ namespace Torque
          ~MemDirectory();
 
          Path getName() const;
-         NodeStatus getStatus() const;
+         Status getStatus() const;
          bool getAttributes(Attributes*);
 
          bool open();
@@ -122,7 +122,7 @@ namespace Torque
 
          U32 calculateChecksum();         
          
-         NodeStatus   mStatus;
+         Status   mStatus;
          U32 mSearchIndex;         
       };
 

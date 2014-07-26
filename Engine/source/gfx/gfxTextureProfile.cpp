@@ -34,15 +34,15 @@
 GFX_ImplementTextureProfile(GFXDefaultRenderTargetProfile, 
                             GFXTextureProfile::DiffuseMap, 
                             GFXTextureProfile::PreserveSize | GFXTextureProfile::NoMipmap | GFXTextureProfile::RenderTarget, 
-                            GFXTextureProfile::NONE);
+                            GFXTextureProfile::None);
 GFX_ImplementTextureProfile(GFXDefaultStaticDiffuseProfile, 
                             GFXTextureProfile::DiffuseMap, 
                             GFXTextureProfile::Static, 
-                            GFXTextureProfile::NONE);
+                            GFXTextureProfile::None);
 GFX_ImplementTextureProfile(GFXDefaultStaticNormalMapProfile, 
                             GFXTextureProfile::NormalMap, 
                             GFXTextureProfile::Static, 
-                            GFXTextureProfile::NONE);
+                            GFXTextureProfile::None);
 GFX_ImplementTextureProfile(GFXDefaultStaticDXT5nmProfile, 
                             GFXTextureProfile::NormalMap, 
                             GFXTextureProfile::Static, 
@@ -50,15 +50,15 @@ GFX_ImplementTextureProfile(GFXDefaultStaticDXT5nmProfile,
 GFX_ImplementTextureProfile(GFXDefaultPersistentProfile,
                             GFXTextureProfile::DiffuseMap, 
                             GFXTextureProfile::PreserveSize | GFXTextureProfile::Static | GFXTextureProfile::KeepBitmap, 
-                            GFXTextureProfile::NONE);
+                            GFXTextureProfile::None);
 GFX_ImplementTextureProfile(GFXSystemMemProfile, 
                             GFXTextureProfile::DiffuseMap, 
                             GFXTextureProfile::PreserveSize | GFXTextureProfile::NoMipmap | GFXTextureProfile::SystemMemory,
-                            GFXTextureProfile::NONE);
+                            GFXTextureProfile::None);
 GFX_ImplementTextureProfile(GFXDefaultZTargetProfile,
                             GFXTextureProfile::DiffuseMap, 
                             GFXTextureProfile::PreserveSize | GFXTextureProfile::NoMipmap | GFXTextureProfile::ZTarget | GFXTextureProfile::NoDiscard, 
-                            GFXTextureProfile::NONE);
+                            GFXTextureProfile::None);
 
 //-----------------------------------------------------------------------------
 

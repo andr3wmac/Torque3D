@@ -1040,24 +1040,24 @@ void ScatterSky::_renderMoon( ObjectRenderInst *ri, SceneRenderState *state, Bas
 
    // Initialize points with basic info
    Point3F points[4];
-   points[0] = Point3F(-BBRadius, 0.0, -BBRadius);
-   points[1] = Point3F( -BBRadius, 0.0, BBRadius);
-   points[2] = Point3F( BBRadius, 0.0,  BBRadius);
-   points[3] = Point3F( BBRadius, 0.0,  -BBRadius);
+   points[0] = Point3F( BBRadius, 0.0,  -BBRadius);
+   points[1] = Point3F( BBRadius, 0.0,  BBRadius);
+   points[2] = Point3F(-BBRadius, 0.0, -BBRadius);
+   points[3] = Point3F( -BBRadius, 0.0, BBRadius);
 
    static const Point2F sCoords[4] =
    {
-      Point2F( 0.0f, 0.0f ),
-      Point2F( 0.0f, 1.0f ),
+      Point2F( 1.0f, 0.0f ),
       Point2F( 1.0f, 1.0f ),
-      Point2F( 1.0f, 0.0f )
+      Point2F( 0.0f, 0.0f ),
+      Point2F( 0.0f, 1.0f )
    };
 
    // Get info we need to adjust points
    const MatrixF &camView = state->getCameraTransform();
 
    // Finalize points
-   for(S32 i = 0; i < 4; i++)
+   for(int i = 0; i < 4; i++)
    {
       // align with camera
       camView.mulV(points[i]);
@@ -1098,8 +1098,24 @@ void ScatterSky::_renderMoon( ObjectRenderInst *ri, SceneRenderState *state, Bas
       mMoonMatInst->setTransforms( *mMatrixSet, state );
       mMoonMatInst->setSceneInfo( state, sgData );
 
+	  // anis -> create a new block state and change back face culling because we no longer use triangle fan.
+      GFXStateBlockDesc desc;
+      desc.setCullMode( GFXCullCW );
+      desc.setBlend( true );
+      desc.setZReadWrite( false, false );
+      desc.samplersDefined = true;
+      desc.samplers[0].addressModeU = GFXAddressWrap;
+      desc.samplers[0].addressModeV = GFXAddressWrap;
+      desc.samplers[0].addressModeW = GFXAddressWrap;
+      desc.samplers[0].magFilter = GFXTextureFilterLinear;
+      desc.samplers[0].minFilter = GFXTextureFilterLinear;
+      desc.samplers[0].mipFilter = GFXTextureFilterLinear;
+      desc.samplers[0].textureColorOp = GFXTOPModulate;
+      
+      GFXStateBlockRef mStateblock = GFX->createStateBlock( desc );  
+      GFX->setStateBlock( mStateblock );
       GFX->setVertexBuffer( vb );
-      GFX->drawPrimitive( GFXTriangleFan, 0, 2 );
+      GFX->drawPrimitive( GFXTriangleStrip, 0, 2 );
    }
 }
 
@@ -1114,13 +1130,13 @@ void ScatterSky::_generateSkyPoints()
    F32 deltaSegAngle = ( 2.0f * M_PI_F / (F32)segments );
 
    // Generate the group of rings for the sphere.
-   for( S32 ring = 0; ring < 2; ring++ )
+   for( int ring = 0; ring < 2; ring++ )
    {
       F32 r0 = mSin( ring * deltaRingAngle );
       F32 y0 = mCos( ring * deltaRingAngle );
 
       // Generate the group of segments for the current ring.
-      for( S32 seg = 0; seg < segments + 1 ; seg++ )
+      for( int seg = 0; seg < segments + 1 ; seg++ )
       {
          F32 x0 = r0 * sinf( seg * deltaSegAngle );
          F32 z0 = r0 * cosf( seg * deltaSegAngle );

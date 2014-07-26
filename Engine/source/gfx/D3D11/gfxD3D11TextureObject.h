@@ -39,6 +39,8 @@ protected:
    bool				    mLocked;
 
    U32                  mLockedSubresource;
+
+   ID3D11Device         *mD3DDevice;
    ID3D11Texture1D      *mD3DTexture;
 
    // used for z buffers...

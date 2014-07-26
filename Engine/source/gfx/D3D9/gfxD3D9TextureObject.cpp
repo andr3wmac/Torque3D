@@ -221,9 +221,9 @@ bool GFXD3D9TextureObject::copyToBmp(GBitmap* bmp)
 
    PROFILE_START(GFXD3D9TextureObject_copyToBmp_pixCopy);
    // copy data into bitmap
-   for (S32 row = 0; row < height; ++row)
+   for (int row = 0; row < height; ++row)
    {
-      for (S32 col = 0; col < width; ++col)
+      for (int col = 0; col < width; ++col)
       {
          destPtr[0] = srcPtr[2]; // red
          destPtr[1] = srcPtr[1]; // green

@@ -28,7 +28,6 @@
 #ifndef _PLATFORM_H_
 #include "platform/platform.h"
 #endif
-#include <algorithm>
 
 //-----------------------------------------------------------------------------
 // Helper definitions for the vector class.
@@ -181,9 +180,6 @@ class Vector
    /// @param count  The number of elements in the array to merge.
    ///
    void merge( const T *addr, U32 count );
-
-   // Reverses the order of elements.
-   void reverse();
 
    /// @}
 };
@@ -508,7 +504,7 @@ template<class T> inline void Vector<T>::compact()
    resize(mElementCount);
 }
 
-typedef S32 (QSORT_CALLBACK *qsort_compare_func)(const void *, const void *);
+typedef int (QSORT_CALLBACK *qsort_compare_func)(const void *, const void *);
 
 template<class T> inline void Vector<T>::sort(compare_func f)
 {
@@ -764,12 +760,6 @@ template<class T> inline void Vector<T>::merge( const T *addr, U32 count )
    mElementCount = newSize;
 }
 
-template<class T> inline void Vector<T>::reverse()
-{
-   for (U32 i = 0, j = size();  (i != j) && (i != --j);  ++i)
-      std::swap( mArray[ i ],  mArray[ j ] );
-}
-
 //-----------------------------------------------------------------------------
 /// Template for vectors of pointers.
 template <class T>
@@ -800,7 +790,7 @@ class VectorPtr : public Vector<void *>
    const_iterator end() const;
 
    void insert(iterator,const T&);
-   void insert(S32 idx) { Parent::insert(idx); }
+   void insert(int idx) { Parent::insert(idx); }
    void erase(iterator);
 
    T&       front();

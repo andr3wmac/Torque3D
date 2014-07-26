@@ -169,18 +169,17 @@ DefineEngineMethod( GuiDirectoryFileListCtrl, getSelectedFiles, const char*, (),
       return StringTable->insert( "" );
 
    // Get an adequate buffer
-   static const U32 itemBufSize = 256;
-   char itemBuffer[itemBufSize];
+   char itemBuffer[256];
+   dMemset( itemBuffer, 0, 256 );
 
-   static const U32 bufSize = ItemVector.size() * 64;
-   char* returnBuffer = Con::getReturnBuffer( bufSize );
-   dMemset( returnBuffer, 0, bufSize );
+   char* returnBuffer = Con::getReturnBuffer( ItemVector.size() * 64 );
+   dMemset( returnBuffer, 0, ItemVector.size() * 64 );
 
    // Fetch the first entry
    StringTableEntry itemText = object->getItemText( ItemVector[0] );
    if( !itemText )
       return StringTable->lookup("");
-   dSprintf( returnBuffer, bufSize, "%s", itemText );
+   dSprintf( returnBuffer, ItemVector.size() * 64, "%s", itemText );
 
    // If only one entry, return it.
    if( ItemVector.size() == 1 )
@@ -193,8 +192,8 @@ DefineEngineMethod( GuiDirectoryFileListCtrl, getSelectedFiles, const char*, (),
       if( !itemText )
          continue;
 
-      dMemset( itemBuffer, 0, itemBufSize );
-      dSprintf( itemBuffer, itemBufSize, " %s", itemText );
+      dMemset( itemBuffer, 0, 256 );
+      dSprintf( itemBuffer, 256, " %s", itemText );
       dStrcat( returnBuffer, itemBuffer );
    }
 

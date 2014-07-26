@@ -40,7 +40,7 @@ ConsoleDocClass( GuiParticleGraphCtrl,
 GuiParticleGraphCtrl::GuiParticleGraphCtrl()
 {
 
-   for(S32 i = 0; i < MaxPlots; i++)
+   for(int i = 0; i < MaxPlots; i++)
    {
 	   mPlots[i].mGraphColor = ColorF(1.0, 1.0, 1.0);
 	   VECTOR_SET_ASSOCIATION(mPlots[i].mGraphData);
@@ -140,7 +140,7 @@ void GuiParticleGraphCtrl::onRender(Point2I offset, const RectI &updateRect)
 	ColorF color(1.0f, 1.0f, 1.0f, 0.5f);
 	pDrawUtil->drawRectFill(updateRect, color);
 
-	for (S32 k = 0; k < MaxPlots; k++)
+	for (int k = 0; k < MaxPlots; k++)
 	{
 		// Nothing to graph
 		if ((mPlots[k].mGraphData.size() == 0) || (mPlots[k].mHidden == true))
@@ -1060,13 +1060,12 @@ ConsoleMethod(GuiParticleGraphCtrl, addPlotPoint, const char*, 5, 6, "(int plotI
 {
    S32 plotID = dAtoi(argv[2]);
    S32 pointAdded = 0;
-   static const U32 bufSize = 32;
-   char *retBuffer = Con::getReturnBuffer(bufSize);
+   char *retBuffer = Con::getReturnBuffer(32);
 
    if(plotID > object->MaxPlots)
    {
 	   Con::errorf("Invalid plotID.");
-	   dSprintf(retBuffer, bufSize, "%d", -2);
+	   dSprintf(retBuffer, 32, "%d", -2);
       return retBuffer;
    }
 
@@ -1079,7 +1078,7 @@ ConsoleMethod(GuiParticleGraphCtrl, addPlotPoint, const char*, 5, 6, "(int plotI
    }
 
    
-   dSprintf(retBuffer, bufSize, "%d", pointAdded);
+   dSprintf(retBuffer, 32, "%d", pointAdded);
 
    return retBuffer;
 }
@@ -1108,20 +1107,19 @@ ConsoleMethod(GuiParticleGraphCtrl, changePlotPoint, const char*, 6, 6, "(int pl
 			  "@return No return value.")
 {
    S32 plotID = dAtoi(argv[2]);
-   static const U32 bufSize = 64;
    if(plotID > object->MaxPlots)
    {
 	   Con::errorf("Invalid plotID.");
 
-      char *retBuffer = Con::getReturnBuffer(bufSize);
+      char *retBuffer = Con::getReturnBuffer(64);
       const S32 index = -1;
-      dSprintf(retBuffer, bufSize, "%d", index);
+      dSprintf(retBuffer, 64, "%d", index);
       return retBuffer;
    }
 
-   char *retBuffer = Con::getReturnBuffer(bufSize);
+   char *retBuffer = Con::getReturnBuffer(64);
    const S32 index = object->changePlotPoint( plotID, dAtoi(argv[3]), Point2F(dAtof(argv[4]), dAtof(argv[5])));
-   dSprintf(retBuffer, bufSize, "%d", index);
+   dSprintf(retBuffer, 64, "%d", index);
    return retBuffer;
 }
 
@@ -1129,10 +1127,9 @@ ConsoleMethod(GuiParticleGraphCtrl, getSelectedPlot, const char*, 2, 2, "() "
               "Gets the selected Plot (a.k.a. graph).\n"
 			  "@return The plot's ID.")
 {
-   static const U32 bufSize = 32;
-   char *retBuffer = Con::getReturnBuffer(bufSize);
+   char *retBuffer = Con::getReturnBuffer(32);
    const S32 plot = object->getSelectedPlot();
-   dSprintf(retBuffer, bufSize, "%d", plot);
+   dSprintf(retBuffer, 32, "%d", plot);
    return retBuffer;
 }
 
@@ -1140,10 +1137,9 @@ ConsoleMethod(GuiParticleGraphCtrl, getSelectedPoint, const char*, 2, 2, "()"
               "Gets the selected Point on the Plot (a.k.a. graph)."
 			  "@return The last selected point ID")
 {
-   static const U32 bufSize = 32;
-   char *retBuffer = Con::getReturnBuffer(bufSize);
+   char *retBuffer = Con::getReturnBuffer(32);
    const S32 point = object->getSelectedPoint();
-   dSprintf(retBuffer, bufSize, "%d", point);
+   dSprintf(retBuffer, 32, "%d", point);
    return retBuffer;
 }
 
@@ -1162,10 +1158,9 @@ ConsoleMethod(GuiParticleGraphCtrl, isExistingPoint, const char*, 4, 4, "(int pl
 	   Con::errorf("Invalid sample.");
    }
 
-   static const U32 bufSize = 32;
-   char *retBuffer = Con::getReturnBuffer(bufSize);
+   char *retBuffer = Con::getReturnBuffer(32);
    const bool isPoint = object->isExistingPoint(plotID, samples);
-   dSprintf(retBuffer, bufSize, "%d", isPoint);
+   dSprintf(retBuffer, 32, "%d", isPoint);
    return retBuffer;
 }
 
@@ -1185,10 +1180,9 @@ ConsoleMethod(GuiParticleGraphCtrl, getPlotPoint, const char*, 4, 4, "(int plotI
 	   Con::errorf("Invalid sample.");
    }
 
-   static const U32 bufSize = 64;
-   char *retBuffer = Con::getReturnBuffer(bufSize);
+   char *retBuffer = Con::getReturnBuffer(64);
    const Point2F &pos = object->getPlotPoint(plotID, samples);
-   dSprintf(retBuffer, bufSize, "%f %f", pos.x, pos.y);
+   dSprintf(retBuffer, 64, "%f %f", pos.x, pos.y);
    return retBuffer;
 }
 
@@ -1207,10 +1201,9 @@ ConsoleMethod(GuiParticleGraphCtrl, getPlotIndex, const char*, 5, 5, "(int plotI
 	   Con::errorf("Invalid plotID.");
    }
 
-   static const U32 bufSize = 32;
-   char *retBuffer = Con::getReturnBuffer(bufSize);
+   char *retBuffer = Con::getReturnBuffer(32);
    const S32 &index = object->getPlotIndex(plotID, x, y);
-   dSprintf(retBuffer, bufSize, "%d", index);
+   dSprintf(retBuffer, 32, "%d", index);
    return retBuffer;
 }
 
@@ -1225,10 +1218,9 @@ ConsoleMethod(GuiParticleGraphCtrl, getGraphColor, const char*, 3, 3, "(int plot
 	   Con::errorf("Invalid plotID.");
    }
 
-   static const U32 bufSize = 64;
-   char *retBuffer = Con::getReturnBuffer(bufSize);
+   char *retBuffer = Con::getReturnBuffer(64);
    const ColorF &color = object->getGraphColor(plotID);
-   dSprintf(retBuffer, bufSize, "%f %f %f", color.red, color.green, color.blue);
+   dSprintf(retBuffer, 64, "%f %f %f", color.red, color.green, color.blue);
    return retBuffer;
 }
 
@@ -1243,10 +1235,9 @@ ConsoleMethod(GuiParticleGraphCtrl, getGraphMin, const char*, 3, 3, "(int plotID
 	   Con::errorf("Invalid plotID.");
    }
 
-   static const U32 bufSize = 64;
-   char *retBuffer = Con::getReturnBuffer(bufSize);
+   char *retBuffer = Con::getReturnBuffer(64);
    const Point2F graphMin = object->getGraphMin(plotID);
-   dSprintf(retBuffer, bufSize, "%f %f", graphMin.x, graphMin.y);
+   dSprintf(retBuffer, 64, "%f %f", graphMin.x, graphMin.y);
    return retBuffer;
 }
 
@@ -1261,10 +1252,9 @@ ConsoleMethod(GuiParticleGraphCtrl, getGraphMax, const char*, 3, 3, "(int plotID
 	   Con::errorf("Invalid plotID.");
    }
 
-   static const U32 bufSize = 64;
-   char *retBuffer = Con::getReturnBuffer(bufSize);
+   char *retBuffer = Con::getReturnBuffer(64);
    const Point2F graphMax = object->getGraphMax(plotID);
-   dSprintf(retBuffer, bufSize, "%f %f", graphMax.x, graphMax.y);
+   dSprintf(retBuffer, 64, "%f %f", graphMax.x, graphMax.y);
    return retBuffer;
 }
 
@@ -1279,10 +1269,9 @@ ConsoleMethod(GuiParticleGraphCtrl, getGraphName, const char*, 3, 3, "(int plotI
 	   Con::errorf("Invalid plotID.");
    }
 
-   static const U32 bufSize = 64;
-   char *retBuffer = Con::getReturnBuffer(bufSize);
+   char *retBuffer = Con::getReturnBuffer(64);
    const StringTableEntry graphName = object->getGraphName(plotID);
-   dSprintf(retBuffer, bufSize, "%s", graphName);
+   dSprintf(retBuffer, 64, "%s", graphName);
    return retBuffer;
 }
 

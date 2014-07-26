@@ -40,6 +40,7 @@ public:
 
 protected:
 
+   // GFXTextureManager
    GFXTextureObject *_createTextureObject(   U32 height, 
                                              U32 width,
                                              U32 depth,

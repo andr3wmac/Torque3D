@@ -1298,7 +1298,7 @@ DefineEngineMethod( EditTSCtrl, renderCircle, void, ( Point3F pos, Point3F norma
 
       PrimBuild::begin( GFXLineStrip, points.size() + 1 );
 
-      for( S32 i = 0; i < points.size(); i++ )
+      for( int i = 0; i < points.size(); i++ )
          PrimBuild::vertex3fv( points[i] );
 
       // GFX does not have a LineLoop primitive, so connect the last line
@@ -1315,13 +1315,13 @@ DefineEngineMethod( EditTSCtrl, renderCircle, void, ( Point3F pos, Point3F norma
    {
       PrimBuild::color( object->mConsoleFillColor );
 
-      PrimBuild::begin( GFXTriangleFan, points.size() + 2 );
+      PrimBuild::begin( GFXTriangleStrip, points.size() + 2 );
 
       // Center point
       PrimBuild::vertex3fv( pos );
 
       // Edge verts
-      for( S32 i = 0; i < points.size(); i++ )
+      for( int i = 0; i < points.size(); i++ )
          PrimBuild::vertex3fv( points[i] );
 
       PrimBuild::vertex3fv( points[0] );
