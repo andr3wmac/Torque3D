@@ -421,7 +421,9 @@ void CubeReflector::updateFace( const ReflectParams &params, U32 faceidx )
 
    // render scene
    LIGHTMGR->registerGlobalLights( &reflectRenderState.getCullingFrustum(), false );
+   reflectRenderState.lockCameraMatrix(true);
    gClientSceneGraph->renderSceneNoLights( &reflectRenderState, mDesc->objectTypeMask );
+   reflectRenderState.lockCameraMatrix(false);
    LIGHTMGR->unregisterAllLights();
 
    // Clean up.

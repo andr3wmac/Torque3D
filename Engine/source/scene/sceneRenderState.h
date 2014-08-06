@@ -111,6 +111,7 @@ class SceneRenderState
 
       /// If true (default) non-lightmapped meshes should be rendered.
       bool mRenderNonLightmappedMeshes;
+      bool mCameraLocked;
 
    public:
 
@@ -137,6 +138,8 @@ class SceneRenderState
       /// during rendering with this scene state.
       bool usePostEffects() const { return mUsePostEffects; }
       void usePostEffects( bool value ) { mUsePostEffects = value; }
+      void lockCameraMatrix(bool _cameraLocked){mCameraLocked =_cameraLocked;};
+      bool isCameraMatrixlocked(){return mCameraLocked;};
 
       /// @name Culling
       /// @{

@@ -70,6 +70,7 @@ SceneRenderState::SceneRenderState( SceneManager* sceneManager,
 
    mRenderPass->assignSharedXform( RenderPassManager::View, view.getWorldViewMatrix() );
    mRenderPass->assignSharedXform( RenderPassManager::Projection, view.getProjectionMatrix() );
+   mCameraLocked = false;
 }
 
 //-----------------------------------------------------------------------------
