@@ -605,10 +605,8 @@ void SkyBox::_initMaterial()
 
    // Also disable lighting on the skybox material by default.
    FeatureSet features = MATMGR->getDefaultFeatures();
-   features.removeFeature( MFT_DiffuseColor );
    features.removeFeature( MFT_RTLighting );
    features.removeFeature( MFT_Visibility );
-   features.removeFeature( MFT_HDROut );
 
    // Now initialize the material.
    mMatInstance->init( features, getGFXVertexFormat<GFXVertexPNTT>() );
