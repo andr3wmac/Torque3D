@@ -371,6 +371,12 @@ void RenderPrePassMgr::render( SceneRenderState *state )
       while ( mat->setupPass( state, sgData ) )
          GFX->drawPrimitive( ri->prim );
    }
+   
+   // init loop data
+   GFXTextureObject *lastLM = NULL;
+   GFXCubemap *lastCubemap = NULL;
+   GFXTextureObject *lastReflectTex = NULL;
+   GFXTextureObject *lastMiscTex = NULL;
 
    // Next render all the meshes.
    itr = mElementList.begin();
@@ -412,6 +418,37 @@ void RenderPrePassMgr::render( SceneRenderState *state )
 
             mat->setSceneInfo(state, sgData);
             mat->setTransforms(matrixSet, state);
+
+            bool dirty = false;
+
+            // set the lightmaps if different
+            if( passRI->lightmap && passRI->lightmap != lastLM )
+            {
+               sgData.lightmap = passRI->lightmap;
+               lastLM = passRI->lightmap;
+               dirty = true;
+            }
+
+            // set the cubemap if different.
+            if ( passRI->cubemap != lastCubemap )
+            {
+               sgData.cubemap = passRI->cubemap;
+               lastCubemap = passRI->cubemap;
+               dirty = true;
+            }
+
+            if ( passRI->reflectTex != lastReflectTex )
+            {
+               sgData.reflectTex = passRI->reflectTex;
+               lastReflectTex = passRI->reflectTex;
+               dirty = true;
+            }
+
+            if ( dirty )
+               mat->setTextureStages( state, sgData );
+
+            // Setup the vertex and index buffers.
+            mat->setBuffers( passRI->vertBuff, passRI->primBuff );
 
             // If we're instanced then don't render yet.
             if ( mat->isInstanced() )
