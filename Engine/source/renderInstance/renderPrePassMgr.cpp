@@ -447,9 +447,6 @@ void RenderPrePassMgr::render( SceneRenderState *state )
             if ( dirty )
                mat->setTextureStages( state, sgData );
 
-            // Setup the vertex and index buffers.
-            mat->setBuffers( passRI->vertBuff, passRI->primBuff );
-
             // If we're instanced then don't render yet.
             if ( mat->isInstanced() )
             {
