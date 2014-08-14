@@ -77,66 +77,7 @@ singleton PostEffect( GlowPostFx )
    target = "$outTex";
    targetScale = "0.5 0.5";
    
-   isEnabled = false;
-               
-   // Blur vertically
-   new PostEffect()
-   {
-      shader = PFX_GlowBlurVertShader;
-      stateBlock = PFX_DefaultStateBlock;
-      texture[0] = "$inTex";
-      target = "$outTex";
-   };
-   
-   // Blur horizontally
-   new PostEffect()
-   {
-      shader = PFX_GlowBlurHorzShader;
-      stateBlock = PFX_DefaultStateBlock;
-      texture[0] = "$inTex";
-      target = "$outTex";
-   };
-            
-   // Upsample and combine with the back buffer.
-   new PostEffect()
-   {      
-      shader = PFX_PassthruShader;
-      stateBlock = PFX_GlowCombineStateBlock;
-      texture[0] = "$inTex";
-      target = "$backBuffer";
-   };
-};
-
-// Deferred Glow
-singleton ShaderData( DeferredGlowShader )
-{
-   DXVertexShaderFile = "shaders/common/postFx/postFxV.hlsl";
-   DXPixelShaderFile  = "shaders/common/postFx/deferredGlowP.hlsl";
-   samplerNames[0] = "$colorBuffer";
-   samplerNames[1] = "$matInfo";
-   pixVersion = 2.0;
-};
-
-singleton PostEffect( DeferredGlowPostFx )
-{  
-   // Do not allow the glow effect to work in reflection 
-   // passes by default so we don't do the extra drawing.
-   allowReflectPass = false;
-                  
-   renderTime = "PFXAfterBin";
-   renderBin = "GlowBin";
-   renderPriority = 1;
-                    
-   // First we down sample the glow buffer.   
-   shader = DeferredGlowShader;
-   stateBlock = PFX_DefaultStateBlock;
-   texture[0] = "#color";
-   texture[1] = "#matinfo";
-   
-   target = "$outTex";
-   targetScale = "0.5 0.5";
-   
-   isEnabled = false;
+   isEnabled = true;
                
    // Blur vertically
    new PostEffect()
