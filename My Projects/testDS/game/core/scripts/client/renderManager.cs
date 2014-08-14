@@ -76,7 +76,7 @@ function initRenderManager()
    DiffuseRenderPassManager.addManager( new RenderTranslucentMgr()         { renderOrder = 1.4; processAddOrder = 1.4; } );
    
    // Note that the GlowPostFx is triggered after this bin.
-   DiffuseRenderPassManager.addManager( new RenderGlowMgr(GlowBin) { renderOrder = 1.5; processAddOrder = 1.5; basicOnly = true; } );
+   DiffuseRenderPassManager.addManager( new RenderGlowMgr(GlowBin) { renderOrder = 1.5; processAddOrder = 1.5; } );
    
    // We render any editor stuff from this bin.  Note that the HDR is
    // completed before this bin to keep editor elements from tone mapping.   
