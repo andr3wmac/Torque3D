@@ -96,13 +96,7 @@ public:
    /// Prepares rendering structures and geometry.
    void _initRender();
 
-   // Deferred Shading
-   void _initShaders();
-
 protected:
-
-   GFXShaderRef                        mDeferredColorShader;
-   GFXStateBlockRef                    mStateblock;
 
    // Material 
    String mMatName;

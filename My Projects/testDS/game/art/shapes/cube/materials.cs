@@ -68,3 +68,43 @@ singleton Material(rounded_cube_TestCubeCenterMaterial)
    translucencyMap[0] = "art/test_translucency_center.png";
    materialTag0 = "Miscellaneous";
 };
+
+singleton Material(quadcube_CubeMatB)
+{
+   mapTo = "CubeMatB";
+   diffuseColor[0] = "0.976471 1 0 1";
+   specular[0] = "0.5 0.5 0.5 1";
+   specularPower[0] = "50";
+   translucentBlendOp = "None";
+   diffuseMap[0] = "art/shapes/cube/grid.dds";
+};
+
+singleton Material(quadcube_CubeMatC)
+{
+   mapTo = "CubeMatC";
+   diffuseColor[0] = "0 1 0.254902 1";
+   specular[0] = "0.5 0.5 0.5 1";
+   specularPower[0] = "50";
+   translucentBlendOp = "None";
+   diffuseMap[0] = "art/shapes/cube/grid.dds";
+};
+
+singleton Material(quadcube_CubeMatD)
+{
+   mapTo = "CubeMatD";
+   diffuseColor[0] = "0 0.184314 1 1";
+   specular[0] = "0.5 0.5 0.5 1";
+   specularPower[0] = "50";
+   translucentBlendOp = "None";
+   diffuseMap[0] = "art/shapes/cube/grid.dds";
+};
+
+singleton Material(quadcube_CubeMatA)
+{
+   mapTo = "CubeMatA";
+   diffuseColor[0] = "1 0.0705882 0 1";
+   specular[0] = "0.5 0.5 0.5 1";
+   specularPower[0] = "50";
+   translucentBlendOp = "None";
+   diffuseMap[0] = "art/shapes/cube/grid.dds";
+};

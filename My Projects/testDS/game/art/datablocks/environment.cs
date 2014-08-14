@@ -88,7 +88,7 @@ datablock LightningData(DefaultStorm)
 datablock ReflectorDesc( DefaultCubeDesc )
 {  
    texSize = 256;
-   nearDist = 0.5;
+   nearDist = 0.1;
    farDist = 1000.0;
    objectTypeMask = 0xFFFFFFFF;
    detailAdjust = 1.0;

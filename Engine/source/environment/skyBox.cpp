@@ -38,7 +38,6 @@
 #include "materials/processedMaterial.h"
 #include "gfx/gfxDebugEvent.h"
 #include "math/util/matrixSet.h"
-#include "materials/shaderData.h"
 
 
 IMPLEMENT_CO_NETOBJECT_V1( SkyBox );
@@ -100,7 +99,6 @@ bool SkyBox::onAdd()
    if ( isClientObject() )
    {
       _initRender();
-      _initShaders();
       _updateMaterial();
    }
 
@@ -221,10 +219,7 @@ void SkyBox::_renderObject( ObjectRenderInst *ri, SceneRenderState *state, BaseM
       mMatInstance->setTransforms( *mMatrixSet, state );
       mMatInstance->setSceneInfo( state, sgData );
 
-      //GFX->setShader(mDeferredColorShader);
-      //GFX->setStateBlock(mStateblock);
       GFX->drawPrimitive( GFXTriangleList, 0, mPrimCount );  
-      //GFX->setShader(NULL);
    }
 
    // Draw render band.
@@ -405,7 +400,11 @@ void SkyBox::_initRender()
    }
 
    GFXVertexPNTT *vertPtr = mVB.lock();
-   if(!vertPtr) return;
+   if (!vertPtr)
+   {
+      delete[] tmpVerts;
+      return;
+   }
 
    dMemcpy( vertPtr, tmpVerts, sizeof ( GFXVertexPNTT ) * vertCount );
 
@@ -606,10 +605,8 @@ void SkyBox::_initMaterial()
 
    // Also disable lighting on the skybox material by default.
    FeatureSet features = MATMGR->getDefaultFeatures();
-   features.removeFeature( MFT_DiffuseColor );
    features.removeFeature( MFT_RTLighting );
    features.removeFeature( MFT_Visibility );
-   features.removeFeature( MFT_HDROut );
 
    // Now initialize the material.
    mMatInstance->init( features, getGFXVertexFormat<GFXVertexPNTT>() );
@@ -644,29 +641,4 @@ BaseMatInstance* SkyBox::_getMaterialInstance()
 ConsoleMethod( SkyBox, postApply, void, 2, 2, "")
 {
 	object->inspectPostApply();
-}
-
-void SkyBox::_initShaders()
-{
-   // Find ShaderData
-   ShaderData *shaderData;
-   mDeferredColorShader = Sim::findObject( "DeferredColorShader", shaderData ) ? shaderData->getShader() : NULL;
-   if ( !mDeferredColorShader )
-      Con::errorf( "SkyBox::_initShaders() - could not find DeferredColorShader" );
-
-   // Create StateBlocks
-   GFXStateBlockDesc desc;
-   desc.setCullMode( GFXCullNone );
-   desc.setBlend( false );
-   desc.setZReadWrite( true, false );
-   desc.samplersDefined = true;
-   desc.samplers[0].addressModeU = GFXAddressWrap;
-   desc.samplers[0].addressModeV = GFXAddressWrap;
-   desc.samplers[0].addressModeW = GFXAddressWrap;
-   desc.samplers[0].magFilter = GFXTextureFilterLinear;
-   desc.samplers[0].minFilter = GFXTextureFilterLinear;
-   desc.samplers[0].mipFilter = GFXTextureFilterLinear;
-   desc.samplers[0].textureColorOp = GFXTOPModulate;
-
-   mStateblock = GFX->createStateBlock( desc );   
 }
