@@ -375,6 +375,13 @@ void TerrainDetailMapFeatHLSL::processVert(  Vector<ShaderComponent*> &component
 void TerrainDetailMapFeatHLSL::processPix(   Vector<ShaderComponent*> &componentList, 
                                              const MaterialFeatureData &fd )
 {
+   // Count the amount of detail textures which are handled in this
+   //  shader.
+   int detailCount = 0;
+   for (int i = 0; i < fd.features.getCount(); i++)
+      if (fd.features.getAt(i) == MFT_TerrainDetailMap)
+         detailCount++;
+
    const U32 detailIndex = getProcessIndex();
    Var *inTex = getVertTexCoord( "texCoord" );
    
@@ -437,14 +444,55 @@ void TerrainDetailMapFeatHLSL::processPix(   Vector<ShaderComponent*> &component
    // Get the detail id.
    Var *detailInfo = _getDetailIdStrengthParallax();
 
-   // Create the detail blend var.
-   Var *detailBlend = new Var;
-   detailBlend->setType( "float" );
-   detailBlend->setName( String::ToString( "detailBlend%d", detailIndex ) );
+   // Create the detail blend var if it doesn't already exist.
+   Var *detailBlend = (Var*)LangElement::find(String::ToString("detailBlend%d", detailIndex));
+   if (!detailBlend)
+   {
+      // TODO: Extract this to a method
+      for(int i = detailCount-1; i >= 0; i--)
+      {
+         // Create the blend var
+         detailBlend = new Var;
+         detailBlend->setType( "float" );
+            detailBlend->setName(getOutputTargetVarName(OutputTarget::DefaultTarget));
+         detailBlend->setName( String::ToString( "detailBlend%d", i ) );
+         
+         // Get the detailInfo for the current texture.
+         Var *curDetailInfo;
+         String name(String::ToString("detailIdStrengthParallax%d", i));
 
-   // Calculate the blend for this detail texture.
-   meta->addStatement( new GenOp( "   @ = calcBlend( @.x, @.xy, @, @ );\r\n", 
-                                    new DecOp( detailBlend ), detailInfo, inTex, layerSize, layerSample ) );
+         // If it doesn't exist, create it.
+         curDetailInfo = (Var*)LangElement::find(name);
+         if (!curDetailInfo)
+         {
+            curDetailInfo = new Var;
+            curDetailInfo->setType("float3");
+            curDetailInfo->setName(name);
+            curDetailInfo->uniform = true;
+            curDetailInfo->constSortPos = cspPotentialPrimitive;
+         }
+
+         // Calculate the blend for this detail texture.
+         meta->addStatement( new GenOp( "   @ = calcBlend( @.x, @.xy, @, @ );\r\n", 
+                                          new DecOp( detailBlend ), curDetailInfo, inTex, layerSize, layerSample ) );
+
+         // Textures only blend with the layers below it, so e.g. layer
+         // 0 will just be a solid texture. This works fine for 2 textures,
+         // but for 3 or more there will be artifacts. Therefore we calculate
+         // the blending of the current layer based on the blending of the 
+         // previous layers. We saturate to handle cases where blend < 0.
+         if(i < detailCount-1)
+         {
+            String out = String::ToString("   detailBlend%d = detailBlend%d", i, i);
+            for(int j = detailCount-1; j > i; j--)
+            {
+               out += String::ToString("- saturate(detailBlend%d)", j);
+            }
+            out += ";\r\n";
+            meta->addStatement(new GenOp(out));
+         }
+      }
+   }
 
    // Get a var and accumulate the blend amount.
    Var *blendTotal = (Var*)LangElement::find( "blendTotal" );
