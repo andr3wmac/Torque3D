@@ -379,7 +379,7 @@ void TerrainDetailMapFeatHLSL::processPix(   Vector<ShaderComponent*> &component
    //  shader.
    int detailCount = 0;
    for (int i = 0; i < fd.features.getCount(); i++)
-      if (fd.features.getAt(i) == MFT_TerrainDetailMap)
+      if ((fd.features.getAt(i) == MFT_TerrainDetailMap)||(fd.features.getAt(i) == MFT_DeferredTerrainDetailMap))
          detailCount++;
 
    const U32 detailIndex = getProcessIndex();
