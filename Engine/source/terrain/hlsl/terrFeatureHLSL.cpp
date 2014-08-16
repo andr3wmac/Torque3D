@@ -452,7 +452,7 @@ void TerrainDetailMapFeatHLSL::processPix(   Vector<ShaderComponent*> &component
        {
          detailBlend = new Var;
          detailBlend->setType( "float" );
-         detailBlend->setName( String::ToString( "detailBlend%d", 0 ) );
+         detailBlend->setName( String::ToString( "detailBlend%d", detailIndex ) );
          meta->addStatement( new GenOp( "   @ = 1.0;\r\n", new DecOp( detailBlend )));
        }
       // TODO: Extract this to a method
