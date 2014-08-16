@@ -448,13 +448,19 @@ void TerrainDetailMapFeatHLSL::processPix(   Vector<ShaderComponent*> &component
    Var *detailBlend = (Var*)LangElement::find(String::ToString("detailBlend%d", detailIndex));
    if (!detailBlend)
    {
+       if (detailCount == 0)
+       {
+         detailBlend = new Var;
+         detailBlend->setType( "float" );
+         detailBlend->setName( String::ToString( "detailBlend%d", 0 ) );
+         meta->addStatement( new GenOp( "   @ = 1.0;\r\n", new DecOp( detailBlend )));
+       }
       // TODO: Extract this to a method
       for(int i = detailCount-1; i >= 0; i--)
       {
          // Create the blend var
          detailBlend = new Var;
          detailBlend->setType( "float" );
-            detailBlend->setName(getOutputTargetVarName(OutputTarget::DefaultTarget));
          detailBlend->setName( String::ToString( "detailBlend%d", i ) );
          
          // Get the detailInfo for the current texture.
