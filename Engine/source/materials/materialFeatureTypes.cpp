@@ -98,7 +98,6 @@ ImplementFeatureType( MFT_DeferredSpecColor, MFG_Texture, 8.2f, false );
 ImplementFeatureType( MFT_DeferredSpecPower, MFG_Texture, 8.3f, false );
 ImplementFeatureType( MFT_DeferredGlossMap, MFG_Texture, 8.3f, false );
 ImplementFeatureType( MFT_DeferredSpecStrength, MFG_Texture, 8.4f, false );
-ImplementFeatureType( MFT_DeferredGlow, MFG_Texture, 8.5f, false );
 ImplementFeatureType( MFT_DeferredMatInfoFlags, MFG_Texture, 8.5f, false );
 ImplementFeatureType( MFT_DeferredTranslucencyMap, MFG_Texture, 8.5f, false );
 ImplementFeatureType( MFT_SkyBox, MFG_Transform, 1.0f, true );

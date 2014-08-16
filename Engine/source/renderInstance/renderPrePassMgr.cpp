@@ -490,7 +490,6 @@ void RenderPrePassMgr::render( SceneRenderState *state )
       // Force the increment if none happened, otherwise go to end of batch.
       itr = ( itr == endOfBatchItr ) ? itr + 1 : endOfBatchItr;
    }
-
    // The final loop is for object render instances.
    itr = mObjectElementList.begin();
    for ( ; itr != mObjectElementList.end(); itr++ )

@@ -347,23 +347,6 @@ void DeferredGlossMapHLSL::processPix( Vector<ShaderComponent*> &componentList, 
    output = new GenOp( "   @.b = @.a;\r\n", color, texOp );
 }
 
-// Glow -> Green ( Glow ) of Material Info Buffer.
-void DeferredGlowHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
-{
-   // search for color var
-   Var *color = (Var*) LangElement::find( getOutputTargetVarName(ShaderFeature::RenderTarget2) );
-   if ( !color )
-   {
-      // create color var
-      color = new Var;
-      color->setType( "fragout" );
-      color->setName( getOutputTargetVarName(ShaderFeature::RenderTarget2) );
-      color->setStructName( "OUT" );
-   }
-
-   output = new GenOp( "   @.g = 1.0;\r\n", color );
-}
-
 // Material Info Flags -> Red ( Flags ) of Material Info Buffer.
 void DeferredMatInfoFlagsHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
 {

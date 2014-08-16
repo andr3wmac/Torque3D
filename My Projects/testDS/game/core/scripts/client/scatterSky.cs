@@ -23,7 +23,7 @@
 new GFXStateBlockData( ScatterSkySBData )
 {
    //cullDefined = true;
-   //cullMode = "GFXCullNone";
+   cullMode = "GFXCullNone";
    
    zDefined = true;
    zEnable = true;
