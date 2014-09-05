@@ -339,9 +339,6 @@ public:
 
    Point3F attenuationRatio;
 
-   // andrewmac: Inverse Square
-   bool inverseSquare;
-
    /// @name Point Lights
    /// @{
 

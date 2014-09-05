@@ -236,7 +236,12 @@ public:
 /// Base texture
 class DiffuseMapFeatHLSL : public ShaderFeatureHLSL
 {
+protected:
+
+   ShaderIncludeDependency mTorqueDep;
+
 public:
+   DiffuseMapFeatHLSL();
    virtual void processVert( Vector<ShaderComponent*> &componentList,
                              const MaterialFeatureData &fd );
 
@@ -650,132 +655,5 @@ public:
                                   MaterialFeatureData *outFeatureData );
 };
 
-// PBS General Feature
-class PBSHLSL : public ShaderFeatureHLSL
-{
-protected:
 
-   ShaderIncludeDependency mDep;
-
-public:
-
-   PBSHLSL();
-
-   virtual void processVert( Vector<ShaderComponent*> &componentList,
-                             const MaterialFeatureData &fd );
-
-   virtual void processPix( Vector<ShaderComponent*> &componentList, 
-                            const MaterialFeatureData &fd );
-
-   virtual Resources getResources( const MaterialFeatureData &fd );
-   
-   virtual String getName()
-   {
-      return "PBS General";
-   }
-};
-/// Base texture
-class PBSBaseMapFeatHLSL : public ShaderFeatureHLSL
-{
-public:
-   virtual void processVert( Vector<ShaderComponent*> &componentList,
-                             const MaterialFeatureData &fd );
-
-   virtual void processPix( Vector<ShaderComponent*> &componentList, 
-                            const MaterialFeatureData &fd );
-
-   virtual Material::BlendOp getBlendOp(){ return Material::LerpAlpha; }
-
-   virtual Resources getResources( const MaterialFeatureData &fd );
-
-   // Sets textures and texture flags for current pass
-   virtual void setTexData( Material::StageData &stageDat,
-                            const MaterialFeatureData &fd,
-                            RenderPassData &passData,
-                            U32 &texIndex );
-                            
-   virtual String getName()
-   {
-      return "PBS Albedo Texture";
-   }
-};
-
-// roughness texture feature
-class PBSRoughnessMapHLSL : public ShaderFeatureHLSL
-{
-public:
-   virtual void processVert( Vector<ShaderComponent*> &componentList,
-                             const MaterialFeatureData &fd );
-
-   virtual void processPix( Vector<ShaderComponent*> &componentList, 
-                            const MaterialFeatureData &fd );
-
-   virtual Material::BlendOp getBlendOp(){ return Material::LerpAlpha; }
-
-   virtual Resources getResources( const MaterialFeatureData &fd );
-
-   // Sets textures and texture flags for current pass
-   virtual void setTexData( Material::StageData &stageDat,
-                            const MaterialFeatureData &fd,
-                            RenderPassData &passData,
-                            U32 &texIndex );
-                            
-   virtual String getName()
-   {
-      return "PBS Roughness Texture";
-   }
-};
-
-class PBSMetallicMapHLSL : public ShaderFeatureHLSL
-{
-public:
-   virtual void processVert( Vector<ShaderComponent*> &componentList,
-                             const MaterialFeatureData &fd );
-
-   virtual void processPix( Vector<ShaderComponent*> &componentList, 
-                            const MaterialFeatureData &fd );
-
-   virtual Material::BlendOp getBlendOp(){ return Material::LerpAlpha; }
-
-   virtual Resources getResources( const MaterialFeatureData &fd );
-
-   // Sets textures and texture flags for current pass
-   virtual void setTexData( Material::StageData &stageDat,
-                            const MaterialFeatureData &fd,
-                            RenderPassData &passData,
-                            U32 &texIndex );
-                            
-   virtual String getName()
-   {
-      return "PBS Metalness Texture";
-   }
-};
-
-/*
-// do we need this one? BJR
-class PBSSpecularMapHLSL : public ShaderFeatureHLSL
-{
-public:
-   virtual void processVert( Vector<ShaderComponent*> &componentList,
-                             const MaterialFeatureData &fd );
-
-   virtual void processPix( Vector<ShaderComponent*> &componentList, 
-                            const MaterialFeatureData &fd );
-
-   virtual Material::BlendOp getBlendOp(){ return Material::LerpAlpha; }
-
-   virtual Resources getResources( const MaterialFeatureData &fd );
-
-   // Sets textures and texture flags for current pass
-   virtual void setTexData( Material::StageData &stageDat,
-                            const MaterialFeatureData &fd,
-                            RenderPassData &passData,
-                            U32 &texIndex );
-                            
-   virtual String getName()
-   {
-      return "PBS Specular Texture";
-   }
-};
-*/
 #endif // _SHADERGEN_HLSL_SHADERFEATUREHLSL_H_

@@ -21,12 +21,16 @@
 //-----------------------------------------------------------------------------
 
 
-float attenuate( float4 lightColor, float lightRadius, float dist )
+float attenuate( float4 lightColor, float2 attParams, float dist )
 {
-   // andrewmac: Physical Based Shading
-   // Replaced with falloff equation based on Unreal Engine 4
-   // https://de45xmedrsdbp.cloudfront.net/Resources/files/2013SiggraphPresentationsNotes-26915738.pdf
-   return pow(saturate(1.0 - pow(dist / lightRadius, 4)), 2) / (pow(dist, 2) + 1);
+	// We're summing the results of a scaled constant,
+	// linear, and quadratic attenuation.
+
+	#ifdef ACCUMULATE_LUV
+		return lightColor.w * ( 1.0 - dot( attParams, float2( dist, dist * dist ) ) );
+	#else
+		return 1.0 - dot( attParams, float2( dist, dist * dist ) );
+	#endif
 }
 
 float3 getDistanceVectorToPlane( float3 origin, float3 direction, float4 plane )

@@ -82,15 +82,13 @@ public:
    GFXShaderConstHandle *mImposterUVs;
    GFXShaderConstHandle *mImposterLimits;
 
+   // Deferred Shading : Material Info Flags
+   GFXShaderConstHandle* mMatInfoFlagsSC;
+
    GFXShaderConstHandle* mTexHandlesSC[Material::MAX_TEX_PER_PASS];
    GFXShaderConstHandle* mRTParamsSC[TEXTURE_STAGE_COUNT];
 
    void init( GFXShader* shader, CustomMaterial* mat = NULL );
-
-   // andrewmac: Physical Based Shading
-   GFXShaderConstHandle* mPBSRoughnessValueSC;
-   GFXShaderConstHandle* mPBSMetallicValueSC;
-   GFXShaderConstHandle* mPBSSpecularValueSC;
 };
 
 class ShaderRenderPassData : public RenderPassData

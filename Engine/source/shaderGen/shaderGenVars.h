@@ -95,10 +95,8 @@ struct ShaderGenVars
    const static String dLightMask;
    const static String toneMap;
 
-   // andrewmac: Physical Based Shading
-   const static String pbsRoughnessValue;
-   const static String pbsMetallicValue;
-   const static String pbsSpecularValue;
+   // Deferred Shading
+   const static String matInfoFlags;
 };
 
 #endif

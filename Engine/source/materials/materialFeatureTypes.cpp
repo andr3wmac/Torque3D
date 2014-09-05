@@ -40,6 +40,7 @@ ImplementFeatureType( MFT_AlphaTest, MFG_Texture, 7.0f, true );
 ImplementFeatureType( MFT_SpecularMap, MFG_Texture, 8.0f, true );
 ImplementFeatureType( MFT_NormalMap, MFG_Texture, 9.0f, true );
 ImplementFeatureType( MFT_DetailNormalMap, MFG_Texture, 10.0f, true );
+ImplementFeatureType( MFT_Imposter, U32(-1), -1, true );
 
 ImplementFeatureType( MFT_RTLighting, MFG_Lighting, 2.0f, true );
 ImplementFeatureType( MFT_SubSurface, MFG_Lighting, 3.0f, true );
@@ -47,7 +48,7 @@ ImplementFeatureType( MFT_LightMap, MFG_Lighting, 4.0f, true );
 ImplementFeatureType( MFT_ToneMap, MFG_Lighting, 5.0f, true );
 ImplementFeatureType( MFT_VertLitTone, MFG_Lighting, 6.0f, false );
 ImplementFeatureType( MFT_VertLit, MFG_Lighting, 7.0f, true );
-ImplementFeatureType( MFT_EnvMap, MFG_Lighting, 8.0f, true );
+ImplementFeatureType( MFT_TranslucencyMap, MFG_Lighting, 8.0f, true );
 ImplementFeatureType( MFT_CubeMap, MFG_Lighting, 9.0f, true );
 ImplementFeatureType( MFT_PixSpecular, MFG_Lighting, 10.0f, true );
 ImplementFeatureType( MFT_MinnaertShading, MFG_Lighting, 12.0f, true );
@@ -85,12 +86,18 @@ ImplementFeatureType( MFT_ForwardShading, U32(-1), -1, true );
 
 ImplementFeatureType( MFT_ImposterVert, MFG_PreTransform, 1.0, false );
 
-// andrewmac: Physical Based Shading
-//  Note: these values were just chosen at random. 
-// material general control feature. contains texturesheet/value switches
-ImplementFeatureType( MFT_PBS, MFG_Lighting, 1.0f, true );
-// textures
-ImplementFeatureType( MFT_PBSBaseMap, MFG_Texture, 2.0f, true );
-ImplementFeatureType( MFT_PBSRoughnessMap, MFG_Texture, 3.0f, true );
-ImplementFeatureType( MFT_PBSMetallicMap, MFG_Texture, 4.0f, true );
-ImplementFeatureType( MFT_PBSSpecularMap, MFG_Texture, 5.0f, true );
+// Deferred Shading
+ImplementFeatureType( MFT_DeferredDiffuseMap, MFG_Texture, 2.0f, false );
+ImplementFeatureType( MFT_DeferredDiffuseColor, MFG_Texture, 5.0f, false );
+ImplementFeatureType( MFT_DeferredEmptyColor, MFG_Texture, 5.0f, false );
+ImplementFeatureType( MFT_DeferredEmptySpec, MFG_Texture, 8.0f, false );
+
+ImplementFeatureType( MFT_DeferredEmissive, MFG_Texture, 8.0f, false );
+ImplementFeatureType( MFT_DeferredSpecMap, MFG_Texture, 8.1f, false );
+ImplementFeatureType( MFT_DeferredSpecColor, MFG_Texture, 8.2f, false );
+ImplementFeatureType( MFT_DeferredSpecPower, MFG_Texture, 8.3f, false );
+ImplementFeatureType( MFT_DeferredGlossMap, MFG_Texture, 8.3f, false );
+ImplementFeatureType( MFT_DeferredSpecStrength, MFG_Texture, 8.4f, false );
+ImplementFeatureType( MFT_DeferredMatInfoFlags, MFG_Texture, 8.5f, false );
+ImplementFeatureType( MFT_DeferredTranslucencyMap, MFG_Texture, 8.5f, false );
+ImplementFeatureType( MFT_SkyBox, MFG_Transform, 1.0f, true );

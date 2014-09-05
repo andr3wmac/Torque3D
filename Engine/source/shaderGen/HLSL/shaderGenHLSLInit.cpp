@@ -33,6 +33,8 @@
 #include "materials/materialFeatureTypes.h"
 #include "core/module.h"
 
+// Deferred Shading
+#include "lighting/advanced/hlsl/deferredShadingFeaturesHLSL.h"
 
 static ShaderGen::ShaderGenInitDelegate sInitDelegate;
 
@@ -69,6 +71,7 @@ void _initShaderGenHLSL( ShaderGen *shaderGen )
    FEATUREMGR->registerFeature( MFT_GlossMap, new NamedFeatureHLSL( "Gloss Map" ) );
    FEATUREMGR->registerFeature( MFT_LightbufferMRT, new NamedFeatureHLSL( "Lightbuffer MRT" ) );
    FEATUREMGR->registerFeature( MFT_RenderTarget1_Zero, new RenderTargetZeroHLSL( ShaderFeature::RenderTarget1 ) );
+   FEATUREMGR->registerFeature( MFT_Imposter, new NamedFeatureHLSL( "Imposter" ) );
 
    FEATUREMGR->registerFeature( MFT_DiffuseMapAtlas, new NamedFeatureHLSL( "Diffuse Map Atlas" ) );
    FEATUREMGR->registerFeature( MFT_NormalMapAtlas, new NamedFeatureHLSL( "Normal Map Atlas" ) );
@@ -94,12 +97,20 @@ void _initShaderGenHLSL( ShaderGen *shaderGen )
 
    FEATUREMGR->registerFeature( MFT_ImposterVert, new ImposterVertFeatureHLSL );
 
-   FEATUREMGR->registerFeature( MFT_PBS, new PBSHLSL );
-
-   FEATUREMGR->registerFeature( MFT_PBSBaseMap, new PBSBaseMapFeatHLSL );
-   FEATUREMGR->registerFeature( MFT_PBSRoughnessMap, new PBSRoughnessMapHLSL );
-   FEATUREMGR->registerFeature( MFT_PBSMetallicMap, new PBSMetallicMapHLSL );
-   //FEATUREMGR->registerFeature( MFT_PBSSpecularMap, new PBSSpecularMapHLSL );
+   // Deferred Shading
+   FEATUREMGR->registerFeature( MFT_DeferredDiffuseMap, new DeferredDiffuseMapHLSL );
+   FEATUREMGR->registerFeature( MFT_DeferredDiffuseColor, new DeferredDiffuseColorHLSL );
+   FEATUREMGR->registerFeature( MFT_DeferredEmptyColor, new DeferredEmptyColorHLSL );
+   FEATUREMGR->registerFeature( MFT_DeferredSpecMap, new DeferredSpecMapHLSL );
+   FEATUREMGR->registerFeature( MFT_DeferredSpecColor, new DeferredSpecColorHLSL );
+   FEATUREMGR->registerFeature( MFT_DeferredSpecPower, new DeferredSpecPowerHLSL );
+   FEATUREMGR->registerFeature( MFT_DeferredGlossMap, new DeferredGlossMapHLSL );
+   FEATUREMGR->registerFeature( MFT_DeferredMatInfoFlags, new DeferredMatInfoFlagsHLSL );
+   FEATUREMGR->registerFeature( MFT_DeferredTranslucencyMap, new DeferredTranslucencyMapHLSL );
+   FEATUREMGR->registerFeature( MFT_DeferredSpecStrength, new DeferredSpecStrengthHLSL );
+   FEATUREMGR->registerFeature( MFT_DeferredEmptySpec, new DeferredEmptySpecHLSL );
+   FEATUREMGR->registerFeature( MFT_DeferredEmissive, new DeferredEmissiveHLSL );
+   FEATUREMGR->registerFeature( MFT_SkyBox, new DeferredSkyHLSL );
 }
 
 MODULE_BEGIN( ShaderGenHLSL )

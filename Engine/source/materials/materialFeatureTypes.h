@@ -94,6 +94,7 @@ DeclareFeatureType( MFT_OverlayMap );
 DeclareFeatureType( MFT_DetailMap );
 DeclareFeatureType( MFT_DiffuseColor );
 DeclareFeatureType( MFT_DetailNormalMap );
+DeclareFeatureType( MFT_Imposter );
 
 /// This feature enables vertex coloring for the diffuse channel.
 DeclareFeatureType( MFT_DiffuseVertColor );
@@ -113,7 +114,7 @@ DeclareFeatureType( MFT_ToneMap );
 DeclareFeatureType( MFT_VertLit );
 DeclareFeatureType( MFT_VertLitTone );
 
-DeclareFeatureType( MFT_EnvMap );
+DeclareFeatureType( MFT_TranslucencyMap );
 DeclareFeatureType( MFT_CubeMap );
 DeclareFeatureType( MFT_PixSpecular );
 DeclareFeatureType( MFT_SpecularMap );
@@ -170,11 +171,18 @@ DeclareFeatureType( MFT_ForwardShading );
 /// so that the rest of the material features can work on it.
 DeclareFeatureType( MFT_ImposterVert );
 
-// material general control feature. contains texturesheet/value switches
-DeclareFeatureType( MFT_PBS );
-// andrewmac: Physical Based Shading
-DeclareFeatureType( MFT_PBSBaseMap );
-DeclareFeatureType( MFT_PBSRoughnessMap );
-DeclareFeatureType( MFT_PBSMetallicMap );
-DeclareFeatureType( MFT_PBSSpecularMap );
+// Deferred Shading
+DeclareFeatureType( MFT_DeferredDiffuseMap );
+DeclareFeatureType( MFT_DeferredDiffuseColor );
+DeclareFeatureType( MFT_DeferredEmptyColor );
+DeclareFeatureType( MFT_DeferredSpecMap );
+DeclareFeatureType( MFT_DeferredSpecColor );
+DeclareFeatureType( MFT_DeferredSpecPower );
+DeclareFeatureType( MFT_DeferredSpecStrength );
+DeclareFeatureType( MFT_DeferredGlossMap );
+DeclareFeatureType( MFT_DeferredMatInfoFlags );
+DeclareFeatureType( MFT_DeferredTranslucencyMap );
+DeclareFeatureType( MFT_DeferredEmptySpec );
+DeclareFeatureType( MFT_DeferredEmissive );
+DeclareFeatureType( MFT_SkyBox );
 #endif // _MATERIALFEATURETYPES_H_

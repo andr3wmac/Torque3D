@@ -253,6 +253,7 @@ void AdvancedLightBinManager::render( SceneRenderState *state )
    if ( !_onPreRender( state ) )
       return;
 
+   // andrewmac: with deferred rendering the lightinfo will always have data in it.
    // Clear as long as there isn't MRT population of light buffer with lightmap data
    if ( !MRTLightmapsDuringPrePass() )
       GFX->clear(GFXClearTarget, ColorI(0, 0, 0, 0), 1.0f, 0);
@@ -751,12 +752,8 @@ void AdvancedLightBinManager::LightMaterialInfo::setLightParameters( const Light
       if ( total > 0.0f )
          attenRatio /= total;
 
-      // andrewmac: Inverse Square Option
-      bool inverseSquare = lightInfo->getExtended<ShadowMapParams>()->inverseSquare;
-
-      Point3F attenParams( ( 1.0f / radius ) * attenRatio.y,
-                           ( 1.0f / ( radius * radius ) ) * attenRatio.z,
-                           inverseSquare ? radius : -1.0f);
+      Point2F attenParams( ( 1.0f / radius ) * attenRatio.y,
+                           ( 1.0f / ( radius * radius ) ) * attenRatio.z );
 
       matParams->setSafe( lightAttenuation, attenParams );
       break;

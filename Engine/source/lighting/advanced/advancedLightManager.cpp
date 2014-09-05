@@ -264,10 +264,6 @@ void AdvancedLightManager::_initLightFields()
    public:
 
       DEFINE_LIGHT_FIELD( attenuationRatio, TypePoint3F, NULL );
-
-      //andrewmac: Inverse Square
-      DEFINE_LIGHT_FIELD( inverseSquare, TypeBool, NULL );
-
       DEFINE_LIGHT_FIELD( shadowType, TYPEID< ShadowType >(), ConsoleBaseType::getType( TYPEID< ShadowType >() )->getEnumTable() );
       DEFINE_LIGHT_FIELD( texSize, TypeS32, NULL );
       DEFINE_LIGHT_FIELD( cookie, TypeStringFilename, NULL );      
@@ -289,10 +285,6 @@ void AdvancedLightManager::_initLightFields()
       ADD_LIGHT_FIELD( "attenuationRatio", TypePoint3F, attenuationRatio,
          "The proportions of constant, linear, and quadratic attenuation to use for "
          "the falloff for point and spot lights." );
-
-      // andrewmac: Inverse Square
-      ADD_LIGHT_FIELD( "inverseSquare", TypeBool, inverseSquare,
-         "Uses inverse square light falloff. " );
 
       ADD_LIGHT_FIELD( "shadowType", TYPEID< ShadowType >(), shadowType,
          "The type of shadow to use on this light." );
@@ -614,7 +606,7 @@ GFXVertexBufferHandle<AdvancedLightManager::LightVertex> AdvancedLightManager::g
       mConeIndices.lock( &idx );
       // Build the cone
       U32 idxIdx = 0;
-      for( int i = 1; i < numPoints + 1; i++ )
+      for( U32 i = 1; i < numPoints + 1; i++ )
       {
          idx[idxIdx++] = 0; // Triangles on cone start at top point
          idx[idxIdx++] = i;
@@ -622,7 +614,7 @@ GFXVertexBufferHandle<AdvancedLightManager::LightVertex> AdvancedLightManager::g
       }
 
       // Build the bottom of the cone (reverse winding order)
-      for( int i = 1; i < numPoints - 1; i++ )
+      for( U32 i = 1; i < numPoints - 1; i++ )
       {
          idx[idxIdx++] = 1;
          idx[idxIdx++] = i + 2;
@@ -672,8 +664,9 @@ ConsoleFunction( setShadowVizLight, const char*, 2, 2, "" )
    const Point3I &size = texObject->getSize();
    F32 aspect = (F32)size.x / (F32)size.y;
 
-   char *result = Con::getReturnBuffer( 64 );
-   dSprintf( result, 64, "%d %d %g", size.x, size.y, aspect ); 
+   static const U32 bufSize = 64;
+   char *result = Con::getReturnBuffer( bufSize );
+   dSprintf( result, bufSize, "%d %d %g", size.x, size.y, aspect ); 
    return result;
 }
 

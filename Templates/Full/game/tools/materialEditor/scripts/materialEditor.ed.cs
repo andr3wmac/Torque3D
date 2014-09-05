@@ -875,6 +875,17 @@ function MaterialEditorGui::guiSync( %this, %material )
       MaterialEditorPropertiesWindow-->toneMapDisplayBitmap.setBitmap( (%material).toneMap[%layer] );
    }
    
+   if((%material).translucencyMap[%layer] $= "") 
+   {
+      MaterialEditorPropertiesWindow-->translucencyMapNameText.setText( "None" );
+      MaterialEditorPropertiesWindow-->translucencyMapDisplayBitmap.setBitmap( "tools/materialeditor/gui/unknownImage" );
+   }
+   else
+   {
+      MaterialEditorPropertiesWindow-->translucencyMapNameText.setText( (%material).translucencyMap[%layer] );
+      MaterialEditorPropertiesWindow-->translucencyMapDisplayBitmap.setBitmap( (%material).translucencyMap[%layer] );
+   }
+   
    if((%material).specularMap[%layer] $= "") 
    {
       MaterialEditorPropertiesWindow-->specMapNameText.setText( "None" );
@@ -901,6 +912,9 @@ function MaterialEditorGui::guiSync( %this, %material )
    MaterialEditorPropertiesWindow-->emissiveCheckbox.setValue((%material).emissive[%layer]);
    MaterialEditorPropertiesWindow-->parallaxTextEdit.setText((%material).parallaxScale[%layer]);
    MaterialEditorPropertiesWindow-->parallaxSlider.setValue((%material).parallaxScale[%layer]);
+
+   // Deferred Shading: Metalness
+   MaterialEditorPropertiesWindow-->useMetalCheckbox.setValue((%material).useMetalness[%layer]);
 
    MaterialEditorPropertiesWindow-->useAnisoCheckbox.setValue((%material).useAnisotropic[%layer]);
    MaterialEditorPropertiesWindow-->vertLitCheckbox.setValue((%material).vertLit[%layer]);
@@ -967,52 +981,6 @@ function MaterialEditorGui::guiSync( %this, %material )
    MaterialEditorPropertiesWindow-->SequenceSliderSSS.setValue( %numFrames );
    
    %this.preventUndo = false;
-   
-   // andrewmac: Physical Based Shading
-   if((%material).pbsBaseMap[%layer] $= "") 
-   {
-      MaterialEditorPropertiesWindow-->pbsBaseMapNameText.setText( "None" );
-      MaterialEditorPropertiesWindow-->pbsBaseMapDisplayBitmap.setBitmap( "tools/materialeditor/gui/unknownImage" );
-   }
-   else
-   {
-      MaterialEditorPropertiesWindow-->pbsBaseMapNameText.setText( (%material).pbsBaseMap[%layer] );
-      MaterialEditorPropertiesWindow-->pbsBaseMapDisplayBitmap.setBitmap( (%material).pbsBaseMap[%layer] );
-   }
-   if((%material).pbsRoughnessMap[%layer] $= "") 
-   {
-      MaterialEditorPropertiesWindow-->pbsRoughnessMapNameText.setText( "None" );
-      MaterialEditorPropertiesWindow-->pbsRoughnessMapDisplayBitmap.setBitmap( "tools/materialeditor/gui/unknownImage" );
-   }
-   else
-   {
-      MaterialEditorPropertiesWindow-->pbsRoughnessMapNameText.setText( (%material).pbsRoughnessMap[%layer] );
-      MaterialEditorPropertiesWindow-->pbsRoughnessMapDisplayBitmap.setBitmap( (%material).pbsRoughnessMap[%layer] );
-   }
-   if((%material).pbsMetallicMap[%layer] $= "") 
-   {
-      MaterialEditorPropertiesWindow-->pbsMetallicMapNameText.setText( "None" );
-      MaterialEditorPropertiesWindow-->pbsMetallicMapDisplayBitmap.setBitmap( "tools/materialeditor/gui/unknownImage" );
-   }
-   else
-   {
-      MaterialEditorPropertiesWindow-->pbsMetallicMapNameText.setText( (%material).pbsMetallicMap[%layer] );
-      MaterialEditorPropertiesWindow-->pbsMetallicMapDisplayBitmap.setBitmap( (%material).pbsMetallicMap[%layer] );
-   }
-   if((%material).pbsSpecularMap[%layer] $= "") 
-   {
-      MaterialEditorPropertiesWindow-->pbsSpecularMapNameText.setText( "None" );
-      MaterialEditorPropertiesWindow-->pbsSpecularMapDisplayBitmap.setBitmap( "tools/materialeditor/gui/unknownImage" );
-   }
-   else
-   {
-      MaterialEditorPropertiesWindow-->pbsSpecularMapNameText.setText( (%material).pbsSpecularMap[%layer] );
-      MaterialEditorPropertiesWindow-->pbsSpecularMapDisplayBitmap.setBitmap( (%material).pbsSpecularMap[%layer] );
-   }
-   
-   MaterialEditorPropertiesWindow-->pbsRoughnessValueTextEdit.setText( getWord((%material).pbsRoughnessValue[%layer], 0) );
-   MaterialEditorPropertiesWindow-->pbsMetallicValueTextEdit.setText( getWord((%material).pbsMetallicValue[%layer], 0) );
-   MaterialEditorPropertiesWindow-->pbsSpecularValueTextEdit.setText( getWord((%material).pbsSpecularValue[%layer], 0) );
 }
 
 //=======================================
@@ -2294,29 +2262,4 @@ function MaterialEditorMapThumbnail::onRightClick( %this )
    %popup.filePath = %fullPath;
    
    %popup.showPopup( Canvas );
-}
-
- // andrewmac: Physical Based Shading
-function MaterialEditorGui::updatePBSRoughnessValue(%this, %newValue)
-{
-   %layer = MaterialEditorGui.currentLayer;
-   
-   %roughnessValue = "\"" @ %newValue @ "\"";
-   MaterialEditorGui.updateActiveMaterial("pbsRoughnessValue[" @ %layer @ "]", %roughnessValue);
-}
-
-function MaterialEditorGui::updatePBSMetallicValue(%this, %newValue)
-{
-   %layer = MaterialEditorGui.currentLayer;
-   
-   %metallicValue = "\"" @ %newValue @ "\"";
-   MaterialEditorGui.updateActiveMaterial("pbsMetallicValue[" @ %layer @ "]", %metallicValue);
-}
-
-function MaterialEditorGui::updatePBSSpecularValue(%this, %newValue)
-{
-   %layer = MaterialEditorGui.currentLayer;
-   
-   %specularValue = "\"" @ %newValue @ "\"";
-   MaterialEditorGui.updateActiveMaterial("pbsSpecularValue[" @ %layer @ "]", %specularValue);
 }

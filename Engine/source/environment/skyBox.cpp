@@ -400,7 +400,11 @@ void SkyBox::_initRender()
    }
 
    GFXVertexPNTT *vertPtr = mVB.lock();
-   if(!vertPtr) return;
+   if (!vertPtr)
+   {
+      delete[] tmpVerts;
+      return;
+   }
 
    dMemcpy( vertPtr, tmpVerts, sizeof ( GFXVertexPNTT ) * vertCount );
 
@@ -594,7 +598,8 @@ void SkyBox::_initMaterial()
 
    // We want to disable culling and z write.
    GFXStateBlockDesc desc;
-   desc.setCullMode( GFXCullCW );
+   desc.setCullMode( GFXCullNone );
+   desc.setBlend( true );
    desc.setZReadWrite( true, false );
    mMatInstance->addStateBlockDesc( desc );
 

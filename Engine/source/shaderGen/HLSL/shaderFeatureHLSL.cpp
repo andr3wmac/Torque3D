@@ -826,6 +826,12 @@ Var* ShaderFeatureHLSL::addOutDetailTexCoord(   Vector<ShaderComponent*> &compon
 // Base Texture
 //****************************************************************************
 
+DiffuseMapFeatHLSL::DiffuseMapFeatHLSL()
+   : mTorqueDep( "shaders/common/torque.hlsl" )
+{
+   addDependency( &mTorqueDep );
+}
+
 void DiffuseMapFeatHLSL::processVert( Vector<ShaderComponent*> &componentList, 
                                        const MaterialFeatureData &fd )
 {
@@ -862,12 +868,22 @@ void DiffuseMapFeatHLSL::processPix(   Vector<ShaderComponent*> &componentList,
       diffColor->setType( "float4" );
       diffColor->setName( "diffuseColor" );
       LangElement *colorDecl = new DecOp( diffColor );
-   
-      meta->addStatement(  new GenOp( "   @ = tex2D(@, @);\r\n", 
+      
+      if (  fd.features[MFT_Imposter] )
+      {
+          meta->addStatement(  new GenOp( "   @ = tex2D(@, @);\r\n", 
                            colorDecl, 
                            diffuseMap, 
                            inTex ) );
-      
+      }
+      else
+      {
+          meta->addStatement(  new GenOp( "   @ = tex2DLinear(@, @);\r\n", 
+                           colorDecl, 
+                           diffuseMap, 
+                           inTex ) );
+      }
+
       meta->addStatement( new GenOp( "   @;\r\n", assignColor( diffColor, Material::Mul ) ) );
       output = meta;
    }
@@ -955,16 +971,28 @@ void DiffuseMapFeatHLSL::processPix(   Vector<ShaderComponent*> &componentList,
       }
       else
       {
-         meta->addStatement(new GenOp( "   @ = tex2D(@, @);\r\n", 
-            new DecOp(diffColor), diffuseMap, inTex));
+          if (  fd.features[MFT_Imposter] )
+              meta->addStatement(new GenOp( "   @ = tex2D(@, @);\r\n",
+                    new DecOp(diffColor), diffuseMap, inTex)); 
+          else
+              meta->addStatement(new GenOp( "   @ = tex2DLinear(@, @);\r\n",
+                    new DecOp(diffColor), diffuseMap, inTex)); 
       }
 
       meta->addStatement(new GenOp( "   @;\r\n", assignColor(diffColor, Material::Mul)));
    }
    else
    {
-      LangElement *statement = new GenOp( "tex2D(@, @)", diffuseMap, inTex );
-      output = new GenOp( "   @;\r\n", assignColor( statement, Material::Mul ) );
+       if (  fd.features[MFT_Imposter] )
+       {
+           LangElement *statement = new GenOp( "tex2D(@, @)", diffuseMap, inTex );
+           output = new GenOp( "   @;\r\n", assignColor( statement, Material::Mul ) );
+       }
+       else
+       {
+           LangElement *statement = new GenOp( "tex2DLinear(@, @)", diffuseMap, inTex );
+           output = new GenOp( "   @;\r\n", assignColor( statement, Material::Mul ) );
+       }
    }
    
 }
@@ -1557,6 +1585,9 @@ void DetailFeatHLSL::processPix( Vector<ShaderComponent*> &componentList,
    // and a simple multiplication with the detail map.
 
    LangElement *statement = new GenOp( "( tex2D(@, @) * 2.0 ) - 1.0", detailMap, inTex );
+   if (  fd.features[MFT_DeferredDiffuseMap])
+       output = new GenOp( "   @;\r\n", assignColor( statement, Material::Add, NULL, ShaderFeature::RenderTarget1 ) );
+   else
    output = new GenOp( "   @;\r\n", assignColor( statement, Material::Add ) );
 }
 
@@ -1638,10 +1669,11 @@ void ReflectCubeFeatHLSL::processVert( Vector<ShaderComponent*> &componentList,
    // If a base or bump tex is present in the material, but not in the
    // current pass - we need to add one to the current pass to use
    // its alpha channel as a gloss map.  Here we just need the tex coords.
-   if( !fd.features[MFT_DiffuseMap] &&
+   if( !fd.features[MFT_DiffuseMap] && !fd.features[MFT_DeferredDiffuseMap] &&
        !fd.features[MFT_NormalMap] )
    {
       if( fd.materialFeatures[MFT_DiffuseMap] ||
+          fd.features[MFT_DeferredDiffuseMap] ||
           fd.materialFeatures[MFT_NormalMap] )
       {
          // find incoming texture var
@@ -1679,7 +1711,7 @@ void ReflectCubeFeatHLSL::processVert( Vector<ShaderComponent*> &componentList,
     cubeNormal->setType( "float3" );
     LangElement *cubeNormDecl = new DecOp( cubeNormal );
 
-    meta->addStatement( new GenOp( "   @ = normalize( mul(@, normalize(@)).xyz );\r\n", 
+    meta->addStatement( new GenOp( "   @ = normalize( mul(@, float4(normalize(@),0.0)).xyz );\r\n", 
                         cubeNormDecl, cubeTrans, inNormal ) );
 
     // grab the eye position
@@ -1732,10 +1764,12 @@ void ReflectCubeFeatHLSL::processPix(  Vector<ShaderComponent*> &componentList,
    // current pass - we need to add one to the current pass to use
    // its alpha channel as a gloss map.
    if( !fd.features[MFT_DiffuseMap] &&
-       !fd.features[MFT_NormalMap] )
+       !fd.features[MFT_NormalMap] &&
+       !fd.features[MFT_DeferredDiffuseMap])
    {
       if( fd.materialFeatures[MFT_DiffuseMap] ||
-          fd.materialFeatures[MFT_NormalMap] )
+          fd.materialFeatures[MFT_NormalMap] ||
+          fd.features[MFT_DeferredDiffuseMap] )
       {
          // grab connector texcoord register
          Var *inTex = getInTexCoord( "texCoord", "float2", true, componentList );
@@ -1761,6 +1795,15 @@ void ReflectCubeFeatHLSL::processPix(  Vector<ShaderComponent*> &componentList,
    }
    else
    {
+      if (fd.features[MFT_DeferredDiffuseMap])
+      {
+        glossColor = (Var*)LangElement::find( "col1" );
+        if (!fd.features[MFT_DeferredSpecMap])
+        {
+            meta->addStatement( new GenOp( "   @.a = 1.0;\r\n", glossColor) );
+        }
+      }
+      else
       glossColor = (Var*) LangElement::find( "diffuseColor" );
       if( !glossColor )
          glossColor = (Var*) LangElement::find( "bumpNormal" );
@@ -1811,7 +1854,9 @@ void ReflectCubeFeatHLSL::processPix(  Vector<ShaderComponent*> &componentList,
       else
          blendOp = Material::Mul;
    }
-
+   if (fd.features[MFT_DeferredDiffuseMap])
+       meta->addStatement( new GenOp( "   @;\r\n", assignColor( texCube, blendOp, lerpVal, ShaderFeature::RenderTarget1 ) ) );
+   else
    meta->addStatement( new GenOp( "   @;\r\n", assignColor( texCube, blendOp, lerpVal ) ) );         
    output = meta;
 }
@@ -1820,7 +1865,7 @@ ShaderFeature::Resources ReflectCubeFeatHLSL::getResources( const MaterialFeatur
 {
    Resources res; 
 
-   if( fd.features[MFT_DiffuseMap] ||
+   if( fd.features[MFT_DiffuseMap] || fd.features[MFT_DeferredDiffuseMap] ||
        fd.features[MFT_NormalMap] )
    {
       res.numTex = 1;
@@ -1843,11 +1888,12 @@ void ReflectCubeFeatHLSL::setTexData(  Material::StageData &stageDat,
    // set up a gloss map if one is not present in the current pass
    // but is present in the current material stage
    if( !passData.mFeatureData.features[MFT_DiffuseMap] &&
+       !passData.mFeatureData.features[MFT_DeferredDiffuseMap] &&
        !passData.mFeatureData.features[MFT_NormalMap] )
    {
       GFXTextureObject *tex = stageDat.getTex( MFT_DetailMap );
       if (  tex &&
-            stageFeatures.features[MFT_DiffuseMap] )
+            (stageFeatures.features[MFT_DiffuseMap] || stageFeatures.features[MFT_DeferredDiffuseMap]) )
          passData.mTexSlot[ texIndex++ ].texObject = tex;
       else
       {
@@ -2055,42 +2101,17 @@ void RTLightingFeatHLSL::processPix(   Vector<ShaderComponent*> &componentList,
    ambient->uniform = true;
    ambient->constSortPos = cspPass;
 
-   if ( !fd.features[MFT_PBS] )
-   {
-      // Calculate the diffuse shading and specular powers.
-      meta->addStatement( new GenOp( "   compute4Lights( @, @, @, @,\r\n"
-                                     "      @, @, @, @, @, @, @, @,\r\n"
-                                     "      @, @ );\r\n", 
-         wsView, wsPosition, wsNormal, lightMask,
-         inLightPos, inLightInvRadiusSq, inLightColor, inLightSpotDir, inLightSpotAngle, lightSpotFalloff, specularPower, specularColor,
-         rtShading, specular ) );
+   // Calculate the diffuse shading and specular powers.
+   meta->addStatement( new GenOp( "   compute4Lights( @, @, @, @,\r\n"
+                                  "      @, @, @, @, @, @, @, @,\r\n"
+                                  "      @, @ );\r\n", 
+      wsView, wsPosition, wsNormal, lightMask,
+      inLightPos, inLightInvRadiusSq, inLightColor, inLightSpotDir, inLightSpotAngle, lightSpotFalloff, specularPower, specularColor,
+      rtShading, specular ) );
 
-         // Apply the lighting to the diffuse color.
-         LangElement *lighting = new GenOp( "float4( @.rgb + @.rgb, 1 )", rtShading, ambient );
-         meta->addStatement( new GenOp( "   @;\r\n", assignColor( lighting, Material::Mul ) ) );
-   }
-   else
-   {
-      Var *albedoColor = (Var*)LangElement::find( "albedoColor" );
-      if ( !albedoColor )
-      {
-         albedoColor  = new Var( "albedoColor", "float4" );
-         albedoColor->uniform = true;
-         albedoColor->constSortPos = cspPotentialPrimitive;
-      }
-
-      // Calculate the diffuse shading and specular powers.
-      meta->addStatement( new GenOp( "   computePBSLights( @, @, @, @, @,\r\n"
-                                     "      @, @, @, @, @, @, @, @,\r\n"
-                                     "      @, @ );\r\n", 
-         wsView, wsPosition, wsNormal, albedoColor, lightMask,
-         inLightPos, inLightInvRadiusSq, inLightColor, inLightSpotDir, inLightSpotAngle, lightSpotFalloff, specularPower, specularColor,
-         rtShading ) );
-
-      // Assign output color.
-      meta->addStatement( new GenOp( "   @;\r\n", assignColor( rtShading, Material::None ) ) );
-   }
-
+   // Apply the lighting to the diffuse color.
+   LangElement *lighting = new GenOp( "float4( @.rgb + @.rgb, 1 )", rtShading, ambient );
+   meta->addStatement( new GenOp( "   @;\r\n", assignColor( lighting, Material::Mul ) ) );
    output = meta;  
 }
 
@@ -2361,6 +2382,8 @@ void AlphaTestHLSL::processPix(  Vector<ShaderComponent*> &componentList,
 
    // If we don't have a color var then we cannot do an alpha test.
    Var *color = (Var*)LangElement::find( "col" );
+   if (!color)
+       color = (Var*)LangElement::find( "col1" );
    if ( !color )
    {
       output = NULL;
@@ -2727,350 +2750,3 @@ void ImposterVertFeatureHLSL::determineFeature( Material *material,
       outFeatureData->features.addFeature( MFT_ImposterVert );
 }
 
-//****************************************************************************
-// PBS Base Texture
-//****************************************************************************
-
-void PBSBaseMapFeatHLSL::processVert( Vector<ShaderComponent*> &componentList, 
-                                       const MaterialFeatureData &fd )
-{
-   MultiLine *meta = new MultiLine;
-   getOutTexCoord(   "texCoord", 
-                     "float2", 
-                     true, 
-                     fd.features[MFT_TexAnim], 
-                     meta, 
-                     componentList );
-   output = meta;
-}
-
-void PBSBaseMapFeatHLSL::processPix(   Vector<ShaderComponent*> &componentList, 
-                                       const MaterialFeatureData &fd )
-{
-   // Get the texture coord.
-   Var *texCoord = getInTexCoord( "texCoord", "float2", true, componentList );
-
-   // create texture var
-   Var *albedoMap = new Var;
-   albedoMap->setType( "sampler2D" );
-   albedoMap->setName( "albedo" );
-   albedoMap->uniform = true;
-   albedoMap->sampler = true;
-   albedoMap->constNum = Var::getTexUnitNum();     // used as texture unit num here
-
-   LangElement *texOp = new GenOp( "tex2D(@, @)", albedoMap, texCoord );
-   Var *albedoColor = new Var( "albedoColor", "float4" );
-   output = new GenOp( "   @ = @;\r\n", new DecOp( albedoColor ), texOp );
-}
-
-ShaderFeature::Resources PBSBaseMapFeatHLSL::getResources( const MaterialFeatureData &fd )
-{
-   Resources res; 
-   res.numTex = 1;
-   res.numTexReg = 1;
-
-   return res;
-}
-
-void PBSBaseMapFeatHLSL::setTexData(   Material::StageData &stageDat,
-                                       const MaterialFeatureData &fd,
-                                       RenderPassData &passData,
-                                       U32 &texIndex )
-{
-   GFXTextureObject *tex = stageDat.getTex( MFT_PBSBaseMap );
-   if ( tex )
-      passData.mTexSlot[ texIndex++ ].texObject = tex;
-}
-
-//****************************************************************************
-// PBS General Feature
-//****************************************************************************
-PBSHLSL::PBSHLSL()
-: mDep( "shaders/common/lighting.hlsl" )
-{
-   addDependency( &mDep );
-}
-
-void PBSHLSL::processVert(   Vector<ShaderComponent*> &componentList, 
-                                       const MaterialFeatureData &fd )
-{
-   MultiLine *meta = new MultiLine;   
-
-   ShaderConnector *connectComp = dynamic_cast<ShaderConnector *>( componentList[C_CONNECTOR] );
-
-   // Special case for lighting imposters. We dont have a vert normal and may not
-   // have a normal map. Generate and pass the normal data the pixel shader needs.
-   if ( fd.features[MFT_ImposterVert] )
-   {
-      if ( !fd.features[MFT_NormalMap] )
-      {
-         Var *eyePos = (Var*)LangElement::find( "eyePosWorld" );
-         if ( !eyePos )
-         {
-            eyePos = new Var( "eyePosWorld", "float3" );
-            eyePos->uniform = true;
-            eyePos->constSortPos = cspPass;
-         }
-          
-         Var *inPosition = (Var*)LangElement::find( "position" );
-
-         Var *outNormal = connectComp->getElement( RT_TEXCOORD );
-         outNormal->setName( "wsNormal" );
-         outNormal->setStructName( "OUT" );
-         outNormal->setType( "float3" );
-         outNormal->mapsToSampler = false;
-
-         // Transform the normal to world space.
-         meta->addStatement( new GenOp( "   @ = normalize( @ - @.xyz );\r\n", outNormal, eyePos, inPosition ) );
-      }
-
-      addOutWsPosition( componentList, fd.features[MFT_UseInstancing], meta );
-
-      output = meta;
-
-      return;
-   }
-
-   // Find the incoming vertex normal.
-   Var *inNormal = (Var*)LangElement::find( "normal" );   
-
-   // Skip out on realtime lighting if we don't have a normal
-   // or we're doing some sort of baked lighting.
-   if (  !inNormal || 
-         fd.features[MFT_LightMap] || 
-         fd.features[MFT_ToneMap] || 
-         fd.features[MFT_VertLit] )
-      return;   
-
-   // If there isn't a normal map then we need to pass
-   // the world space normal to the pixel shader ourselves.
-   if ( !fd.features[MFT_NormalMap] )
-   {
-      Var *outNormal = connectComp->getElement( RT_TEXCOORD );
-      outNormal->setName( "wsNormal" );
-      outNormal->setStructName( "OUT" );
-      outNormal->setType( "float3" );
-      outNormal->mapsToSampler = false;
-
-      // Get the transform to world space.
-      Var *objTrans = getObjTrans( componentList, fd.features[MFT_UseInstancing], meta );
-
-      // Transform the normal to world space.
-      meta->addStatement( new GenOp( "   @ = mul( @, float4( normalize( @ ), 0.0 ) ).xyz;\r\n", outNormal, objTrans, inNormal ) );
-   }
-
-   addOutWsPosition( componentList, fd.features[MFT_UseInstancing], meta );
-
-   output = meta;
-}
-
-void PBSHLSL::processPix( Vector<ShaderComponent*> &componentList, 
-                                    const MaterialFeatureData &fd )
-{
-   MultiLine *meta = new MultiLine;
-   ShaderConnector *connectComp = dynamic_cast<ShaderConnector *>( componentList[C_CONNECTOR] );
-
-   Var *pbsRoughnessValue = (Var*)LangElement::find( "pbsRoughnessValue" );
-   if(pbsRoughnessValue == NULL)
-   {
-      pbsRoughnessValue = new Var;
-      pbsRoughnessValue->setType( "float" );
-      pbsRoughnessValue->setName( "pbsRoughnessValue" );
-      pbsRoughnessValue->uniform = true;
-      pbsRoughnessValue->constSortPos = cspPotentialPrimitive;
-   }
-
-   Var *pbsMetallicValue = (Var*)LangElement::find( "pbsMetallicValue" );
-   if(pbsMetallicValue == NULL)
-   {
-      pbsMetallicValue = new Var;
-      pbsMetallicValue->setType( "float" );
-      pbsMetallicValue->setName( "pbsMetallicValue" );
-      pbsMetallicValue->uniform = true;
-      pbsMetallicValue->constSortPos = cspPotentialPrimitive;
-   }
-   
-   // create sample float vars
-   Var *rough = new Var;
-   rough->setType("float");
-   rough->setName("roughness");
-   meta->addStatement(new GenOp( "   @ = @;\r\n", new DecOp(rough), pbsRoughnessValue));
-
-   Var *metal = new Var;
-   metal->setType("float");
-   metal->setName("metal");
-   meta->addStatement(new GenOp( "   @ = @;\r\n", new DecOp(metal), pbsMetallicValue));
-   
-   // Look for a wsNormal or grab it from the connector.
-   Var *wsNormal = (Var*)LangElement::find( "wsNormal" );
-   if ( !wsNormal )
-   {
-      wsNormal = connectComp->getElement( RT_TEXCOORD );
-      wsNormal->setName( "wsNormal" );
-      wsNormal->setStructName( "IN" );
-      wsNormal->setType( "float3" );
-      meta->addStatement( new GenOp( "   @ = normalize( half3( @ ) );\r\n", wsNormal, wsNormal ) );
-   }
-
-   // Now the wsPosition and wsView.
-   Var *wsPosition = getInWsPosition( componentList );
-   Var *wsView = getWsView( wsPosition, meta );
-
-   // Create temporaries to hold results of lighting.
-   Var *rtShading = new Var( "rtShading", "float4" );
-   meta->addStatement( new GenOp( "   @;\r\n", new DecOp(rtShading) ) );   
-
-   Var *specularColor = (Var*)LangElement::find( "specularColor" );
-   if ( !specularColor )
-   {
-      specularColor  = new Var( "specularColor", "float4" );
-      specularColor->uniform = true;
-      specularColor->constSortPos = cspPotentialPrimitive;
-   }
-
-   Var *inLightColor  = new Var( "inLightColor", "float4" );
-   inLightColor->uniform = true;
-   inLightColor->arraySize = 4;
-   inLightColor->constSortPos = cspPotentialPrimitive;
-
-   // Get all the light constants.
-   Var *inLightPos  = new Var( "inLightPos", "float4" );
-   inLightPos->uniform = true;
-   inLightPos->arraySize = 3;
-   inLightPos->constSortPos = cspPotentialPrimitive;
-
-   Var *albedoColor = (Var*)LangElement::find( "albedoColor" );
-   if ( !albedoColor )
-   {
-      albedoColor  = new Var( "albedoColor", "float4" );
-      albedoColor->uniform = true;
-      albedoColor->constSortPos = cspPotentialPrimitive;
-   }
-
-   // Calculate the diffuse shading and specular powers.
-   meta->addStatement( new GenOp( "   computePBSLights( @, @, @, @, @, @, @, @ );\r\n", 
-      wsView, wsPosition, wsNormal, albedoColor, specularColor, inLightPos, inLightColor, rtShading ) );
-
-   // Assign output color.
-   meta->addStatement( new GenOp( "   @;\r\n", assignColor( rtShading, Material::None ) ) );
-
-   output = meta;
-}
-
-ShaderFeature::Resources PBSHLSL::getResources( const MaterialFeatureData &fd )
-{
-   Resources res;
-   return res;
-}
-
-//****************************************************************************
-// PBS Roughness Texture
-//****************************************************************************
-
-void PBSRoughnessMapHLSL::processVert( Vector<ShaderComponent*> &componentList, 
-                                       const MaterialFeatureData &fd )
-{
-   MultiLine *meta = new MultiLine;
-   getOutTexCoord(   "texCoord", 
-                     "float2", 
-                     true, 
-                     fd.features[MFT_TexAnim], 
-                     meta, 
-                     componentList );
-   output = meta;
-}
-
-void PBSRoughnessMapHLSL::processPix(   Vector<ShaderComponent*> &componentList, 
-                                       const MaterialFeatureData &fd )
-{
-   // Get the texture coord.
-   Var *texCoord = getInTexCoord( "texCoord", "float2", true, componentList );
-
-   // create texture var
-   Var *roughnessMap = new Var;
-   roughnessMap->setType( "sampler2D" );
-   roughnessMap->setName( "roughnessMap" );
-   roughnessMap->uniform = true;
-   roughnessMap->sampler = true;
-   roughnessMap->constNum = Var::getTexUnitNum();
-   LangElement *texOp = new GenOp( "tex2D(@, @)", roughnessMap, texCoord );
-
-   Var *roughnessColor = new Var( "pbsRoughnessValue", "float" );
-
-   output = new GenOp( "   @ = @.r;\r\n", new DecOp( roughnessColor ), texOp );   
-}
-
-ShaderFeature::Resources PBSRoughnessMapHLSL::getResources( const MaterialFeatureData &fd )
-{
-   Resources res; 
-   res.numTex = 1;
-   res.numTexReg = 1;
-
-   return res;
-}
-
-void PBSRoughnessMapHLSL::setTexData(   Material::StageData &stageDat,
-                                       const MaterialFeatureData &fd,
-                                       RenderPassData &passData,
-                                       U32 &texIndex )
-{
-   GFXTextureObject *tex = stageDat.getTex( MFT_PBSRoughnessMap );
-   if ( tex )
-      passData.mTexSlot[ texIndex++ ].texObject = tex;
-}
-
-//****************************************************************************
-// PBS Metalic Texture
-//****************************************************************************
-
-void PBSMetallicMapHLSL::processVert( Vector<ShaderComponent*> &componentList, 
-                                       const MaterialFeatureData &fd )
-{
-   MultiLine *meta = new MultiLine;
-   getOutTexCoord(   "texCoord", 
-                     "float2", 
-                     true, 
-                     fd.features[MFT_TexAnim], 
-                     meta, 
-                     componentList );
-   output = meta;
-}
-
-void PBSMetallicMapHLSL::processPix(   Vector<ShaderComponent*> &componentList, 
-                                       const MaterialFeatureData &fd )
-{
-   // Get the texture coord.
-   Var *texCoord = getInTexCoord( "texCoord", "float2", true, componentList );
-
-   // create texture var
-   Var *metallicMap = new Var;
-   metallicMap->setType( "sampler2D" );
-   metallicMap->setName( "metallicMap" );
-   metallicMap->uniform = true;
-   metallicMap->sampler = true;
-   metallicMap->constNum = Var::getTexUnitNum();
-   LangElement *texOp = new GenOp( "tex2D(@, @)", metallicMap, texCoord );
-
-   Var *pbsMetallicValue = new Var( "pbsMetallicValue", "float" );
-
-   output = new GenOp( "   @ = @.b;\r\n", new DecOp( pbsMetallicValue ), texOp );   
-}
-
-ShaderFeature::Resources PBSMetallicMapHLSL::getResources( const MaterialFeatureData &fd )
-{
-   Resources res; 
-   res.numTex = 1;
-   res.numTexReg = 1;
-
-   return res;
-}
-
-void PBSMetallicMapHLSL::setTexData(   Material::StageData &stageDat,
-                                       const MaterialFeatureData &fd,
-                                       RenderPassData &passData,
-                                       U32 &texIndex )
-{
-   GFXTextureObject *tex = stageDat.getTex( MFT_PBSMetallicMap );
-   if ( tex )
-      passData.mTexSlot[ texIndex++ ].texObject = tex;
-}

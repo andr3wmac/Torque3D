@@ -70,7 +70,7 @@ GFX_ImplementTextureProfile( ShadowMapProfile,
                               GFXTextureProfile::PreserveSize | 
                               GFXTextureProfile::RenderTarget |
                               GFXTextureProfile::Pooled,
-                              GFXTextureProfile::None );
+                              GFXTextureProfile::NONE );
 
 GFX_ImplementTextureProfile( ShadowMapZProfile,
                              GFXTextureProfile::DiffuseMap, 
@@ -78,7 +78,7 @@ GFX_ImplementTextureProfile( ShadowMapZProfile,
                              GFXTextureProfile::NoMipmap | 
                              GFXTextureProfile::ZTarget |
                              GFXTextureProfile::Pooled,
-                             GFXTextureProfile::None );
+                             GFXTextureProfile::NONE );
 
 
 LightShadowMap::LightShadowMap( LightInfo *light )
@@ -561,9 +561,6 @@ ShadowMapParams::ShadowMapParams( LightInfo *light )
       mShadowMap( NULL )
 {
    attenuationRatio.set( 0.0f, 1.0f, 1.0f );
-   // andrewmac: Inverse Square
-   inverseSquare = false;
-
    shadowType = ShadowType_Spot;
    overDarkFactor.set(2000.0f, 1000.0f, 500.0f, 100.0f);
    numSplits = 4;
@@ -715,9 +712,6 @@ void ShadowMapParams::packUpdate( BitStream *stream ) const
    stream->writeInt( shadowType, 8 );
    
    mathWrite( *stream, attenuationRatio );
-
-   // andrewmac: Inverse Square
-   stream->writeFlag(inverseSquare);
    
    stream->write( texSize );
 
@@ -748,9 +742,6 @@ void ShadowMapParams::unpackUpdate( BitStream *stream )
    }
 
    mathRead( *stream, &attenuationRatio );
-
-   // andrewmac: Inverse Square
-   inverseSquare = stream->readFlag();
 
    stream->read( &texSize );
 
