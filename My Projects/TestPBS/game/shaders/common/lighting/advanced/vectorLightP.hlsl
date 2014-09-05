@@ -209,12 +209,19 @@ float4 main( FarFrustumQuadConnectP IN,
    #endif // !NO_SHADOW
 
    // Specular term
-   float specular = AL_CalcSpecular(   -lightDirection, 
-                                       normal, 
-                                       normalize(-IN.vsEyeRay) ) * lightBrightness * shadowed;
+   float4 colorSample = tex2D( colorBuffer, IN.uv0 );
+   float specular = 0;
+   float3 real_specular = AL_CalcSpecular(  colorSample.rgb,
+                                      lightColor.rgb,
+                                      -normalize( lightDirection ), 
+                                      normal, 
+                                      IN.vsEyeRay );
                                     
    float Sat_NL_Att = saturate( dotNL * shadowed ) * lightBrightness;
-   float3 lightColorOut = lightMapParams.rgb * lightColor.rgb;
+   float3 lightColorOut = (lightColor.rgb + real_specular) * lightBrightness * shadowed;
+   //float3 lightColorOut = lightMapParams.rgb * lightColor.rgb;
+   //lightColorOut += real_specular;
+   //lightColorOut = lightColorOut ;
 
    // Felix' Normal Mapped Ambient.
    float ambientBrightness = (float)lightAmbient;
@@ -267,6 +274,5 @@ float4 main( FarFrustumQuadConnectP IN,
       addToResult = lightColor * float4( fLT, 0.0);
    }
 
-   float4 colorSample = tex2D( colorBuffer, IN.uv0 );
    return AL_DeferredOutput(lightColorOut, colorSample.rgb, matInfo, addToResult, specular, colorSample.a, Sat_NL_Att);
 }
