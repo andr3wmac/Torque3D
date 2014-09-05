@@ -205,10 +205,8 @@ void compute4Lights( float3 wsView,
 ///   @param toEye   The normalized vector representing direction from the pixel 
 ///                  being lit to the camera.
 ///
-float3 AL_CalcSpecular( float3 baseColor, float3 lightColor, float3 toLight, float3 normal, float3 toEye )
+float3 AL_CalcSpecular( float3 baseColor, float3 lightColor, float3 toLight, float3 normal, float3 toEye, float roughness, float metallic )
 {
-    float roughness = 0.2f;
-    float metallic = 0.5f;
     float PI = 3.14159265898793f;
 
     float nDotL = saturate( dot( normal, toLight ) );
@@ -288,16 +286,7 @@ float4 AL_DeferredOutput(
 		float 	specularMap, 
 		float 	shadowAttenuation)
 {
-   float3 specularColor = float3(specularMap, specularMap, specularMap);
-   bool metalness = getFlag(matInfo.r, 3);
-   if ( metalness )
-   {
-       specularColor = 0.04 * (1 - specularMap) + diffuseColor * specularMap;
-   }
-
-   float specularOut = (specularColor * pow(specular, ceil((matInfo.b * 128.0) / AL_ConstantSpecularPower)) * (matInfo.a * 5.0)).r;
-   
    lightColor *= shadowAttenuation;
    lightColor += ambient.rgb;
-   return float4(lightColor.rgb, specularOut); 
+   return float4(lightColor.rgb, 0.0f); 
 }

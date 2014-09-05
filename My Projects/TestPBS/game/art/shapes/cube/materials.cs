@@ -25,19 +25,19 @@ singleton Material(cube_GridMaterial)
 {
 	mapTo = "GridMaterial";
 
-	diffuseMap[0] = "grid";
-	normalMap[0] = "";
-	specularMap[0] = "";
+	diffuseMap[0] = "art/shapes/cube/grid";
 
 	diffuseColor[0] = "1 1 1 1";
 	specular[0] = "0.9 0.9 0.9 1";
-	specularPower[0] = 0.415939;
+	specularPower[0] = "44";
 	pixelSpecular[0] = false;
 	emissive[0] = false;
 
 	doubleSided = false;
 	translucent = false;
 	translucentBlendOp = "None";
+   specularStrength[0] = "5";
+   materialTag0 = "Miscellaneous";
 };
 
 //--- cube.dae MATERIALS END ---

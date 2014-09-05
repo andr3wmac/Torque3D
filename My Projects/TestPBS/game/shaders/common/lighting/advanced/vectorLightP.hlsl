@@ -215,7 +215,9 @@ float4 main( FarFrustumQuadConnectP IN,
                                       lightColor.rgb,
                                       -normalize( lightDirection ), 
                                       normal, 
-                                      IN.vsEyeRay );
+                                      IN.vsEyeRay,
+							 matInfo.b,
+							 matInfo.a );
                                     
    float Sat_NL_Att = saturate( dotNL * shadowed ) * lightBrightness;
    float3 lightColorOut = (lightColor.rgb + real_specular) * lightBrightness * shadowed;

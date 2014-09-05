@@ -158,7 +158,9 @@ float4 main(   ConvexConnectP IN,
                                       lightColor.rgb,
                                       lightToPxlVec, 
                                       normal, 
-                                      viewSpacePos );
+                                      viewSpacePos,
+							 matInfo.b,
+							 matInfo.a );
 
    float Sat_NL_Att = saturate( nDotL * atten * shadowed ) * lightBrightness;
    float3 lightColorOut = (lightColor.rgb + real_specular) * lightBrightness * shadowed * atten;
