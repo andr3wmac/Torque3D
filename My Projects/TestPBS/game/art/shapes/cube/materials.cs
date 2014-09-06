@@ -25,20 +25,47 @@ singleton Material(cube_GridMaterial)
 {
 	mapTo = "GridMaterial";
 
-	diffuseMap[0] = "art/shapes/cube/grid";
+	diffuseMap[0] = "art/shapes/cube/grid.dds";
 
 	diffuseColor[0] = "1 1 1 1";
-	specular[0] = "0.9 0.9 0.9 1";
-	specularPower[0] = "44";
+	specular[0] = "1 1 1 1";
+	specularPower[0] = "21";
 	pixelSpecular[0] = false;
-	emissive[0] = false;
+	emissive[0] = "0";
 
 	doubleSided = false;
 	translucent = false;
-	translucentBlendOp = "None";
-   specularStrength[0] = "5";
+	translucentBlendOp = "LerpAlpha";
    materialTag0 = "Miscellaneous";
+   subSurface[0] = "0";
+   cubemap = "DesertSkyCubemap";
+   specularStrength[0] = "0";
 };
 
 //--- cube.dae MATERIALS END ---
 
+
+singleton Material(rounded_cube_TestCubeMaterial)
+{
+   mapTo = "TestCubeMaterial";
+   diffuseColor[0] = "0.348135 0.64 0.3072 1";
+   specular[0] = "0.5 0.5 0.5 1";
+   specularPower[0] = "50";
+   translucentBlendOp = "None";
+   diffuseMap[0] = "art/grey_block.png";
+   translucencyMap[0] = "art/test_translucency_middle.png";
+   glow[0] = "1";
+   materialTag0 = "Miscellaneous";
+};
+
+singleton Material(rounded_cube_TestCubeCenterMaterial)
+{
+   mapTo = "TestCubeCenterMaterial";
+   diffuseColor[0] = "0.996078 0.992157 0.992157 1";
+   specular[0] = "0.5 0.5 0.5 1";
+   specularPower[0] = "50";
+   translucentBlendOp = "None";
+   diffuseMap[0] = "art/grey_block.png";
+   translucencyMap[0] = "art/test_translucency_center.png";
+   materialTag0 = "Miscellaneous";
+};

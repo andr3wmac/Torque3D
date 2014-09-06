@@ -31,7 +31,7 @@ new SimGroup(MissionGroup) {
       rayleighScattering = "0.0035";
       sunScale = "1 1 0.8 1";
       ambientScale = "0.5 0.5 0.4 1";
-      fogScale = "1 1 1 1";
+      fogScale = "White";
       exposure = "0.85";
       azimuth = "84";
       elevation = "54";
@@ -176,6 +176,23 @@ new SimGroup(MissionGroup) {
       clarity = "0.5";
       underwaterColor = "9 6 5 240";
       position = "0 0 238.69";
+      canSave = "1";
+      canSaveDynamicFields = "1";
+   };
+   new TSStatic() {
+      shapeName = "art/shapes/cube/cube.dae";
+      playAmbient = "1";
+      meshCulling = "0";
+      originSort = "0";
+      cubeReflectorDesc = "DefaultCubeDesc";
+      collisionType = "Collision Mesh";
+      decalType = "Collision Mesh";
+      allowPlayerStep = "1";
+      renderNormals = "0";
+      forceDetail = "-1";
+      position = "2.7768 2.06125 241.264";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
       canSave = "1";
       canSaveDynamicFields = "1";
    };
