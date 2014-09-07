@@ -346,6 +346,9 @@ void GFXSamplerStateData::initPersistFields()
       addField("maxAnisotropy", TypeS32, Offset(mState.maxAnisotropy, GFXSamplerStateData),
          "The maximum texture anisotropy.  The default value is 1." );
 
+      addField("inGammaSpace", TypeBool, Offset(mState.inGammaSpace, GFXSamplerStateData),
+         "If true, texture is converted to linear space during sampling." );
+
    endGroup( "Filter State" );
 
    addField("textureTransform", TypeGFXTextureTransformFlags, Offset(mState.textureTransform, GFXSamplerStateData),

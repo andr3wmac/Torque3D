@@ -292,6 +292,7 @@ GFXSamplerStateDesc::GFXSamplerStateDesc()
    textureTransform = GFXTTFFDisable;
    resultArg = GFXTACurrent;
    mipLODBias = 0.0f;
+   inGammaSpace = false;
 }
 
 GFXSamplerStateDesc GFXSamplerStateDesc::getWrapLinear()

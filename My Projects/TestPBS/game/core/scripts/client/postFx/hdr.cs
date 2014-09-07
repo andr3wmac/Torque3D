@@ -234,6 +234,7 @@ function HDRPostFX::onEnabled( %this )
    %format = getBestHDRFormat();
    if ( %format $= "" || %format $= "GFXFormatR8G8B8A8" )
    {
+      echo("HDR NOT ENABLED DUE TO LOW FORMAT!");
       // We didn't get a valid HDR format... so fail.
       return false;
    }
@@ -302,7 +303,7 @@ singleton PostEffect( HDRPostFX )
                                 
       shader = HDR_BrightPassShader;
       stateBlock = HDR_DownSampleStateBlock;
-      texture[0] = "$backBuffer";
+      texture[0] = "#lightinfo";
       texture[1] = "#adaptedLum";
       target = "$outTex";
       targetFormat = "GFXFormatR16G16B16A16F"; 
@@ -349,7 +350,7 @@ singleton PostEffect( HDRPostFX )
       
       shader = HDR_SampleLumShader;
       stateBlock = HDR_DownSampleStateBlock;
-      texture[0] = "$backBuffer";
+      texture[0] = "#lightinfo";
       target = "$outTex";
       targetScale = "0.0625 0.0625"; // 1/16th
       targetFormat = "GFXFormatR16F";
@@ -409,7 +410,7 @@ singleton PostEffect( HDRPostFX )
       
       shader = HDR_CombineShader;
       stateBlock = HDR_CombineStateBlock;
-      texture[0] = "$backBuffer";
+      texture[0] = "#lightinfo";
       texture[1] = "#adaptedLum";            
       texture[2] = "#bloomFinal";
       texture[3] = $HDRPostFX::colorCorrectionRamp;

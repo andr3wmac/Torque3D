@@ -127,7 +127,7 @@ float4 main(   ConvexConnectP IN,
                uniform float4 lightColor,
                uniform float  lightBrightness,
                uniform float  lightRange,
-               uniform float2 lightAttenuation,
+               uniform float  lightAttenuation,
                uniform float4 lightMapParams,
 
                uniform float4 vsFarPlane,

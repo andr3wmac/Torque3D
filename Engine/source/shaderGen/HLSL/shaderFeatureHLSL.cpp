@@ -878,7 +878,7 @@ void DiffuseMapFeatHLSL::processPix(   Vector<ShaderComponent*> &componentList,
       }
       else
       {
-          meta->addStatement(  new GenOp( "   @ = tex2DLinear(@, @);\r\n", 
+          meta->addStatement(  new GenOp( "   @ = tex2D(@, @);\r\n", 
                            colorDecl, 
                            diffuseMap, 
                            inTex ) );
@@ -975,7 +975,7 @@ void DiffuseMapFeatHLSL::processPix(   Vector<ShaderComponent*> &componentList,
               meta->addStatement(new GenOp( "   @ = tex2D(@, @);\r\n",
                     new DecOp(diffColor), diffuseMap, inTex)); 
           else
-              meta->addStatement(new GenOp( "   @ = tex2DLinear(@, @);\r\n",
+              meta->addStatement(new GenOp( "   @ = tex2D(@, @);\r\n",
                     new DecOp(diffColor), diffuseMap, inTex)); 
       }
 
@@ -990,7 +990,7 @@ void DiffuseMapFeatHLSL::processPix(   Vector<ShaderComponent*> &componentList,
        }
        else
        {
-           LangElement *statement = new GenOp( "tex2DLinear(@, @)", diffuseMap, inTex );
+           LangElement *statement = new GenOp( "tex2D(@, @)", diffuseMap, inTex );
            output = new GenOp( "   @;\r\n", assignColor( statement, Material::Mul ) );
        }
    }
@@ -1798,9 +1798,21 @@ void ReflectCubeFeatHLSL::processPix(  Vector<ShaderComponent*> &componentList,
       if (fd.features[MFT_DeferredDiffuseMap])
       {
         glossColor = (Var*)LangElement::find( "col1" );
-        if (!fd.features[MFT_DeferredSpecMap])
+        if (!fd.features[MFT_DeferredMatInfoFlags])
         {
-            meta->addStatement( new GenOp( "   @.a = 1.0;\r\n", glossColor) );
+            meta->addStatement( new GenOp( "   @.a = 0.5;\r\n", glossColor) );
+        } else {
+
+            Var *specStrength = (Var*)LangElement::find( "specularStrength" );
+            if ( !specStrength )
+            {
+               specStrength = new Var;
+               specStrength->setType( "float" );
+               specStrength->setName( "specularStrength" );
+               specStrength->uniform = true;
+               specStrength->constSortPos = cspPotentialPrimitive;
+            }
+            meta->addStatement( new GenOp( "   @.a = @ / 5.0f;\r\n", glossColor, specStrength ) );
         }
       }
       else
@@ -1833,7 +1845,21 @@ void ReflectCubeFeatHLSL::processPix(  Vector<ShaderComponent*> &componentList,
       if ( fd.materialFeatures[MFT_RTLighting] )
       attn =(Var*)LangElement::find("d_NL_Att");
 
-   LangElement *texCube = new GenOp( "texCUBE( @, @ )", cubeMap, reflectVec );
+   // Determine roughness
+   Var *specPower = (Var*)LangElement::find( "specularPower" );
+   if ( !specPower )
+   {
+      specPower = new Var;
+      specPower->setType( "float" );
+      specPower->setName( "specularPower" );
+      specPower->uniform = true;
+      specPower->constSortPos = cspPotentialPrimitive;
+   }
+
+   // Cube LOD level = (1.0 - Roughness) * 8
+   // mip_levle =  min((1.0 - u_glossiness)*11.0 + 1.0, 8.0)
+   //LangElement *texCube = new GenOp( "texCUBElod( @, float4(@, min((1.0 - (@ / 128.0)) * 11.0 + 1.0, 8.0)) )", cubeMap, reflectVec, specPower );
+   LangElement *texCube = new GenOp( "texCUBElod( @, float4(@, (@ / 128.0) * 8) )", cubeMap, reflectVec, specPower );
    LangElement *lerpVal = NULL;
    Material::BlendOp blendOp = Material::LerpAlpha;
 

@@ -755,7 +755,8 @@ void AdvancedLightBinManager::LightMaterialInfo::setLightParameters( const Light
       Point2F attenParams( ( 1.0f / radius ) * attenRatio.y,
                            ( 1.0f / ( radius * radius ) ) * attenRatio.z );
 
-      matParams->setSafe( lightAttenuation, attenParams );
+      // Inverse Square Light Fall-Off
+      matParams->setSafe( lightAttenuation, radius );
       break;
    }
 

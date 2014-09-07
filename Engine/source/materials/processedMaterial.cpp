@@ -267,6 +267,13 @@ void ProcessedMaterial::_initPassStateBlock( RenderPassData *rpd, GFXStateBlockD
             break;
          }
 
+         case Material::Standard:
+         {
+            result.samplers[i].inGammaSpace = true;
+            break;
+         }
+
+
          case Material::Cube:
          case Material::SGCube:
          case Material::NormalizeCube:

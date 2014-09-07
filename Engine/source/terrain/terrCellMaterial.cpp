@@ -548,7 +548,10 @@ bool TerrainCellMaterial::_createPass( Vector<MaterialInfo*> *materials,
 
    desc.samplersDefined = true;
    if ( pass->baseTexMapConst->isValid() )
+   {
       desc.samplers[pass->baseTexMapConst->getSamplerRegister()] = GFXSamplerStateDesc::getWrapLinear();
+      desc.samplers[pass->baseTexMapConst->getSamplerRegister()].inGammaSpace = true;
+   }
 
    if ( pass->layerTexConst->isValid() )
       desc.samplers[pass->layerTexConst->getSamplerRegister()] = GFXSamplerStateDesc::getClampPoint();

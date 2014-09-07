@@ -207,6 +207,7 @@ void compute4Lights( float3 wsView,
 ///
 float3 AL_CalcSpecular( float3 baseColor, float3 lightColor, float3 toLight, float3 normal, float3 toEye, float roughness, float metallic )
 {
+    roughness = roughness * 0.5; // andrewmac scaled.
     float PI = 3.14159265898793f;
 
     float nDotL = saturate( dot( normal, toLight ) );
@@ -288,5 +289,8 @@ float4 AL_DeferredOutput(
 {
    lightColor *= shadowAttenuation;
    lightColor += ambient.rgb;
+
+   diffuseColor.rgb = pow(diffuseColor.rgb, 2.2);
+   lightColor *= float4(diffuseColor.rgb, 1.0);
    return float4(lightColor.rgb, 0.0f); 
 }
