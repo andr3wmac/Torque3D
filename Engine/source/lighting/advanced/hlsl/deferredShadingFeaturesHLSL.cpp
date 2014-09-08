@@ -325,6 +325,19 @@ void DeferredEmptySpecHLSL::processPix( Vector<ShaderComponent*> &componentList,
    output = new GenOp( "   @.a = 0.0;\r\n", color );
 }
 
+void DeferredEmptySpecHLSL::processVert( Vector<ShaderComponent*> &componentList, 
+                                       const MaterialFeatureData &fd )
+{
+   MultiLine *meta = new MultiLine;
+   getOutTexCoord(   "texCoord", 
+                     "float2", 
+                     true, 
+                     fd.features[MFT_TexAnim], 
+                     meta, 
+                     componentList );
+   output = meta;
+}
+
 // Gloss Map (Alpha Channel of Specular Map) -> Blue ( Spec Power ) of Material Info Buffer.
 void DeferredGlossMapHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
 {
