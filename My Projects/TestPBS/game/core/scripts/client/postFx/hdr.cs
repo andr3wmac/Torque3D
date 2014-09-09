@@ -285,7 +285,7 @@ function HDRPostFX::onDisabled( %this )
 singleton PostEffect( HDRPostFX )
 {
    isEnabled = false;
-   allowReflectPass = false;
+   allowReflectPass = true;
       
    // Resolve the HDR before we render any editor stuff
    // and before we resolve the scene to the backbuffer.
@@ -311,6 +311,7 @@ singleton PostEffect( HDRPostFX )
       
       new PostEffect()
       {
+         allowReflectPass = true;
          shader = HDR_DownScale4x4Shader;
          stateBlock = HDR_DownSampleStateBlock;
          texture[0] = "$inTex";
@@ -321,6 +322,7 @@ singleton PostEffect( HDRPostFX )
       
       new PostEffect()
       {
+         allowReflectPass = true;
          internalName = "bloomH";
          
          shader = HDR_BloomGaussBlurHShader;
@@ -332,6 +334,7 @@ singleton PostEffect( HDRPostFX )
 
       new PostEffect()
       {
+         allowReflectPass = true;
          internalName = "bloomV";
                   
          shader = HDR_BloomGaussBlurVShader;
@@ -346,6 +349,7 @@ singleton PostEffect( HDRPostFX )
    // Now calculate the adapted luminance.
    new PostEffect()
    {
+      allowReflectPass = true;
       internalName = "adaptLum";
       
       shader = HDR_SampleLumShader;
@@ -357,6 +361,7 @@ singleton PostEffect( HDRPostFX )
       
       new PostEffect()
       {
+         allowReflectPass = true;
          shader = HDR_DownSampleLumShader;
          stateBlock = HDR_DownSampleStateBlock;
          texture[0] = "$inTex";
@@ -367,6 +372,7 @@ singleton PostEffect( HDRPostFX )
       
       new PostEffect()
       {
+         allowReflectPass = true;
          shader = HDR_DownSampleLumShader;
          stateBlock = HDR_DownSampleStateBlock;
          texture[0] = "$inTex";
@@ -377,6 +383,7 @@ singleton PostEffect( HDRPostFX )
       
       new PostEffect()
       {
+         allowReflectPass = true;
          shader = HDR_DownSampleLumShader;
          stateBlock = HDR_DownSampleStateBlock;
          texture[0] = "$inTex";
@@ -390,6 +397,7 @@ singleton PostEffect( HDRPostFX )
       // one... PostEffect takes care to manage that.
       new PostEffect()
       {
+         allowReflectPass = true;
          internalName = "finalLum";         
          shader = HDR_CalcAdaptedLumShader;
          stateBlock = HDR_DownSampleStateBlock;
@@ -406,6 +414,7 @@ singleton PostEffect( HDRPostFX )
    // version of the scene.
    new PostEffect()
    {
+      allowReflectPass = true;
       internalName = "combinePass";
       
       shader = HDR_CombineShader;

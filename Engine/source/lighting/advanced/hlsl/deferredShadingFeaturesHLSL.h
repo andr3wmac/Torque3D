@@ -166,6 +166,8 @@ public:
 
    virtual void processPix( Vector<ShaderComponent*> &componentList, 
       const MaterialFeatureData &fd );
+   virtual void processVert( Vector<ShaderComponent*> &componentList,
+                             const MaterialFeatureData &fd );
    
    virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget1; }
 };
