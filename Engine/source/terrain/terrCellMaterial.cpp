@@ -660,8 +660,8 @@ bool TerrainCellMaterial::_createPass( Vector<MaterialInfo*> *materials,
       desc.addDesc( RenderPrePassMgr::getOpaqueStenciWriteDesc( false ) );
 
    // Flip the cull for reflection materials.
-   if ( reflectMat )
-      desc.setCullMode( GFXCullCW );
+   if ( prePassMat )
+      desc.setCullMode( GFXCullNone );
 
    pass->stateBlock = GFX->createStateBlock( desc );
 
