@@ -75,7 +75,7 @@ new SimGroup(MissionGroup) {
       elevation = "35";
       color = "0.992157 0.992157 0.992157 1";
       ambient = "0.027451 0.027451 0.027451 1";
-      brightness = "0.2";
+      brightness = "1";
       castShadows = "1";
       coronaEnabled = "1";
       coronaMaterial = "Corona_Mat";
@@ -341,6 +341,7 @@ new SimGroup(MissionGroup) {
       playAmbient = "1";
       meshCulling = "0";
       originSort = "0";
+      cubeReflectorDesc = "DefaultCubeDesc";
       collisionType = "Collision Mesh";
       decalType = "Collision Mesh";
       allowPlayerStep = "1";
@@ -351,13 +352,13 @@ new SimGroup(MissionGroup) {
       scale = "0.05 0.05 0.05";
       canSave = "1";
       canSaveDynamicFields = "1";
-      cubeReflectorDesc = "DefaultCubeDesc";
    };
    new TSStatic() {
       shapeName = "art/shapes/testSphere1.dae";
       playAmbient = "1";
       meshCulling = "0";
       originSort = "0";
+      cubeReflectorDesc = "DefaultCubeDesc";
       collisionType = "Collision Mesh";
       decalType = "Collision Mesh";
       allowPlayerStep = "1";
@@ -368,13 +369,13 @@ new SimGroup(MissionGroup) {
       scale = "0.05 0.05 0.05";
       canSave = "1";
       canSaveDynamicFields = "1";
-      cubeReflectorDesc = "DefaultCubeDesc";
    };
    new TSStatic() {
       shapeName = "art/shapes/testSphere2.dae";
       playAmbient = "1";
       meshCulling = "0";
       originSort = "0";
+      cubeReflectorDesc = "DefaultCubeDesc";
       collisionType = "Collision Mesh";
       decalType = "Collision Mesh";
       allowPlayerStep = "1";
@@ -385,13 +386,13 @@ new SimGroup(MissionGroup) {
       scale = "0.05 0.05 0.05";
       canSave = "1";
       canSaveDynamicFields = "1";
-      cubeReflectorDesc = "DefaultCubeDesc";
    };
    new TSStatic() {
       shapeName = "art/shapes/testSphere3.dae";
       playAmbient = "1";
       meshCulling = "0";
       originSort = "0";
+      cubeReflectorDesc = "DefaultCubeDesc";
       collisionType = "Collision Mesh";
       decalType = "Collision Mesh";
       allowPlayerStep = "1";
@@ -402,13 +403,13 @@ new SimGroup(MissionGroup) {
       scale = "0.05 0.05 0.05";
       canSave = "1";
       canSaveDynamicFields = "1";
-      cubeReflectorDesc = "DefaultCubeDesc";
    };
    new TSStatic() {
       shapeName = "art/shapes/testSphere4.dae";
       playAmbient = "1";
       meshCulling = "0";
       originSort = "0";
+      cubeReflectorDesc = "DefaultCubeDesc";
       collisionType = "Collision Mesh";
       decalType = "Collision Mesh";
       allowPlayerStep = "1";
@@ -419,7 +420,6 @@ new SimGroup(MissionGroup) {
       scale = "0.05 0.05 0.05";
       canSave = "1";
       canSaveDynamicFields = "1";
-      cubeReflectorDesc = "DefaultCubeDesc";
    };
 };
 //--- OBJECT WRITE END ---

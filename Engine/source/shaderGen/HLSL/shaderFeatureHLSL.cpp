@@ -1815,7 +1815,7 @@ void ReflectCubeFeatHLSL::processPix(  Vector<ShaderComponent*> &componentList,
                    specStrength->uniform = true;
                    specStrength->constSortPos = cspPotentialPrimitive;
                }
-               meta->addStatement( new GenOp( "   @.a *= @/5;\r\n", glossColor, specStrength ) );
+               meta->addStatement( new GenOp( "   @.a = @/5;\r\n", glossColor, specStrength ) );
            }
        }
        else
