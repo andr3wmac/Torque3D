@@ -213,9 +213,9 @@ float4 main( FarFrustumQuadConnectP IN,
    float specular = 0;
    float3 real_specular = AL_CalcSpecular(  colorSample.rgb,
                                       lightColor.rgb,
-                                      -normalize( lightDirection ), 
+                                      normalize( -lightDirection ), 
                                       normal, 
-                                      IN.vsEyeRay,
+                                      IN.vsEyeRay * depth,
 							 matInfo.b,
 							 matInfo.a );
                                     

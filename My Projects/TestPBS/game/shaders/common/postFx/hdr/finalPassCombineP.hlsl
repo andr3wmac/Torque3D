@@ -69,7 +69,16 @@ float4 main( PFXVertToPix IN ) : COLOR0
       bloom.rgb = lerp( bloom.rgb, rodColor, coef );
    }
 
-   sample.rgb = toFilmic(sample.rgb);
+   // Map the high range of color values into a range appropriate for
+   // display, taking into account the user's adaptation level, 
+   // white point, and selected value for for middle gray.
+   if ( g_fEnableToneMapping > 0.0f )
+   {
+      float Lp = (g_fMiddleGray / (adaptedLum + 0.0001)) * hdrLuminance( sample.rgb );
+      //float toneScalar = ( Lp * ( 1.0 + ( Lp / ( g_fWhiteCutoff ) ) ) ) / ( 1.0 + Lp );
+	  float toneScalar = Lp;
+      sample.rgb = lerp( sample.rgb, sample.rgb * toneScalar, g_fEnableToneMapping );
+   }
 
    // Add the bloom effect.
    sample += g_fBloomScale * bloom;

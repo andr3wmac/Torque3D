@@ -91,7 +91,7 @@ float4 main(   ConvexConnectP IN,
    // Eye ray - Eye -> Pixel
    float3 eyeRay = getDistanceVectorToPlane( -vsFarPlane.w, IN.vsEyeDir.xyz, vsFarPlane );
    float3 viewSpacePos = eyeRay * depth;
-      
+
    // Build light vec, get length, clip pixel if needed
    float3 lightToPxlVec = viewSpacePos - lightPosition;
    float lenLightV = length( lightToPxlVec );
@@ -154,9 +154,11 @@ float4 main(   ConvexConnectP IN,
    // Specular term
    float4 colorSample = tex2D( colorBuffer, uvScene );
    float specular = 0;
+
+   float3 lightVec = lightPosition - viewSpacePos;
    float3 real_specular = AL_CalcSpecular(  colorSample.rgb,
                                       lightColor.rgb,
-                                      lightToPxlVec, 
+                                      lightVec, 
                                       normal, 
                                       viewSpacePos,
 							 matInfo.b,
