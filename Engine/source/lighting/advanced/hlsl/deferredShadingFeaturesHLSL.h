@@ -198,4 +198,12 @@ public:
                             RenderPassData &passData,
                             U32 &texIndex );
 };
+// Translucency Outputs
+class DeferredTranslucencyEmptyHLSL : public ShaderFeatureHLSL
+{
+public:
+   virtual String getName() { return "Deferred Shading: Translucency Map Placeholder"; }
+   virtual void processPix( Vector<ShaderComponent*> &componentList, 
+      const MaterialFeatureData &fd );
+};
 #endif

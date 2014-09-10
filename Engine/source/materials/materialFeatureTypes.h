@@ -182,6 +182,7 @@ DeclareFeatureType( MFT_DeferredSpecStrength );
 DeclareFeatureType( MFT_DeferredGlossMap );
 DeclareFeatureType( MFT_DeferredMatInfoFlags );
 DeclareFeatureType( MFT_DeferredTranslucencyMap );
+DeclareFeatureType( MFT_DeferredTranslucencyEmpty );
 DeclareFeatureType( MFT_DeferredEmptySpec );
 DeclareFeatureType( MFT_DeferredEmissive );
 DeclareFeatureType( MFT_SkyBox );

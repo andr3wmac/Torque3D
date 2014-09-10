@@ -496,6 +496,22 @@ void DeferredTranslucencyMapHLSL::setTexData(   Material::StageData &stageDat,
    }
 }
 
+// Tranlucency -> Green of Material Info Buffer.
+void DeferredTranslucencyEmptyHLSL::processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd )
+{
+   // search for color var
+   Var *color = (Var*) LangElement::find( getOutputTargetVarName(ShaderFeature::RenderTarget2) );
+   if ( !color )
+   {
+      // create color var
+      color = new Var;
+      color->setType( "fragout" );
+      color->setName( getOutputTargetVarName(ShaderFeature::RenderTarget2) );
+      color->setStructName( "OUT" );
+   }
+   output = new GenOp( "   @.g = 0.0;\r\n", color );
+   
+}
 //****************************************************************************
 // Vertex position
 //****************************************************************************
