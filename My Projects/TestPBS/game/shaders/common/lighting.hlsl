@@ -289,8 +289,9 @@ float4 AL_DeferredOutput(
 {
    lightColor *= shadowAttenuation;
    lightColor += ambient.rgb;
-
+   
+   diffuseColor = saturate(diffuseColor);
    diffuseColor.rgb = pow(diffuseColor.rgb, 2.2);
-   lightColor *= float4(diffuseColor.rgb, 1.0);
+   lightColor *= diffuseColor.rgb;
    return float4(lightColor.rgb, 0.0f); 
 }
