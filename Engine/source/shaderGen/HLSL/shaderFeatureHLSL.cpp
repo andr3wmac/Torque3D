@@ -1819,6 +1819,7 @@ void ReflectCubeFeatHLSL::processPix(  Vector<ShaderComponent*> &componentList,
                    meta->addStatement( new GenOp( "   @.a *= @/5;\r\n", glossColor, specStrength ) );
                else
                    meta->addStatement( new GenOp( "   @.a = @/5;\r\n", glossColor, specStrength ) );
+               meta->addStatement( new GenOp( "   @ = saturate(@);\r\n", glossColor, glossColor));
            }
        }
        else
