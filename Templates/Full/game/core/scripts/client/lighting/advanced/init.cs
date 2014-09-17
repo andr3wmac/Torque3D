@@ -61,7 +61,7 @@ function onActivateAdvancedLM()
    AL_FormatToken.enable();
    
    // Activate Deferred Shading
-   AL_DeferredShading.enable();
+   //AL_DeferredShading.enable();
 }
 
 function onDeactivateAdvancedLM()
@@ -70,7 +70,7 @@ function onDeactivateAdvancedLM()
    AL_FormatToken.disable();
    
    // Deactivate Deferred Shading
-   AL_DeferredShading.disable();
+   //AL_DeferredShading.disable();
 }
 
 function setAdvancedLighting()

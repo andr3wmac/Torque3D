@@ -30,24 +30,12 @@ uniform sampler1D colorCorrectionTex : register( s1 );
 uniform float OneOverGamma;
 uniform float Brightness;
 uniform float Contrast;
- 
+
 float4 main( PFXVertToPix IN ) : COLOR0  
 {
    float4 color = tex2D(backBuffer, IN.uv0.xy);
- 
-   // Apply the color correction.
-   color.r = tex1D( colorCorrectionTex, color.r ).r;
-   color.g = tex1D( colorCorrectionTex, color.g ).g;
-   color.b = tex1D( colorCorrectionTex, color.b ).b;
- 
-   // Apply gamma correction
-   color.rgb = pow( abs(color.rgb), OneOverGamma );
- 
-   // Apply contrast
-   color.rgb = ((color.rgb - 0.5f) * max(Contrast, 0)) + 0.5f;
- 
-   // Apply brightness
-   color.rgb += Brightness;
- 
+   //color.rgb = pow(color.rgb, 1/2.2);
+
+   //color.rgb = toFilmic(color.rgb); 
    return color;    
 }

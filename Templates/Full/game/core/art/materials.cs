@@ -22,9 +22,11 @@
 
 singleton Material( BlankWhite )
 {
-   diffuseMap[0] = "core/art/white";
+   diffuseMap[0] = "tools/materialeditor/gui/matEd_mappedMat";
    mapTo = "white";
    materialTag0 = "Miscellaneous";
+   specularPower[0] = "39";
+   specularStrength[0] = "1.47059";
 };
 
 singleton Material( Empty )

@@ -60,7 +60,7 @@ float4 main(   ConvexConnectP IN,
                uniform float4 lightColor,
                uniform float  lightBrightness,
                uniform float  lightRange,
-               uniform float2 lightAttenuation,
+               uniform float  lightAttenuation,
                uniform float3 lightDirection,
                uniform float4 lightSpotParams,
                uniform float4 lightMapParams,
@@ -91,7 +91,7 @@ float4 main(   ConvexConnectP IN,
    // Eye ray - Eye -> Pixel
    float3 eyeRay = getDistanceVectorToPlane( -vsFarPlane.w, IN.vsEyeDir.xyz, vsFarPlane );
    float3 viewSpacePos = eyeRay * depth;
-      
+
    // Build light vec, get length, clip pixel if needed
    float3 lightToPxlVec = viewSpacePos - lightPosition;
    float lenLightV = length( lightToPxlVec );
@@ -152,12 +152,20 @@ float4 main(   ConvexConnectP IN,
    // cause the hardware occlusion query to disable the shadow.
 
    // Specular term
-   float specular = AL_CalcSpecular(   -lightToPxlVec, 
-                                       normal, 
-                                       normalize( -eyeRay ) ) * lightBrightness * atten * shadowed;
+   float4 colorSample = tex2D( colorBuffer, uvScene );
+   float specular = 0;
+
+   float3 lightVec = lightPosition - viewSpacePos;
+   float3 real_specular = AL_CalcSpecular(  colorSample.rgb,
+                                      lightColor.rgb,
+                                      lightVec, 
+                                      normal, 
+                                      viewSpacePos,
+							 matInfo.b,
+							 matInfo.a );
 
    float Sat_NL_Att = saturate( nDotL * atten * shadowed ) * lightBrightness;
-   float3 lightColorOut = lightMapParams.rgb * lightColor.rgb;
+   float3 lightColorOut = (lightColor.rgb + real_specular) * lightBrightness * shadowed * atten;
    float4 addToResult = 0.0;
 
    // TODO: This needs to be removed when lightmapping is disabled
@@ -176,6 +184,5 @@ float4 main(   ConvexConnectP IN,
       addToResult = ( 1.0 - shadowed ) * abs(lightMapParams);
    }
 
-   float4 colorSample = tex2D( colorBuffer, uvScene );
    return AL_DeferredOutput(lightColorOut, colorSample.rgb, matInfo, addToResult, specular, colorSample.a, Sat_NL_Att);
 }

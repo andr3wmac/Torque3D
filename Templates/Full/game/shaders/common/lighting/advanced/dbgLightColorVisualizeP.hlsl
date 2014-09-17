@@ -22,11 +22,13 @@
 
 #include "shadergen:/autogenConditioners.h"
 #include "../../postfx/postFx.hlsl"
-
+#include "../../torque.hlsl"
 
 float4 main( PFXVertToPix IN, 
              uniform sampler2D lightPrePassTex : register(S0) ) : COLOR0
 {   
-   float4 lightColor = tex2D( lightPrePassTex, IN.uv0 );    
+   float4 lightColor = tex2D( lightPrePassTex, IN.uv0 ); 
+   lightColor.rgb = toFilmic(lightColor.rgb);   
+   lightColor.rgb = pow(lightColor.rgb, 1/2.2);
    return float4( lightColor.rgb, 1.0 );   
 }

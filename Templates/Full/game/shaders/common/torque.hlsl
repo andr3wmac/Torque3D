@@ -285,17 +285,20 @@ bool getFlag(float flags, int num)
    return (fmod(process, pow(2, squareNum)) >= squareNum); 
 }
 
-// Sample in linear space. Decodes gamma.
-float4 tex2DLinear(sampler2D tex, float2 texCoord)
+float3 toFilmic(float3 _rgb)
 {
-   float4 sample = tex2D(tex, texCoord);
-   return float4(pow(abs(sample.rgb), 2.2), sample.a);
+    _rgb = max(float3(0.0,0.0,0.0), _rgb - 0.004);
+    return (_rgb * (6.2*_rgb + 0.5)) / (_rgb*(6.2*_rgb + 1.7) + 0.06);
 }
 
-// Sample in linear space. Decodes gamma.
-float4 tex2DLodLinear(sampler2D tex, float4 texCoord)
+float3 FilmicTonemap( in float3 x )
 {
-   float4 sample = tex2Dlod(tex, texCoord);
-   return float4(pow(abs(sample.rgb), 2.2), sample.a);
+  float A = 0.22f; // Shoulder Strength.
+  float B = 0.30f; // Linear Strength.
+  float C = 0.10f; // Linear Angle.
+  float D = 0.20f; // Toe Strength.
+  float E = 0.01f; // Toe Numerator.
+  float F = 0.30f; // Toe Denominator.
+  return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F)) - E/F;
 }
 #endif // _TORQUE_HLSL_
