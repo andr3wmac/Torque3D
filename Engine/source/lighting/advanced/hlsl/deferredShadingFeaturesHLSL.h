@@ -38,7 +38,7 @@ public:
    
    virtual U32 getOutputTargets( const MaterialFeatureData &fd ) const { return ShaderFeature::RenderTarget1; }
    virtual Resources getResources( const MaterialFeatureData &fd );
-
+   virtual Material::BlendOp getBlendOp(){ return Material::LerpAlpha; };
    // Sets textures and texture flags for current pass
    virtual void setTexData( Material::StageData &stageDat,
                             const MaterialFeatureData &fd,

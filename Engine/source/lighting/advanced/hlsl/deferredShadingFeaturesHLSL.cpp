@@ -161,7 +161,7 @@ void DeferredDiffuseMapHLSL::processPix( Vector<ShaderComponent*> &componentList
    else
    {
        LangElement *statement = new GenOp( "tex2D(@, @)", diffuseMap, inTex );
-       output = new GenOp( "   @;\r\n", assignColor( statement, Material::None, NULL, ShaderFeature::RenderTarget1 ) );
+       output = new GenOp( "   @;\r\n", assignColor( statement, Material::Mul, NULL, ShaderFeature::RenderTarget1 ) );
    }
 }
 
