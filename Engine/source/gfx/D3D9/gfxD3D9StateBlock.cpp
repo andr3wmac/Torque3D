@@ -196,7 +196,7 @@ void GFXD3D9StateBlock::activate(GFXD3D9StateBlock* oldState)
       SS(maxAnisotropy, D3DSAMP_MAXANISOTROPY, mDesc.samplers[i].maxAnisotropy);
 
       // Gamma Space.
-      //SS(inGammaSpace, D3DSAMP_SRGBTEXTURE, mDesc.samplers[i].inGammaSpace);
+      SS(inGammaSpace, D3DSAMP_SRGBTEXTURE, mDesc.samplers[i].inGammaSpace);
       
       SS(addressModeU, D3DSAMP_ADDRESSU, GFXD3D9TextureAddress[mDesc.samplers[i].addressModeU]);
       SS(addressModeV, D3DSAMP_ADDRESSV, GFXD3D9TextureAddress[mDesc.samplers[i].addressModeV]);
