@@ -60,8 +60,9 @@ float4 main( Conn In ) : COLOR0
    float fac = dot( normalize( In.pos ), sunDir );
    fac = max( nightInterpAndExposure.y, pow( saturate( fac ), 2 ) );
    Out = lerp( color, nightSkyColor, nightInterpAndExposure.y );
-   
+   Out = color;
    Out.a = 1;
-
+   
+   Out = saturate(Out);
    return hdrEncode( Out );
 }
