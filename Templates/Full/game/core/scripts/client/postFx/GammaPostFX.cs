@@ -38,7 +38,7 @@ singleton GFXStateBlockData( GammaStateBlock : PFX_DefaultStateBlock )
 singleton PostEffect( GammaPostFX )
 {
    isEnabled = true;
-   allowReflectPass = false;
+   allowReflectPass = true;
    
    renderTime = "PFXBeforeBin";
    renderBin = "EditorBin";
