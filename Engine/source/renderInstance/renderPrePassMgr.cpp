@@ -572,6 +572,9 @@ void ProcessedPrePassMaterial::_determineFeatures( U32 stageNum,
    newFeatures.addFeature( MFT_EyeSpaceDepthOut );
    newFeatures.addFeature( MFT_PrePassConditioner );
 
+
+#ifndef TORQUE_DEDICATED
+
    // Deferred Shading : Diffuse
    if (mStages[stageNum].getTex( MFT_DiffuseMap ))
    {
@@ -586,27 +589,24 @@ void ProcessedPrePassMaterial::_determineFeatures( U32 stageNum,
    if( mStages[stageNum].getTex( MFT_SpecularMap ) )
    {
       newFeatures.addFeature( MFT_DeferredSpecMap );
-
-      if( !mStages[stageNum].getTex( MFT_SpecularMap )->mHasTransparency )
-         newFeatures.addFeature( MFT_DeferredSpecPower );
-      else
-         newFeatures.addFeature( MFT_DeferredGlossMap);
-
       newFeatures.addFeature( MFT_DeferredSpecStrength );
-   } else {
-       if (fd.features[MFT_PixSpecular])
-       {
-           newFeatures.addFeature(MFT_DeferredSpecColor);
-       }
-       else
-       {
-           newFeatures.addFeature(MFT_DeferredEmptySpec);
-       }
-      if ( mMaterial->mSpecular[stageNum] )
-      {
-         newFeatures.addFeature( MFT_DeferredSpecStrength );
+
+      if( mStages[stageNum].getTex( MFT_SpecularMap )->mHasTransparency )
+         newFeatures.addFeature( MFT_DeferredGlossMap);
+      else
          newFeatures.addFeature( MFT_DeferredSpecPower );
-      }
+   }
+   else
+   {
+       if ( mMaterial->mSpecular[stageNum] )
+       {
+           newFeatures.addFeature( MFT_DeferredSpecStrength );
+           newFeatures.addFeature( MFT_DeferredSpecPower );
+       }
+       if (fd.features[MFT_PixSpecular])
+           newFeatures.addFeature(MFT_DeferredSpecColor);
+       else
+           newFeatures.addFeature(MFT_DeferredEmptySpec);
    }
 
    // Deferred Shading : Translucency Mapping
@@ -617,8 +617,6 @@ void ProcessedPrePassMaterial::_determineFeatures( U32 stageNum,
 
    // Deferred Shading : Material Info Flags
    newFeatures.addFeature( MFT_DeferredMatInfoFlags );
-
-#ifndef TORQUE_DEDICATED
 
    for ( U32 i=0; i < fd.features.getCount(); i++ )
    {
@@ -648,7 +646,10 @@ void ProcessedPrePassMaterial::_determineFeatures( U32 stageNum,
                   type == MFT_InterlacedPrePass ||
                   type == MFT_Visibility ||
                   type == MFT_UseInstancing ||
-                  type == MFT_DiffuseVertColor )
+                  type == MFT_DiffuseVertColor ||
+                  type == MFT_DetailMap ||
+                  type == MFT_DetailNormalMap ||
+                  type == MFT_DiffuseMapAtlas)
          newFeatures.addFeature( type );
 
       // Add any transform features.
@@ -693,14 +694,7 @@ void ProcessedPrePassMaterial::_determineFeatures( U32 stageNum,
    if ( stageNum < 1 && 
          (  (  mMaterial->mCubemapData && mMaterial->mCubemapData->mCubemap ) ||
                mMaterial->mDynamicCubemap ) )
-   newFeatures.addFeature( MFT_CubeMap );
-   
-   if (fd.features.hasFeature( MFT_DetailMap ))
-       newFeatures.addFeature( MFT_DetailMap );
-   if (fd.features.hasFeature( MFT_DetailNormalMap ))
-       newFeatures.addFeature( MFT_DetailNormalMap );
-   if (fd.features.hasFeature( MFT_DiffuseMapAtlas ))
-       newFeatures.addFeature( MFT_DiffuseMapAtlas );
+   newFeatures.addFeature( MFT_CubeMap );   
 #endif
 
    // Deferred Shading : Disable Unused Features
