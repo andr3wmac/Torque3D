@@ -141,7 +141,7 @@ IMPLEMENT_CONOBJECT(PostEffect);
 
 GFX_ImplementTextureProfile( PostFxTextureProfile,
                             GFXTextureProfile::DiffuseMap,
-                            GFXTextureProfile::Static | GFXTextureProfile::PreserveSize,
+                            GFXTextureProfile::Static | GFXTextureProfile::PreserveSize | GFXTextureProfile::NoMipmap,
                             GFXTextureProfile::NONE );
 
 
