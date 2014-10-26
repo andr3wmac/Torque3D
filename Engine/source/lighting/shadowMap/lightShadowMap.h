@@ -273,6 +273,14 @@ protected:
    /// The callback used to get texture events.
    /// @see GFXTextureManager::addEventDelegate
    void _onTextureEvent( GFXTexCallbackCode code );  
+
+   // andrewmac : Static Shadow Map
+   bool mIsStatic;
+public:
+
+   bool isStatic() { return mIsStatic; }
+   void setStatic(bool value) { mIsStatic = value; }
+
 };
 
 GFX_DeclareTextureProfile( ShadowMapProfile );
@@ -297,7 +305,7 @@ public:
 
    LightShadowMap* getShadowMap() const { return mShadowMap; }
 
-   LightShadowMap* getOrCreateShadowMap();
+   LightShadowMap* getOrCreateShadowMap(bool isStatic = false);
 
    bool hasCookieTex() const { return cookie.isNotEmpty(); }
 

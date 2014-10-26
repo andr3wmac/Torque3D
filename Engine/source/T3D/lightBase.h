@@ -55,6 +55,8 @@ protected:
 
    F32 mBrightness;
 
+   // andrewmac: Static Shadows
+   bool mCastStaticShadows;
    bool mCastShadows;
 
    F32 mPriority;

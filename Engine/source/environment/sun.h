@@ -65,6 +65,8 @@ protected:
    F32  mEndElevation;
 
    bool mCastShadows;
+   // andrewmac: static shadows
+   bool mCastStaticShadows;
 
    LightInfo *mLight;
 

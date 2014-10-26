@@ -129,6 +129,8 @@ protected:
 
    F32 mOuterConeAngle;
 
+   // andrewmac: Static Shadows
+   bool mCastStaticShadows;
    bool mCastShadows;
 
    ::Vector<LightInfoEx*> mExtended;
@@ -190,6 +192,10 @@ public:
 
    bool getCastShadows() const { return mCastShadows; }
    void setCastShadows( bool castShadows ) { mCastShadows = castShadows; }
+
+   // andrewmac: static shadows
+   bool getCastStaticShadows() const { return mCastStaticShadows; }
+   void setCastStaticShadows( bool castShadows ) { mCastStaticShadows = castShadows; }
 
    void setPriority( F32 priority ) { mPriority = priority; }
    F32 getPriority() const { return mPriority; }

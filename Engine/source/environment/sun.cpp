@@ -66,6 +66,9 @@ Sun::Sun()
    mSunElevation = 35.0f;
    mCastShadows = true;
 
+   // andrewmac: static shadows
+   mCastStaticShadows = false;
+
    mAnimateSun = false;
    mTotalTime = 0.0f;
    mCurrTime = 0.0f;
@@ -162,7 +165,11 @@ void Sun::initPersistFields()
          "Adjust the Sun's global contrast/intensity");      
 
       addField( "castShadows", TypeBool, Offset( mCastShadows, Sun ), 
-         "Enables/disables shadows cast by objects due to Sun light");      
+         "Enables/disables shadows cast by objects due to Sun light");    
+
+      // andrewmac: static shadows
+      addField( "castStaticShadows", TypeBool, Offset( mCastStaticShadows, Sun ), 
+         "Enables/disables static shadows cast by objects due to Sun light"); 
 
    endGroup( "Lighting" );
 
@@ -220,6 +227,8 @@ U32 Sun::packUpdate(NetConnection *conn, U32 mask, BitStream *stream )
       stream->write( mLightAmbient );
       stream->write( mBrightness );      
       stream->writeFlag( mCastShadows );
+      // andrewmac: static shadows
+      stream->writeFlag( mCastStaticShadows );
       stream->write( mFlareScale );
 
       if ( stream->writeFlag( mFlareData ) )
@@ -253,6 +262,8 @@ void Sun::unpackUpdate( NetConnection *conn, BitStream *stream )
       stream->read( &mLightAmbient );
       stream->read( &mBrightness );      
       mCastShadows = stream->readFlag();
+      // andrewmac: static shadows
+      mCastStaticShadows = stream->readFlag();
       stream->read( &mFlareScale );
 
       if ( stream->readFlag() )
@@ -425,6 +436,7 @@ void Sun::_conformLights()
    // directional color are the same.
    bool castShadows = mLightColor != mLightAmbient && mCastShadows; 
    mLight->setCastShadows( castShadows );
+   mLight->setCastStaticShadows( mLightColor != mLightAmbient && mCastStaticShadows );
 }
 
 void Sun::_initCorona()

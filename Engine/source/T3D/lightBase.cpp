@@ -90,6 +90,8 @@ void LightBase::initPersistFields()
       addField( "color", TypeColorF, Offset( mColor, LightBase ), "Changes the base color hue of the light." );
       addField( "brightness", TypeF32, Offset( mBrightness, LightBase ), "Adjusts the lights power, 0 being off completely." );      
       addField( "castShadows", TypeBool, Offset( mCastShadows, LightBase ), "Enables/disabled shadow casts by this light." );
+       // andrewmac: static shadows
+      addField( "castStaticShadows", TypeBool, Offset( mCastStaticShadows, LightBase ), "Enables/disabled static shadow casts by this light." );
       addField( "priority", TypeF32, Offset( mPriority, LightBase ), "Used for sorting of lights by the light manager. "
 		  "Priority determines if a light has a stronger effect than, those with a lower value" );
 
@@ -276,6 +278,8 @@ U32 LightBase::packUpdate( NetConnection *conn, U32 mask, BitStream *stream )
       stream->write( mColor );
       stream->write( mBrightness );
 
+      // andrewmac: static shadows
+      stream->writeFlag( mCastStaticShadows );
       stream->writeFlag( mCastShadows );
 
       stream->write( mPriority );      
@@ -321,6 +325,9 @@ void LightBase::unpackUpdate( NetConnection *conn, BitStream *stream )
    {   
       stream->read( &mColor );
       stream->read( &mBrightness );      
+      
+       // andrewmac: static shadows
+      mCastStaticShadows = stream->readFlag();
       mCastShadows = stream->readFlag();
 
       stream->read( &mPriority );      

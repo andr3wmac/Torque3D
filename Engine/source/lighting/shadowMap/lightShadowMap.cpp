@@ -92,7 +92,8 @@ LightShadowMap::LightShadowMap( LightInfo *light )
       mVizQuery( NULL ),
       mWasOccluded( false ),
       mLastScreenSize( 0.0f ),
-      mLastPriority( 0.0f )
+      mLastPriority( 0.0f ),
+      mIsStatic( false )
 {
    GFXTextureManager::addEventDelegate( this, &LightShadowMap::_onTextureEvent );
 
@@ -298,6 +299,9 @@ bool LightShadowMap::setTextureStage( U32 currTexFlag, LightingShaderConstants* 
 void LightShadowMap::render(  RenderPassManager* renderPass,
                               const SceneRenderState *diffuseState )
 {
+   // andrewmac: Static Shadow Map Test
+   if ( mIsStatic && mLastUpdate ) return;
+
    mDebugTarget.setTexture( NULL );
    _render( renderPass, diffuseState );
    mDebugTarget.setTexture( mShadowMapTex );
@@ -632,12 +636,12 @@ void ShadowMapParams::_validate()
    texSize = mClamp( texSize, 32, maxTexSize );
 }
 
-LightShadowMap* ShadowMapParams::getOrCreateShadowMap()
+LightShadowMap* ShadowMapParams::getOrCreateShadowMap(bool isStatic)
 {
    if ( mShadowMap )
       return mShadowMap;
 
-   if ( !mLight->getCastShadows() )
+   if ( !mLight->getCastShadows() && !mLight->getCastStaticShadows() )
       return NULL;
 
    switch ( mLight->getType() )
@@ -664,6 +668,7 @@ LightShadowMap* ShadowMapParams::getOrCreateShadowMap()
          break;
    }
 
+   mShadowMap->setStatic(isStatic);
    return mShadowMap;
 }
 
