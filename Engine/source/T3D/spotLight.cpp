@@ -122,8 +122,7 @@ void SpotLight::_conformLights()
    mLight->setColor( mColor );
    mLight->setBrightness( mBrightness );
    mLight->setCastShadows( mCastShadows );
-   // andrewmac: static shadows
-   mLight->setCastStaticShadows( mCastStaticShadows );
+   mLight->setCastDynamicShadows( mCastDynamicShadows );
    mLight->setPriority( mPriority );
 
    mOuterConeAngle = getMax( 0.01f, mOuterConeAngle );

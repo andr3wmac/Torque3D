@@ -116,8 +116,7 @@ void PointLight::_conformLights()
 
    mLight->setBrightness( mBrightness );
    mLight->setCastShadows( mCastShadows );
-   // andrewmac: static shadows
-   mLight->setCastStaticShadows( mCastStaticShadows );
+   mLight->setCastDynamicShadows( mCastDynamicShadows );
    mLight->setPriority( mPriority );
 
    // Update the bounds and scale to fit our light.

@@ -150,8 +150,7 @@ ScatterSky::ScatterSky()
    mBrightness = 1.0f;
 
    mCastShadows = true;
-   // andrewmac: static shadows
-   mCastStaticShadows = true;
+   mCastDynamicShadows = true;
    mDirty = true;
 
    mLight = LightManager::createLightInfo();
@@ -272,7 +271,7 @@ void ScatterSky::_conformLights()
    mLight->setAmbient( mAmbientColor );
    mLight->setColor( mSunColor );
    mLight->setCastShadows( mCastShadows );
-   mLight->setCastStaticShadows( mCastStaticShadows );
+   mLight->setCastDynamicShadows( mCastDynamicShadows );
 
    FogData fog = getSceneManager()->getFogData();
    fog.color = mFogColor;
@@ -380,9 +379,8 @@ void ScatterSky::initPersistFields()
       addField( "castShadows", TypeBool, Offset( mCastShadows, ScatterSky ),
          "Enables/disables shadows cast by objects due to ScatterSky light." );
 
-      // andrewmac: static shadows
-      addField( "castStaticShadows", TypeBool, Offset( mCastStaticShadows, ScatterSky ),
-         "Enables/disables static shadows cast by objects due to ScatterSky light." );
+      addField( "castDynamicShadows", TypeBool, Offset( mCastDynamicShadows, ScatterSky ),
+         "Enables/disables dynamic shadows cast by objects due to ScatterSky light." );
 
       addField( "brightness", TypeF32, Offset( mBrightness, ScatterSky ),
          "The brightness of the ScatterSky's light object." );
@@ -488,8 +486,7 @@ U32 ScatterSky::packUpdate(NetConnection *con, U32 mask, BitStream *stream)
       stream->write( mBrightness );
 
       stream->writeFlag( mCastShadows );
-      // andrewmac: static shadows
-      stream->writeFlag( mCastStaticShadows );
+      stream->writeFlag( mCastDynamicShadows );
 
       stream->write( mFlareScale );
 
@@ -589,8 +586,7 @@ void ScatterSky::unpackUpdate(NetConnection *con, BitStream *stream)
       stream->read( &mBrightness );
 
       mCastShadows = stream->readFlag();
-      // andrewmac: cast static shadows
-      mCastStaticShadows = stream->readFlag();
+      mCastDynamicShadows = stream->readFlag();
 
       stream->read( &mFlareScale );
 

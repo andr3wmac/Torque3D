@@ -65,9 +65,7 @@ Sun::Sun()
    mSunAzimuth = 0.0f;
    mSunElevation = 35.0f;
    mCastShadows = true;
-
-   // andrewmac: static shadows
-   mCastStaticShadows = false;
+   mCastDynamicShadows = false;
 
    mAnimateSun = false;
    mTotalTime = 0.0f;
@@ -167,9 +165,8 @@ void Sun::initPersistFields()
       addField( "castShadows", TypeBool, Offset( mCastShadows, Sun ), 
          "Enables/disables shadows cast by objects due to Sun light");    
 
-      // andrewmac: static shadows
-      addField( "castStaticShadows", TypeBool, Offset( mCastStaticShadows, Sun ), 
-         "Enables/disables static shadows cast by objects due to Sun light"); 
+      addField( "castDynamicShadows", TypeBool, Offset( mCastDynamicShadows, Sun ), 
+         "Enables/disables dynamic shadows cast by objects due to Sun light"); 
 
    endGroup( "Lighting" );
 
@@ -227,8 +224,7 @@ U32 Sun::packUpdate(NetConnection *conn, U32 mask, BitStream *stream )
       stream->write( mLightAmbient );
       stream->write( mBrightness );      
       stream->writeFlag( mCastShadows );
-      // andrewmac: static shadows
-      stream->writeFlag( mCastStaticShadows );
+      stream->writeFlag( mCastDynamicShadows );
       stream->write( mFlareScale );
 
       if ( stream->writeFlag( mFlareData ) )
@@ -262,8 +258,7 @@ void Sun::unpackUpdate( NetConnection *conn, BitStream *stream )
       stream->read( &mLightAmbient );
       stream->read( &mBrightness );      
       mCastShadows = stream->readFlag();
-      // andrewmac: static shadows
-      mCastStaticShadows = stream->readFlag();
+      mCastDynamicShadows = stream->readFlag();
       stream->read( &mFlareScale );
 
       if ( stream->readFlag() )
@@ -436,7 +431,7 @@ void Sun::_conformLights()
    // directional color are the same.
    bool castShadows = mLightColor != mLightAmbient && mCastShadows; 
    mLight->setCastShadows( castShadows );
-   mLight->setCastStaticShadows( mLightColor != mLightAmbient && mCastStaticShadows );
+   mLight->setCastDynamicShadows( mLightColor != mLightAmbient && mCastDynamicShadows );
 }
 
 void Sun::_initCorona()

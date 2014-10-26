@@ -206,8 +206,7 @@ protected:
    LightInfo *mLight;
 
    bool mCastShadows;
-   // andrewmac: static shadows
-   bool mCastStaticShadows;
+   bool mCastDynamicShadows;
    bool mDirty;
 
    LightFlareData *mFlareData;

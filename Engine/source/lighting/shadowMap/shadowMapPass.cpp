@@ -63,7 +63,7 @@ ShadowMapPass::ShadowMapPass(LightManager* lightManager, ShadowMapManager* shado
    mLightManager = lightManager;
    mShadowManager = shadowManager;
 
-   // Dynamic
+   // Static
    mShadowRPM = new ShadowRenderPassManager();
    mShadowRPM->assignName( "ShadowRenderPassManager" );
    mShadowRPM->registerObject();
@@ -72,14 +72,14 @@ ShadowMapPass::ShadowMapPass(LightManager* lightManager, ShadowMapManager* shado
    mShadowRPM->addManager( new RenderTerrainMgr( 0.5f, 0.5f )  );
    mShadowRPM->addManager( new RenderImposterMgr( 0.6f, 0.6f )  );
 
-   // Static Dynamic
-   mStaticShadowRPM = new StaticShadowRenderPassManager();
-   mStaticShadowRPM->assignName( "StaticShadowRenderPassManager" );
-   mStaticShadowRPM->registerObject();
-   Sim::getRootGroup()->addObject( mStaticShadowRPM );
-   mStaticShadowRPM->addManager( new RenderMeshMgr(RenderPassManager::RIT_Mesh, 0.3f, 0.3f) );
-   mStaticShadowRPM->addManager( new RenderTerrainMgr( 0.5f, 0.5f )  );
-   mStaticShadowRPM->addManager( new RenderImposterMgr( 0.6f, 0.6f )  );
+   // Dynamic
+   mDynamicShadowRPM = new DynamicShadowRenderPassManager();
+   mDynamicShadowRPM->assignName( "DynamicShadowRenderPassManager" );
+   mDynamicShadowRPM->registerObject();
+   Sim::getRootGroup()->addObject( mDynamicShadowRPM );
+   mDynamicShadowRPM->addManager( new RenderMeshMgr(RenderPassManager::RIT_Mesh, 0.3f, 0.3f) );
+   mDynamicShadowRPM->addManager( new RenderTerrainMgr( 0.5f, 0.5f )  );
+   mDynamicShadowRPM->addManager( new RenderImposterMgr( 0.6f, 0.6f )  );
 
    mActiveLights = 0;
 
@@ -125,8 +125,8 @@ ShadowMapPass::~ShadowMapPass()
    if ( mShadowRPM )
       mShadowRPM->deleteObject();
 
-   if ( mStaticShadowRPM )
-      mStaticShadowRPM->deleteObject();
+   if ( mDynamicShadowRPM )
+      mDynamicShadowRPM->deleteObject();
 }
 
 void ShadowMapPass::render(   SceneManager *sceneManager, 
@@ -167,10 +167,10 @@ void ShadowMapPass::render(   SceneManager *sceneManager,
          continue;
 
       // Static light cast?
-      params->isStatic = mLights[i]->getCastStaticShadows();
+      params->isDynamic = mLights[i]->getCastDynamicShadows();
 
       // andrewmac: static shadows.
-      LightShadowMap *lsm = params->getOrCreateShadowMap(mLights[i]->getCastStaticShadows());
+      LightShadowMap *lsm = params->getOrCreateShadowMap(mLights[i]->getCastDynamicShadows());
 
       // First check the visiblity query... if it wasn't 
       // visible skip it.
@@ -207,9 +207,9 @@ void ShadowMapPass::render(   SceneManager *sceneManager,
          mShadowManager->setLightShadowMap( lsm );
 
          // andrewmac: Static/Dynamic Shadows
-         if ( lsm->isStatic() )
+         if ( lsm->isDynamic() )
          {
-            lsm->render( mStaticShadowRPM, diffuseState );
+            lsm->render( mDynamicShadowRPM, diffuseState );
          } else {
             lsm->render( mShadowRPM, diffuseState );
          }
@@ -248,6 +248,7 @@ void ShadowMapPass::render(   SceneManager *sceneManager,
    mShadowManager->setLightShadowMap( NULL );
 }
 
+// Static Shadow Maps
 void ShadowRenderPassManager::addInst( RenderInst *inst )
 {
    PROFILE_SCOPE(ShadowRenderPassManager_addInst);
@@ -270,8 +271,8 @@ void ShadowRenderPassManager::addInst( RenderInst *inst )
    Parent::addInst(inst);
 }
 
-// andrewmac: static shadows
-void StaticShadowRenderPassManager::addInst( RenderInst *inst )
+// Dynamic Shadow Maps
+void DynamicShadowRenderPassManager::addInst( RenderInst *inst )
 {
    PROFILE_SCOPE(StaticShadowRenderPassManager_addInst);
 
@@ -282,7 +283,7 @@ void StaticShadowRenderPassManager::addInst( RenderInst *inst )
          return;
 
       const BaseMaterialDefinition *mat = meshRI->matInst->getMaterial();
-      if ( !mat->castsStaticShadows() || mat->isTranslucent() )
+      if ( !mat->castsDynamicShadows() || mat->isTranslucent() )
       {
          // Do not add this instance, return here and avoid the default behavior
          // of calling up to Parent::addInst()

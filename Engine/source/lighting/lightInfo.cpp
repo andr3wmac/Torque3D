@@ -50,7 +50,7 @@ LightInfo::LightInfo()
       mOuterConeAngle( 90.0f ),
       mType( Vector ),
       mCastShadows( false ),
-      mCastStaticShadows( false ),
+      mCastDynamicShadows( false ),
       mPriority( 1.0f ),
       mScore( 0.0f ),
       mDebugRender( false )

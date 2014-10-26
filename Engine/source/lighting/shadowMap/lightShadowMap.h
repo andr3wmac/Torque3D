@@ -275,11 +275,11 @@ protected:
    void _onTextureEvent( GFXTexCallbackCode code );  
 
    // andrewmac : Static Shadow Map
-   bool mIsStatic;
+   bool mIsDynamic;
 public:
 
-   bool isStatic() { return mIsStatic; }
-   void setStatic(bool value) { mIsStatic = value; }
+   bool isDynamic() { return mIsDynamic; }
+   void setDynamic(bool value) { mIsDynamic = value; }
 
 };
 
@@ -304,9 +304,9 @@ public:
    virtual void unpackUpdate( BitStream *stream );
 
    // andremwac: static shadow maps
-   LightShadowMap* getShadowMap() const { return isStatic ? mStaticShadowMap : mShadowMap; }
+   LightShadowMap* getShadowMap() const { return isDynamic ? mDynamicShadowMap : mShadowMap; }
 
-   LightShadowMap* getOrCreateShadowMap(bool isStatic = false);
+   LightShadowMap* getOrCreateShadowMap(bool isDynamic = false);
 
    bool hasCookieTex() const { return cookie.isNotEmpty(); }
 
@@ -323,7 +323,7 @@ protected:
 
    ///
    LightShadowMap *mShadowMap;
-   LightShadowMap *mStaticShadowMap;
+   LightShadowMap *mDynamicShadowMap;
 
    LightInfo *mLight;
 
@@ -387,7 +387,7 @@ public:
    /// @}
 
    // andrewmac: static shadow maps
-   bool isStatic;
+   bool isDynamic;
 };
 
 #endif // _LIGHTSHADOWMAP_H_

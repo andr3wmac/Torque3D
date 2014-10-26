@@ -93,7 +93,7 @@ LightShadowMap::LightShadowMap( LightInfo *light )
       mWasOccluded( false ),
       mLastScreenSize( 0.0f ),
       mLastPriority( 0.0f ),
-      mIsStatic( false )
+      mIsDynamic( false )
 {
    GFXTextureManager::addEventDelegate( this, &LightShadowMap::_onTextureEvent );
 
@@ -299,8 +299,8 @@ bool LightShadowMap::setTextureStage( U32 currTexFlag, LightingShaderConstants* 
 void LightShadowMap::render(  RenderPassManager* renderPass,
                               const SceneRenderState *diffuseState )
 {
-   // andrewmac: Static Shadow Map Test
-   if ( mIsStatic && mLastUpdate ) return;
+   // If this is not dynamic we only render once.
+   if ( !mIsDynamic && mLastUpdate ) return;
 
    mDebugTarget.setTexture( NULL );
    _render( renderPass, diffuseState );
@@ -563,8 +563,8 @@ LightInfoExType ShadowMapParams::Type( "" );
 ShadowMapParams::ShadowMapParams( LightInfo *light ) 
    :  mLight( light ),
       mShadowMap( NULL ),
-      mStaticShadowMap ( NULL ),
-      isStatic ( true )
+      mDynamicShadowMap ( NULL ),
+      isDynamic ( true )
 {
    attenuationRatio.set( 0.0f, 1.0f, 1.0f );
    shadowType = ShadowType_Spot;
@@ -582,7 +582,7 @@ ShadowMapParams::ShadowMapParams( LightInfo *light )
 ShadowMapParams::~ShadowMapParams()
 {
    SAFE_DELETE( mShadowMap );
-   SAFE_DELETE( mStaticShadowMap );
+   SAFE_DELETE( mDynamicShadowMap );
 }
 
 void ShadowMapParams::_validate()
@@ -639,12 +639,12 @@ void ShadowMapParams::_validate()
    texSize = mClamp( texSize, 32, maxTexSize );
 }
 
-LightShadowMap* ShadowMapParams::getOrCreateShadowMap(bool isStatic)
+LightShadowMap* ShadowMapParams::getOrCreateShadowMap(bool isDynamic)
 {
-   if ( isStatic && mStaticShadowMap ) return mStaticShadowMap;
-   if ( !isStatic && mShadowMap ) return mShadowMap;
+   if ( isDynamic && mDynamicShadowMap ) return mDynamicShadowMap;
+   if ( !isDynamic && mShadowMap ) return mShadowMap;
 
-   if ( !mLight->getCastShadows() && !mLight->getCastStaticShadows() )
+   if ( !mLight->getCastShadows() && !mLight->getCastDynamicShadows() )
       return NULL;
 
    LightShadowMap* newShadowMap = NULL;
@@ -673,11 +673,11 @@ LightShadowMap* ShadowMapParams::getOrCreateShadowMap(bool isStatic)
          break;
    }
 
-   if ( isStatic )
+   if ( isDynamic )
    {
-      newShadowMap->setStatic( true );
-      mStaticShadowMap = newShadowMap;
-      return mStaticShadowMap;
+      newShadowMap->setDynamic( true );
+      mDynamicShadowMap = newShadowMap;
+      return mDynamicShadowMap;
    } else {
       mShadowMap = newShadowMap;
       return mShadowMap;
@@ -756,7 +756,7 @@ void ShadowMapParams::unpackUpdate( BitStream *stream )
       // map so it can be reallocated on the next render.
       shadowType = newType;
       SAFE_DELETE( mShadowMap );
-      SAFE_DELETE( mStaticShadowMap );
+      SAFE_DELETE( mDynamicShadowMap );
    }
 
    mathRead( *stream, &attenuationRatio );

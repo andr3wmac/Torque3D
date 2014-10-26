@@ -3017,7 +3017,7 @@
                         // andrewmac: static shadows hack
                         new GuiCheckBoxCtrl() {
                            canSaveDynamicFields = "0";
-                           internalName = "castStaticShadows";
+                           internalName = "castDynamicShadows";
                            Enabled = "1";
                            isContainer = "0";
                            Profile = "ToolsGuiCheckBoxProfile";
@@ -3028,11 +3028,11 @@
                            MinExtent = "8 2";
                            canSave = "1";
                            Visible = "1";
-                           Command = "MaterialEditorGui.updateActiveMaterial(\"castStaticShadows\", $ThisControl.getValue());";
+                           Command = "MaterialEditorGui.updateActiveMaterial(\"castDynamicShadows\", $ThisControl.getValue());";
                            tooltipprofile = "ToolsGuiDefaultProfile";
                            ToolTip = "Determines if this material will be rendered from both sides of the polygon, or just the \'front facing\' side. ";
                            hovertime = "1000";
-                           text = "Static Shadows";
+                           text = "Dynamic Shadows";
                            groupNum = "-1";
                            buttonType = "ToggleButton";
                            useMouseEvents = "0";
