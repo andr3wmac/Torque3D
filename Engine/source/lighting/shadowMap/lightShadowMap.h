@@ -303,7 +303,8 @@ public:
    virtual void packUpdate( BitStream *stream ) const;
    virtual void unpackUpdate( BitStream *stream );
 
-   LightShadowMap* getShadowMap() const { return mShadowMap; }
+   // andremwac: static shadow maps
+   LightShadowMap* getShadowMap() const { return isStatic ? mStaticShadowMap : mShadowMap; }
 
    LightShadowMap* getOrCreateShadowMap(bool isStatic = false);
 
@@ -322,6 +323,7 @@ protected:
 
    ///
    LightShadowMap *mShadowMap;
+   LightShadowMap *mStaticShadowMap;
 
    LightInfo *mLight;
 
@@ -383,6 +385,9 @@ public:
    bool lastSplitTerrainOnly;
 
    /// @}
+
+   // andrewmac: static shadow maps
+   bool isStatic;
 };
 
 #endif // _LIGHTSHADOWMAP_H_

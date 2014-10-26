@@ -81,7 +81,7 @@ singleton Material( Grid512_OrangeLines_Mat )
    mapTo = "Grid512_OrangeLines_Mat";
    diffuseMap[0] = "core/art/grids/512_orange_lines";
    materialTag0 = "TestMaterial";
-   castShadows = "0";
+   castShadows = "1";
    castStaticShadows = "0";
 };
 

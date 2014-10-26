@@ -562,7 +562,9 @@ LightInfoExType ShadowMapParams::Type( "" );
 
 ShadowMapParams::ShadowMapParams( LightInfo *light ) 
    :  mLight( light ),
-      mShadowMap( NULL )
+      mShadowMap( NULL ),
+      mStaticShadowMap ( NULL ),
+      isStatic ( true )
 {
    attenuationRatio.set( 0.0f, 1.0f, 1.0f );
    shadowType = ShadowType_Spot;
@@ -580,6 +582,7 @@ ShadowMapParams::ShadowMapParams( LightInfo *light )
 ShadowMapParams::~ShadowMapParams()
 {
    SAFE_DELETE( mShadowMap );
+   SAFE_DELETE( mStaticShadowMap );
 }
 
 void ShadowMapParams::_validate()
@@ -638,38 +641,47 @@ void ShadowMapParams::_validate()
 
 LightShadowMap* ShadowMapParams::getOrCreateShadowMap(bool isStatic)
 {
-   if ( mShadowMap )
-      return mShadowMap;
+   if ( isStatic && mStaticShadowMap ) return mStaticShadowMap;
+   if ( !isStatic && mShadowMap ) return mShadowMap;
 
    if ( !mLight->getCastShadows() && !mLight->getCastStaticShadows() )
       return NULL;
 
+   LightShadowMap* newShadowMap = NULL;
+
    switch ( mLight->getType() )
    {
       case LightInfo::Spot:
-         mShadowMap = new SingleLightShadowMap( mLight );
+         newShadowMap = new SingleLightShadowMap( mLight );
          break;
 
       case LightInfo::Vector:
-         mShadowMap = new PSSMLightShadowMap( mLight );
+         newShadowMap = new PSSMLightShadowMap( mLight );
          break;
 
       case LightInfo::Point:
 
          if ( shadowType == ShadowType_CubeMap )
-            mShadowMap = new CubeLightShadowMap( mLight );
+            newShadowMap = new CubeLightShadowMap( mLight );
          else if ( shadowType == ShadowType_Paraboloid )
-            mShadowMap = new ParaboloidLightShadowMap( mLight );
+            newShadowMap = new ParaboloidLightShadowMap( mLight );
          else
-            mShadowMap = new DualParaboloidLightShadowMap( mLight );
+            newShadowMap = new DualParaboloidLightShadowMap( mLight );
          break;
    
       default:
          break;
    }
 
-   mShadowMap->setStatic(isStatic);
-   return mShadowMap;
+   if ( isStatic )
+   {
+      newShadowMap->setStatic( true );
+      mStaticShadowMap = newShadowMap;
+      return mStaticShadowMap;
+   } else {
+      mShadowMap = newShadowMap;
+      return mShadowMap;
+   }
 }
 
 GFXTextureObject* ShadowMapParams::getCookieTex()
@@ -744,6 +756,7 @@ void ShadowMapParams::unpackUpdate( BitStream *stream )
       // map so it can be reallocated on the next render.
       shadowType = newType;
       SAFE_DELETE( mShadowMap );
+      SAFE_DELETE( mStaticShadowMap );
    }
 
    mathRead( *stream, &attenuationRatio );

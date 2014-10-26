@@ -163,13 +163,13 @@ void ShadowMapPass::render(   SceneManager *sceneManager,
       ShadowMapParams *params = mLights[i]->getExtended<ShadowMapParams>();
 
       // Before we do anything... skip lights without shadows.      
-      if ( smDisableShadows )
+      if ( !mLights[i]->getCastShadows() || smDisableShadows )
          continue;
+
+      // Static light cast?
+      params->isStatic = mLights[i]->getCastStaticShadows();
 
       // andrewmac: static shadows.
-      if ( !mLights[i]->getCastShadows() && !mLights[i]->getCastStaticShadows() )
-         continue;
-
       LightShadowMap *lsm = params->getOrCreateShadowMap(mLights[i]->getCastStaticShadows());
 
       // First check the visiblity query... if it wasn't 
