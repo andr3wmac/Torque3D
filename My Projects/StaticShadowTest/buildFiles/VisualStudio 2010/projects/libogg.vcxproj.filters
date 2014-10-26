@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{b7c8d688-5561-4cda-9599-db0344bb4f4b}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat;cc</Extensions>
+    </Filter>
+    <Filter Include="Source Files\lib">
+      <UniqueIdentifier>{1b0847e9-984a-4b82-af58-51bf90f94638}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\lib\include">
+      <UniqueIdentifier>{80942afc-f579-4bd0-a046-0bf8bc69919b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\lib\src">
+      <UniqueIdentifier>{fdfc10f4-9d15-41f2-9fc1-83677e6f511f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libogg\src\bitwise.c">
+      <Filter>Source Files\lib\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libogg\src\framing.c">
+      <Filter>Source Files\lib\src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\Engine\lib\libogg\include\ogg\ogg.h">
+      <Filter>Source Files\lib\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Engine\lib\libogg\include\ogg\os_types.h">
+      <Filter>Source Files\lib\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+</Project>
