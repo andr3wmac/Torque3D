@@ -205,7 +205,8 @@ void ShadowMapPass::render(   SceneManager *sceneManager,
    }
 
    // Now sort the shadow info by priority.
-   shadowMaps.sort( LightShadowMap::cmpPriority );
+   // andrewmac: tempoarily disabled until I find a better solution.
+   //shadowMaps.sort( LightShadowMap::cmpPriority );
 
    GFXDEBUGEVENT_SCOPE( ShadowMapPass_Render, ColorI::RED );
 
@@ -283,6 +284,7 @@ void ShadowRenderPassManager::addInst( RenderInst *inst )
          return;
       }
    }
+
    //Con::printf("[STATIC] Object added.");
    Parent::addInst(inst);
 }
@@ -306,6 +308,7 @@ void DynamicShadowRenderPassManager::addInst( RenderInst *inst )
          return;
       }
    }
+
    //Con::printf("[DYNAMIC] Object added.");
    Parent::addInst(inst);
 }
