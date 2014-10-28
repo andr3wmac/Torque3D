@@ -200,10 +200,12 @@ float4 main( FarFrustumQuadConnectP IN,
 
       static_shadowed = lerp( static_shadowed, 1.0, saturate( fadeOutAmt ) );
       dynamic_shadowed = lerp( dynamic_shadowed, 1.0, saturate( fadeOutAmt ) );
-      //float shadowed = lerp(static_shadowed, dynamic_shadowed, 0.5);
+      
 
-      // temp for debugging. change to dynamic_shadowed to see the dynamic shadow map.
-      float shadowed = static_shadowed;
+      // temp for debugging. uncomment one or the other.
+      //float shadowed = static_shadowed;
+      float shadowed = dynamic_shadowed;
+      //float shadowed = lerp(static_shadowed, dynamic_shadowed, 0.5);
 
       #ifdef PSSM_DEBUG_RENDER
          if ( fadeOutAmt > 1.0 )
