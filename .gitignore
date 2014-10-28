@@ -183,3 +183,4 @@ Project Manager.exe
 projects.xml
 Qt*.dll
 My Projects/StaticShadowTest/buildFiles/Link/
+My Projects/StaticShadowTest/game/shaders/procedural/

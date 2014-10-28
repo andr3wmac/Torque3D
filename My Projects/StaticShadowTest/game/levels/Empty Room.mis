@@ -105,7 +105,7 @@ new SimGroup(MissionGroup) {
    };
    new ConvexShape() {
       Material = "Grid512_OrangeLines_Mat";
-      position = "0.25863 4.64551 1.85801";
+      position = "-6.2026 4.64551 2.15227";
       rotation = "0 0 1 104.134";
       scale = "1 1 1";
       canSave = "1";
@@ -113,7 +113,7 @@ new SimGroup(MissionGroup) {
 
       surface = "0 0 0 1 0 0 1.52323";
       surface = "0 1 0 0 0 0 -1.52323";
-      surface = "0.707107 0 0 0.707106 0 2.20399 0";
+      surface = "0.707107 0 0 0.707107 0 2.20399 0";
       surface = "0 0.707107 -0.707107 0 0 -2.20399 0";
       surface = "0.5 0.5 -0.5 0.5 -2.47987 0 -2.36725e-007";
       surface = "0.5 -0.5 0.5 0.5 2.47987 0 -2.36725e-007";
@@ -128,7 +128,7 @@ new SimGroup(MissionGroup) {
 
       surface = "0 0 0 1 0 0 0.05";
       surface = "0 1 0 0 0 0 -0.05";
-      surface = "0.707107 0 0 0.707106 0 0.179593 0";
+      surface = "0.707107 0 0 0.707107 0 0.179593 0";
       surface = "0 0.707107 -0.707107 0 0 -0.179593 -7.10543e-015";
       surface = "0.5 0.5 -0.5 0.5 -0.162133 0 -2.16072e-009";
       surface = "0.5 -0.5 0.5 0.5 0.162133 0 -2.16072e-009";
@@ -138,7 +138,7 @@ new SimGroup(MissionGroup) {
       isEnabled = "1";
       color = "1 0 0.117647 1";
       brightness = "1";
-      castShadows = "0";
+      castShadows = "1";
       castDynamicShadows = "0";
       priority = "1";
       animate = "1";
@@ -174,7 +174,7 @@ new SimGroup(MissionGroup) {
 
       surface = "0 0 0 1 0 0 1.52323";
       surface = "0 1 0 0 0 0 -1.52323";
-      surface = "0.707107 0 0 0.707107 0 2.20399 0";
+      surface = "0.707107 0 0 0.707106 0 2.20399 0";
       surface = "0 0.707107 -0.707107 0 0 -2.20399 0";
       surface = "0.5 0.5 -0.5 0.5 -2.47987 0 -2.36725e-007";
       surface = "0.5 -0.5 0.5 0.5 2.47987 0 -2.36725e-007";
@@ -189,14 +189,14 @@ new SimGroup(MissionGroup) {
 
       surface = "0 0 0 1 0 0 1.52323";
       surface = "0 1 0 0 0 0 -1.52323";
-      surface = "0.707107 0 0 0.707106 0 2.20399 0";
+      surface = "0.707107 0 0 0.707107 0 2.20399 0";
       surface = "0 0.707107 -0.707107 0 0 -2.20399 0";
       surface = "0.5 0.5 -0.5 0.5 -2.47987 0 -2.36725e-007";
       surface = "0.5 -0.5 0.5 0.5 2.47987 0 -2.36725e-007";
    };
    new ConvexShape() {
-      Material = "Grid512_OrangeLines_Mat";
-      position = "-16.6681 3.00856 5.35164";
+      Material = "w_swarmgun";
+      position = "3.10672 3.00856 3.563";
       rotation = "0 0 1 104.134";
       scale = "1 1 1";
       canSave = "1";
@@ -204,7 +204,7 @@ new SimGroup(MissionGroup) {
 
       surface = "0 0 0 1 0 0 1.52323";
       surface = "0 1 0 0 0 0 -1.52323";
-      surface = "0.707107 0 0 0.707107 0 2.20399 0";
+      surface = "0.707107 0 0 0.707106 0 2.20399 0";
       surface = "0 0.707107 -0.707107 0 0 -2.20399 0";
       surface = "0.5 0.5 -0.5 0.5 -2.47987 0 -2.36725e-007";
       surface = "0.5 -0.5 0.5 0.5 2.47987 0 -2.36725e-007";
@@ -214,7 +214,7 @@ new SimGroup(MissionGroup) {
       isEnabled = "1";
       color = "0 0.117647 1 1";
       brightness = "1";
-      castShadows = "0";
+      castShadows = "1";
       castDynamicShadows = "0";
       priority = "1";
       animate = "1";
@@ -245,8 +245,8 @@ new SimGroup(MissionGroup) {
       isEnabled = "1";
       color = "0.32549 1 0 1";
       brightness = "1";
-      castShadows = "0";
-      castDynamicShadows = "0";
+      castShadows = "1";
+      castDynamicShadows = "1";
       priority = "1";
       animate = "1";
       animationPeriod = "1";
@@ -265,7 +265,7 @@ new SimGroup(MissionGroup) {
       representedInLightmap = "0";
       shadowDarkenColor = "0 0 0 -1";
       includeLightmappedGeometryInShadow = "0";
-      position = "0.568278 5.28878 2.78485";
+      position = "0.568278 5.28878 6.098";
       rotation = "1 0 0 0";
       canSave = "1";
       canSaveDynamicFields = "1";
@@ -276,7 +276,7 @@ new SimGroup(MissionGroup) {
       isEnabled = "1";
       color = "0.443137 0.0313726 0.741176 1";
       brightness = "1";
-      castShadows = "0";
+      castShadows = "1";
       castDynamicShadows = "0";
       priority = "1";
       animate = "1";
@@ -312,7 +312,7 @@ new SimGroup(MissionGroup) {
 
       surface = "0 0 0 1 0 0 3.43361";
       surface = "0 1 0 0 0 0 -3.43361";
-      surface = "0.707107 0 0 0.707106 0 0.429735 0";
+      surface = "0.707107 0 0 0.707107 0 0.429735 0";
       surface = "0 0.707107 -0.707107 0 0 -0.429735 0";
       surface = "0.5 0.5 -0.5 0.5 -8.67497 0 -5.43987e-006";
       surface = "0.5 -0.5 0.5 0.5 8.67497 0 -5.43987e-006";
