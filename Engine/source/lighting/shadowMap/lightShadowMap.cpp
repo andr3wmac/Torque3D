@@ -269,11 +269,20 @@ GFXTextureObject* LightShadowMap::_getDepthTarget( U32 width, U32 height )
 
 bool LightShadowMap::setTextureStage( U32 currTexFlag, LightingShaderConstants* lsc )
 {
-   if ( currTexFlag == Material::DynamicLight )
+   if ( currTexFlag == Material::DynamicLight && !isDynamic() )
    {
       S32 reg = lsc->mShadowMapSC->getSamplerRegister();
-   	if ( reg != -1 )
-      	GFX->setTexture( reg, mShadowMapTex);
+
+      if ( reg != -1 )
+         GFX->setTexture( reg, mShadowMapTex);
+
+      return true;
+   } else if ( currTexFlag == Material::DynamicShadowMap && isDynamic() )
+   {
+      S32 reg = lsc->mDynamicShadowMapSC->getSamplerRegister();
+
+      if ( reg != -1 )
+         GFX->setTexture( reg, mShadowMapTex);
 
       return true;
    }
@@ -460,8 +469,9 @@ LightingShaderConstants::LightingShaderConstants()
       mLightInvRadiusSqSC(NULL),
       mLightSpotDirSC(NULL),
       mLightSpotAngleSC(NULL),
-	  mLightSpotFalloffSC(NULL),
+      mLightSpotFalloffSC(NULL),
       mShadowMapSC(NULL), 
+      mDynamicShadowMapSC(NULL), 
       mShadowMapSizeSC(NULL), 
       mCookieMapSC(NULL),
       mRandomDirsConst(NULL),
@@ -517,6 +527,7 @@ void LightingShaderConstants::init(GFXShader* shader)
    mLightSpotFalloffSC = shader->getShaderConstHandle( ShaderGenVars::lightSpotFalloff );
 
    mShadowMapSC = shader->getShaderConstHandle("$shadowMap");
+   mDynamicShadowMapSC = shader->getShaderConstHandle("$dynamicShadowMap");
    mShadowMapSizeSC = shader->getShaderConstHandle("$shadowMapSize");
 
    mCookieMapSC = shader->getShaderConstHandle("$cookieMap");

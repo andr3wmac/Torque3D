@@ -31,9 +31,10 @@
 
 
 uniform sampler2D ShadowMap : register(S1);
+uniform sampler2D DynamicShadowMap : register(S2);
 
 #ifdef USE_SSAO_MASK
-uniform sampler2D ssaoMask : register(S2);
+uniform sampler2D ssaoMask : register(S3);
 uniform float4 rtParams2;
 #endif
 
@@ -174,19 +175,35 @@ float4 main( FarFrustumQuadConnectP IN,
       // Each split has a different far plane, take this into account.
       float farPlaneScale = dot( farPlaneScalePSSM, finalMask );
       distToLight *= farPlaneScale;
-      
-      float shadowed = softShadow_filter(   ShadowMap,
+
+      float static_shadowed = softShadow_filter(  ShadowMap,
                                              IN.uv0.xy,
                                              shadowCoord,
                                              farPlaneScale * shadowSoftness,
                                              distToLight,
                                              dotNL,
                                              dot( finalMask, overDarkPSSM ) );
+      
+
+      float dynamic_shadowed = softShadow_filter( DynamicShadowMap,
+                                             IN.uv0.xy,
+                                             shadowCoord,
+                                             farPlaneScale * shadowSoftness,
+                                             distToLight,
+                                             dotNL,
+                                             dot( finalMask, overDarkPSSM ) );
+      
   
       // Fade out the shadow at the end of the range.
       float4 zDist = (zNearFarInvNearFar.x + zNearFarInvNearFar.y * depth);
       float fadeOutAmt = ( zDist.x - fadeStartLength.x ) * fadeStartLength.y;
-      shadowed = lerp( shadowed, 1.0, saturate( fadeOutAmt ) );
+
+      static_shadowed = lerp( static_shadowed, 1.0, saturate( fadeOutAmt ) );
+      dynamic_shadowed = lerp( dynamic_shadowed, 1.0, saturate( fadeOutAmt ) );
+      //float shadowed = lerp(static_shadowed, dynamic_shadowed, 0.5);
+
+      // temp for debugging. change to dynamic_shadowed to see the dynamic shadow map.
+      float shadowed = static_shadowed;
 
       #ifdef PSSM_DEBUG_RENDER
          if ( fadeOutAmt > 1.0 )

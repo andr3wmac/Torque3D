@@ -88,6 +88,7 @@ struct LightingShaderConstants
    GFXShaderConstHandle *mLightSpotFalloffSC;
 
    GFXShaderConstHandle* mShadowMapSC;
+   GFXShaderConstHandle* mDynamicShadowMapSC;
    GFXShaderConstHandle* mShadowMapSizeSC;
 
    GFXShaderConstHandle* mCookieMapSC;
@@ -304,7 +305,8 @@ public:
    virtual void unpackUpdate( BitStream *stream );
 
    // andremwac: static shadow maps
-   LightShadowMap* getShadowMap() const { return isDynamic ? mDynamicShadowMap : mShadowMap; }
+   LightShadowMap* getShadowMap() const { return mShadowMap; }
+   LightShadowMap* getDynamicShadowMap() const { return mDynamicShadowMap; }
 
    LightShadowMap* getOrCreateShadowMap(bool isDynamic = false);
 

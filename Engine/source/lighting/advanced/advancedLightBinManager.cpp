@@ -190,19 +190,19 @@ void AdvancedLightBinManager::addLight( LightInfo *light )
 
    // Find a shadow map for this light, if it has one
    ShadowMapParams *lsp = light->getExtended<ShadowMapParams>();
-   LightShadowMap *lsm = lsp->getShadowMap();
+   LightShadowMap *staticShadowMap = lsp->getShadowMap();
+   LightShadowMap *dynamicShadowMap = lsp->getDynamicShadowMap();
 
    // Get the right shadow type.
    ShadowType shadowType = ShadowType_None;
-   if (  light->getCastShadows() && 
-         lsm && lsm->hasShadowTex() &&
-         !ShadowMapPass::smDisableShadows )
-      shadowType = lsm->getShadowType();
+   if (  light->getCastShadows() && staticShadowMap && staticShadowMap->hasShadowTex() && !ShadowMapPass::smDisableShadows )
+      shadowType = staticShadowMap->getShadowType();
 
    // Add the entry
    LightBinEntry lEntry;
    lEntry.lightInfo = light;
-   lEntry.shadowMap = lsm;
+   lEntry.shadowMap = staticShadowMap;
+   lEntry.dynamicShadowMap = dynamicShadowMap;
    lEntry.lightMaterial = _getLightMaterial( lightType, shadowType, lsp->hasCookieTex() );
 
    if( lightType == LightInfo::Spot )
@@ -328,10 +328,11 @@ void AdvancedLightBinManager::render( SceneRenderState *state )
       setupSGData( sgData, state, curLightInfo );
       curLightMat->setLightParameters( curLightInfo, state, worldToCameraXfm );
       mShadowManager->setLightShadowMap( curEntry.shadowMap );
+      mShadowManager->setLightDynamicShadowMap( curEntry.dynamicShadowMap );
 
       // Let the shadow know we're about to render from it.
-      if ( curEntry.shadowMap )
-         curEntry.shadowMap->preLightRender();
+      if ( curEntry.shadowMap ) curEntry.shadowMap->preLightRender();
+      if ( curEntry.dynamicShadowMap ) curEntry.dynamicShadowMap->preLightRender();
 
       // Set geometry
       GFX->setVertexBuffer( curEntry.vertBuffer );
@@ -352,12 +353,13 @@ void AdvancedLightBinManager::render( SceneRenderState *state )
       }
 
       // Tell it we're done rendering.
-      if ( curEntry.shadowMap )
-         curEntry.shadowMap->postLightRender();
+      if ( curEntry.shadowMap ) curEntry.shadowMap->postLightRender();
+      if ( curEntry.dynamicShadowMap ) curEntry.dynamicShadowMap->postLightRender();
    }
 
    // Set NULL for active shadow map (so nothing gets confused)
    mShadowManager->setLightShadowMap(NULL);
+   mShadowManager->setLightDynamicShadowMap(NULL);
    GFX->setVertexBuffer( NULL );
    GFX->setPrimitiveBuffer( NULL );
 

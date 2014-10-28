@@ -88,6 +88,7 @@ public:
       DynamicLightMask,
       NormalizeCube,
       TexTarget,
+      DynamicShadowMap,
    };
 
    enum BlendOp
