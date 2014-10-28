@@ -83,7 +83,8 @@ singleton Material( Grid512_OrangeLines_Mat )
    materialTag0 = "TestMaterial";
    castShadows = "1";
    castStaticShadows = "0";
-   castDynamicShadows = "0";
+   castDynamicShadows = "1";
+   specularStrength[0] = "0.75";
 };
 
 singleton Material( Grid512_Red_Mat )
