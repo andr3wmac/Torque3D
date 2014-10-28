@@ -25,6 +25,7 @@ singleton Material( BlankWhite )
    diffuseMap[0] = "core/art/white";
    mapTo = "white";
    materialTag0 = "Miscellaneous";
+   castShadows = "0";
 };
 
 singleton Material( Empty )
