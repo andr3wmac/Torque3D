@@ -476,19 +476,28 @@ LightingShaderConstants::LightingShaderConstants()
       mCookieMapSC(NULL),
       mRandomDirsConst(NULL),
       mShadowSoftnessConst(NULL), 
+      mAtlasXOffsetSC(NULL), 
+      mAtlasYOffsetSC(NULL),
+      mAtlasScaleSC(NULL), 
+      mFadeStartLength(NULL), 
+      mOverDarkFactorPSSM(NULL), 
+      mTapRotationTexSC(NULL),
+
       mWorldToLightProjSC(NULL), 
       mViewToLightProjSC(NULL),
       mScaleXSC(NULL), 
       mScaleYSC(NULL),
       mOffsetXSC(NULL), 
       mOffsetYSC(NULL), 
-      mAtlasXOffsetSC(NULL), 
-      mAtlasYOffsetSC(NULL),
-      mAtlasScaleSC(NULL), 
-      mFadeStartLength(NULL), 
       mFarPlaneScalePSSM(NULL),
-      mOverDarkFactorPSSM(NULL), 
-      mTapRotationTexSC(NULL)
+
+      mDynamicWorldToLightProjSC(NULL), 
+      mDynamicViewToLightProjSC(NULL),
+      mDynamicScaleXSC(NULL), 
+      mDynamicScaleYSC(NULL),
+      mDynamicOffsetXSC(NULL), 
+      mDynamicOffsetYSC(NULL), 
+      mDynamicFarPlaneScalePSSM(NULL)
 {
 }
 
@@ -533,24 +542,29 @@ void LightingShaderConstants::init(GFXShader* shader)
    mCookieMapSC = shader->getShaderConstHandle("$cookieMap");
 
    mShadowSoftnessConst = shader->getShaderConstHandle("$shadowSoftness");
-
-   mWorldToLightProjSC = shader->getShaderConstHandle("$worldToLightProj");
-   mViewToLightProjSC = shader->getShaderConstHandle("$viewToLightProj");
-
-   mScaleXSC = shader->getShaderConstHandle("$scaleX");
-   mScaleYSC = shader->getShaderConstHandle("$scaleY");
-   mOffsetXSC = shader->getShaderConstHandle("$offsetX");
-   mOffsetYSC = shader->getShaderConstHandle("$offsetY");
    mAtlasXOffsetSC = shader->getShaderConstHandle("$atlasXOffset");
    mAtlasYOffsetSC = shader->getShaderConstHandle("$atlasYOffset");
    mAtlasScaleSC = shader->getShaderConstHandle("$atlasScale");
 
    mFadeStartLength = shader->getShaderConstHandle("$fadeStartLength");
+   mOverDarkFactorPSSM = shader->getShaderConstHandle("$overDarkPSSM");
+   mTapRotationTexSC = shader->getShaderConstHandle( "$gTapRotationTex" );
+
+   mWorldToLightProjSC = shader->getShaderConstHandle("$worldToLightProj");
+   mViewToLightProjSC = shader->getShaderConstHandle("$viewToLightProj");
+   mScaleXSC = shader->getShaderConstHandle("$scaleX");
+   mScaleYSC = shader->getShaderConstHandle("$scaleY");
+   mOffsetXSC = shader->getShaderConstHandle("$offsetX");
+   mOffsetYSC = shader->getShaderConstHandle("$offsetY");
    mFarPlaneScalePSSM = shader->getShaderConstHandle("$farPlaneScalePSSM");
 
-   mOverDarkFactorPSSM = shader->getShaderConstHandle("$overDarkPSSM");
-
-   mTapRotationTexSC = shader->getShaderConstHandle( "$gTapRotationTex" );
+   mDynamicWorldToLightProjSC = shader->getShaderConstHandle("$dynamicWorldToLightProj");
+   mDynamicViewToLightProjSC = shader->getShaderConstHandle("$dynamicViewToLightProj");
+   mDynamicScaleXSC = shader->getShaderConstHandle("$dynamicScaleX");
+   mDynamicScaleYSC = shader->getShaderConstHandle("$dynamicScaleY");
+   mDynamicOffsetXSC = shader->getShaderConstHandle("$dynamicOffsetX");
+   mDynamicOffsetYSC = shader->getShaderConstHandle("$dynamicOffsetY");
+   mDynamicFarPlaneScalePSSM = shader->getShaderConstHandle("$dynamicFarPlaneScalePSSM");
 
    mInit = true;
 }

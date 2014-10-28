@@ -95,14 +95,6 @@ struct LightingShaderConstants
 
    GFXShaderConstHandle* mRandomDirsConst;
    GFXShaderConstHandle* mShadowSoftnessConst;
-
-   GFXShaderConstHandle* mWorldToLightProjSC;
-   GFXShaderConstHandle* mViewToLightProjSC;
-
-   GFXShaderConstHandle* mScaleXSC;
-   GFXShaderConstHandle* mScaleYSC;
-   GFXShaderConstHandle* mOffsetXSC;
-   GFXShaderConstHandle* mOffsetYSC;
    GFXShaderConstHandle* mAtlasXOffsetSC;
    GFXShaderConstHandle* mAtlasYOffsetSC;
    GFXShaderConstHandle* mAtlasScaleSC;
@@ -110,10 +102,27 @@ struct LightingShaderConstants
    // fadeStartLength.x = Distance in eye space to start fading shadows
    // fadeStartLength.y = 1 / Length of fade
    GFXShaderConstHandle* mFadeStartLength;
-   GFXShaderConstHandle* mFarPlaneScalePSSM;
    GFXShaderConstHandle* mOverDarkFactorPSSM;
 
    GFXShaderConstHandle* mTapRotationTexSC;
+
+   // Static Specific:   
+   GFXShaderConstHandle* mWorldToLightProjSC;
+   GFXShaderConstHandle* mViewToLightProjSC;
+   GFXShaderConstHandle* mScaleXSC;
+   GFXShaderConstHandle* mScaleYSC;
+   GFXShaderConstHandle* mOffsetXSC;
+   GFXShaderConstHandle* mOffsetYSC;
+   GFXShaderConstHandle* mFarPlaneScalePSSM;
+
+   // Dynamic Specific:   
+   GFXShaderConstHandle* mDynamicWorldToLightProjSC;
+   GFXShaderConstHandle* mDynamicViewToLightProjSC;
+   GFXShaderConstHandle* mDynamicScaleXSC;
+   GFXShaderConstHandle* mDynamicScaleYSC;
+   GFXShaderConstHandle* mDynamicOffsetXSC;
+   GFXShaderConstHandle* mDynamicOffsetYSC;
+   GFXShaderConstHandle* mDynamicFarPlaneScalePSSM;
 
    LightingShaderConstants();
    ~LightingShaderConstants();

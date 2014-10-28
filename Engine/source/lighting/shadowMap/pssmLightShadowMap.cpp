@@ -430,18 +430,28 @@ void PSSMLightShadowMap::setShaderParameters(GFXShaderConstBuffer* params, Light
       }
    }
 
-   params->setSafe(lsc->mScaleXSC, sx);
-   params->setSafe(lsc->mScaleYSC, sy);
-   params->setSafe(lsc->mOffsetXSC, ox);
-   params->setSafe(lsc->mOffsetYSC, oy);
+   // These values change based on static/dynamic.
+   if ( mIsDynamic )
+   {
+      params->setSafe(lsc->mDynamicScaleXSC, sx);
+      params->setSafe(lsc->mDynamicScaleYSC, sy);
+      params->setSafe(lsc->mDynamicOffsetXSC, ox);
+      params->setSafe(lsc->mDynamicOffsetYSC, oy);
+      params->setSafe( lsc->mDynamicFarPlaneScalePSSM, mFarPlaneScalePSSM);
+   } else {
+      params->setSafe(lsc->mScaleXSC, sx);
+      params->setSafe(lsc->mScaleYSC, sy);
+      params->setSafe(lsc->mOffsetXSC, ox);
+      params->setSafe(lsc->mOffsetYSC, oy);
+      params->setSafe( lsc->mFarPlaneScalePSSM, mFarPlaneScalePSSM);
+   }
+
    params->setSafe(lsc->mAtlasXOffsetSC, aXOff);
    params->setSafe(lsc->mAtlasYOffsetSC, aYOff);
    params->setSafe(lsc->mAtlasScaleSC, shadowMapAtlas);
 
    Point4F lightParams( mLight->getRange().x, p->overDarkFactor.x, 0.0f, 0.0f );
    params->setSafe( lsc->mLightParamsSC, lightParams );
-      
-   params->setSafe( lsc->mFarPlaneScalePSSM, mFarPlaneScalePSSM);
 
    Point2F fadeStartLength(p->fadeStartDist, 0.0f);
    if (fadeStartLength.x == 0.0f)

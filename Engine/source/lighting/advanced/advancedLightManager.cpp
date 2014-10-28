@@ -385,6 +385,7 @@ void AdvancedLightManager::setLightInfo(  ProcessedMaterial *pmat,
                         lsc->mLightSpotFalloffSC,
                         shaderConsts );
 
+   // Static
    if ( staticShadowMap && light->getCastShadows() )
    {
       if (  lsc->mWorldToLightProjSC->isValid() )
@@ -421,6 +422,46 @@ void AdvancedLightManager::setLightInfo(  ProcessedMaterial *pmat,
          shaderConsts->set(   lsc->mViewToLightProjSC, 
                               proj * state->getCameraTransform(), 
                               lsc->mViewToLightProjSC->getType() );
+      }
+   }
+
+   // Dynamic
+   if ( dynamicShadowMap && light->getCastDynamicShadows() )
+   {
+      if (  lsc->mDynamicWorldToLightProjSC->isValid() )
+         shaderConsts->set(   lsc->mDynamicWorldToLightProjSC, 
+                              dynamicShadowMap->getWorldToLightProj(), 
+                              lsc->mDynamicWorldToLightProjSC->getType() );
+
+      if (  lsc->mDynamicViewToLightProjSC->isValid() )
+      {
+         // TODO: Should probably cache these results and 
+         // not do this mul here on every material that needs
+         // this transform.
+
+         shaderConsts->set(   lsc->mDynamicViewToLightProjSC, 
+                              dynamicShadowMap->getWorldToLightProj() * state->getCameraTransform(), 
+                              lsc->mDynamicViewToLightProjSC->getType() );
+      }
+
+      shaderConsts->setSafe( lsc->mShadowMapSizeSC, 1.0f / (F32)dynamicShadowMap->getTexSize() );
+
+      // Do this last so that overrides can properly override parameters previously set
+      dynamicShadowMap->setShaderParameters(shaderConsts, lsc);
+   }   
+   else
+   {
+      if ( lsc->mDynamicViewToLightProjSC->isValid() )
+      {
+         // TODO: Should probably cache these results and 
+         // not do this mul here on every material that needs
+         // this transform.
+         MatrixF proj;
+         light->getWorldToLightProj( &proj );
+
+         shaderConsts->set(   lsc->mDynamicViewToLightProjSC, 
+                              proj * state->getCameraTransform(), 
+                              lsc->mDynamicViewToLightProjSC->getType() );
       }
    }
 }

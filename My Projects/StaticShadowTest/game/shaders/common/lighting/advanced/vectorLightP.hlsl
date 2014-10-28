@@ -38,62 +38,24 @@ uniform sampler2D ssaoMask : register(S3);
 uniform float4 rtParams2;
 #endif
 
-
-float4 main( FarFrustumQuadConnectP IN,
-
-             uniform sampler2D prePassBuffer : register(S0),
-             
-             uniform float3 lightDirection,
-             uniform float4 lightColor,
-             uniform float  lightBrightness,
-             uniform float4 lightAmbient,
-             
-             uniform float3 eyePosWorld,
-             
-             uniform float4x4 worldToLightProj,
-
-             uniform float4 scaleX,
-             uniform float4 scaleY,
-             uniform float4 offsetX,
-             uniform float4 offsetY,
-             uniform float4 atlasXOffset,
-             uniform float4 atlasYOffset,
-             uniform float2 atlasScale,
-             uniform float4 zNearFarInvNearFar,
-             uniform float4 lightMapParams,
-
-             uniform float2 fadeStartLength,
-             uniform float4 farPlaneScalePSSM,
-             uniform float4 overDarkPSSM,
-             uniform float shadowSoftness ) : COLOR0
+float AL_VectorLightShadowCast( sampler2D sourceShadowMap,
+                                float2 texCoord,
+                                float4x4 worldToLightProj,
+                                float4 worldPos,
+                                float4 scaleX,
+                                float4 scaleY,
+                                float4 offsetX,
+                                float4 offsetY,
+                                float4 farPlaneScalePSSM,
+                                float4 atlasXOffset,
+                                float4 atlasYOffset,
+                                float2 atlasScale,
+                                float shadowSoftness, 
+                                float dotNL ,
+                                float4 overDarkPSSM
+)
 {
-   // Sample/unpack the normal/z data
-   float4 prepassSample = prepassUncondition( prePassBuffer, IN.uv0 );
-   float3 normal = prepassSample.rgb;
-   float depth = prepassSample.a;
-
-   // Use eye ray to get ws pos
-   float4 worldPos = float4(eyePosWorld + IN.wsEyeRay * depth, 1.0f);
-   
-   // Get the light attenuation.
-   float dotNL = dot(-lightDirection, normal);
-
-   #ifdef PSSM_DEBUG_RENDER
-      float3 debugColor = 0;
-   #endif
-   
-   #ifdef NO_SHADOW
-
-      // Fully unshadowed.
-      float shadowed = 1.0;
-
-      #ifdef PSSM_DEBUG_RENDER
-         debugColor = 1.0;
-      #endif
-
-   #else
-
-      // Compute shadow map coordinate
+// Compute shadow map coordinate
       float4 pxlPosLightProj = mul(worldToLightProj, worldPos);
       float2 baseShadowCoord = pxlPosLightProj.xy / pxlPosLightProj.w;   
 
@@ -176,22 +138,103 @@ float4 main( FarFrustumQuadConnectP IN,
       float farPlaneScale = dot( farPlaneScalePSSM, finalMask );
       distToLight *= farPlaneScale;
 
-      float static_shadowed = softShadow_filter(  ShadowMap,
-                                             IN.uv0.xy,
-                                             shadowCoord,
-                                             farPlaneScale * shadowSoftness,
-                                             distToLight,
-                                             dotNL,
-                                             dot( finalMask, overDarkPSSM ) );
-      
+      return softShadow_filter(  sourceShadowMap,
+                                 texCoord,
+                                 shadowCoord,
+                                 farPlaneScale * shadowSoftness,
+                                 distToLight,
+                                 dotNL,
+                                 dot( finalMask, overDarkPSSM ) );
+};
 
-      float dynamic_shadowed = softShadow_filter( DynamicShadowMap,
-                                             IN.uv0.xy,
-                                             shadowCoord,
-                                             farPlaneScale * shadowSoftness,
-                                             distToLight,
-                                             dotNL,
-                                             dot( finalMask, overDarkPSSM ) );
+float4 main( FarFrustumQuadConnectP IN,
+
+             uniform sampler2D prePassBuffer : register(S0),
+             
+             uniform float3 lightDirection,
+             uniform float4 lightColor,
+             uniform float  lightBrightness,
+             uniform float4 lightAmbient,
+             
+             uniform float3 eyePosWorld,
+             uniform float4 atlasXOffset,
+             uniform float4 atlasYOffset,
+             uniform float2 atlasScale,
+             uniform float4 zNearFarInvNearFar,
+             uniform float4 lightMapParams,
+             uniform float2 fadeStartLength,
+             uniform float4 overDarkPSSM,
+             uniform float shadowSoftness,
+
+             // Static Shadows
+             uniform float4x4 worldToLightProj,
+             uniform float4 scaleX,
+             uniform float4 scaleY,
+             uniform float4 offsetX,
+             uniform float4 offsetY,
+             uniform float4 farPlaneScalePSSM,
+
+             // Dynamic Shadows
+             uniform float4x4 dynamicWorldToLightProj,
+             uniform float4 dynamicScaleX,
+             uniform float4 dynamicScaleY,
+             uniform float4 dynamicOffsetX,
+             uniform float4 dynamicOffsetY,
+             uniform float4 dynamicFarPlaneScalePSSM
+
+            ) : COLOR0
+{
+   // Sample/unpack the normal/z data
+   float4 prepassSample = prepassUncondition( prePassBuffer, IN.uv0 );
+   float3 normal = prepassSample.rgb;
+   float depth = prepassSample.a;
+
+   // Use eye ray to get ws pos
+   float4 worldPos = float4(eyePosWorld + IN.wsEyeRay * depth, 1.0f);
+   
+   // Get the light attenuation.
+   float dotNL = dot(-lightDirection, normal);
+
+   #ifdef PSSM_DEBUG_RENDER
+      float3 debugColor = 0;
+   #endif
+   
+   #ifdef NO_SHADOW
+
+      // Fully unshadowed.
+      float shadowed = 1.0;
+
+      #ifdef PSSM_DEBUG_RENDER
+         debugColor = 1.0;
+      #endif
+
+   #else
+      
+      float static_shadowed = AL_VectorLightShadowCast( ShadowMap,
+                                                        IN.uv0.xy,
+                                                        worldToLightProj,
+                                                        worldPos,
+                                                        scaleX, scaleY,
+                                                        offsetX, offsetY,
+                                                        farPlaneScalePSSM,
+                                                        atlasXOffset, atlasYOffset,
+                                                        atlasScale,
+                                                        shadowSoftness, 
+                                                        dotNL,
+                                                        overDarkPSSM);
+
+      float dynamic_shadowed = AL_VectorLightShadowCast( DynamicShadowMap,
+                                                        IN.uv0.xy,
+                                                        dynamicWorldToLightProj,
+                                                        worldPos,
+                                                        dynamicScaleX, dynamicScaleY,
+                                                        dynamicOffsetX, dynamicOffsetY,
+                                                        dynamicFarPlaneScalePSSM,
+                                                        atlasXOffset, atlasYOffset,
+                                                        atlasScale,
+                                                        shadowSoftness, 
+                                                        dotNL,
+                                                        overDarkPSSM);
       
   
       // Fade out the shadow at the end of the range.
@@ -200,12 +243,11 @@ float4 main( FarFrustumQuadConnectP IN,
 
       static_shadowed = lerp( static_shadowed, 1.0, saturate( fadeOutAmt ) );
       dynamic_shadowed = lerp( dynamic_shadowed, 1.0, saturate( fadeOutAmt ) );
-      
 
       // temp for debugging. uncomment one or the other.
       //float shadowed = static_shadowed;
-      float shadowed = dynamic_shadowed;
-      //float shadowed = lerp(static_shadowed, dynamic_shadowed, 0.5);
+      //float shadowed = dynamic_shadowed;
+      float shadowed = min(static_shadowed, dynamic_shadowed);
 
       #ifdef PSSM_DEBUG_RENDER
          if ( fadeOutAmt > 1.0 )
