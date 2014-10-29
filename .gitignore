@@ -183,3 +183,4 @@ Project Manager.exe
 projects.xml
 Qt*.dll
 My Projects/TestBGFX/buildFiles/Link/
+Templates/Empty/game/shaders/procedural/
