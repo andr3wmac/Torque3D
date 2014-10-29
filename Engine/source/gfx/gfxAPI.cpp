@@ -43,6 +43,7 @@ ImplementEnumType( GFXAdapterType,
    { OpenGL, "OpenGL", "OpenGL." },
    { Direct3D8, "D3D8", "Direct3D 8." },
    { Direct3D9, "D3D9", "Direct3D 9." },
+   { BGFXDevice, "BGFX", "BGFX Library" },
    { NullDevice, "NullDevice", "Null device for dedicated servers." },
    { Direct3D9_360, "Xenon", "Direct3D 9 on Xbox 360." }
 EndImplementEnumType;

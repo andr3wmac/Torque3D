@@ -275,6 +275,7 @@ enum GFXBlend
 enum GFXAdapterType 
 {
    OpenGL = 0,
+   BGFXDevice,
    Direct3D9,
    Direct3D8,
    NullDevice,

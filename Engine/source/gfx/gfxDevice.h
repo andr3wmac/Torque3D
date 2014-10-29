@@ -54,6 +54,9 @@
 #include "math/util/frustum.h"
 #endif
 
+#ifndef _PLATFORM_PLATFORMTIMER_H_
+#include "platform/platformTimer.h"
+#endif
 
 class FontRenderBatcher;
 class GFont;
@@ -743,6 +746,7 @@ public:
    virtual void endScene();
    virtual void beginField();
    virtual void endField();
+   PlatformTimer *mFrameTime;
 
    virtual GFXTexHandle & getFrontBuffer(){ return mFrontBuffer[mCurrentFrontBufferIdx]; }
 
@@ -996,6 +1000,7 @@ public:
    /// things which need just generic position/texture/color shaders
    ///
    /// @param  type  Type of generic shader, add your own if you need
+   virtual GFXShaderRef getGenericShader( GenericShaderType type = GSColor ) { return NULL; };
    virtual void setupGenericShaders( GenericShaderType type = GSColor ) {};
 
    /// Get the fill convention for this device
@@ -1007,7 +1012,7 @@ public:
    virtual void doParanoidStateCheck(){};
 
    /// Get access to this device's drawing utility class.
-   GFXDrawUtil *getDrawUtil();
+   virtual GFXDrawUtil *getDrawUtil();
 
 #ifndef TORQUE_SHIPPING
    /// This is a method designed for debugging. It will allow you to dump the states
