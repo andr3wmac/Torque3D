@@ -179,7 +179,7 @@ pip-log.txt
 console.log
 *.cached.dts
 !Engine/bin
-My Projects/
 Project Manager.exe
 projects.xml
 Qt*.dll
+My Projects/TestBGFX/buildFiles/Link/

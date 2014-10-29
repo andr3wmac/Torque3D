@@ -325,7 +325,7 @@ public:
    virtual void reset( D3DPRESENT_PARAMETERS &d3dpp ) = 0;
 
    GFXShaderRef mGenericShader[GS_COUNT];
-
+   virtual GFXShaderRef getGenericShader( GenericShaderType type = GSColor ) { return mGenericShader[type]; };
    virtual void setupGenericShaders( GenericShaderType type  = GSColor );
 
    // Function only really used on the, however a centralized function for

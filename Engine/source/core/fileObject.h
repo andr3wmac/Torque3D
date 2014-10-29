@@ -52,6 +52,8 @@ public:
    void close();
    void writeObject( SimObject* object, const U8* objectPrepend = NULL );
 
+   U32 getBufferSize() { return mBufferSize; }
+
    DECLARE_CONOBJECT(FileObject);
 };
 

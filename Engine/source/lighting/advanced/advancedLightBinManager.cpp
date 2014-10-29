@@ -232,6 +232,9 @@ void AdvancedLightBinManager::render( SceneRenderState *state )
 {
    PROFILE_SCOPE( AdvancedLightManager_Render );
 
+   // andrewmac:
+   return;
+
    // Take a look at the SceneRenderState and see if we should skip drawing the pre-pass
    if( state->disableAdvancedLightingBins() )
       return;
@@ -253,6 +256,7 @@ void AdvancedLightBinManager::render( SceneRenderState *state )
    if ( !_onPreRender( state ) )
       return;
 
+   // andrewmac: with deferred rendering the lightinfo will always have data in it.
    // Clear as long as there isn't MRT population of light buffer with lightmap data
    if ( !MRTLightmapsDuringPrePass() )
       GFX->clear(GFXClearTarget, ColorI(0, 0, 0, 0), 1.0f, 0);
