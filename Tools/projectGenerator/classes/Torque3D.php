@@ -21,7 +21,7 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-// This class wraps up some project generator specific stuff for the Torque 3D project itself
+// This class wraps up some project T3D_Generator specific stuff for the Torque 3D project itself
 // simplifying the per project setup, while still allowing the engine to have modules plugged in
 
 class Torque3D
@@ -120,6 +120,7 @@ class Torque3D
         includeModule( 'advancedLighting' );
         includeModule( 'basicLighting' );
         includeModule( 'collada' );
+        includeModule( 'bgfx' );
         
         if ( T3D_Generator::$platform != "360" && T3D_Generator::$platform != "ps3" )
         {
