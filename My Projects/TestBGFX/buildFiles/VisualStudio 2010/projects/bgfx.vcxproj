@@ -1,0 +1,413 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Library Project Template -->
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Optimized Debug|Win32">
+      <Configuration>Optimized Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{F2C0209B-1B90-4F73-816A-A0920FF8B110}</ProjectGuid>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Optimized Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="Torque.Cpp.$(Platform).user.props" Condition="exists('Torque.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Optimized Debug|Win32'" Label="PropertySheets">
+    <Import Project="Torque.Cpp.$(Platform).user.props" Condition="exists('Torque.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="Torque.Cpp.$(Platform).user.props" Condition="exists('Torque.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../../../../Engine/lib//compiled/$(Configuration).$(Platform)/</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../Link/VC2010.$(Configuration).$(PlatformName)/$(ProjectName)/</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">bgfx_DEBUG</TargetName>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Optimized Debug|Win32'">../../../../../Engine/lib//compiled/$(Configuration).$(Platform)/</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Optimized Debug|Win32'">../../Link/VC2010.$(Configuration).$(PlatformName)/$(ProjectName)/</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Optimized Debug|Win32'">bgfx_OPTIMIZEDDEBUG</TargetName>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../../../../Engine/lib//compiled/$(Configuration).$(Platform)/</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../Link/VC2010.$(Configuration).$(PlatformName)/$(ProjectName)/</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">bgfx</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Disabled</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>../../../../../Engine/lib/bx/include;../../../../../Engine/lib/bgfx/include;../../../../../Engine/lib/bgfx/include/compat/msvc;../../../../../Engine/lib/bgfx/3rdparty;../../../../../Engine/lib/bgfx/3rdparty/khronos;../../../../../Engine/lib/bgfx/3rdparty/fcpp;../../../../../Engine/lib/bgfx/3rdparty/glsl-optimizer/include;../../../../../Engine/lib/bgfx/3rdparty/glsl-optimizer/src/glsl;../../../../../Engine/lib/bgfx/3rdparty/glsl-optimizer/src/mapi;../../../../../Engine/lib/bgfx/3rdparty/glsl-optimizer/src/mesa;../../../../../Engine/lib/bgfx/3rdparty/glsl-optimizer/src/getopt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>TORQUE_DEBUG;TORQUE_DEBUG_GUARD;D3D_DEBUG_INFO;TORQUE_NET_STATS;UNICODE;_CRT_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <PrecompiledHeaderOutputFile>$(OutDir)$(ProjectName)_DEBUG.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>$(OutDir)</AssemblerListingLocation>
+      <ProgramDataBaseFileName>$(OutDir)$(ProjectName)_DEBUG.pdb</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <CompileAs>Default</CompileAs>
+      <DisableSpecificWarnings>4244;4305;4530;4355;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Lib>
+      <OutputFile>$(OutDir)bgfx_DEBUG.lib</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Optimized Debug|Win32'">
+    <ClCompile>
+      <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Full</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>../../../../../Engine/lib/bx/include;../../../../../Engine/lib/bgfx/include;../../../../../Engine/lib/bgfx/include/compat/msvc;../../../../../Engine/lib/bgfx/3rdparty;../../../../../Engine/lib/bgfx/3rdparty/khronos;../../../../../Engine/lib/bgfx/3rdparty/fcpp;../../../../../Engine/lib/bgfx/3rdparty/glsl-optimizer/include;../../../../../Engine/lib/bgfx/3rdparty/glsl-optimizer/src/glsl;../../../../../Engine/lib/bgfx/3rdparty/glsl-optimizer/src/mapi;../../../../../Engine/lib/bgfx/3rdparty/glsl-optimizer/src/mesa;../../../../../Engine/lib/bgfx/3rdparty/glsl-optimizer/src/getopt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>TORQUE_DEBUG;TORQUE_DEBUG_GUARD;D3D_DEBUG_INFO;TORQUE_NET_STATS;UNICODE;_CRT_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <PrecompiledHeaderOutputFile>$(OutDir)$(ProjectName)_OPTIMIZEDDEBUG.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>$(OutDir)</AssemblerListingLocation>
+      <ProgramDataBaseFileName>$(OutDir)$(ProjectName)_OPTIMIZEDDEBUG.pdb</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>Default</CompileAs>
+      <DisableSpecificWarnings>4244;4305;4530;4355;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Lib>
+      <OutputFile>$(OutDir)bgfx_OPTIMIZEDDEBUG.lib</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Full</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <AdditionalIncludeDirectories>../../../../../Engine/lib/bx/include;../../../../../Engine/lib/bgfx/include;../../../../../Engine/lib/bgfx/include/compat/msvc;../../../../../Engine/lib/bgfx/3rdparty;../../../../../Engine/lib/bgfx/3rdparty/khronos;../../../../../Engine/lib/bgfx/3rdparty/fcpp;../../../../../Engine/lib/bgfx/3rdparty/glsl-optimizer/include;../../../../../Engine/lib/bgfx/3rdparty/glsl-optimizer/src/glsl;../../../../../Engine/lib/bgfx/3rdparty/glsl-optimizer/src/mapi;../../../../../Engine/lib/bgfx/3rdparty/glsl-optimizer/src/mesa;../../../../../Engine/lib/bgfx/3rdparty/glsl-optimizer/src/getopt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>UNICODE;_CRT_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <PrecompiledHeaderOutputFile>$(OutDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>$(OutDir)</AssemblerListingLocation>
+      <ProgramDataBaseFileName>$(OutDir)$(ProjectName).pdb</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <CompileAs>Default</CompileAs>
+      <DisableSpecificWarnings>4244;4305;4530;4355;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Lib>
+      <OutputFile>$(OutDir)/bgfx.lib</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\fcpp\cpp.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\fcpp\cpp1.c" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\fcpp\cpp2.c" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\fcpp\cpp3.c" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\fcpp\cpp4.c" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\fcpp\cpp5.c" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\fcpp\cpp6.c" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\fcpp\cppadd.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\fcpp\cppdef.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\fcpp\fpp.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\fcpp\FPPBase.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\fcpp\fpp_pragmas.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\fcpp\FPP_protos.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ast.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ast_array_index.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ast_expr.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ast_function.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ast_to_hir.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ast_type.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\builtin_functions.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\builtin_types.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\builtin_type_macros.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\builtin_variables.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\glsl_lexer.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\glsl_optimizer.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\glsl_optimizer.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\glsl_parser.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\glsl_parser.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\glsl_parser_extras.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\glsl_parser_extras.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\glsl_symbol_table.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\glsl_symbol_table.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\glsl_types.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\glsl_types.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\hir_field_selection.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_basic_block.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_basic_block.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_builder.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_builder.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_clone.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_constant_expression.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_equals.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_expression_flattening.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_expression_flattening.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_function.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_function_can_inline.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_function_detect_recursion.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_function_inlining.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_hierarchical_visitor.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_hierarchical_visitor.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_hv_accept.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_import_prototypes.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_optimization.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_print_glsl_visitor.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_print_glsl_visitor.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_print_visitor.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_print_visitor.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_rvalue_visitor.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_rvalue_visitor.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_stats.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_stats.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_uniform.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_unused_structs.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_unused_structs.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_validate.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_variable_refcount.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_variable_refcount.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_visitor.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\linker.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\linker.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\link_atomics.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\link_functions.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\link_interface_blocks.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\link_uniforms.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\link_uniform_blocks.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\link_uniform_block_active_visitor.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\link_uniform_block_active_visitor.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\link_uniform_initializers.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\link_varyings.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\link_varyings.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\list.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\loop_analysis.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\loop_analysis.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\loop_controls.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\loop_unroll.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_clip_distance.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_discard.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_discard_flow.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_if_to_cond_assign.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_instructions.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_jumps.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_mat_op_to_vec.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_named_interface_blocks.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_noise.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_output_reads.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_packed_varyings.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_packing_builtins.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_ubo_reference.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_variable_index_to_cond_assign.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_vector.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_vector_insert.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_vec_index_to_cond_assign.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_vec_index_to_swizzle.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\main.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_algebraic.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_array_splitting.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_constant_folding.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_constant_propagation.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_constant_variable.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_copy_propagation.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_copy_propagation_elements.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_cse.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_dead_builtin_varyings.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_dead_code.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_dead_code_local.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_dead_functions.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_flatten_nested_if_blocks.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_flip_matrices.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_function_inlining.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_if_simplification.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_noop_swizzle.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_redundant_jumps.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_structure_splitting.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_swizzle_swizzle.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_tree_grafting.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_vectorize.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\program.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ralloc.c" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\ralloc.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\standalone_scaffolding.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\standalone_scaffolding.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\strtod.c" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\strtod.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\s_expression.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\s_expression.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\glcpp\glcpp-lex.c" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\glcpp\glcpp-parse.c" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\glcpp\glcpp-parse.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\glcpp\glcpp.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\glsl\glcpp\pp.c" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\mesa\main\compiler.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\mesa\main\config.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\mesa\main\context.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\mesa\main\core.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\mesa\main\dd.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\mesa\main\glheader.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\mesa\main\glminimal.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\mesa\main\hash_table.c" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\mesa\main\hash_table.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\mesa\main\imports.c" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\mesa\main\imports.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\mesa\main\macros.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\mesa\main\mtypes.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\mesa\main\simple_list.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\mesa\program\hash_table.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\mesa\program\prog_hash_table.c" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\mesa\program\prog_instruction.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\mesa\program\prog_parameter.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\mesa\program\prog_statevars.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\mesa\program\symbol_table.c" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\3rdparty\glsl-optimizer\src\mesa\program\symbol_table.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\common\aviwriter.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\common\bgfx_utils.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\common\bgfx_utils.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\common\bounds.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\common\bounds.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\common\camera.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\common\camera.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\common\common.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\common\cube_atlas.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\common\cube_atlas.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\common\packrect.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\common\font\font_manager.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\common\font\fs_font_basic.bin.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\common\font\fs_font_distance_field.bin.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\common\font\fs_font_distance_field_subpixel.bin.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\common\font\text_buffer_manager.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\common\font\text_metrics.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\common\font\text_metrics.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\common\font\utf8.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\common\font\utf8.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\common\font\vs_font_basic.bin.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\common\font\vs_font_distance_field.bin.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\common\font\vs_font_distance_field_subpixel.bin.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\common\nanovg\fontstash.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\common\nanovg\fs_nanovg_fill.bin.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\common\nanovg\nanovg.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\common\nanovg\nanovg_bgfx.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\common\nanovg\vs_nanovg_fill.bin.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\src\bgfx.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\src\bgfx_p.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\src\charset.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\src\config.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\src\fs_clear0.bin.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\src\fs_clear1.bin.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\src\fs_clear2.bin.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\src\fs_clear3.bin.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\src\fs_debugfont.bin.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\src\glcontext_eagl.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\src\glcontext_eagl.mm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Optimized Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\src\glcontext_egl.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\src\glcontext_egl.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\src\glcontext_glx.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\src\glcontext_glx.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\src\glcontext_ios.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\src\glcontext_nsgl.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\src\glcontext_nsgl.mm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Optimized Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\src\glcontext_ppapi.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\src\glcontext_ppapi.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\src\glcontext_wgl.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\src\glcontext_wgl.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\src\glimports.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\src\image.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\src\image.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\src\renderer_d3d.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\src\renderer_d3d11.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\src\renderer_d3d11.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\src\renderer_d3d9.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\src\renderer_d3d9.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\src\renderer_gl.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\src\renderer_gl.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\src\renderer_null.cpp" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\src\vertexdecl.cpp" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\src\vertexdecl.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\src\vs_clear.bin.h" />
+    <ClInclude Include="..\..\..\..\..\Engine\lib\bgfx\src\vs_debugfont.bin.h" />
+    <ClCompile Include="..\..\..\..\..\Engine\lib\bgfx\tools\shaderc\shaderc.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

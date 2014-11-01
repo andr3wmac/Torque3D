@@ -1,0 +1,237 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{ee7f3286-29cc-4f22-8f2e-ac52130de34f}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat;cc</Extensions>
+    </Filter>
+    <Filter Include="Source Files\lib">
+      <UniqueIdentifier>{8985b16d-a8ea-4ea8-8463-34b1cf667e61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\lib\include">
+      <UniqueIdentifier>{bf377a3e-24c2-4e9c-bf85-8c55bf79d1e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\lib\lib">
+      <UniqueIdentifier>{e3df8872-9741-46d8-a0b8-b68b6174b8a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\lib\lib\dec">
+      <UniqueIdentifier>{8de35c45-6c2e-48bf-aee5-dc2ce15f857c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\lib\lib\dec\x86_vc">
+      <UniqueIdentifier>{6884bed1-2886-46d0-b4c7-434e0165aa3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\lib\lib\enc">
+      <UniqueIdentifier>{42aeeab7-6493-4f87-8e44-23c9e2f81595}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\lib\lib\enc\x86_32_vs">
+      <UniqueIdentifier>{3546008d-0b4f-4292-ab50-aafab6dc994a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\cpu.c">
+      <Filter>Source Files\lib\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\dec\apiwrapper.c">
+      <Filter>Source Files\lib\lib\dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\dec\bitpack.c">
+      <Filter>Source Files\lib\lib\dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\dec\decapiwrapper.c">
+      <Filter>Source Files\lib\lib\dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\dec\decinfo.c">
+      <Filter>Source Files\lib\lib\dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\dec\decode.c">
+      <Filter>Source Files\lib\lib\dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\dec\dequant.c">
+      <Filter>Source Files\lib\lib\dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\dec\fragment.c">
+      <Filter>Source Files\lib\lib\dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\dec\huffdec.c">
+      <Filter>Source Files\lib\lib\dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\dec\idct.c">
+      <Filter>Source Files\lib\lib\dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\dec\info.c">
+      <Filter>Source Files\lib\lib\dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\dec\internal.c">
+      <Filter>Source Files\lib\lib\dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\dec\quant.c">
+      <Filter>Source Files\lib\lib\dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\dec\state.c">
+      <Filter>Source Files\lib\lib\dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\dec\x86_vc\mmxfrag.c">
+      <Filter>Source Files\lib\lib\dec\x86_vc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\dec\x86_vc\mmxidct.c">
+      <Filter>Source Files\lib\lib\dec\x86_vc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\dec\x86_vc\mmxloopfilter.c">
+      <Filter>Source Files\lib\lib\dec\x86_vc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\dec\x86_vc\mmxstate.c">
+      <Filter>Source Files\lib\lib\dec\x86_vc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\dec\x86_vc\x86state.c">
+      <Filter>Source Files\lib\lib\dec\x86_vc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\blockmap.c">
+      <Filter>Source Files\lib\lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\dct.c">
+      <Filter>Source Files\lib\lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\dct_decode.c">
+      <Filter>Source Files\lib\lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\dct_encode.c">
+      <Filter>Source Files\lib\lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\dsp.c">
+      <Filter>Source Files\lib\lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\encapiwrapper.c">
+      <Filter>Source Files\lib\lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\encode.c">
+      <Filter>Source Files\lib\lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\encoder_huffman.c">
+      <Filter>Source Files\lib\lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\encoder_idct.c">
+      <Filter>Source Files\lib\lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\encoder_quant.c">
+      <Filter>Source Files\lib\lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\encoder_toplevel.c">
+      <Filter>Source Files\lib\lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\frarray.c">
+      <Filter>Source Files\lib\lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\frinit.c">
+      <Filter>Source Files\lib\lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\mcomp.c">
+      <Filter>Source Files\lib\lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\misc_common.c">
+      <Filter>Source Files\lib\lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\pb.c">
+      <Filter>Source Files\lib\lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\pp.c">
+      <Filter>Source Files\lib\lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\reconstruct.c">
+      <Filter>Source Files\lib\lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\scan.c">
+      <Filter>Source Files\lib\lib\enc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\x86_32_vs\dsp_mmx.c">
+      <Filter>Source Files\lib\lib\enc\x86_32_vs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\x86_32_vs\fdct_mmx.c">
+      <Filter>Source Files\lib\lib\enc\x86_32_vs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\x86_32_vs\recon_mmx.c">
+      <Filter>Source Files\lib\lib\enc\x86_32_vs</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\Engine\lib\libtheora\include\theora\codec.h">
+      <Filter>Source Files\lib\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Engine\lib\libtheora\include\theora\theora.h">
+      <Filter>Source Files\lib\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Engine\lib\libtheora\include\theora\theoradec.h">
+      <Filter>Source Files\lib\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Engine\lib\libtheora\include\theora\theoraenc.h">
+      <Filter>Source Files\lib\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Engine\lib\libtheora\lib\cpu.h">
+      <Filter>Source Files\lib\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Engine\lib\libtheora\lib\internal.h">
+      <Filter>Source Files\lib\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Engine\lib\libtheora\lib\dec\apiwrapper.h">
+      <Filter>Source Files\lib\lib\dec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Engine\lib\libtheora\lib\dec\bitpack.h">
+      <Filter>Source Files\lib\lib\dec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Engine\lib\libtheora\lib\dec\dct.h">
+      <Filter>Source Files\lib\lib\dec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Engine\lib\libtheora\lib\dec\decint.h">
+      <Filter>Source Files\lib\lib\dec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Engine\lib\libtheora\lib\dec\dequant.h">
+      <Filter>Source Files\lib\lib\dec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Engine\lib\libtheora\lib\dec\huffdec.h">
+      <Filter>Source Files\lib\lib\dec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Engine\lib\libtheora\lib\dec\huffman.h">
+      <Filter>Source Files\lib\lib\dec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Engine\lib\libtheora\lib\dec\idct.h">
+      <Filter>Source Files\lib\lib\dec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Engine\lib\libtheora\lib\dec\ocintrin.h">
+      <Filter>Source Files\lib\lib\dec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Engine\lib\libtheora\lib\dec\quant.h">
+      <Filter>Source Files\lib\lib\dec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Engine\lib\libtheora\lib\dec\x86_vc\x86int.h">
+      <Filter>Source Files\lib\lib\dec\x86_vc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\block_inline.h">
+      <Filter>Source Files\lib\lib\enc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\codec_internal.h">
+      <Filter>Source Files\lib\lib\enc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\dsp.h">
+      <Filter>Source Files\lib\lib\enc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\encoder_huffman.h">
+      <Filter>Source Files\lib\lib\enc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\encoder_lookup.h">
+      <Filter>Source Files\lib\lib\enc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\hufftables.h">
+      <Filter>Source Files\lib\lib\enc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\pp.h">
+      <Filter>Source Files\lib\lib\enc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\quant_lookup.h">
+      <Filter>Source Files\lib\lib\enc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Engine\lib\libtheora\lib\enc\toplevel_lookup.h">
+      <Filter>Source Files\lib\lib\enc</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+</Project>
