@@ -29,6 +29,7 @@
 #include "T3D/gameBase/moveManager.h"
 #include "console/consoleInternal.h"
 
+// This was added from github editor.
 
 IMPLEMENT_CONOBJECT( AIClient );
 
