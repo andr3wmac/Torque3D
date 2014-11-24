@@ -62,6 +62,7 @@ GFXFormatInfo::Data GFXFormatInfo::smFormatInfos[ GFXFormat_COUNT ] =
    // 64 bit texture formats...
    GFXFormatInfo::Data( 8,    true,  false, false ),   // GFXFormatR16G16B16A16
    GFXFormatInfo::Data( 8,    true,  false, true  ),   // GFXFormatR16G16B16A16F
+   GFXFormatInfo::Data( 4,    false, false, true ),    // GFXFormatG32R32F
 
    // 128 bit texture formats...
    GFXFormatInfo::Data( 16,   true,  false, true  ),  // GFXFormatR32G32B32A32F

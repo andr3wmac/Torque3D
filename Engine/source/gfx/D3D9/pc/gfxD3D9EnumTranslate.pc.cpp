@@ -91,6 +91,7 @@ void GFXD3D9EnumTranslate::init()
    GFXD3D9TextureFormat[GFXFormatR5G5B5A1] = D3DFMT_A1R5G5B5;
    GFXD3D9TextureFormat[GFXFormatR5G5B5X1] = D3DFMT_X1R5G5B5;
    GFXD3D9TextureFormat[GFXFormatR32F] = D3DFMT_R32F;
+   GFXD3D9TextureFormat[GFXFormatG32R32F] = D3DFMT_G32R32F;
    GFXD3D9TextureFormat[GFXFormatA4L4] = D3DFMT_A4L4;
    GFXD3D9TextureFormat[GFXFormatA8L8] = D3DFMT_A8L8;
    GFXD3D9TextureFormat[GFXFormatA8] = D3DFMT_A8;

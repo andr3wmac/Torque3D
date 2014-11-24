@@ -203,6 +203,7 @@ ImplementEnumType( GFXFormat,
    { GFXFormatR16F, "GFXFormatR16F" }, 
    { GFXFormatR16G16F, "GFXFormatR16G16F" }, 
    { GFXFormatR10G10B10A2, "GFXFormatR10G10B10A2" },
+   { GFXFormatG32R32F, "GFXFormatG32R32F" }, 
 
 EndImplementEnumType;
 
