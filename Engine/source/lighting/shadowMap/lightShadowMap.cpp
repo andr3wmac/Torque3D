@@ -57,7 +57,7 @@
 // TODO: Some cards (Justin's GeForce 7x series) barf on the integer format causing
 // filtering artifacts. These can (sometimes) be resolved by switching the format
 // to FP16 instead of Int16.
-const GFXFormat LightShadowMap::ShadowMapFormat = GFXFormatR32F; // GFXFormatR8G8B8A8;
+const GFXFormat LightShadowMap::ShadowMapFormat = GFXFormatG32R32F; // GFXFormatR8G8B8A8;
 
 bool LightShadowMap::smDebugRenderFrustums;
 F32 LightShadowMap::smShadowTexScalar = 1.0f;

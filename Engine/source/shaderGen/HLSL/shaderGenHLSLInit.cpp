@@ -77,6 +77,7 @@ void _initShaderGenHLSL( ShaderGen *shaderGen )
    
    FEATUREMGR->registerFeature( MFT_DepthOut, new DepthOutHLSL );
    FEATUREMGR->registerFeature( MFT_EyeSpaceDepthOut, new EyeSpaceDepthOutHLSL() );
+   FEATUREMGR->registerFeature( MFT_EyeSpaceDepthSquaredOut, new EyeSpaceDepthSquaredOutHLSL() );
 
    FEATUREMGR->registerFeature( MFT_HDROut, new HDROutHLSL );
 

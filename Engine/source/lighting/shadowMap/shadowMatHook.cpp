@@ -204,7 +204,7 @@ void ShadowMaterialHook::_overrideFeatures(  ProcessedMaterial *mat,
    if ( fd.features.hasFeature( MFT_ParaboloidVertTransform ) ) 
       fd.features.addFeature( MFT_DepthOut );      
    else
-      fd.features.addFeature( MFT_EyeSpaceDepthOut );
+      fd.features.addFeature( MFT_EyeSpaceDepthSquaredOut );
 }
 
 ShadowMatInstance::ShadowMatInstance( Material *mat ) 

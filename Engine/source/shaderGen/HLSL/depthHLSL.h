@@ -43,6 +43,19 @@ public:
    virtual const char* getOutputVarName() const { return "eyeSpaceDepth"; }
 };
 
+class EyeSpaceDepthSquaredOutHLSL : public ShaderFeatureHLSL
+{
+public:
+
+   // ShaderFeature
+   virtual void processVert( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd );
+   virtual void processPix( Vector<ShaderComponent*> &componentList, const MaterialFeatureData &fd );
+   virtual Resources getResources( const MaterialFeatureData &fd );
+   virtual String getName() { return "Eye Space Depth (Out)"; }
+   virtual Material::BlendOp getBlendOp() { return Material::None; }
+   virtual const char* getOutputVarName() const { return "eyeSpaceDepth"; }
+};
+
 
 class DepthOutHLSL : public ShaderFeatureHLSL
 {

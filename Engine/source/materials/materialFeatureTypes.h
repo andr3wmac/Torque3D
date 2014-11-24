@@ -134,6 +134,7 @@ DeclareFeatureType( MFT_MinnaertShading );
 DeclareFeatureType( MFT_GlowMask );
 DeclareFeatureType( MFT_Visibility );
 DeclareFeatureType( MFT_EyeSpaceDepthOut );
+DeclareFeatureType( MFT_EyeSpaceDepthSquaredOut );
 DeclareFeatureType( MFT_DepthOut );
 DeclareFeatureType( MFT_Fog );
 
