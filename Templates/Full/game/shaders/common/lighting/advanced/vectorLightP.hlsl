@@ -37,6 +37,22 @@ uniform sampler2D ssaoMask : register(S2);
 uniform float4 rtParams2;
 #endif
 
+// andrewmac: Variance Shadow Map
+float ChebyshevUpperBound(float2 moments, float t)
+{
+    if (t <= moments.x)
+		return 1.0;
+
+    // Compute Variance
+    float variance = moments.y - (moments.x * moments.x);
+    variance = max(variance, 0.00002);
+
+    // Compute probablistic upper bound.
+    float d = t - moments.x;
+    float p_max = variance / (variance + d*d);
+
+    return p_max;
+}
 
 float4 main( FarFrustumQuadConnectP IN,
 
@@ -175,14 +191,17 @@ float4 main( FarFrustumQuadConnectP IN,
       float farPlaneScale = dot( farPlaneScalePSSM, finalMask );
       distToLight *= farPlaneScale;
       
-      float shadowed = softShadow_filter(   ShadowMap,
-                                             IN.uv0.xy,
-                                             shadowCoord,
-                                             farPlaneScale * shadowSoftness,
-                                             distToLight,
-                                             dotNL,
-                                             dot( finalMask, overDarkPSSM ) );
+      //float shadowed = softShadow_filter(   ShadowMap,
+      //                                       IN.uv0.xy,
+      //                                       shadowCoord,
+      //                                       farPlaneScale * shadowSoftness,
+      //                                       distToLight,
+      //                                       dotNL,
+      //                                       dot( finalMask, overDarkPSSM ) );
   
+      float2 moments = tex2Dlod( ShadowMap, float4( shadowCoord, 0, 0 ) ).rg;
+      float shadowed = ChebyshevUpperBound(moments, distToLight);
+
       // Fade out the shadow at the end of the range.
       float4 zDist = (zNearFarInvNearFar.x + zNearFarInvNearFar.y * depth);
       float fadeOutAmt = ( zDist.x - fadeStartLength.x ) * fadeStartLength.y;
