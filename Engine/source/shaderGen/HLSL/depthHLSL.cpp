@@ -252,8 +252,7 @@ void DepthOutHLSL::processPix(   Vector<ShaderComponent*> &componentList,
    depthOut->setName(getOutputVarName());
    */
 
-   // andrewmac: investigate if DepthOut is used by anything else.
-   LangElement *depthOut = new GenOp( "float4( 0.25, 0.5, 0.75, 1 )", depthVar, depthVar, depthVar );
+   LangElement *depthOut = new GenOp( "float4( @, 0, 0, 1 )", depthVar );
 
    output = new GenOp( "   @;\r\n", assignColor( depthOut, Material::None ) );
 }
