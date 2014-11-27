@@ -197,8 +197,12 @@ void EyeSpaceDepthSquaredOutHLSL::processPix( Vector<ShaderComponent*> &componen
    // If there isn't an output conditioner for the pre-pass, than just write
    // out the depth to rgba and return.
    if( !fd.features[MFT_PrePassConditioner] )
+   {
       // andrewmac: changed this to output depth^2 for variance shadow maps.
-      meta->addStatement( new GenOp( "   @;\r\n", assignColor( new GenOp( "float4(@.r, @.r * @.r, 1,1)", depthOut, depthOut, depthOut ), Material::None ) ) );
+      meta->addStatement( new GenOp( "   float dx = ddx(@.r);\r\n", depthOut ) );
+      meta->addStatement( new GenOp( "   float dy = ddy(@.r);\r\n", depthOut ) );
+      meta->addStatement( new GenOp( "   @;\r\n", assignColor( new GenOp( "float4(@.r, @.r * @.r + 0.25*(dx*dx + dy*dy), 1,1)", depthOut, depthOut, depthOut ), Material::None ) ) );
+   }
    
    output = meta;
 }

@@ -224,3 +224,20 @@ new CustomMaterial( AL_ParticlePointLightMaterial )
    
    pixVersion = 3.0;
 };
+
+// Variance Shadow Map Blurs
+singleton ShaderData( AL_ShadowMapBlurX )
+{   
+   DXVertexShaderFile 	= "shaders/common/lighting/advanced/shadowBlurV.hlsl";
+   DXPixelShaderFile 	= "shaders/common/lighting/advanced/shadowBlurP_X.hlsl";
+
+   pixVersion = 2.0;
+};
+
+singleton ShaderData( AL_ShadowMapBlurY )
+{   
+   DXVertexShaderFile 	= "shaders/common/lighting/advanced/shadowBlurV.hlsl";
+   DXPixelShaderFile 	= "shaders/common/lighting/advanced/shadowBlurP_Y.hlsl";
+
+   pixVersion = 2.0;
+};

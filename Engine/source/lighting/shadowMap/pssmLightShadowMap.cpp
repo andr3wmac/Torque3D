@@ -37,7 +37,8 @@
 #include "materials/shaderData.h"
 #include "ts/tsShapeInstance.h"
 #include "console/consoleTypes.h"
-
+#include "materials/shaderData.h"
+#include "gfx/gfxDrawUtil.h"
 
 AFTER_MODULE_INIT( Sim )
 {
@@ -109,6 +110,10 @@ void PSSMLightShadowMap::_setNumSplits( U32 numSplits, U32 texSize )
    mShadowMapTex.set(   texWidth, texHeight, 
                         ShadowMapFormat, &ShadowMapProfile, 
                         "PSSMLightShadowMap" );
+
+   mShadowMapBlurTex.set(   texWidth, texHeight, 
+                        ShadowMapFormat, &ShadowMapProfile, 
+                        "PSSMLightShadowMapBlur" );
 }
 
 void PSSMLightShadowMap::_calcSplitPos(const Frustum& currFrustum)
@@ -378,6 +383,24 @@ void PSSMLightShadowMap::_render(   RenderPassManager* renderPass,
 
    // Release our render target
    mTarget->resolve();
+
+   // andrewmac: shadowmap blur
+   ShaderData* blurx_shader = getBlurXShader();
+   mTarget->attachTexture( GFXTextureTarget::Color0, mShadowMapBlurTex );
+   GFX->setActiveRenderTarget( mTarget );
+   GFX->setShader(blurx_shader->getShader());
+   GFX->setTexture(0, mShadowMapTex);
+   GFX->getDrawUtil()->drawFullscreenQuad();
+   mTarget->resolve();
+
+   ShaderData* blury_shader = getBlurYShader();
+   mTarget->attachTexture( GFXTextureTarget::Color0, mShadowMapTex );
+   GFX->setActiveRenderTarget( mTarget );
+   GFX->setShader(blury_shader->getShader());
+   GFX->setTexture(0, mShadowMapBlurTex);
+   GFX->getDrawUtil()->drawFullscreenQuad();
+   mTarget->resolve();
+
    GFX->popActiveRenderTarget();
 }
 
@@ -456,4 +479,20 @@ void PSSMLightShadowMap::setShaderParameters(GFXShaderConstBuffer* params, Light
 
    // The softness is a factor of the texel size.
    params->setSafe( lsc->mShadowSoftnessConst, p->shadowSoftness * ( 1.0f / mTexSize ) );
+}
+
+ShaderData* PSSMLightShadowMap::getBlurXShader()
+{
+   if ( !mBlurXShader )
+      mBlurXShader = dynamic_cast<ShaderData*>( Sim::findObject( "AL_ShadowMapBlurX" ) );
+   
+   return mBlurXShader;
+}
+
+ShaderData* PSSMLightShadowMap::getBlurYShader()
+{
+   if ( !mBlurYShader )
+      mBlurYShader = dynamic_cast<ShaderData*>( Sim::findObject( "AL_ShadowMapBlurY" ) );
+   
+   return mBlurYShader;
 }

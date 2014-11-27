@@ -38,6 +38,13 @@ uniform float4 rtParams2;
 #endif
 
 // andrewmac: Variance Shadow Map
+float ReduceLightBleeding(float val, float amount)
+{
+    float min = amount;
+    float max = 1.0;
+    float unclamped = (val - min) / (max - min);
+    return clamp(unclamped, 0.0, 1.0);
+}
 float ChebyshevUpperBound(float2 moments, float t)
 {
     if (t <= moments.x)
@@ -45,13 +52,15 @@ float ChebyshevUpperBound(float2 moments, float t)
 
     // Compute Variance
     float variance = moments.y - (moments.x * moments.x);
-    variance = max(variance, 0.00002);
+    // TODO: The 0.000002 should be replaced by artist adjustable value.
+    variance = max(variance, 0.000001);
 
     // Compute probablistic upper bound.
     float d = t - moments.x;
     float p_max = variance / (variance + d*d);
 
-    return p_max;
+    // TODO: The 0.8 should be replaced by an artist adjustable value.
+    return ReduceLightBleeding(p_max, 0.9);
 }
 
 float4 main( FarFrustumQuadConnectP IN,

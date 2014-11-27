@@ -58,7 +58,7 @@ void DualParaboloidLightShadowMap::_render(  RenderPassManager* renderPass,
 
       mShadowMapTex.set(   mTexSize * 2, mTexSize, 
                            ShadowMapFormat, &ShadowMapProfile, 
-                           "DualParaboloidLightShadowMap" );
+                           "DualParaboloidLightShadowMap");
    }
 
    GFXFrustumSaver frustSaver;

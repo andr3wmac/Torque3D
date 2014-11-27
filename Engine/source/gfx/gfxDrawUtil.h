@@ -58,6 +58,8 @@ public:
    void drawRectFill( const Point2I &upperLeft, const Point2I &lowerRight, const ColorI &color );
    void drawRectFill( const RectI &rect, const ColorI &color );
 
+   void drawFullscreenQuad();
+
    void draw2DSquare( const Point2F &screenPoint, F32 width, F32 spinAngle = 0.0f );
 
    //-----------------------------------------------------------------------------

@@ -542,6 +542,34 @@ void GFXDrawUtil::drawRectFill( const Point2F &upperLeft, const Point2F &lowerRi
    mDevice->drawPrimitive( GFXTriangleStrip, 0, 2 );
 }
 
+void GFXDrawUtil::drawFullscreenQuad( )
+{
+   // A simple function to render a quad over the whole visible area (pending transform matrix)
+
+   GFXVertexBufferHandle<GFXVertexPT> verts(mDevice, 4, GFXBufferTypeVolatile);
+   verts.lock();
+
+   F32 ulOffset = (0.5 / 2048);
+   
+   verts[0].point.set( -1.0f - ulOffset, -1.0f + ulOffset, 0.0f );
+   verts[0].texCoord.set(0, 1);
+   verts[1].point.set( 1.0f - ulOffset, -1.0f + ulOffset, 0.0f );
+   verts[1].texCoord.set(1, 1);
+   verts[2].point.set( -1.0f - ulOffset, 1.0f + ulOffset, 0.0f );
+   verts[2].texCoord.set(0, 0);
+   verts[3].point.set( 1.0f - ulOffset, 1.0f + ulOffset, 0.0f );
+   verts[3].texCoord.set(1, 0);
+
+   verts.unlock();
+
+   mDevice->setWorldMatrix( MatrixF::Identity );
+   mDevice->setViewMatrix( MatrixF::Identity );
+   mDevice->setProjectionMatrix( MatrixF::Identity );
+   mDevice->setStateBlock(mBitmapStretchSB);
+   mDevice->setVertexBuffer( verts );
+   mDevice->drawPrimitive( GFXTriangleStrip, 0, 2 );
+}
+
 void GFXDrawUtil::draw2DSquare( const Point2F &screenPoint, F32 width, F32 spinAngle )
 {
    width *= 0.5;

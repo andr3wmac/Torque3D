@@ -29,6 +29,11 @@
 #include "math/util/frustum.h"
 #endif
 
+#ifndef _SHADERTDATA_H_
+#include "materials/shaderData.h"
+#endif
+
+class PostEffect;
 
 class PSSMLightShadowMap : public LightShadowMap
 {
@@ -66,6 +71,12 @@ protected:
    Point3F mOffsetProj[MAX_SPLITS];
    Point4F mFarPlaneScalePSSM;
    F32 mLogWeight;
+
+   ShaderData* getBlurXShader();
+   ShaderData* getBlurYShader();
+   GFXTexHandle               mShadowMapBlurTex;
+   SimObjectPtr<ShaderData>   mBlurXShader;
+   SimObjectPtr<ShaderData>   mBlurYShader;
 };
 
 #endif
