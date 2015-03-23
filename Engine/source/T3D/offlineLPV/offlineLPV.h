@@ -41,6 +41,7 @@
 
 #include "materials/matTextureTarget.h"
 #include "renderInstance/renderBinManager.h"
+#include "core/resourceManager.h"
 
 GFX_DeclareTextureProfile( LPVProfile );
 
@@ -203,6 +204,15 @@ class OfflineLPV : public ScenePolyhedralSpace
       void _rebuildDebugVoxels();
       void _rebuildDebugVoxelsVB();
       virtual void _renderObject( ObjectRenderInst* ri, SceneRenderState* state, BaseMatInstance* overrideMat );
+
+      //texture cacheing
+      struct TextureCache
+      {
+         Resource<GBitmap> mTexture;
+         FileName mFileReference;
+      };
+      Vector<TextureCache> mTextureCache;
+      Resource<GBitmap> getOrCreateTexture(FileName textureName);
 
    public:
 
